@@ -42,7 +42,7 @@ node("master"){
 //                            passwordVariable: 'ARTIFACTORY_PASSWORD']])
 //            {
                 sh """
-                pushd ${workspaceDir}/${appName}/plugins/tlv-network-specific
+                pushd ${workspaceDir}/${appName}/plugins/tlv-network-specific-plugin
                 ./gradlew artifactoryPublish
                 popd
                 """
