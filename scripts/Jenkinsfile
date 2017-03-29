@@ -11,7 +11,7 @@
 //==================================================================================================
 
 // TODO: get to run on any node
-node("master"){
+node(""){
     def workspaceDir = pwd()
     def appName = "tlv"
     def omarCommonProjName = "omar-common"
