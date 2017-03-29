@@ -10,7 +10,6 @@
 //    OPENSHIFT_PASSWORD: The password to use logging into the docker registry
 //==================================================================================================
 
-// TODO: get to run on any node
 node(""){
     def workspaceDir = pwd()
     def appName = "tlv"
