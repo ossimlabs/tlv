@@ -32,21 +32,6 @@ node(""){
     }
 
     try {
-      stage ("Publish Plugin Artifactory")
-      {
-
-          withCredentials([[$class: 'UsernamePasswordMultiBinding',
-                            credentialsId: 'artifactoryCredentials',
-                            usernameVariable: 'ARTIFACTORY_USER',
-                            passwordVariable: 'ARTIFACTORY_PASSWORD']])
-            {
-                sh """
-                pushd ${workspaceDir}/${appName}/plugins/tlv-network-specific-plugin
-                ./gradlew artifactoryPublish
-                popd
-                """
-            }
-      }
       stage ("Publish App Artifactory")
       {
           withCredentials([[$class: 'UsernamePasswordMultiBinding',
