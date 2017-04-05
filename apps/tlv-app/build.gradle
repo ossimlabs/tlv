@@ -89,23 +89,22 @@ task wrapper(type: Wrapper) {
 assets {
   minifyJs = true
   minifyCss = true
-
-  excludes = [
-    "**/bootstrap/**",
-    "**/bootswatch-slate/**",
-    "**/Cesium/**",
-    "**/jquery/**",
-    "**/momentjs/**",
-    "**/requirejs/**",
-    "**/*.css",
-    "**/*.js"
-  ]
-  includes = [
-    "**/bootswatch-slate/**/glyphicons*",
-    "**/Cesium/Assets/**",
-    "**/Cesium/Workers/**",
-    "**/index-bundle.*"
-  ]
+//  excludes = [
+//    "**/bootstrap/**",
+//    "**/bootswatch-slate/**",
+//    "**/Cesium/**",
+//    "**/jquery/**",
+//    "**/momentjs/**",
+//    "**/requirejs/**",
+//    "**/*.css",
+//    "**/*.js"
+//  ]
+//  includes = [
+//    "**/bootswatch-slate/**/glyphicons*",
+//    "**/Cesium/Assets/**",
+//    "**/Cesium/Workers/**",
+//    "**/index-bundle.*"
+//  ]
 }
 
 publishing {
