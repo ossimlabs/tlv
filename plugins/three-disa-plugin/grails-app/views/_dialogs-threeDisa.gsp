@@ -75,21 +75,8 @@
 	<div class = "modal-dialog">
 		<div class = "modal-content">
 			<div class = "modal-header"><h4>Select Tie Points</h4></div>
-			<div class = "modal-body">
-				<div class = "row">
-					<div class = "col-md-5"><div id = "tiePointImageIdDiv">&nbsp;</div></div>
-					<div class = "col-md-2"><div align = "center" id = "tiePointImageCountDiv">&nbsp;</div></div>
-					<div class = "col-md-5"><div align = "right" id = "tiePointAcquisitionDateDiv"></div></div>
-				</div>
-                <div class = "map" id = "tiePointMap"></div>
-			</div>
+			<div class = "modal-body"></div>
 			<div class = "modal-footer">
-				<button class = "btn btn-primary" onclick = "changeTiePointFrame( 'rewind' )" type = "button">
-					<span class = "glyphicon glyphicon-step-backward"></span>
-				</button>
-				<button class = "btn btn-primary" onclick = "changeTiePointFrame( 'fastForward' )" type = "button">
-					<span class = "glyphicon glyphicon-step-forward"></span>
-				</button>
 				<button type = "button" class = "btn btn-primary" onclick = addTiePoint()>Add Tie Point</button>
 				<button type = "button" class = "btn btn-primary" onclick = "$( '#jobNameDialog' ).modal( 'show' )">Complete</button>
 				<button type = "button" class = "btn btn-default" data-dismiss = "modal">Close</button>
