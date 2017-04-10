@@ -154,14 +154,21 @@ function createTiePointMap( index, image ) {
     var div = document.createElement( "div" );
     div.className = "map tie-point-map";
     div.id = "tiePointMap" + index;
-    div.onmouseover = function() { tlv[ "3disa" ].currentLayer = index; }
+    div.onmouseover = function() {
+        tlv[ "3disa" ].currentLayer = index; }
     div.style.height = height + "px";
     modalBody.append( div );
 
     var maxHeight = image.metadata.height;
     var maxWidth = image.metadata.width;
     var map = new ol.Map({
-        interactions: ol.interaction.defaults({ mouseWheelZoom: false }),
+        interactions: ol.interaction.defaults({
+            dragPan: false,
+            mouseWheelZoom: false
+        }).extend([
+            new ol.interaction.DragPan( { kinetic: false } ),
+            new ol.interaction.MouseWheelZoom( { duration: 0 } )
+        ]),
         logo: false,
         target: "tiePointMap" + index,
         view: new ol.View({
@@ -175,8 +182,6 @@ function createTiePointMap( index, image ) {
             resolution: tlv.map.getView().getResolution()
         })
     });
-
-    map.on( "moveend", function( event ) { syncTiePointMaps(); } );
 
     map.getView().on('change:rotation', function( event ) {
         tlv[ "3disa" ].syncTiePointMapsOveride = true;
@@ -349,7 +354,8 @@ function setupTiePointSelectionDialog() {
                 imageId: layer.imageId,
                 library: layer.library,
                 metadata: layer.metadata,
-                sensorModel: layer.sensorModel
+                sensorModel: layer.sensorModel,
+                synching: 0
             });
 
             var filename = layer.metadata.filename;
@@ -371,26 +377,34 @@ function setupTiePointSelectionDialog() {
     var coordinates = [ center, extent.slice( 0, 2 ), extent.slice( 2, 4 ) ];
     groundToImagePoints( coordinates, tlv[ "3disa" ].layers[ 0 ], function( pixels, layer ) {
         var view = layer.map.getView();
-
         var center = [ pixels[ 0 ][ 0 ], -pixels[ 0 ][ 1 ] ];
         view.setCenter( center );
 
         var extent = [ pixels[ 1 ][ 0 ], -pixels[ 1 ][ 1 ], pixels[ 2 ][ 0 ], -pixels[ 2 ][ 1 ] ];
         view.fit( extent, layer.map.getSize(), { nearest: true } );
+
+        syncTiePointMaps( { map: layer.map } );
     });
 }
 
-function syncTiePointMaps() {
+function syncTiePointMaps( event ) {
     // during rotation, don't sync the maps
     if ( tlv[ "3disa" ].syncTiePointMapsOveride == true ) {
         tlv[ "3disa" ].syncTiePointMapsOveride = false;
         return;
     }
 
-    var currentLayerIndex = tlv["3disa"].currentLayer;
-    var currentLayer = tlv[ "3disa" ].layers[ currentLayerIndex ];
-    var view = currentLayer.map.getView();
+    // determine which layer is trying to by synched
+    var currentLayer;
+    $.each(
+        tlv[ "3disa" ].layers,
+        function( index, layer ) {
+            if ( layer.map.getTarget() == event.map.getTarget() ) { currentLayer = layer; }
+            layer.map.un( "moveend", syncTiePointMaps );
+        }
+    );
 
+    var view = currentLayer.map.getView();
     var rotation = view.getRotation();
     view.setRotation( 0 );
 
@@ -401,29 +415,24 @@ function syncTiePointMaps() {
         [ extent[ 0 ], -extent[ 1 ] ],
         [ extent[ 2 ], -extent[ 3 ] ]
     ];
-
     view.setRotation( rotation );
 
     imagePointsToGround( coordinates, currentLayer, function( coordinates, layer ) {
         $.each(
             tlv[ "3disa" ].layers,
             function( index, layer ) {
-                if ( index != currentLayerIndex ) {
-                    groundToImagePoints( coordinates, layer, function( pixels, layer ) {
-                        var view = layer.map.getView();
+                groundToImagePoints( coordinates, layer, function( pixels, layer ) {
+                    var view = layer.map.getView();
+                    var center = [ pixels[ 0 ], -pixels[ 1 ] ];
+                    view.setCenter( center );
+                    var rotation = view.getRotation();
+                    view.setRotation( 0 );
+                    var extent = [ pixels[ 1 ][ 0 ], -pixels[ 1 ][ 1 ], pixels[ 2 ][ 0 ], -pixels[ 2 ][ 1 ] ];
+                    view.fit( extent, layer.map.getSize(), { nearest: true } );
 
-                        var center = [ pixels[ 0 ], -pixels[ 1 ] ];
-                        view.setCenter( center );
-
-                        var rotation = view.getRotation();
-                        view.setRotation( 0 );
-
-                        var extent = [ pixels[ 1 ][ 0 ], -pixels[ 1 ][ 1 ], pixels[ 2 ][ 0 ], -pixels[ 2 ][ 1 ] ];
-                        view.fit( extent, layer.map.getSize(), { nearest: true } );
-
-                        view.setRotation( rotation );
-                    });
-                }
+                    view.setRotation( rotation );
+                    setTimeout( function() { layer.map.on( "moveend", syncTiePointMaps ); }, 100 );
+                });
             }
         );
     });
