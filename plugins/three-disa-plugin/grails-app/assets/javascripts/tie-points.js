@@ -166,8 +166,7 @@ function createTiePointMap( index, image ) {
             dragPan: false,
             mouseWheelZoom: false
         }).extend([
-            new ol.interaction.DragPan( { kinetic: false } ),
-            new ol.interaction.MouseWheelZoom( { duration: 0 } )
+            new ol.interaction.DragPan( { kinetic: false } )
         ]),
         logo: false,
         target: "tiePointMap" + index,
