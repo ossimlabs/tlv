@@ -1,3 +1,9 @@
+.custom-map-control {
+	background-color: rgba(0, 0, 0, 0.5);
+	color: white;
+    position: absolute;
+}
+
 #errorDialog {
     display: none;
     bottom: 0;

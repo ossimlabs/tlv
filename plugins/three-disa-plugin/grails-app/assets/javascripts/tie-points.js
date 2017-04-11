@@ -159,9 +159,18 @@ function createTiePointMap( index, image ) {
     div.style.height = height + "px";
     modalBody.append( div );
 
+    // create a control to put the image ID at the top of the map
+    var mapTitleDiv = document.createElement("div");
+    mapTitleDiv.className = "custom-map-control";
+    mapTitleDiv.innerHTML = image.imageId + "<br>" + image.acquisitionDate + "z";
+    mapTitleDiv.style = "right: 0.5em; text-align: right; top: 0.5em";
+    var mapTitleControl = new ol.control.Control({ element: mapTitleDiv });
+
+    // create the map
     var maxHeight = image.metadata.height;
     var maxWidth = image.metadata.width;
     var map = new ol.Map({
+        controls: ol.control.defaults().extend([ mapTitleControl ]),
         interactions: ol.interaction.defaults({
             dragPan: false,
             mouseWheelZoom: false
