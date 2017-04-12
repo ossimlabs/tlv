@@ -190,6 +190,7 @@ function setupMap() {
 	if ( tlv.orientation == "auto" ) {
 		tlv.orientation = null;
 		$( "#orientationSelect" ).val( "auto" );
+		orientationToggle();
 	}
 }
 
