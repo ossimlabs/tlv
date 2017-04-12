@@ -186,12 +186,6 @@ function setupMap() {
 
 	$(".ol-zoom-in").click(function() { $(this).blur(); });
 	$(".ol-zoom-out").click(function() { $(this).blur(); });
-
-	if ( tlv.orientation == "auto" ) {
-		tlv.orientation = null;
-		$( "#orientationSelect" ).val( "auto" );
-		orientationToggle();
-	}
 }
 
 function syncMapPositionWithGlobe() {
