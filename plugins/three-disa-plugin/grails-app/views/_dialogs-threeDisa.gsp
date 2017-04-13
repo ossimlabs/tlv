@@ -48,11 +48,11 @@
 			<div class = "modal-body">
 				<div class = "row">
 					<div class = "col-md-6">
-						<div align  = "center" class = "row">Overall CE <sub>90</sub>  (m<sup>2</sup>)</div>
+						<div align  = "center" class = "row">Overall CE <sub>90</sub>  (m)</div>
 						<div class = "row">
 							<div align = "right" class = "col-md-6">Desired:</div>
 							<div class = "col-md-6">
-								<input id = "desiredCeInput" style = "width: 7em" type = "number" value = "1.0">
+								<input id = "desiredCeInput" style = "width: 6em" type = "number" value = "1.0">
 							</div>
 							<div align = "right" class = "col-md-6">Predicted:</div>
 							<div class = "col-md-6">
@@ -65,7 +65,7 @@
 						<div class = "row">
 							<div align = "right" class = "col-md-6">Desired:</div>
 							<div class = "col-md-6">
-								<input id = "desiredLeInput" style = "width: 7em" type = "number" value = "1.0">
+								<input id = "desiredLeInput" style = "width: 6em" type = "number" value = "1.0">
 							</div>
 						</div>
 						<div class = "row">
