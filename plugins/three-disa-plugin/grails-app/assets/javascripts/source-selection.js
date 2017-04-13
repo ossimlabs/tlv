@@ -6,7 +6,7 @@ function buildSourceSelectionTable() {
     var row = table.insertRow( 0 );
     $( row ).css( "white-space", "nowrap" );
     $.each(
-        [ "Use", "", "Image ID", "Sensor Model", "NIIRS", "Azimuth", "Graze", "CE (m<sup>2</sup>)", "LE (m)" ],
+        [ "", "Must Use", "Image ID", "Sensor Model", "NIIRS", "Azimuth", "Graze", "CE<sub>90</sub> (m<sup>2</sup>)", "LE<sub>90</sub> (m)" ],
         function( index, value ) {
             var cell = row.insertCell( row.cells.length );
             $( cell ).append( value );
@@ -17,18 +17,19 @@ function buildSourceSelectionTable() {
         tlv.layers,
         function( index, layer ) {
             row = table.insertRow( table.rows.length );
-            $( row ).addClass( "success" );
 
             cell = row.insertCell( row.cells.length );
-            $( cell ).append( "<input checked type = 'checkbox'>" );
+            $( cell ).append( index + 1 );
+
+            cell = row.insertCell( row.cells.length );
+            $( cell ).append( "<input type = 'checkbox'>" );
             $( $( cell ).children() ).click( function() {
                 var row = $( this ).parent().parent();
                 if ( !$( this ).is( ":checked" ) ) { $( row ).removeClass( "success" ); }
                 else { $( row ).addClass( "success" ); }
-            });
 
-            cell = row.insertCell( row.cells.length );
-            $( cell ).append( index + 1 );
+                getSourceSelectionCandidates();
+            });
 
             cell = row.insertCell( row.cells.length );
             $( cell ).append( layer.imageId );
@@ -114,4 +115,85 @@ function getSelectedImages() {
 
 
     return images;
+}
+
+function getSourceSelectionCandidates() {
+    if ( tlv[ "3disa" ].sourceSelectionAjax ) {
+        //tlv[ "3disa" ].sourceSelectionAjax.abort();
+        clearTimeout( tlv[ "3disa" ].sourceSelectionAjax );
+    }
+
+    var center = ol.proj.transform( tlv.map.getView().getCenter(), "EPSG:3857", "EPSG:4326" );
+
+    var images = [];
+    $.each(
+        tlv.layers,
+        function( index, layer ) {
+            var image = { filename: layer.metadata.filename };
+
+            var row = $( "#sourceSelectionTable" )[ 0 ].rows[ index + 1 ];
+            var checkbox = $( row ).find( "input" );
+            if ( checkbox.is(":checked") ) { image.must_use = true; }
+            else { image.must_use = false; }
+
+            images.push( image );
+        }
+    );
+
+    tlv[ "3disa" ].sourceSelectionAjax = setTimeout( function() {
+/*
+
+    $.ajax({
+        data: JSON.stringify({
+            service: "source_selection",
+            point: {
+               lat: center[1],
+               lon: center[0]
+            },
+            Desired_accuracy: {
+                ce90: $( "#desiredCeInput" ).val(),
+                le90: $( "#desiredLeInput" ).val()
+            },
+            candidates: images
+        }),
+        dataType: "json",
+        success: function( data ) {
+            if ( !data.meets_criteria ) { displayErrorDialog( "Sorry, we couldn't meet your high standards. Try lowering the error values or include some more images." ); }
+            else {
+*/
+                // fake response
+                $( "#predictedCeSpan" ).html( Math.random().toFixed(3) );//data.predicted_accuracy.ce90 );
+                $( "#predictedLeSpan" ).html( Math.random().toFixed(3) );//data.predicted_accuracy.le90 );
+                var data = { images: [] };
+                $.each(
+                    images,
+                    function( index, image ) {
+                        if ( image.must_use ) { data.images.push( image.filename ); }
+                        else if (Math.random() > 0.5) {
+                            data.images.push( image.filename );
+                        }
+                    }
+                );
+
+                // reset all the rows, removing the "selected" class
+                $.each( $( "#sourceSelectionTable tr" ), function( index, row ) { $( row ).removeClass( "success" ); } );
+
+                $.each(
+                    // data.images,
+                    data.images,
+                    function( index, filename ) {
+                        var filenames = tlv.layers.map( function( image ) { return image.metadata.filename; } );
+                        var imageIndex = filenames.indexOf( filename );
+
+                        var row = $( "#sourceSelectionTable" )[ 0 ].rows[ imageIndex + 1 ];
+                        $( row ).addClass( "success" );
+                    }
+                );
+}, 2000);
+/*            }
+        },
+        type: "post",
+        url: tlv.availableResources.complete[ images[0].library ].mensaUrl + "/sourceselection"
+    });
+*/
 }

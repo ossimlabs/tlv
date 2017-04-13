@@ -34,9 +34,9 @@ class ThreeDisaService {
             layer.tiePoints.each {
                 def point = it
                 def tiePoint = new TiePoint(
-                    filename: layer.filename,
-                    x: point[0],
-                    y: point[1]
+                    identifier: point.id as Integer,
+                    x: point.coordinates[0],
+                    y: point.coordinates[1]
                 )
                 image.addToTiePoints( tiePoint )
             }
