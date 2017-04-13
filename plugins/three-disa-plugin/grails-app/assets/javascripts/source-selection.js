@@ -6,7 +6,7 @@ function buildSourceSelectionTable() {
     var row = table.insertRow( 0 );
     $( row ).css( "white-space", "nowrap" );
     $.each(
-        [ "", "Use", "Image ID", "Sensor Model", "NIIRS", "Azimuth", "Graze", "CE<sub>90</sub> (m<sup>2</sup>)", "LE<sub>90</sub> (m)" ],
+        [ "", "Use", "Image ID", "Sensor Model", "NIIRS", "Azimuth", "Graze", "CE<sub>90</sub> (m)", "LE<sub>90</sub> (m)" ],
         function( index, value ) {
             var cell = row.insertCell( row.cells.length );
             $( cell ).append( value );
@@ -24,13 +24,13 @@ function buildSourceSelectionTable() {
             cell = row.insertCell( row.cells.length );
             $( cell ).append(
                 "<div class = 'btn-group' id = 'use" + index + "Buttons' style = 'display: flex'>" +
-                    "<button class = 'btn btn-default' id = 'mustUse" + index + "Button' title = 'Must Use'>" +
+                    "<button class = 'btn btn-primary' id = 'mustUse" + index + "Button' title = 'Must Use'>" +
                         "<span class = 'glyphicon glyphicon-ok-sign'></span>" +
                     "</button>" +
-                    "<button class = 'btn btn-default active' id = 'mayUse" + index + "Button' title = 'May Use'>" +
+                    "<button class = 'btn btn-primary active' id = 'mayUse" + index + "Button' title = 'May Use'>" +
                         "<span class = 'glyphicon glyphicon-question-sign'></span>" +
                     "</button>" +
-                    "<button class = 'btn btn-default' id = 'doNotUse" + index + "Button' title = 'Do Not Use'>" +
+                    "<button class = 'btn btn-primary' id = 'doNotUse" + index + "Button' title = 'Do Not Use'>" +
                         "<span class = 'glyphicon glyphicon-remove-sign'></span>" +
                     "</button>" +
                 "</div>"
