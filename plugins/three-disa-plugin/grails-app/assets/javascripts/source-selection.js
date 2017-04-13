@@ -6,7 +6,7 @@ function buildSourceSelectionTable() {
     var row = table.insertRow( 0 );
     $( row ).css( "white-space", "nowrap" );
     $.each(
-        [ "", "Must Use", "Image ID", "Sensor Model", "NIIRS", "Azimuth", "Graze", "CE<sub>90</sub> (m<sup>2</sup>)", "LE<sub>90</sub> (m)" ],
+        [ "", "Use", "Image ID", "Sensor Model", "NIIRS", "Azimuth", "Graze", "CE<sub>90</sub> (m<sup>2</sup>)", "LE<sub>90</sub> (m)" ],
         function( index, value ) {
             var cell = row.insertCell( row.cells.length );
             $( cell ).append( value );
@@ -22,14 +22,26 @@ function buildSourceSelectionTable() {
             $( cell ).append( index + 1 );
 
             cell = row.insertCell( row.cells.length );
-            $( cell ).append( "<input type = 'checkbox'>" );
-            $( $( cell ).children() ).click( function() {
-                var row = $( this ).parent().parent();
-                if ( !$( this ).is( ":checked" ) ) { $( row ).removeClass( "success" ); }
-                else { $( row ).addClass( "success" ); }
-
-                getSourceSelectionCandidates();
-            });
+            $( cell ).append(
+                "<div class = 'btn-group' id = 'use" + index + "Buttons' style = 'display: flex'>" +
+                    "<button class = 'btn btn-default' id = 'mustUse" + index + "Button' title = 'Must Use'>" +
+                        "<span class = 'glyphicon glyphicon-ok-sign'></span>" +
+                    "</button>" +
+                    "<button class = 'btn btn-default active' id = 'mayUse" + index + "Button' title = 'May Use'>" +
+                        "<span class = 'glyphicon glyphicon-question-sign'></span>" +
+                    "</button>" +
+                    "<button class = 'btn btn-default' id = 'doNotUse" + index + "Button' title = 'Do Not Use'>" +
+                        "<span class = 'glyphicon glyphicon-remove-sign'></span>" +
+                    "</button>" +
+                "</div>"
+            );
+            $( "#use" + index + "Buttons button" ).click(
+                function() {
+                    $( this ).addClass( "active" ).siblings().removeClass( "active" );
+                    $( this ).blur();
+                    getSourceSelectionCandidates();
+                }
+            );
 
             cell = row.insertCell( row.cells.length );
             $( cell ).append( layer.imageId );
@@ -58,19 +70,6 @@ function buildSourceSelectionTable() {
             cell = row.insertCell( row.cells.length );
             $( cell ).append( layer.LE );
             $( cell ).attr( "id", layer.metadata.index_id + "LE" );
-
-            cell = row.insertCell( row.cells.length );
-            var span = document.createElement( "span" );
-            span.className = "glyphicon glyphicon-trash";
-
-            var deleteButton = document.createElement( "button" );
-            deleteButton.className = "btn btn-primary btn-xs";
-            deleteButton.onclick = function() {
-                deleteFrame( i );
-                buildSourceSelectionTable();
-            };
-            deleteButton.appendChild( span );
-            $( cell ).append( deleteButton );
         }
     );
 
@@ -129,14 +128,16 @@ function getSourceSelectionCandidates() {
     $.each(
         tlv.layers,
         function( index, layer ) {
-            var image = { filename: layer.metadata.filename };
+            if ( !$( "#doNotUse" + index + "Button" ).hasClass( "active" ) ) {
+                var image = {
+                    filename: layer.metadata.filename,
+                    must_use: false
+                };
 
-            var row = $( "#sourceSelectionTable" )[ 0 ].rows[ index + 1 ];
-            var checkbox = $( row ).find( "input" );
-            if ( checkbox.is(":checked") ) { image.must_use = true; }
-            else { image.must_use = false; }
+                if ( $( "#mustUse" + index + "Button" ).hasClass( "active" ) ) { image.must_use = true; }
 
-            images.push( image );
+                images.push( image );
+            }
         }
     );
 
