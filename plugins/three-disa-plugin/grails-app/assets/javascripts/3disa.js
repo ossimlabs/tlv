@@ -22,6 +22,7 @@ function generateDem() {
     tlv[ "3disa" ].job = { demGeneration: true };
 
     buildSourceSelectionTable();
+    getSourceSelectionCandidates();
     $( "#sourceSelectionDialog" ).modal( "show" );
 
     $( "#selectImagesButton" ).unbind();
@@ -46,7 +47,7 @@ function getJobDetails() {
             ];
             tlv.layers = [];
 
-            var filenames = job.imageRegistration.images.map( function( image ) { return image.filename; } ); 
+            var filenames = job.imageRegistration.images.map( function( image ) { return image.filename; } );
             getImageMetadata( filenames );
         },
         url: tlv.contextPath + "/threeDisa/listJobs"

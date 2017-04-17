@@ -183,7 +183,7 @@ function orientDevice(event) {
 	}
 }
 
-function orientationToggle() {
+function orientationToggle() { 
 	if ($("#orientationSelect").val() == "auto") {
 		if (window.DeviceOrientationEvent) { window.addEventListener("deviceorientation", orientDevice, false); }
 		else {
@@ -208,6 +208,12 @@ pageLoad = function() {
 		$("#searchDialog").modal("hide");
 		tlv.bbox = calculateInitialViewBbox();
 		setupTimeLapse();
+	}
+
+    if ( tlv.orientation == "auto" ) {
+		tlv.orientation = null;
+		$( "#orientationSelect" ).val( "auto" );
+		orientationToggle();
 	}
 }
 

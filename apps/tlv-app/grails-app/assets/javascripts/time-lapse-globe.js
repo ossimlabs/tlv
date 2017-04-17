@@ -13,7 +13,7 @@ function checkWebGlCompatability() {
 	if (!window.WebGLRenderingContext) { displayErrorDialog("Your browser doesn't know what WebGL is. :("); }
 	else {
 		var canvas = document.createElement("canvas");
-		var context = canvas.getContext("webgl");
+		var context = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
 		if (!context) { displayErrorDialog("Your browser supports WebGL but the initialization failed. :("); }
 		else { return true; }
 	}
@@ -60,6 +60,7 @@ function setupGlobe() {
 	);
 
 	if ( tlv.dimensions == "3" ) {
+		tlv.dimensions = null;
 		$( "#dimensionsSelect" ).val( 3 );
 		addDimension();
 		if ( tlv.tilt ) { tlv.globe.getCamera().setTilt( Math.PI / 180 * tlv.tilt ); }

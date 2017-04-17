@@ -47,15 +47,36 @@
 			<div class = "modal-header"><h4>Source Selection Table</h4></div>
 			<div class = "modal-body">
 				<div class = "row">
-					<div align = "center" class = "col-md-6">
-						Overall CE: <br>
-						<span id = "overallCeSpan">-</span>
+					<div class = "col-md-6">
+						<div align  = "center" class = "row">Overall CE <sub>90</sub>  (m)</div>
+						<div class = "row">
+							<div align = "right" class = "col-md-6">Desired:</div>
+							<div class = "col-md-6">
+								<input id = "desiredCeInput" style = "width: 6em" type = "number" value = "1.0">
+							</div>
+							<div align = "right" class = "col-md-6">Predicted:</div>
+							<div class = "col-md-6">
+								<span id = "predictedCeSpan">Estimated</span>
+							</div>
+						</div>
 					</div>
-					<div align = "center" class = "col-md-6">
-						Overall LE: <br>
-						<span id = "overallLeSpan">-</span>
+					<div class = "col-md-6">
+						<div align = "center" class = "row">Overall LE <sub>90</sub>  (m)</div>
+						<div class = "row">
+							<div align = "right" class = "col-md-6">Desired:</div>
+							<div class = "col-md-6">
+								<input id = "desiredLeInput" style = "width: 6em" type = "number" value = "1.0">
+							</div>
+						</div>
+						<div class = "row">
+							<div align = "right" class = "col-md-6">Predicted:</div>
+							<div class = "col-md-6">
+								<span id = "predictedLeSpan">Estimated</span>
+							</div>
+						</div>
 					</div>
 				</div>
+				<br>
 				<table class = "table table-condensed table-striped" id = "sourceSelectionTable"></table>
 			</div>
 			<div class = "modal-footer">
@@ -69,27 +90,16 @@
 <g:javascript>
 	$( "#sourceSelectionDialog" ).on( "hidden.bs.modal", function ( event ) { hideDialog( "sourceSelectionDialog" ); });
 	$( "#sourceSelectionDialog" ).on( "shown.bs.modal", function ( event ) { displayDialog( "sourceSelectionDialog" ); });
+	$( "#desiredCeInput" ).on( "input", function () { getSourceSelectionCandidates(); });
+	$( "#desiredLeInput" ).on( "input", function () { getSourceSelectionCandidates(); });
 </g:javascript>
 
 <div class = "modal modal-xl" id = "tiePointSelectionDialog" role = "dialog" tabindex = "-1">
 	<div class = "modal-dialog">
 		<div class = "modal-content">
 			<div class = "modal-header"><h4>Select Tie Points</h4></div>
-			<div class = "modal-body">
-				<div class = "row">
-					<div class = "col-md-5"><div id = "tiePointImageIdDiv">&nbsp;</div></div>
-					<div class = "col-md-2"><div align = "center" id = "tiePointImageCountDiv">&nbsp;</div></div>
-					<div class = "col-md-5"><div align = "right" id = "tiePointAcquisitionDateDiv"></div></div>
-				</div>
-                <div class = "map" id = "tiePointMap"></div>
-			</div>
+			<div class = "modal-body"></div>
 			<div class = "modal-footer">
-				<button class = "btn btn-primary" onclick = "changeTiePointFrame( 'rewind' )" type = "button">
-					<span class = "glyphicon glyphicon-step-backward"></span>
-				</button>
-				<button class = "btn btn-primary" onclick = "changeTiePointFrame( 'fastForward' )" type = "button">
-					<span class = "glyphicon glyphicon-step-forward"></span>
-				</button>
 				<button type = "button" class = "btn btn-primary" onclick = addTiePoint()>Add Tie Point</button>
 				<button type = "button" class = "btn btn-primary" onclick = "$( '#jobNameDialog' ).modal( 'show' )">Complete</button>
 				<button type = "button" class = "btn btn-default" data-dismiss = "modal">Close</button>

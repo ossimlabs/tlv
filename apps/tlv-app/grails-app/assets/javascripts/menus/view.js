@@ -37,12 +37,12 @@ createMapControls = function() {
 
 function createSwipeControls() {
 	var leftSwipeTextDiv = document.createElement("div");
-	leftSwipeTextDiv.className = "swipe-text-div swipe-text-div-left";
+	leftSwipeTextDiv.className = "custom-map-control swipe-text-div swipe-text-div-left";
 	leftSwipeTextDiv.id = "leftSwipeTextDiv";
 	var leftSwipeTextControl = new ol.control.Control({ element: leftSwipeTextDiv });
 
 	var rightSwipeTextDiv = document.createElement("div");
-	rightSwipeTextDiv.className = "swipe-text-div swipe-text-div-right";
+	rightSwipeTextDiv.className = "custom-map-control swipe-text-div swipe-text-div-right";
 	rightSwipeTextDiv.id = "rightSwipeTextDiv";
 	var rightSwipeTextControl = new ol.control.Control({ element: rightSwipeTextDiv });
 

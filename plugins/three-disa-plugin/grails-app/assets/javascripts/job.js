@@ -180,7 +180,7 @@ function submitJob() {
                 features,
                 function( index, feature ) {
                     var coordinates = feature.getGeometry().getCoordinates();
-                    jobLayer.tiePoints.push( coordinates );
+                    jobLayer.tiePoints.push( { coordinates: coordinates, id: feature.getProperties().id }  );
                 }
             );
             if ( jobLayer.tiePoints.length < 1 ) {
@@ -200,7 +200,7 @@ function submitJob() {
     );
     tlv[ "3disa" ].job.name = encodeURIComponent( $( "#jobNameInput" ).val() );
     tlv[ "3disa" ].job.layers = jobLayers;
-console.dir(tlv[ "3disa" ].job);
+
     if ( validationFlag ) {
         $( "#tiePointSelectionDialog" ).modal( "hide" );
         displayLoadingDialog( "Submitting your job details, hang tight." );
