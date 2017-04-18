@@ -377,34 +377,32 @@ function imagePointsToGround( pixels, layer, callback ) {
     });
 }
 
-function refreshTiePointLayer( layer ) {console.dir(layer);
+function refreshTiePointLayer( layer ) {
     $.each(
         layer.vectorLayer.getSource().getFeatures(),
         function( index, feature ) {
-            var point;
-
             var geometry = feature.getGeometry();
-            if ( geometry.getType() == "Point" ) { point = geometry.getCoordinates(); }
-            else { point = geometry.getGeometries()[ 1 ].getCoordinates(); }
+            var point = geometry.getType() == "Point" ? geometry : geometry.getGeometries()[ 0 ];
+            var coordinate = point.getCoordinates();
 
-            var centerPixel = layer.map.getPixelFromCoordinate( point );
+            var centerPixel = layer.map.getPixelFromCoordinate( coordinate );
             var deltaXPixel = [ centerPixel[ 0 ] + 5, centerPixel[ 1 ] ];
-            var deltaYPixel = [ centerPixel[ 0 ], centerPixel[ 1 ] + 5 ];
 
-            var deltaXPoints = layer.map.getCoordinateFromPixel( deltaXPixel )[ 0 ] - point[ 0 ];
-            var deltaYPoints = layer.map.getCoordinateFromPixel( deltaYPixel )[ 1 ] - point[ 1 ];
+            var maxXPoint = new ol.geom.Point( layer.map.getCoordinateFromPixel( deltaXPixel ) );
+            var minXPoint = maxXPoint.clone();
+            minXPoint.rotate( Math.PI, coordinate );
+            var horizontalLine = new ol.geom.LineString([
+                minXPoint.getCoordinates(),
+                maxXPoint.getCoordinates()
+            ]);
 
-            var horizontalLinePoints = [
-                [ point[ 0 ] - deltaXPoints, point[ 1 ] ],
-                [ point[ 0 ] + deltaXPoints, point[ 1 ] ]
-            ];
-            var verticalLinePoints = [
-                [ point[ 0 ], point[ 1 ] - deltaYPoints],
-                [ point[ 0 ], point[ 1 ] + deltaYPoints]
-            ];
+            var verticalLine = horizontalLine.clone();
+            verticalLine.rotate( Math.PI / 2, coordinate );
+
             var geometryCollection = new ol.geom.GeometryCollection([
-                new ol.geom.MultiLineString( [ horizontalLinePoints, verticalLinePoints ] ),
-                new ol.geom.Point( point )
+                point,
+                horizontalLine,
+                verticalLine
             ]);
             feature.setGeometry( geometryCollection );
         }
