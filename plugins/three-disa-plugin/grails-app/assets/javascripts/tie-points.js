@@ -1,6 +1,13 @@
 function aTiePointHasBeenAdded( event ) {
-    var feature = event.feature;
+    $.each(
+        tlv[ "3disa" ].layers,
+        function( index, layer ) {
+            layer.map.removeInteraction( layer.drawInteraction );
+            layer.vectorLayer.getSource().un( "addfeature", aTiePointHasBeenAdded );
+        }
+    );
 
+    var feature = event.feature;
     var numberOfFeatures = event.target.getFeatures().length;
 
     var featureId = Date.parse( new Date() );
@@ -12,9 +19,10 @@ function aTiePointHasBeenAdded( event ) {
     style.setText( textStyle );
     feature.setStyle( style );
 
-    var pixel = feature.getGeometry().getCoordinates();
+    var point = feature.getGeometry().getCoordinates();
     var currentLayer = tlv[ "3disa" ].layers[ tlv[ "3disa" ].currentLayer ];
-    imagePointsToGround( [[ pixel[ 0 ], -pixel[ 1 ] ]], currentLayer, function( coordinates, layer ) {
+    refreshTiePointLayer( currentLayer );
+    imagePointsToGround( [[ point[ 0 ], -point[ 1 ] ]], currentLayer, function( coordinates, layer ) {
         $.each(
             tlv[ "3disa" ].layers,
             function( index, layer ) {
@@ -35,19 +43,12 @@ function aTiePointHasBeenAdded( event ) {
                         newFeature.setStyle( newStyle );
 
                         layer.vectorLayer.getSource().addFeature( newFeature );
+                        refreshTiePointLayer( layer );
                     });
                 }
             }
         );
     });
-
-    // remove all the draw interactions
-    $.each(
-        tlv[ "3disa" ].layers,
-        function( index, layer ) {
-            layer.map.removeInteraction( layer.drawInteraction );
-        }
-    );
 }
 
 function addTiePoint() {
@@ -58,6 +59,7 @@ function addTiePoint() {
             layer.map.removeInteraction( layer.drawInteraction );
 
             layer.map.addInteraction( layer.drawInteraction );
+            layer.vectorLayer.getSource().on( "addfeature", aTiePointHasBeenAdded );
         }
     );
 }
@@ -95,16 +97,53 @@ function addTiePointVectorLayer( index ) {
     tlv[ "3disa" ].layers[ index ].vectorLayer = new ol.layer.Vector({
         source: new ol.source.Vector({ features: features })
     });
-    tlv[ "3disa" ].layers[ index ].vectorLayer.getSource().on( "addfeature", aTiePointHasBeenAdded );
     map.addLayer( tlv[ "3disa" ].layers[ index ].vectorLayer );
+    map.on( "moveend", function( event ) { refreshTiePointLayer( tlv[ "3disa" ].layers[ index ] ); } );
 
     tlv[ "3disa" ].layers[ index ].drawInteraction = new ol.interaction.Draw({
         features: features,
         type: "Point"
     });
 
-    var modifyInteraction = new ol.interaction.Modify({ features: features });
-    map.addInteraction( modifyInteraction );
+    // custom drag interaction
+    var pointerInteraction = new ol.interaction.Pointer({
+        handleDownEvent: function( event ) {
+            var feature = event.map.forEachFeatureAtPixel( event.pixel,
+                function( feature ) { return feature; }
+            );
+            if ( feature ) {
+                this.coordinate_ = event.coordinate;
+                this.feature_ = feature;
+            }
+
+
+            return !!feature;
+        },
+        handleDragEvent: function( event ) {
+            var deltaX = event.coordinate[ 0 ] - this.coordinate_[ 0 ];
+            var deltaY = event.coordinate[ 1 ] - this.coordinate_[ 1 ];
+            this.feature_.getGeometry().translate( deltaX, deltaY );
+
+            this.coordinate_[ 0 ] = event.coordinate[ 0 ];
+            this.coordinate_[ 1 ] = event.coordinate[ 1 ];
+        },
+        handleMoveEvent: function( event ) {
+            var feature = event.map.forEachFeatureAtPixel( event.pixel,
+                function( feature ) { return feature; }
+            );
+            var element = event.map.getTargetElement();
+            if ( feature ) { element.style.cursor = "pointer"; }
+            else { element.style.cursor = ""; }
+        },
+        handleUpEvent: function( event ) {
+            this.coordinate_ = null;
+            this.feature_ = null;
+
+
+            return false;
+        }
+    });
+    map.addInteraction(pointerInteraction);
 
     map.getViewport().addEventListener( "contextmenu",
         function ( event ) {
@@ -203,8 +242,16 @@ function createTiePointMap( index, image ) {
 function createTiePointStyle() {
     return new ol.style.Style({
         image: new ol.style.Circle({
-            fill: new ol.style.Fill({ color: "rgba(255, 255, 0, 1)" }),
-            radius: 5
+            fill: new ol.style.Fill({ color: "rgba(255, 255, 0, 0.1)" }),
+            radius: 5,
+            stroke: new ol.style.Stroke({
+                 color: "rgba(255, 255, 0, 0.1)",
+                 width: 1
+            })
+        }),
+        stroke: new ol.style.Stroke({
+             color: "rgba(255, 255, 0, 1)",
+             width: 1
         }),
         text: new ol.style.Text({
             fill: new ol.style.Fill({ color: "rgba(255, 255, 0, 1)" }),
@@ -330,6 +377,40 @@ function imagePointsToGround( pixels, layer, callback ) {
     });
 }
 
+function refreshTiePointLayer( layer ) {console.dir(layer);
+    $.each(
+        layer.vectorLayer.getSource().getFeatures(),
+        function( index, feature ) {
+            var point;
+
+            var geometry = feature.getGeometry();
+            if ( geometry.getType() == "Point" ) { point = geometry.getCoordinates(); }
+            else { point = geometry.getGeometries()[ 1 ].getCoordinates(); }
+
+            var centerPixel = layer.map.getPixelFromCoordinate( point );
+            var deltaXPixel = [ centerPixel[ 0 ] + 5, centerPixel[ 1 ] ];
+            var deltaYPixel = [ centerPixel[ 0 ], centerPixel[ 1 ] + 5 ];
+
+            var deltaXPoints = layer.map.getCoordinateFromPixel( deltaXPixel )[ 0 ] - point[ 0 ];
+            var deltaYPoints = layer.map.getCoordinateFromPixel( deltaYPixel )[ 1 ] - point[ 1 ];
+
+            var horizontalLinePoints = [
+                [ point[ 0 ] - deltaXPoints, point[ 1 ] ],
+                [ point[ 0 ] + deltaXPoints, point[ 1 ] ]
+            ];
+            var verticalLinePoints = [
+                [ point[ 0 ], point[ 1 ] - deltaYPoints],
+                [ point[ 0 ], point[ 1 ] + deltaYPoints]
+            ];
+            var geometryCollection = new ol.geom.GeometryCollection([
+                new ol.geom.MultiLineString( [ horizontalLinePoints, verticalLinePoints ] ),
+                new ol.geom.Point( point )
+            ]);
+            feature.setGeometry( geometryCollection );
+        }
+    );
+}
+
 function rotateNorthArrow( radians, layer ) {
     if ( layer.northAngle ) { radians = radians - layer.northAngle; }
     var transform = 'rotate(' + radians + 'rad)';
@@ -340,8 +421,8 @@ function rotateNorthArrow( radians, layer ) {
     $( arrow ).css('webkitTransform', transform);
 }
 
-function setupTiePointSelectionDialog() {
-    var selectedImages = getSelectedImages();
+function setupTiePointSelectionDialog( selectedImages ) {
+    if ( !selectedImages ) { selectedImages = getSelectedImages() };
     if ( selectedImages.length < 2 ) {
         displayErrorDialog( "It takes at least two images to Tango." );
         return;
