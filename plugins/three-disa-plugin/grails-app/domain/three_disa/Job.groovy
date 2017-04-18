@@ -4,7 +4,7 @@ package three_disa
 class Job {
 
 	String bbox
-	ImageRegistration imageRegistration
+	Triangulation triangulation
 	String name
 	Date submitted
 

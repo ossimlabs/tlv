@@ -1,7 +1,7 @@
 package three_disa
 
 
-class ImageRegistration {
+class Triangulation {
 
     DemGeneration demGeneration
     Date finish

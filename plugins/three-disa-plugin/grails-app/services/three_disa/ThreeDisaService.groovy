@@ -20,7 +20,7 @@ class ThreeDisaService {
 	def submitJob( params, request ) {
         def demGeneration = params.demGeneration ? new DemGeneration( status: "NOT STARTED" ) : null
 
-        def imageRegistration = new ImageRegistration(
+        def triangulation = new Triangulation(
             demGeneration: demGeneration,
             status: "NOT STARTED"
         )
@@ -34,19 +34,19 @@ class ThreeDisaService {
             layer.tiePoints.each {
                 def point = it
                 def tiePoint = new TiePoint(
-                    identifier: point.id as Integer,
+                    identifier: point.id as Long,
+                    label: point.label,
                     x: point.coordinates[0],
                     y: point.coordinates[1]
                 )
                 image.addToTiePoints( tiePoint )
             }
-            println image.properties
-            imageRegistration.addToImages( image )
+            triangulation.addToImages( image )
         }
 
 		def job = new Job(
             bbox: params.bbox,
-            imageRegistration: imageRegistration,
+            triangulation: triangulation,
             name: params.name,
 			submitted: new Date()
 		)
