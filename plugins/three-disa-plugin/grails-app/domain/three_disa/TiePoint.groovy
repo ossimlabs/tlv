@@ -3,7 +3,8 @@ package three_disa
 
 class TiePoint {
 
-    Integer identifier
+    Long identifier
+    String label
     Double x
     Double y
 

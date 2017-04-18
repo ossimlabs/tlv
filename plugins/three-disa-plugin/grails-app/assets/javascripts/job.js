@@ -6,7 +6,7 @@ function buildJobsTable( jobs ) {
     $( row ).css( "white-space", "nowrap" );
     row.insertCell( row.cells.length );
     $.each(
-        [ "Name", "Registration", "DEM", "TLV", "Submitted" ],
+        [ "Name", "Triangulation", "Tie Points", "DEM", "Layers", "Submitted" ],
         function( index, value ) {
             var cell = row.insertCell( row.cells.length );
             $( cell ).append( "<b><i>" + value + "</i></b>" );
@@ -27,9 +27,9 @@ function buildJobsTable( jobs ) {
             cell = row.insertCell( row.cells.length );
             $( cell ).append( decodeURIComponent( job.name ) );
 
-            var imageRegistration = job.imageRegistration
+            var triangulation = job.triangulation
             cell = row.insertCell( row.cells.length );
-            if ( imageRegistration.status == "FINISHED" ) {
+            if ( triangulation.status == "FINISHED" ) {
                 var button = document.createElement( "button" );
                 button.className = "btn btn-primary btn-xs";
                 button.innerHTML = "View ISA";
@@ -38,9 +38,19 @@ function buildJobsTable( jobs ) {
                 }
                 $( cell ).append( button );
             }
-            else { $( cell ).append( imageRegistration.status ); }
+            else { $( cell ).append( triangulation.status ); }
 
-            var demGeneration = imageRegistration.demGeneration;
+            cell = row.insertCell( row.cells.length );
+            var button = document.createElement( "button" );
+            button.className = "btn btn-primary btn-xs";
+            button.innerHTML = triangulation.images[0].tiePoints.length + " (View)";
+            button.onclick = function() {
+                var queryString = encodeURIComponent( '{"jobId":' + job.id + ',"view":"tiePoints"}' );
+                window.open( tlv.contextPath + "?3disa=" + queryString );
+            }
+            $( cell ).append( button );
+
+            var demGeneration = triangulation.demGeneration;
             cell = row.insertCell( row.cells.length );
             var demGenerationStatus = demGeneration.status || "-";
             var cellText;
@@ -49,7 +59,8 @@ function buildJobsTable( jobs ) {
                 button.className = "btn btn-primary btn-xs";
                 button.innerHTML = "View 3D";
                 button.onclick = function() {
-                    window.open( tlv.contextPath + "?demGeneration=" + demGeneration.id + "&dimensions=3&tilt=60" );
+                    var queryString = encodeURIComponent( '{"jobId":' + job.id + '}' );
+                    window.open( tlv.contextPath + "?3disa=" + queryString + "&dimensions=3&tilt=60" );
                 }
                 $( cell ).append( button );
             }
@@ -58,9 +69,10 @@ function buildJobsTable( jobs ) {
             cell = row.insertCell( row.cells.length );
             var button = document.createElement( "button" );
             button.className = "btn btn-primary btn-xs";
-            button.innerHTML = "View 2D";
+            button.innerHTML = triangulation.images.length + " (View)";
             button.onclick = function() {
-                window.open( tlv.contextPath + "?3disa=" + job.id );
+                var queryString = encodeURIComponent( '{"jobId":' + job.id + '}' );
+                window.open( tlv.contextPath + "?3disa=" + queryString );
             }
             $( cell ).append( button );
 
@@ -76,28 +88,20 @@ function buildJobsTable( jobs ) {
                 "<table class = 'table table-condensed'>" +
                     "<tr>" +
                         "<td></td>" +
-                        "<td><b><i>Image Registration</i></b></td>" +
+                        "<td><b><i>Triangulation</i></b></td>" +
                         "<td><b><i>DEM Generation</i></b></td>" +
                     "</tr>" +
                     "<tr>" +
                         "<td>Start</td>" +
-                        "<td>" + ( imageRegistration.start ? imageRegistration.start.replace( /T/, " " ) : "-" ) + "</td>" +
+                        "<td>" + ( triangulation.start ? triangulation.start.replace( /T/, " " ) : "-" ) + "</td>" +
                         "<td>" + ( demGeneration.start ? demGeneration.start.replace( /T/, " " ) : "-" ) + "</td>" +
                     "</tr>" +
                     "<tr>" +
                         "<td>Finish</td>" +
-                        "<td>" + ( imageRegistration.finish ? imageRegistration.finish.replace( /T/, " " ) : "-" ) + "</td>" +
+                        "<td>" + ( triangulation.finish ? triangulation.finish.replace( /T/, " " ) : "-" ) + "</td>" +
                         "<td>" + ( demGeneration.finish ? demGeneration.finish.replace( /T/, " " ) : "-" ) + "</td>" +
                     "</tr>" +
-                "</table>" +
-                "<div class = 'row'>" +
-                    "<div align = 'center' class = 'col-md-6'>" +
-                        "<b><i>Layers: </i></b> " + imageRegistration.images.length +
-                    "</div>" +
-                    "<div align = 'center' class = 'col-md-6'>" +
-                        "<b><i>Tie Points: </i></b>" + imageRegistration.images[0].tiePoints.length +
-                    "</div>" +
-                "</div>"
+                "</table>"
             );
 
             var table2 = document.createElement( "table" );
@@ -110,7 +114,7 @@ function buildJobsTable( jobs ) {
             $( cell2 ).append( "Sensor Model" );
 
             $.each(
-                imageRegistration.images,
+                triangulation.images,
                 function( index, image ) {
                     row2 = table2.insertRow( table2.rows.length );
                     cell2 = row2.insertCell( row2.cells.length );
@@ -166,21 +170,16 @@ function submitJob() {
                 sensorModel: layer.sensorModel
             };
 
-            var features = layer.vectorLayer.getSource().getFeatures();
-            features.sort( function( a, b ) {
-                var aNumber = parseInt( a.getStyle().getText().getText(), 10 );
-                var bNumber = parseInt( b.getStyle().getText().getText(), 10 );
-
-
-                return  aNumber > bNumber ? 1 : ( bNumber > aNumber ? -1 : 0 );
-            });
-
             jobLayer.tiePoints = [];
             $.each(
-                features,
+                layer.vectorLayer.getSource().getFeatures(),
                 function( index, feature ) {
-                    var coordinates = feature.getGeometry().getCoordinates();
-                    jobLayer.tiePoints.push( { coordinates: coordinates, id: feature.getProperties().id }  );
+                    var coordinates = feature.getGeometry().getGeometries()[ 0 ].getCoordinates();
+                    jobLayer.tiePoints.push({
+                        coordinates: coordinates,
+                        id: feature.getProperties().id,
+                        label: feature.getStyle().getText().getText()
+                    });
                 }
             );
             if ( jobLayer.tiePoints.length < 1 ) {

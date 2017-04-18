@@ -7,7 +7,7 @@ class Image {
     String sensorModel
 
 
-    static belongsTo = ImageRegistration
+    static belongsTo = Triangulation
 
     static hasMany = [ tiePoints: TiePoint ]
 }
