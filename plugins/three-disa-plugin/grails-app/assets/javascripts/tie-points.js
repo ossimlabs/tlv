@@ -167,7 +167,7 @@ function calculateTiePointLabel() {
     );
 
 
-    return Math.max( ...tiePointNumbers ).toString();
+    return Math.max.apply( null, tiePointNumbers ).toString();
 }
 
 function calculateTileResolutions( imageHeight, imageWidth ) {
