@@ -8,7 +8,7 @@ class DemGeneration {
 	String status
 
 
-	static belongsTo = ImageRegistration
+	static belongsTo = Triangulation
 
 	static constraints = {
 		finish nullable: true

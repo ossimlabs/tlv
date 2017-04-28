@@ -5,7 +5,7 @@ function crossHairLayerToggle() {
 }
 
 function displayCrossHairLayer() {
-	if (!tlv.crossHairLayer) {
+	if ( !tlv.crossHairLayer ) {
 		var stroke = new ol.style.Stroke({
 			 color: "rgba(255, 255, 0, 1)",
 			 width: 2
@@ -13,12 +13,14 @@ function displayCrossHairLayer() {
 		var style = new ol.style.Style({ stroke: stroke });
 
 		tlv.crossHairLayer = new ol.layer.Vector({
-			source: new ol.source.Vector(),
+			source: new ol.source.Vector({
+				features: [ new ol.Feature() ]
+			}),
 			style: style
 		});
-		tlv.map.addLayer(tlv.crossHairLayer);
+		tlv.map.addLayer( tlv.crossHairLayer );
 	}
-	else { tlv.crossHairLayer.setVisible(true); }
+	else { tlv.crossHairLayer.setVisible( true ); }
 	refreshCrossHairLayer();
 }
 
@@ -58,31 +60,25 @@ function hideSearchOriginLayer() { tlv.searchOriginLayer.setVisible(false); }
 
 function refreshCrossHairLayer() {
 	var mapCenter = tlv.map.getView().getCenter();
-
 	var centerPixel = tlv.map.getPixelFromCoordinate(mapCenter);
 	var deltaXPixel = [centerPixel[0] + 10, centerPixel[1]];
-	var deltaYPixel = [centerPixel[0], centerPixel[1] + 10];
 
-	var deltaXDegrees = tlv.map.getCoordinateFromPixel(deltaXPixel)[0] - mapCenter[0];
-	var deltaYDegrees = tlv.map.getCoordinateFromPixel(deltaYPixel)[1] - mapCenter[1];
+	var maxXPoint = new ol.geom.Point( tlv.map.getCoordinateFromPixel( deltaXPixel ) );
+	var minXPoint = maxXPoint.clone();
+	minXPoint.rotate( Math.PI, mapCenter );
+	var horizontalLine = new ol.geom.LineString([
+		minXPoint.getCoordinates(),
+		maxXPoint.getCoordinates()
+	]);
 
-	var horizontalLinePoints = [
-		[mapCenter[0] - deltaXDegrees, mapCenter[1]],
-		[mapCenter[0] + deltaXDegrees, mapCenter[1]]
-	];
-	var horizontalLineGeometry = new ol.geom.LineString(horizontalLinePoints);
-	var horizontalLineFeature = new ol.Feature(horizontalLineGeometry);
+	var verticalLine = horizontalLine.clone();
+	verticalLine.rotate( Math.PI / 2, mapCenter );
 
-	var verticalLinePoints = [
-		[mapCenter[0], mapCenter[1] - deltaYDegrees],
-		[mapCenter[0], mapCenter[1] + deltaYDegrees]
-	];
-	var verticalLineGeometry = new ol.geom.LineString(verticalLinePoints);
-	var verticalLineFeature = new ol.Feature(verticalLineGeometry);
-
-	var source = tlv.crossHairLayer.getSource();
-        $.each(source.getFeatures(), function(i, x) { source.removeFeature(x); });
-	source.addFeatures([horizontalLineFeature, verticalLineFeature]);
+	var geometryCollection = new ol.geom.GeometryCollection([
+		horizontalLine,
+		verticalLine
+	]);
+	tlv.crossHairLayer.getSource().getFeatures()[0].setGeometry( geometryCollection );
 }
 
 function searchOriginLayerToggle() {
