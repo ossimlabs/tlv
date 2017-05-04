@@ -42,9 +42,6 @@ plugins:
     networkSpecific:
         dialogs: false
         navigationMenu: false
-    threeDisa:
-        dialogs: true
-        navigationMenu: true
 
 securityClassification:
     backgroundColor: green
