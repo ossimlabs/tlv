@@ -8,7 +8,7 @@
 
 		<title>Time Lapse Viewer (TLV)</title>
 		<link href = "${createLink( action: "openSearch", controller: "home" )}" rel = "search" title = "Time Lapse Viewer" type = "application/opensearchdescription+xml">
-		<link href = "${request.contextPath}/assets/tlvicon.ico" rel = "shortcut icon" type = "image/x-icon">
+		<link href = "${ request.contextPath }/assets/tlvicon.ico" rel = "shortcut icon" type = "image/x-icon">
 
 		<asset:stylesheet src = "index-bundle.css"/>
 		<asset:javascript src = "index-bundle.js"/>
