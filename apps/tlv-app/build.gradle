@@ -98,6 +98,7 @@ assets {
     "**/*.js"
   ]
   includes = [
+    "**/application.*",
     "**/bootswatch-slate/**/glyphicons*",
     "**/Cesium/Assets/**",
     "**/Cesium/Workers/**",
