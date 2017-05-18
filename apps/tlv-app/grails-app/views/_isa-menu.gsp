@@ -15,7 +15,7 @@
 
 			var bbox = document.createElement( "input" );
 			bbox.type = "hidden";
-			lbbox.name = "bbox";
+			bbox.name = "bbox";
 			bbox.value = ol.proj.transformExtent( view.calculateExtent( tlv.map.getSize() ), "EPSG:3857", "EPSG:4326" );
 			form.appendChild( bbox );
 
