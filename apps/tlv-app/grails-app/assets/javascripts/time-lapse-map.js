@@ -285,5 +285,5 @@ function updateTileLoadingProgressBar() {
 	var progressBar = $("#tileLoadProgressBar");
 	progressBar.css("width", (width >= 100 ? 100 : width) + "%");
 	if (width < 100) { progressBar.css("visibility", "visible"); }
-	else { setTimeout(function() { progressBar.css("visibility", "hidden"); }, 250) }
+	else { setTimeout(function() { progressBar.css("visibility", "hidden"); }, 500) }
 }

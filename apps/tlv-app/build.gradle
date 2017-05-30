@@ -50,8 +50,6 @@ dependencyManagement {
 }
 dependencies {
   compile project(':tlv-network-specific-plugin')
-  compile project(':three-disa-plugin')
-  //compile(group: "io.ossim.omar.plugins", name: "three-disa-plugin", version: "1.0.0-${buildVersionTag}", changing: jarArtifactsChanging)
   compile "org.springframework.boot:spring-boot-starter-logging"
   compile "org.springframework.boot:spring-boot-autoconfigure"
   compile "org.grails:grails-core"
@@ -100,6 +98,7 @@ assets {
     "**/*.js"
   ]
   includes = [
+    "**/application.*",
     "**/bootswatch-slate/**/glyphicons*",
     "**/Cesium/Assets/**",
     "**/Cesium/Workers/**",
