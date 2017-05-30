@@ -24,7 +24,7 @@
 			<div class = "modal-body">
 				<div class = "form-group">
 
-					<label>Place</label>
+					<label>Location</label>
 					<div class = "input-group">
   						<input class = "form-control" id = "searchLocationInput" placeholder = "BE, Coordinate or Placename" type = "text">
 						<span class = "input-group-btn">
