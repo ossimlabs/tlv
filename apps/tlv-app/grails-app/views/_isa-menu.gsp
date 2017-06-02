@@ -32,7 +32,7 @@
 			form.appendChild( location );
 
 	        form.submit();
-	        form.remove();
+	        //form.remove();
 	    }
 	</g:javascript>
 </g:if>
