@@ -48,7 +48,8 @@
                     <select class = "form-control" id = "dynamicRangeSelect" onchange = "updateImageProperties( true )">
                         <g:each in = "${[
                             [ name: "None", value: "none" ],
-                            [ name: "Auto", value: "auto-minmax" ],
+                            [ name: "Auto Min Max", value: "auto-minmax" ],
+                            [ name: "Auto Percentile", value: "auto-percentile" ],
                             [ name: "STD 1", value: "std-stretch-1" ],
                             [ name: "STD 2", value: "std-stretch-2" ],
                             [ name: "STD 3", value: "std-stretch-3" ]
