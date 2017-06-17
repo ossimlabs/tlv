@@ -183,7 +183,7 @@ function orientDevice(event) {
 	}
 }
 
-function orientationToggle() { 
+function orientationToggle() {
 	if ($("#orientationSelect").val() == "auto") {
 		if (window.DeviceOrientationEvent) { window.addEventListener("deviceorientation", orientDevice, false); }
 		else {
@@ -295,9 +295,9 @@ function updateAcquisitionDate() {
 }
 
 function updateImageId() {
-	var layer = tlv.layers[tlv.currentLayer];
-	var libraryLabel = tlv.availableResources.complete[layer.library].label;
-	$("#imageIdDiv").html(libraryLabel + ": " + layer.imageId);
+	var layer = tlv.layers[ tlv.currentLayer ];
+	var libraryLabel = tlv.libraries[ layer.library ].label;
+	$( "#imageIdDiv" ).html( libraryLabel + ": " + layer.imageId );
 }
 
 function updateScreenText() {
