@@ -28,7 +28,7 @@
 			var location = document.createElement( "input" );
 			location.type = "hidden";
 			location.name = "location";
-			location.value = ol.proj.transform( view.getCenter(), "EPSG:3857", "EPSG:4326" );
+			location.value = ol.proj.transform( view.getCenter(), "EPSG:3857", "EPSG:4326" ).reverse();
 			form.appendChild( location );
 
 	        form.submit();
