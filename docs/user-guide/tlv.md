@@ -9,7 +9,7 @@ TLV serves two main purposes...
 The rewind button will cycle back to the previous image in the stack.
 
 **<span class="glyphicon glyphicon-play"></span>&nbsp;:**
-This play button cycles through all images at 1 second intervals. We're still working on an '80s jam to go along in the background.
+This play button cycles through all images at 1 second intervals. .
 
 **<span class="glyphicon glyphicon-step-forward"></span>&nbsp;:**
 The fast forward button will advance to the next image in the stack.
