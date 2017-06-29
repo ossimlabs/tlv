@@ -9,7 +9,7 @@ TLV serves two main purposes...
 The rewind button will cycle back to the previous image in the stack.
 
 **<span class="glyphicon glyphicon-play"></span>&nbsp;:**
-This play button cycles through all images at 1 second intervals. We're still working on an '80s jam to go along in the background.
+This play button cycles through all images at 1 second intervals.
 
 **<span class="glyphicon glyphicon-step-forward"></span>&nbsp;:**
 The fast forward button will advance to the next image in the stack.
@@ -58,8 +58,8 @@ Select the kernel size used for sharpening. You can also try squinting really ha
 ## Layers
 * **Base Layer:**
 Select from an assortment of base layers to bring context to the imagery.
-* **Corss-Hair:**
-As the name implies, this places a corss-hair in the center of the map. Whether you are looking to zero-in on the bad guy or just want to center the map on a particular target, this will get the job done.
+* **Cross-Hair:**
+As the name implies, this places a cross-hair in the center of the map. Whether you are looking to zero-in on the bad guy or just want to center the map on a particular target, this will get the job done.
 * **Search Origin:**
 This will place a marker on the map that indicates the exact location used for the center point search. All the zooming and panning can sometimes disorient you worse than someone waking you up from deep REM sleep. So, in case you forget the point around which you actually were searching, we’ve got you covered.
 
