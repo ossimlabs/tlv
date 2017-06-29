@@ -26,7 +26,12 @@
 
 					<label>Location</label>
 					<div class = "input-group">
-  						<input class = "form-control" id = "searchLocationInput" placeholder = "BE, Coordinate or Placename" type = "text">
+						<%
+							def placeholder = [ "Coordinate" ]
+							if ( params.beLookup.url ) { placeholder.plus( 0, "BE" ) }
+							if ( params.geocoderUrl ) { placeholder.push( "Placename" ) }
+						%>
+  						<input class = "form-control" id = "searchLocationInput" placeholder = "${ placeholder.join( ", " ) }" type = "text">
 						<span class = "input-group-btn">
 							<button class = "btn btn-primary"  onclick = getLocationGps() title = "Use your GPS location" type = "button"><span class = "glyphicon glyphicon-screenshot"></span></button>
 						</span>
@@ -48,21 +53,6 @@
 						</span>
 					</div>
 
-					<label>Sensors</label>
-					<div class = "input-group">
-						<div class = "btn-group" data-toggle = "buttons">
-							<label class = "btn btn-primary" id = "searchSensorAllLabel" onchange = librarySensorCheck()>
-								<input id = "searchSensorAllCheckbox" type = "checkbox">ALL
-							</label>
-							<g:each in = "${ params.availableResources.sensors }">
-								<label class = "btn btn-primary" id = "searchSensor${ it.name.capitalize() }Label" title = "${ it.description }">
-									<input id = "searchSensor${ it.name.capitalize() }Checkbox" type = "checkbox">
-									${ it.name.toUpperCase() }
-								</label>
-							</g:each>
-						</div>
-					</div>
-
 					<label>Min. NIIRS</label>
 					<input class = "form-control" id = "searchMinNiirsInput" max = "9" min = "0" step = "0.1" type = "number">
 
@@ -75,6 +65,20 @@
 							<option value = ${ it }>${ it }</option>
 						</g:each>
 					</select>
+
+					<g:if test = "${ params.libraries.size() > 1 }">
+						<label>Libraries</label>
+						<div class = "input-group">
+							<div class = "btn-group" data-toggle = "buttons">
+								<g:each in = "${ params.libraries }">
+									<label class = "btn btn-primary" id = "searchLibrary${ it.value.name.capitalize() }Label">
+										<input id = "searchLibrary${ it.value.name.capitalize() }Checkbox" type = "checkbox">
+										${ it.value.label }
+									</label>
+								</g:each>
+							</div>
+						</div>
+					</g:if>
 				</div>
 			</div>
 			<div class = "modal-footer">

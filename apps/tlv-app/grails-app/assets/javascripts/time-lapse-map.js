@@ -1,7 +1,7 @@
 function addBaseLayersToTheMap() {
 	tlv.baseLayers = {};
 	$.each(
-		tlv.availableResources.baseLayers,
+		tlv.availableBaseLayers,
 		function(i, x) {
 			var source;
 			switch(x.type) {

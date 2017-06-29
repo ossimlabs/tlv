@@ -70,7 +70,6 @@ dependencies {
   testRuntime "org.seleniumhq.selenium:selenium-htmlunit-driver:2.47.1"
   testRuntime "net.sourceforge.htmlunit:htmlunit:2.18"
 
-  compile "org.codehaus.groovy.modules.http-builder:http-builder:0.7.1"
   compile "org.webjars:bootstrap:3.3.5"
   compile "org.webjars:bootswatch-slate:3.3.5+4"
   compile "org.webjars:jquery:2.2.0"

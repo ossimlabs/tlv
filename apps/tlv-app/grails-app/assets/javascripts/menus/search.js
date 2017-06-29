@@ -1,33 +1,16 @@
 function beginSearch() {
 	var searchParams = getSearchParams();
-	if (searchParams.error) { displayErrorDialog(searchParams.error); }
+	if ( searchParams.error ) { displayErrorDialog( searchParams.error ); }
 	else {
-		displayLoadingDialog("We are searching the libraries for imagery... fingers crossed!");
-		$.ajax({
-			data: "searchParams=" + encodeURIComponent( JSON.stringify( searchParams ) ),
-			dataType: "json",
-			error: function(jqXhr, textStatus, errorThrown) {
-				hideLoadingDialog();
-				searchError();
-				console.dir(jqXhr);
-				console.dir(textStatus);
-				console.dir(errorThrown);
-			},
-			success: function(data) {
-				hideLoadingDialog();
-				if (!data.error) {
-					if (data.layers.length > 0) {
-						$.each(data, function(i, x) { tlv[i] = x; });
+		displayLoadingDialog( "We are searching the libraries for imagery... fingers crossed!" );
 
-						tlv.bbox = calculateInitialViewBbox();
-						setupTimeLapse();
-					}
-					else { displayErrorDialog("Sorry, we couldn't find anything that matched your search criteria. Maybe ease up on those search constraints a bit?"); }
-				}
-				else { displayErrorDialog(data.error); }
-			},
-			url: tlv.contextPath + "/search/searchLibrary"
-		});
+		tlv.location = searchParams.location;
+		$.each(
+			searchParams.libraries,
+ 			function( index, library ) {
+				tlv.libraries[ library ].searchLibrary( searchParams );
+			}
+		);
 	}
 }
 
@@ -53,35 +36,6 @@ function bookmarkSearchParams() {
 		}
 	}
 	else { displayErrorDialog( "Uh oh, something went wrong." ); }
-}
-
-function disableAllSensorCheckboxes() {
-	$.each(
-		tlv.availableResources.sensors,
-		function(i, x) {
-			var checkbox = $("#searchSensor" + x.name.capitalize() + "Checkbox");
-			if (checkbox.is(":checked")) { checkbox.trigger("click"); }
-
-			var label = $("#searchSensor" + x.name.capitalize() + "Label");
-			label.attr("disabled", true);
-			label.fadeTo("fast", 0.5);
-		}
-	);
-}
-
-function disableSensorCheckbox(sensorName) {
-	var checkbox = $("#searchSensor" + sensorName.capitalize() + "Checkbox");
-	if (checkbox.is(":checked")) { checkbox.trigger("click"); }
-
-	var label = $("#searchSensor" + sensorName.capitalize() + "Label");
-	label.attr("disabled", true);
-	label.fadeTo("fast", 0.5);
-}
-
-function enableSensorCheckbox(sensorName) {
-	var label = $("#searchSensor" + sensorName.capitalize() + "Label");
-	label.attr("disabled", false);
-	label.fadeTo("fast", 1);
 }
 
 function getDate(date) {
@@ -143,6 +97,13 @@ function getSearchParams() {
 
 	searchObject.filter = tlv.filter || null;
 
+	var libraries = getSelectedLibraries();
+	if (libraries.length == 0) {
+		//$( "#searchDialog" ).modal( "show" );
+		return { error: "Please select a library, thanks." };
+	}
+	searchObject.libraries = libraries;
+
 	var location = getLocation();
 	if (!location) { return { error: "Sorry, we couldn't interpret that location. :(" }; }
 	else { searchObject.location = location; }
@@ -156,13 +117,6 @@ function getSearchParams() {
 	var minNiirs = $("#searchMinNiirsInput").val();
 	searchObject.minNiirs = parseFloat(minNiirs);
 
-	var sensors = getSelectedSensors();
-	if (sensors.length == 0) {
-		$("#searchDialog").modal("show");
-		return { error: "Please select a sensor, thanks." };
-	}
-	searchObject.sensors = sensors;
-
 	var startDate = getStartDate();
 	searchObject.startYear = startDate.year;
 	searchObject.startMonth = startDate.month;
@@ -175,21 +129,24 @@ function getSearchParams() {
 	return searchObject;
 }
 
-function getSelectedSensors() {
-	var sensors = [];
-	if ($("#searchSensorAllCheckbox").is(":checked")) { sensors.push("all"); }
+function getSelectedLibraries() {
+	var libraries = [];
+
+	if ( Object.keys( tlv.libraries ).length == 1 ) {
+		libraries.push( Object.keys( tlv.libraries )[ 0 ] );
+	}
 	else {
 		$.each(
-			tlv.availableResources.sensors,
-			function(i, x) {
-				var checkbox = $("#searchSensor" + x.name.capitalize() + "Checkbox");
-				if (checkbox.is(":checked")) { sensors.push(x.name); }
+			tlv.libraries,
+			function( key, value ) {
+				var checkbox = $( "#searchLibrary" + value.name.capitalize() + "Checkbox" );
+				if ( checkbox.is( ":checked" ) ) { libraries.push( key ); }
 			}
 		);
 	}
 
 
-	return sensors;
+	return libraries;
 }
 
 function getStartDate() {
@@ -217,6 +174,22 @@ function initializeEndDateTimePicker() {
 	endDateTimePicker.data("DateTimePicker").date(endDate);
 }
 
+function initializeLibraryCheckboxes() {
+	if ( tlv.searchLibraries ) {
+		$.each(
+			tlv.searchLibraries.split( "," ),
+			function( index, library ) { console.dir("#searchLibrary" + library.capitalize() + "Checkbox");
+				var checkbox = $( "#searchLibrary" + library.capitalize() + "Checkbox" );
+				checkbox.trigger( "click" );
+			}
+		);
+	}
+	else if ( Object.keys( tlv.libraries ).length > 1 ) {
+		var checkbox = $( "#searchLibrary" + Object.keys( tlv.libraries )[ 0 ].capitalize() + "Checkbox" );
+		checkbox.trigger( "click" );
+	}
+}
+
 function initializeLocationInput() {
 	if (tlv.location) {
 		$("#searchLocationInput").val(tlv.location);
@@ -241,22 +214,6 @@ function initializeMinNiirsInput() {
 	$("#searchMinNiirsInput").val(minNiirs);
 }
 
-function initializeSensorCheckboxes() {
-	if (tlv.sensors) {
-		$.each(
-			tlv.sensors.split(","),
-			function(i, x) {
-				var checkbox = $("#searchSensor" + x.capitalize() + "Checkbox");
-                                checkbox.trigger("click");
-			}
-		);
-	}
-	else {
-		$("#searchSensorAllCheckbox").trigger("click");
-		disableAllSensorCheckboxes();
-	}
-}
-
 function initializeStartDateTimePicker() {
 	var startDateTimePicker = $("#searchStartDateTimePicker");
 	startDateTimePicker.datetimepicker({
@@ -276,39 +233,48 @@ function initializeStartDateTimePicker() {
 	startDateTimePicker.data("DateTimePicker").date(startDate);
 }
 
-function librarySensorCheck() {
-	if ($("#searchSensorAllCheckbox").is(":checked")) { disableAllSensorCheckboxes(); }
-	else {
-		$.each(
-			tlv.availableResources.sensors,
-			function(i, x) {
-				var sensorName = x.name;
-				var thisSensorShouldBeEnabled = false;
-				$.each(
-					tlv.availableResources.complete,
-					function(j, y) {
-						var libraryCheckbox = $("#searchLibrary" + j.capitalize() + "Checkbox");
-						if (libraryCheckbox.is(":checked")) {
-							$.each(
-								y.sensors,
-								function(k, z) {
-									if (z.name == sensorName) { thisSensorShouldBeEnabled = true; }
-								}
-							);
-						}
-					}
-				);
-				if (thisSensorShouldBeEnabled) { enableSensorCheckbox(sensorName); }
-				else { disableSensorCheckbox(sensorName); }
-			}
-		);
-	}
-}
-
 var pageLoadSearch = pageLoad;
 pageLoad = function() {
 	pageLoadSearch();
 	setupSearchMenuDialog();
+}
+
+function processResults() {
+	// ensure that all libraries have been searched
+	var searchesComplete = [];
+	$.each(
+		tlv.libraries,
+		function( key, library ) {
+			searchesComplete.push( library.searchComplete );
+		}
+	);
+
+	if ( searchesComplete.indexOf( false ) > -1 ) { return; }
+	else {
+		hideLoadingDialog();
+
+		var searchResults = [];
+		$.each(
+			tlv.libraries,
+			function( key, library ) {
+				searchResults = searchResults.concat( library.searchResults || [] );
+			}
+		);
+		if ( searchResults.length > 0 ) {
+			tlv.layers = searchResults.sort( function( a, b ) {
+				if ( a.acquisitionDate < b.acquisitionDate ) { return -1; }
+				if ( a.acquisitionDate > b.acquisitionDate ) { return 1; }
+				return 0;
+			});
+
+			var maxResults = $( "#searchMaxResultsSelect" ).val();
+			if ( tlv.layers.length > maxResults ) { tlv.layers.splice( maxResults ); }
+
+			tlv.bbox = calculateInitialViewBbox();
+			setupTimeLapse();
+		}
+		else { displayErrorDialog("Sorry, we couldn't find anything that matched your search criteria. Maybe ease up on those search constraints a bit?"); }
+	}
 }
 
 function searchError() { displayErrorDialog("Uh oh, something went wrong with your search!"); }
@@ -318,7 +284,7 @@ function setupSearchMenuDialog() {
 	initializeEndDateTimePicker();
 	initializeStartDateTimePicker();
 
-	initializeSensorCheckboxes();
+	initializeLibraryCheckboxes();
 	initializeMinNiirsInput();
 	initializeMaxCloudCoverInput();
 	initializeMaxResultsSelect();

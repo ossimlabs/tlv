@@ -10,41 +10,59 @@ convertGeospatialCoordinateFormat = function( inputString, callbackFunction ) {
 	}
 	else if ( callbackFunction ) {
 		displayLoadingDialog( "We're checking our maps for that location... BRB!" );
-		if ( inputString.match( bePattern ) ) {
+		if ( inputString.match( bePattern ) && tlv.beLookup.url ) {
+			var queryParams = {
+				filter: tlv.beLookup.columnName + " = '" + inputString + "'",
+				maxFeatures: 1,
+				outputFormat: "JSON",
+				request: "GetFeature",
+				service: "WFS",
+				typeName: tlv.beLookup.typeName,
+				version: "1.1.0"
+			};
+
 			$.ajax({
-				data: "beNumber=" + inputString,
 				dataType: "json",
 				error: function( jqXhr, textStatus, errorThrown ) {
 					hideLoadingDialog();
 				},
 				success: function( data ) {
 					hideLoadingDialog();
-					if ( data.length == 0 ) { displayErrorDialog( "We couldn't find that BE. :(" ); }
-					else {
-						var point = data;
+
+					if ( data.features.length > 0 ) {
+						var point = data.features[ 0 ].geometry.coordinates;
 						callbackFunction( point );
 					}
+					else { displayErrorDialog( "We couldn't find that BE. :(" ); }
 				},
-				url: tlv.contextPath + "/be"
+				url: tlv.beLookup.url + "?" + $.param( queryParams )
 			});
 		}
 		// assume it's a placename
 		else {
+			var queryParams = {
+				autocomplete: true,
+				autocompleteBias: "BALANCED",
+				maxInterpretations: 1,
+				query: inputString,
+				responseIncludes: "WKT_GEOMETRY_SIMPLIFIED"
+			};
+
 			$.ajax({
-				data: "location=" + inputString,
 				dataType: "json",
 				error: function( jqXhr, textStatus, errorThrown ) {
 					hideLoadingDialog();
 				},
 				success: function( data ) {
 					hideLoadingDialog();
-					if ( data.length == 0 ) { displayErrorDialog( "We couldn't find that location. :(" ); }
-					else {
-						var point = data;
+					if ( data.interpretations.length > 0 ) {
+						var center = data.interpretations[ 0 ].feature.geometry.center;
+						var point = [ center.lng, center.lat ];
 						callbackFunction( point );
 					}
+					else { displayErrorDialog( "We couldn't find that location. :(" ); }
 				},
-				url: tlv.contextPath + "/geocoder"
+				url: tlv.geocoderUrl + "?" + $.param( queryParams )
 			});
 		}
 	}
