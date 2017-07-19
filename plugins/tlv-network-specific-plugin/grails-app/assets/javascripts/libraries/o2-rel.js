@@ -28,8 +28,6 @@ createImageLayerSource = function( layer ) {
 
 var pageLoadO2Rel = pageLoad;
 pageLoad = function() {
-	pageLoadO2Rel();
-
 	tlv.libraries[ "o2-rel"].searchLibrary = function( searchParams ) {
 		var library = tlv.libraries[ "o2-rel"];
 		library.searchComplete = false;
@@ -42,7 +40,7 @@ pageLoad = function() {
 			typeName: "omar:raster_entry",
 			version: "1.1.0"
 		};
-		if ( tlv.filter ) { queryParams.filter = filter; }
+		if ( tlv.filter ) { queryParams.filter = tlv.filter; }
 		else {
 			var filter = "";
 
@@ -106,4 +104,6 @@ pageLoad = function() {
 			url: library.wfsUrl + "?" + $.param( queryParams )
 		});
 	}
+
+	pageLoadO2Rel();
 }
