@@ -22,10 +22,10 @@
 		<div class = "modal-content">
 			<div class = "modal-header"><h4>Context Menu</h4></div>
 			<div class = "modal-body">
-				<div align = "center" class = "row"><b><i>You clicked here:</i></b></div>
+				<div class = "row" style = "text-align: center"><b><i>You clicked here:</i></b></div>
 				<div class = "row" id = "mouseClickDiv"></div>
 				<hr>
-				<div align = "center" class = "row"><b><i>Image Metadata:</i></b></div>
+				<div class = "row" style = "text-align: center"><b><i>Image Metadata:</i></b></div>
 				<pre id = "imageMetadataPre" style = "background: none; color: #c8c8c8"></pre>
 			</div>
 			<div class = "modal-footer">

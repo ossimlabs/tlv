@@ -1,9 +1,9 @@
 <div class = "row">
-	<nav class = "navbar navbar-default navbar-static-top" id = "navigationMenu" role = "navigation">
+	<nav class = "navbar navbar-default navbar-static-top" id = "navigationMenu">
 		<div class = "container-fluid">
 			<div class = "navbar-header">
 				<a class = "navbar-brand" href = "${ grailsApplication.config.server.contextPath }" style = "padding-top: 5px">
-					<asset:image height = "40px" src = "logos/tlv.png" title = "TLV Home"/>
+					<asset:image height = "40" src = "logos/tlv.png" title = "TLV Home"/>
 				</a>
 
 				<g:render template = "/menus/time-lapse-menu-controls"/>
@@ -34,7 +34,7 @@
 					</g:each>
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
-					<li><a href = "${ grailsApplication.config.docsUrl }" target = "_blank")>Help</a></li>
+					<li><a href = "${ grailsApplication.config.docsUrl }" target = "_blank">Help</a></li>
 				</ul>
 			</div>
 		</div>

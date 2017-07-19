@@ -1,5 +1,5 @@
 <div class = "row">
-	<div
+	<div>
 		class = "security-classification"
 		style = "background-color: ${ grailsApplication.config.securityClassification.backgroundColor };
 			color: ${ grailsApplication.config.securityClassification.textColor };">
