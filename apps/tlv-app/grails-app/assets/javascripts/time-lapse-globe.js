@@ -32,7 +32,8 @@ function setupGlobe() {
 		sceneOptions: {
     		contextOptions: {
       			webgl: { preserveDrawingBuffer: true }
-    		}
+    		},
+			//terrainExaggeration: 1
   		}
 	});
 	// only render the globe when necessary
