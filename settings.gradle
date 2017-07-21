@@ -1,7 +1,0 @@
-include "tlv-app", 
-        "tlv-network-specific-plugin",
-        "three-disa-plugin"
-
-project(':tlv-network-specific-plugin').projectDir = 'plugins/tlv-network-specific-plugin' as File
-project(':three-disa-plugin').projectDir = 'plugins/three-disa-plugin' as File
-project(':tlv-app').projectDir = 'apps/tlv-app' as File

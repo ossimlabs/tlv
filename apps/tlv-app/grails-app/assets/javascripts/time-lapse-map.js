@@ -84,7 +84,29 @@ function createContextMenuContent(coordinate) {
 	$("#imageMetadataPre").html( JSON.stringify( tlv.layers[tlv.currentLayer].metadata, null, 2 ) );
 }
 
-function createImageLayerSource(layer) {}
+function createImageLayerSource( layer ) {
+	return new ol.source.TileWMS({
+		crossOrigin: "anonymous",
+		params: {
+			FILTER: "in(" + layer.metadata.id + ")",
+			FORMAT: "image/png",
+			IDENTIFIER: Math.floor( Math.random() * 1000000 ),
+			LAYERS: "omar:raster_entry",
+			STYLES: JSON.stringify({
+				bands: layer.bands || "default",
+				brightness: layer.brightness || 0,
+				contrast: layer.contrast || 1,
+				hist_center: true,
+				hist_op: layer.histOp || "auto-minmax",
+				resampler_filter: layer.resamplerFilter || "bilinear",
+				sharpen_mode: layer.sharpenMode || "none"
+			}),
+			TRANSPARENT: true,
+			VERSION: "1.1.1"
+		},
+		url: tlv.libraries[ layer.library ].wmsUrl
+	});
+}
 
 function createMapControls() {
 	var span = document.createElement("span");

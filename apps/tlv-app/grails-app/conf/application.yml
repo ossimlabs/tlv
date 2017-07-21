@@ -34,12 +34,12 @@ libraries:
         name: o2-dev
         wfsUrl: ${baseUrl}/omar-wfs/wfs
         wmsUrl: ${baseUrl}/omar-wms/wms
-    #o2-rel:
-    #    label: O2-REL
-    #    layerType: wms
-    #    name: o2-rel
-    #    wfsUrl: https://omar-rel.ossim.io/omar-wfs/wfs
-    #    wmsUrl: https://omar-rel.ossim.io/omar-wms/wms
+    o2-rel:
+        label: O2-REL
+        layerType: wms
+        name: o2-rel
+        wfsUrl: https://omar-rel.ossim.io/omar-wfs/wfs
+        wmsUrl: https://omar-rel.ossim.io/omar-wms/wms
 
 plugins:
     networkSpecific:
