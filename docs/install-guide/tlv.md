@@ -57,13 +57,18 @@ geocoderUrl: ${baseUrl}/twofishes
 isaUrl: ${baseUrl}/isa/
 
 libraries:
-    o2:
-      label: O2
+    o2-dev:
+      label: O2-DEV
       layerType: wms
-      name: o2
-      sensors: []
-      wfsUrl: http://omar-wfs-app:8080/omar-wfs/wfs
-      viewUrl: ${baseUrl}/omar-wms/wms
+      name: o2-dev
+      wfsUrl: ${baseUrl}/omar-wfs/wfs
+      wmsUrl: ${baseUrl}/omar-wms/wms
+    o2-rel:
+      label: O2-REL
+      layerType: wms
+      name: o2-rel
+      wfsUrl: https://omar-rel.ossim.io/omar-wfs/wfs
+      wmsUrl: https://omar-rel.ossim.io/omar-wms/wms
 
 plugins:
   networkSpecific:
