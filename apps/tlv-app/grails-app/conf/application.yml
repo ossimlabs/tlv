@@ -4,7 +4,7 @@ baseLayers:
         name: OSM Basic
         styles:
         type: wms
-        url: http://dev.o2.radiantbluecloud.com/service-proxy/wmsProxy
+        url: ${baseUrl}/service-proxy/wmsProxy
         visible: false
     osmBright:
         layers: o2-basemap-bright
@@ -12,31 +12,34 @@ baseLayers:
         styles:
         type: wms
         visible: true
-        url: http://dev.o2.radiantbluecloud.com/service-proxy/wmsProxy
+        url: ${baseUrl}/service-proxy/wmsProxy
 
-baseUrl: http://localhost:8080
+baseUrl: https://omar-dev.ossim.io
 
 beLookup:
     columnName: be_number
     typeName: omar:facility
-    url: http://localhost:8081/wfs
+    #url: ${baseUrl}/omar-wfs/wfs
 
 defaultLocation: 48.8584, 2.2945
 
-docsUrl: http://localhost:80/o2-docs
+docsUrl: ${baseUrl}/omar-docs
 
-geocoderUrl: http://dev.o2.radiantbluecloud.com/twofishes
+geocoderUrl: ${baseUrl}/omar-ui/twoFishesProxy
 
 libraries:
-    o2:
-        imageSpaceUrl: http://localhost:8081/imageSpace
-        label: O2
+    o2-dev:
+        label: O2-DEV
         layerType: wms
-        mensaUrl: http://localhost:8081/mensa
-        name: o2
-        sensors: []
-        viewUrl: http://localhost:8081/wms
-        wfsUrl: http://localhost:8081/wfs
+        name: o2-dev
+        wfsUrl: ${baseUrl}/omar-wfs/wfs
+        wmsUrl: ${baseUrl}/omar-wms/wms
+    #o2-rel:
+    #    label: O2-REL
+    #    layerType: wms
+    #    name: o2-rel
+    #    wfsUrl: https://omar-rel.ossim.io/omar-wfs/wfs
+    #    wmsUrl: https://omar-rel.ossim.io/omar-wms/wms
 
 plugins:
     networkSpecific:

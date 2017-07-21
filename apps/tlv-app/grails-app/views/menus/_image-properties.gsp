@@ -1,6 +1,6 @@
  <div id = "imagePropertiesDiv">
 	<div>
-        <div align = "right">
+        <div style = "text-align: right">
             <button class = "btn btn-default btn-sm" onclick = 'javascript:$( "#imagePropertiesDiv" ).hide()' type = "button">
                 <span class = "glyphicon glyphicon-remove"></span>
             </button>
@@ -15,7 +15,7 @@
                         </g:each>
                     </select>
                     <table id = "manualBandSelectTable" style = "background: none; display: none">
-                        <tr align = "center">
+                        <tr style = "text-align: center">
                             <td>R</td>
                             <td>G</td>
                             <td>B</td>

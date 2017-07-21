@@ -9,7 +9,12 @@
 
 					<label>Geo-Jump</label>
 					<div class = "input-group">
-						<input class = "form-control" id = "geoJumpLocationInput" placeholder = "BE, Coordinate or Placename" type = "text">
+						<%
+							def placeholder = [ "BE", "Coordinate", "Placename" ]
+							//if ( params.beLookup.url ) { placeholder.plus( 0, "BE" ) }
+							//if ( params.geocoderUrl ) { placeholder.push( "Placename" ) }
+						%>
+						<input class = "form-control" id = "geoJumpLocationInput" placeholder = "${ placeholder.join( ", " ) }" type = "text">
 						<span class = "input-group-btn">
 							<button class = "btn btn-primary"  onclick = "geoJump($('#geoJumpLocationInput').val()); $('#timeLapseDialog').modal('hide')" type = "button">Go!</button>
 						</span>
