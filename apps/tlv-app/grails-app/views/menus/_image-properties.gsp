@@ -23,7 +23,11 @@
                         <tr>
                             <g:each in = "${[ "red", "green", "blue" ]}">
                                 <td>
-                                    <select class = "form-control" id = "${ it }GunSelect" onchange = "updateImageProperties( true )"></select>
+                                    <select class = "form-control" id = "${ it }GunSelect" onchange = "updateImageProperties( true )">
+                                        <g:each in = "${[ 1, 2, 3, 4 ]}">
+                                            <option value = ${ it }>${ it }</option>
+                                        </g:each>
+                                    </select>
                                 </td>
                             </g:each>
                         </tr>
