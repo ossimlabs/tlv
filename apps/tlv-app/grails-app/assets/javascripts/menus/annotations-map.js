@@ -197,7 +197,7 @@ function drawAnnotationMap(type) {
 	// create the right draw interaction
 	switch (type) {
 		case "circle": drawCircle(); break;
-		case "lineString": drawLineString(); break;
+		case "line": drawLineString(); break;
 		case "point": drawPoint(); break;
 		case "polygon": drawPolygon(); break;
 		case "rectangle": drawRectangle(); break;
