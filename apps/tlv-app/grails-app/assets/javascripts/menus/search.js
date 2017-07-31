@@ -253,8 +253,8 @@ function initializeEndDateTimePicker() {
 	// default to current date or user defined
 	var endDate = new Date();
 	if (tlv.endYear) { endDate.setFullYear(tlv.endYear); }
-	if (tlv.endMonth) { endDate.setMonth(tlv.endMonth - 1); }
 	if (tlv.endDay) { endDate.setDate(tlv.endDay); }
+	if (tlv.endMonth) { endDate.setMonth(tlv.endMonth - 1); }
 	if (tlv.endHour) { endDate.setHours(tlv.endHour); }
 	if (tlv.endMinute) { endDate.setMinutes(tlv.endMinute); }
 	if (tlv.endSecond) { endDate.setSeconds(tlv.endSecond); }
@@ -312,8 +312,8 @@ function initializeStartDateTimePicker() {
 	var endDate = $("#searchEndDateTimePicker").data("DateTimePicker").date().toDate();
 	var startDate = new Date(endDate - 30 * 24 * 60 * 60 * 1000);
 	if (tlv.startYear) { startDate.setFullYear(tlv.startYear); }
-	if (tlv.startMonth) { startDate.setMonth(tlv.startMonth - 1); }
 	if (tlv.startDay) { startDate.setDate(tlv.startDay); }
+	if (tlv.startMonth) { startDate.setMonth(tlv.startMonth - 1); }
 	startDate.setHours(tlv.startHour ? tlv.startHour : 0);
 	startDate.setMinutes(tlv.startMinute ? tlv.startMinute : 0);
 	startDate.setSeconds(tlv.startSecond ? tlv.startSecond : 0);
