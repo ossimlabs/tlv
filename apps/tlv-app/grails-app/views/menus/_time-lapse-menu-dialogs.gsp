@@ -10,9 +10,9 @@
 					<label>Geo-Jump</label>
 					<div class = "input-group">
 						<%
-							def placeholder = [ "BE", "Coordinate", "Placename" ]
-							//if ( params.beLookup.url ) { placeholder.plus( 0, "BE" ) }
-							//if ( params.geocoderUrl ) { placeholder.push( "Placename" ) }
+							def placeholder = [ "Coordinate" ]
+							if ( params.beLookup.url ) { placeholder = placeholder.plus( 0, "BE" ) }
+							if ( params.geocoderUrl ) { placeholder.push( "Placename" ) }
 						%>
 						<input class = "form-control" id = "geoJumpLocationInput" placeholder = "${ placeholder.join( ", " ) }" type = "text">
 						<span class = "input-group-btn">

@@ -1,4 +1,19 @@
 function beginSearch() {
+	var location = getLocation();
+	if ( !location ) {
+		var locationString = $("#searchLocationInput").val() != "" ? $("#searchLocationInput").val() : tlv.defaultLocation;
+		var callbackFunction = function( point ) {
+			var getLocationCallback = getLocation;
+			getLocation = function() { return point; }
+			beginSearch();
+			getLocation = getLocationCallback;
+		}
+		var location = convertGeospatialCoordinateFormat( locationString, callbackFunction );
+
+		// if an ajax call is needed to find the location, we don't want an erroneous error messge while we wait
+		return;
+	}
+
 	var searchParams = getSearchParams();
 	if ( searchParams.error ) { displayErrorDialog( searchParams.error ); }
 	else {
@@ -8,7 +23,79 @@ function beginSearch() {
 		$.each(
 			searchParams.libraries,
  			function( index, library ) {
-				tlv.libraries[ library ].searchLibrary( searchParams );
+				tlv.libraries[ library ].searchComplete = false;
+
+				var queryParams = {
+					maxResults: 100,
+					outputFormat: "JSON",
+					request: "getFeature",
+					service: "WFS",
+					typeName: "omar:raster_entry",
+					version: "1.1.0"
+				};
+				if ( tlv.filter ) { queryParams.filter = tlv.filter; }
+				else {
+					var filter = "";
+
+					var startDate = searchParams.startYear + "-" + searchParams.startMonth + "-" + searchParams.startDay + "T" + searchParams.startHour + ":" + searchParams.startMinute + ":" + searchParams.startSecond + ".000+0000"
+					var endDate = searchParams.endYear + "-" + searchParams.endMonth + "-" + searchParams.endDay +
+						"T" + searchParams.endHour + ":" + searchParams.endMinute + ":" + searchParams.endSecond + ".999+0000"
+					filter += "((acquisition_date >= " + startDate + " AND acquisition_date <= " + endDate + ") OR acquisition_date IS NULL)";
+
+					filter += " AND ";
+
+					filter += "(cloud_cover <= " + searchParams.maxCloudCover + " OR cloud_cover IS NULL)";
+
+					filter += " AND ";
+
+					/* 1m * 1Nm / 1852m * 1min / 1Nm * 1deg / 60min */
+					var deltaDegrees =  1 / 1852 / 60;
+					filter += "DWITHIN(ground_geom,POINT(" + searchParams.location.join(" ") + ")," + deltaDegrees + ",meters)";
+
+					filter += " AND ";
+
+					filter += "(niirs >= " + searchParams.minNiirs + " OR niirs IS NULL)";
+
+					queryParams.filter = filter;
+				}
+
+				$.ajax({
+					dataType: "json",
+					error: function() {
+						tlv.libraries[ library ].searchComplete = true;
+						processResults();
+					},
+					success: function( data ) {
+						var images = []
+						$.each(
+							data.features,
+							function( index, feature ) {
+								var metadata = feature.properties;
+								metadata.footprint = feature.geometry || null;
+
+								var acquisitionDate = "N/A";
+								if ( metadata.acquisition_date ) {
+									var date = getDate( new Date( Date.parse( metadata.acquisition_date ) ) );
+									acquisitionDate = date.year +  "-" + date.month + "-" + date.day + " " +
+										date.hour + ":" + date.minute + ":" + date.second;
+								}
+
+								images.push({
+									acquisitionDate: acquisitionDate,
+									imageId: metadata.image_id || ( metadata.title || metadata.filename.replace( /^.*[\\\/]/, "" ) ),
+									library: library,
+									metadata: metadata,
+									numberOfBands: metadata.number_of_bands || 1
+								});
+							}
+						);
+						tlv.libraries[ library ].searchResults = images;
+
+						tlv.libraries[ library ].searchComplete = true;
+						processResults();
+					},
+					url: tlv.libraries[ library ].wfsUrl + "?" + $.param( queryParams )
+				});
 			}
 		);
 	}
@@ -166,8 +253,8 @@ function initializeEndDateTimePicker() {
 	// default to current date or user defined
 	var endDate = new Date();
 	if (tlv.endYear) { endDate.setFullYear(tlv.endYear); }
-	if (tlv.endMonth) { endDate.setMonth(tlv.endMonth - 1); }
 	if (tlv.endDay) { endDate.setDate(tlv.endDay); }
+	if (tlv.endMonth) { endDate.setMonth(tlv.endMonth - 1); }
 	if (tlv.endHour) { endDate.setHours(tlv.endHour); }
 	if (tlv.endMinute) { endDate.setMinutes(tlv.endMinute); }
 	if (tlv.endSecond) { endDate.setSeconds(tlv.endSecond); }
@@ -225,8 +312,8 @@ function initializeStartDateTimePicker() {
 	var endDate = $("#searchEndDateTimePicker").data("DateTimePicker").date().toDate();
 	var startDate = new Date(endDate - 30 * 24 * 60 * 60 * 1000);
 	if (tlv.startYear) { startDate.setFullYear(tlv.startYear); }
-	if (tlv.startMonth) { startDate.setMonth(tlv.startMonth - 1); }
 	if (tlv.startDay) { startDate.setDate(tlv.startDay); }
+	if (tlv.startMonth) { startDate.setMonth(tlv.startMonth - 1); }
 	startDate.setHours(tlv.startHour ? tlv.startHour : 0);
 	startDate.setMinutes(tlv.startMinute ? tlv.startMinute : 0);
 	startDate.setSeconds(tlv.startSecond ? tlv.startSecond : 0);

@@ -60,6 +60,12 @@ function setupGlobe() {
 		}
 	);
 
+	if ( tlv.terrainProvider ) {
+		tlv.globe.getCesiumScene().terrainProvider = new Cesium.CesiumTerrainProvider({
+			url: tlv.terrainProvider
+		});
+	}
+
 	if ( tlv.dimensions == "3" ) {
 		tlv.dimensions = null;
 		$( "#dimensionsSelect" ).val( 3 );

@@ -23,5 +23,3 @@
 //= require menus/layers
 //= require menus/search
 //= require menus/view
-
-//= require index-bundle-plugin
