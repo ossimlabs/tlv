@@ -86,7 +86,6 @@ function createContextMenuContent(coordinate) {
 
 function createImageLayerSource( layer ) {
 	return new ol.source.TileWMS({
-		crossOrigin: "anonymous",
 		params: {
 			FILTER: "in(" + layer.metadata.id + ")",
 			FORMAT: "image/png",
