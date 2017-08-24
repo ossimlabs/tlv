@@ -1,18 +1,18 @@
-baseLayers:
-    osmBasic:
-        layers: o2-basemap-basic
-        name: OSM Basic
-        styles:
-        type: wms
-        url: ${baseUrl}/service-proxy/wmsProxy
-        visible: false
-    osmBright:
-        layers: o2-basemap-bright
-        name: OSM Bright
-        styles:
-        type: wms
-        visible: true
-        url: ${baseUrl}/service-proxy/wmsProxy
+#baseLayers:
+#    osmBasic:
+#        layers: o2-basemap-basic
+#        name: OSM Basic
+#        styles:
+#        type: wms
+#        url: ${baseUrl}/service-proxy/wmsProxy
+#        visible: false
+#    osmBright:
+#        layers: o2-basemap-bright
+#        name: OSM Bright
+#        styles:
+##        type: wms
+#        visible: true
+#        url: ${baseUrl}/service-proxy/wmsProxy
 
 baseUrl: https://omar-dev.ossim.io
 
