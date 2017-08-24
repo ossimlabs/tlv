@@ -40,8 +40,6 @@ node(""){
                             passwordVariable: 'ARTIFACTORY_PASSWORD']])
             {
               sh """
-              pwd
-              echo "${ workspaceDir }"
               pushd ${workspaceDir}/${appName}/apps/${appName}-app
               ./gradlew artifactoryPublish
               popd
