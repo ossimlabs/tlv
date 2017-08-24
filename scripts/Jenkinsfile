@@ -41,7 +41,7 @@ node(""){
             {
               sh """
               pwd
-              echo "${ workSpaceDir }"
+              echo "${ workspaceDir }"
               pushd ${workspaceDir}/${appName}/apps/${appName}-app
               ./gradlew artifactoryPublish
               popd
