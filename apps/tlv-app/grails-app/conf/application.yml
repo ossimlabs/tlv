@@ -1,3 +1,4 @@
+# List any base layers that may be available
 #baseLayers:
 #    osmBasic:
 #        layers: o2-basemap-basic
@@ -16,35 +17,34 @@
 
 baseUrl: https://omar-dev.ossim.io
 
+# If BEs are available, define the WFS query schema here
 beLookup:
-    columnName: be_number
-    typeName: omar:facility
-    #url: ${baseUrl}/omar-wfs/wfs
+#    columnName: be_number
+#    typeName: omar:facility
+#    url: ${baseUrl}/omar-wfs/wfs
 
 defaultLocation: 48.8584, 2.2945
 
-docsUrl: ${baseUrl}/omar-docs
+# If documentation is available, define the URL
+#docsUrl: ${baseUrl}/omar-docs
 
-geocoderUrl: ${baseUrl}/omar-ui/twoFishesProxy
+# If the twofishes geocoder is available, define the URL
+#geocoderUrl: ${baseUrl}/omar-ui/twoFishesProxy
 
-libraries:
-    o2-dev:
-        label: O2-DEV
-        layerType: wms
-        name: o2-dev
-        wfsUrl: ${baseUrl}/omar-wfs/wfs
-        wmsUrl: ${baseUrl}/omar-wms/wms
-    o2-rel:
-        label: O2-REL
-        layerType: wms
-        name: o2-rel
-        wfsUrl: https://omar-rel.ossim.io/omar-wfs/wfs
-        wmsUrl: https://omar-rel.ossim.io/omar-wms/wms
-
-plugins:
-    networkSpecific:
-        dialogs: false
-        navigationMenu: false
+# List the various repository details
+#libraries:
+#    o2-dev:
+#        label: O2-DEV
+#        layerType: wms
+#        name: o2-dev
+#        wfsUrl: ${baseUrl}/omar-wfs/wfs
+#        wmsUrl: ${baseUrl}/omar-wms/wms
+#    o2-rel:
+#        label: O2-REL
+#        layerType: wms
+#        name: o2-rel
+#        wfsUrl: https://omar-rel.ossim.io/omar-wfs/wfs
+#        wmsUrl: https://omar-rel.ossim.io/omar-wms/wms
 
 securityClassification:
     backgroundColor: green
@@ -55,7 +55,8 @@ server:
   contextPath:
   port: 8080
 
-terrainProvider: //assets.agi.com/stk-terrain/world
+# If a terrain server is available, define the URL
+#terrainProvider: //assets.agi.com/stk-terrain/world
 
 ---
 hibernate:
