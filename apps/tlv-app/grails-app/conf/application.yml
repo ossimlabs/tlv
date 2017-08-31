@@ -1,4 +1,4 @@
-#baseLayers:
+# baseLayers:
 #    osmBasic:
 #        layers: o2-basemap-basic
 #        name: OSM Basic
@@ -10,7 +10,7 @@
 #        layers: o2-basemap-bright
 #        name: OSM Bright
 #        styles:
-##        type: wms
+#        type: wms
 #        visible: true
 #        url: ${baseUrl}/service-proxy/wmsProxy
 
@@ -23,23 +23,23 @@ beLookup:
 
 defaultLocation: 48.8584, 2.2945
 
-docsUrl: ${baseUrl}/omar-docs
+# docsUrl: ${baseUrl}/omar-docs
 
-geocoderUrl: ${baseUrl}/omar-ui/twoFishesProxy
+# geocoderUrl: ${baseUrl}/omar-ui/twoFishesProxy
 
-libraries:
-    o2-dev:
-        label: O2-DEV
-        layerType: wms
-        name: o2-dev
-        wfsUrl: ${baseUrl}/omar-wfs/wfs
-        wmsUrl: ${baseUrl}/omar-wms/wms
-    o2-rel:
-        label: O2-REL
-        layerType: wms
-        name: o2-rel
-        wfsUrl: https://omar-rel.ossim.io/omar-wfs/wfs
-        wmsUrl: https://omar-rel.ossim.io/omar-wms/wms
+#libraries:
+#    o2-dev:
+#        label: O2-DEV
+#        layerType: wms
+#        name: o2-dev
+#        wfsUrl: ${baseUrl}/omar-wfs/wfs
+#        wmsUrl: ${baseUrl}/omar-wms/wms
+#    o2-rel:
+#        label: O2-REL
+#        layerType: wms
+#        name: o2-rel
+#        wfsUrl: https://omar-rel.ossim.io/omar-wfs/wfs
+#        wmsUrl: https://omar-rel.ossim.io/omar-wms/wms
 
 plugins:
     networkSpecific:
@@ -55,7 +55,7 @@ server:
   contextPath:
   port: 8080
 
-terrainProvider: //assets.agi.com/stk-terrain/world
+# terrainProvider: //assets.agi.com/stk-terrain/world
 
 ---
 hibernate:
