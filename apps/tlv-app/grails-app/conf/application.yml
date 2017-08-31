@@ -11,7 +11,7 @@
 #        layers: o2-basemap-bright
 #        name: OSM Bright
 #        styles:
-##        type: wms
+#        type: wms
 #        visible: true
 #        url: ${baseUrl}/service-proxy/wmsProxy
 
