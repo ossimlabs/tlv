@@ -169,7 +169,7 @@ updateScreenText = function() {
 				var layer = tlv.layers[x];
 				var acquisitionDate = layer.acquisitionDate;
 				var imageId = layer.imageId;
-				var libraryLabel = tlv.availableResources.complete[layer.library].label;
+				var libraryLabel = tlv.libraries[ layer.library ].label;
 				$("#" + i + "SwipeTextDiv").html(libraryLabel + ": " + imageId + "<br>" + acquisitionDate);
 			}
 		);
