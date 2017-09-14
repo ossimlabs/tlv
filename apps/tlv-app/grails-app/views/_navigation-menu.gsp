@@ -27,11 +27,7 @@
 					<g:render template = "/menus/view-menu"/>
 					<g:render template = "/isa-menu"/>
 				</ul>
-				<g:if test = "${ grailsApplication.config.docsUrl }">
-					<ul class = "nav navbar-nav navbar-right">
-						<li><a href = "${ grailsApplication.config.docsUrl }" target = "_blank">Help</a></li>
-					</ul>
-				</g:if>
+				<g:render template = "/menus/help-menu"/>
 			</div>
 		</div>
 	</nav>

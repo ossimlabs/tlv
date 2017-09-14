@@ -1,4 +1,9 @@
+about:
+    release: Egmont Key
+    releaseNumber: 2.0.1
+
 # List any base layers that may be available
+# Optional
 #baseLayers:
 #    osmBasic:
 #        layers: o2-basemap-basic
@@ -18,7 +23,8 @@
 baseUrl: https://omar-dev.ossim.io
 
 # If BEs are available, define the WFS query schema here
-beLookup:
+# Optional
+#beLookup:
 #    columnName: be_number
 #    typeName: omar:facility
 #    url: ${baseUrl}/omar-wfs/wfs
@@ -26,12 +32,20 @@ beLookup:
 defaultLocation: 48.8584, 2.2945
 
 # If documentation is available, define the URL
+# Optional
 #docsUrl: ${baseUrl}/omar-docs
 
 # If the twofishes geocoder is available, define the URL
+# Optional
 #geocoderUrl: ${baseUrl}/omar-ui/twoFishesProxy
 
+# If ISA is available, define the URL
+# Make sure the trailing forward slash is included
+# Optional
+#isaUrl: ${baseUrl}/isa-ui/
+
 # List the various repository details
+# Required
 #libraries:
 #    o2-dev:
 #        label: O2-DEV
@@ -46,16 +60,15 @@ defaultLocation: 48.8584, 2.2945
 #        wfsUrl: https://omar-rel.ossim.io/omar-wfs/wfs
 #        wmsUrl: https://omar-rel.ossim.io/omar-wms/wms
 
+# Set the security classification banner here
+# Required
 securityClassification:
     backgroundColor: green
     text: UNCLASSIFIED
     textColor: white
 
-server:
-  contextPath:
-  port: 8080
-
 # If a terrain server is available, define the URL
+# Optional
 #terrainProvider: //assets.agi.com/stk-terrain/world
 
 ---
