@@ -23,13 +23,8 @@
 <g:render template = "/time-lapse-dialogs"/>
 
 <g:render template = "/menus/annotations-menu-dialogs"/>
+<g:render template = "/menus/help-menu-dialogs"/>
 <g:render template = "/menus/layers-menu-dialogs"/>
 <g:render template = "/menus/search-menu-dialogs"/>
 <g:render template = "/menus/time-lapse-menu-dialogs"/>
 <g:render template = "/menus/view-menu-dialogs"/>
-
-<g:each in = "${ grailsApplication.config.plugins }">
-	<g:if test = "${ it.value?.dialogs == true }">
-		<g:render template = "/dialogs-${ it.key }"/>
-	</g:if>
-</g:each>
