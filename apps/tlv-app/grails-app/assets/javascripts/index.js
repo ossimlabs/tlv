@@ -68,7 +68,7 @@ function convertGeospatialCoordinateFormat(inputString, callbackFunction) {
 		});
 	}
 	else {
-		if ( callbackFunction ) {
+		if ( callbackFunction && tlv.geocoderUrl ) {
 			displayLoadingDialog();
 
 			var queryParams = {
