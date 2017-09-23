@@ -29,8 +29,6 @@ baseUrl: https://omar-dev.ossim.io
 #    typeName: omar:facility
 #    url: ${baseUrl}/omar-wfs/wfs
 
-defaultLocation: 48.8584, 2.2945
-
 # If documentation is available, define the URL
 # Optional
 #docsUrl: ${baseUrl}/omar-docs
