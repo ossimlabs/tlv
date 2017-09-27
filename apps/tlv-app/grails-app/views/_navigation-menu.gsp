@@ -27,7 +27,10 @@
 					<g:render template = "/menus/view-menu"/>
 					<g:render template = "/isa-menu"/>
 				</ul>
-				<g:render template = "/menus/help-menu"/>
+				<ul class = "nav navbar-nav navbar-right">
+					<g:render template = "/user"/>
+					<g:render template = "/menus/help-menu"/>
+				</ul>
 			</div>
 		</div>
 	</nav>

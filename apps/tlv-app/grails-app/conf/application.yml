@@ -69,6 +69,12 @@ securityClassification:
 # Optional
 #terrainProvider: //assets.agi.com/stk-terrain/world
 
+# If access requires a PKI, define how to get the username here
+# Optional
+#userInfo:
+#    requestHeaderUserName: username
+#    requestHeaderUserNameDefault: Anonymous
+
 ---
 hibernate:
     cache:
