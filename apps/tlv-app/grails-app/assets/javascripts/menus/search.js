@@ -11,7 +11,7 @@ function beginSearch() {
 			getLocation = getLocationCallback;
 		}
 		var location = convertGeospatialCoordinateFormat( locationString, callbackFunction );
-		if ( !location ) { displayErrorDialog( "Sorry, we couldn't interpret that location. :(" ); }
+		if ( location == false ) { displayErrorDialog( "Sorry, we couldn't interpret that location. :(" ); }
 
 
 		// if an ajax call is needed to find the location, we don't want an erroneous error messge while we wait
