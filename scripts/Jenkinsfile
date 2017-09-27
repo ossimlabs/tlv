@@ -37,7 +37,7 @@ node(""){
                 // requires SonarQube Scanner for Gradle 2.1+
                 // It's important to add --info because of SONARJNKNS-281
                 sh """
-                  pushd ${workspaceDir}/${appName}/
+                  pushd ${workspaceDir}/${appName}/apps/${appName}-app
                   ./gradlew --info sonarqube
                   popd
                 """
