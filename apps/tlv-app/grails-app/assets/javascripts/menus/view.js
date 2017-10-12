@@ -159,18 +159,18 @@ var updateScreenTextView = updateScreenText;
 updateScreenText = function() {
 	updateScreenTextView();
 
-	if ($("#swipeSelect").val() == "on") {
-		$("#acquisitionDateDiv").html("&nbsp;");
-		$("#imageIdDiv").html("&nbsp;");
+	if ( $("#swipeSelect" ).val() == "on" ) {
+		$( "#acquisitionDateDiv" ).html( "&nbsp;" );
+		$( "#imageIdDiv" ).html( "&nbsp;" );
 
 		$.each(
-			{ left: tlv.swipeLayers[0], right: tlv.swipeLayers[1] },
-			function(i, x) {
-				var layer = tlv.layers[x];
-				var acquisitionDate = layer.acquisitionDate;
-				var imageId = layer.imageId;
-				var libraryLabel = tlv.libraries[ layer.library ].label;
-				$("#" + i + "SwipeTextDiv").html(libraryLabel + ": " + imageId + "<br>" + acquisitionDate);
+			{ left: tlv.swipeLayers[ 0 ], right: tlv.swipeLayers[ 1 ] },
+			function( i, x ) {
+				var layer = tlv.layers[ x ];
+				var acquisitionDate = layer ? layer.acquisitionDate : "";
+				var imageId = layer ? layer.imageId + "<br>" : "";
+				var libraryLabel = layer ? tlv.libraries[ layer.library ].label + ":" : "";
+				$( "#" + i + "SwipeTextDiv" ).html( libraryLabel + imageId + acquisitionDate );
 			}
 		);
 	}
