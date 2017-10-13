@@ -371,9 +371,11 @@ function processResults() {
 
 				var extent = new ol.geom.GeometryCollection( geometries ).getExtent();
 				tlv.location = ol.extent.getCenter( extent );
+
+				tlv.bbox = tlv.bbox || extent;
 			}
 
-			tlv.bbox = calculateInitialViewBbox();
+			tlv.bbox = tlv.bbox || calculateInitialViewBbox();
 			setupTimeLapse();
 		}
 		else { displayErrorDialog("Sorry, we couldn't find anything that matched your search criteria. Maybe ease up on those search constraints a bit?"); }
