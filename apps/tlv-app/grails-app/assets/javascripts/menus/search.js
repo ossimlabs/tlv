@@ -1,7 +1,9 @@
 function beginSearch() {
+	$( "#searchDialog" ).modal( "hide" );
+
 	var location = getLocation();
-	if ( !location ) {
-		var locationString = $("#searchLocationInput").val() != "" ? $("#searchLocationInput").val() : tlv.defaultLocation;
+	var locationString = $( "#searchLocationInput" ).val();
+	if ( !location && locationString != "" ) {
 		var callbackFunction = function( point ) {
 			var getLocationCallback = getLocation;
 			getLocation = function() { return point; }
@@ -9,6 +11,8 @@ function beginSearch() {
 			getLocation = getLocationCallback;
 		}
 		var location = convertGeospatialCoordinateFormat( locationString, callbackFunction );
+		if ( location == false ) { displayErrorDialog( "Sorry, we couldn't interpret that location. :(" ); }
+
 
 		// if an ajax call is needed to find the location, we don't want an erroneous error messge while we wait
 		return;
@@ -19,20 +23,21 @@ function beginSearch() {
 	else {
 		displayLoadingDialog( "We are searching the libraries for imagery... fingers crossed!" );
 
+		var queryParams = {
+			maxResults: 100,
+			outputFormat: "JSON",
+			request: "getFeature",
+			service: "WFS",
+			typeName: "omar:raster_entry",
+			version: "1.1.0"
+		};
+
 		tlv.location = searchParams.location;
 		$.each(
 			searchParams.libraries,
  			function( index, library ) {
 				tlv.libraries[ library ].searchComplete = false;
 
-				var queryParams = {
-					maxResults: 100,
-					outputFormat: "JSON",
-					request: "getFeature",
-					service: "WFS",
-					typeName: "omar:raster_entry",
-					version: "1.1.0"
-				};
 				if ( tlv.filter ) { queryParams.filter = tlv.filter; }
 				else {
 					var filter = "";
@@ -155,8 +160,8 @@ function getEndDate() {
 }
 
 function getLocation() {
-	var locationString = $("#searchLocationInput").val() != "" ? $("#searchLocationInput").val() : tlv.defaultLocation;
-	var location = convertGeospatialCoordinateFormat(locationString);
+	var locationString = $( "#searchLocationInput" ).val();
+	var location = convertGeospatialCoordinateFormat( locationString );
 
 
 	return location;
@@ -192,8 +197,7 @@ function getSearchParams() {
 	searchObject.libraries = libraries;
 
 	var location = getLocation();
-	if (!location) { return { error: "Sorry, we couldn't interpret that location. :(" }; }
-	else { searchObject.location = location; }
+	searchObject.location = location;
 
 	var maxCloudCover = $("#searchMaxCloudCoverInput").val();
 	searchObject.maxCloudCover = maxCloudCover;
@@ -278,12 +282,7 @@ function initializeLibraryCheckboxes() {
 }
 
 function initializeLocationInput() {
-	if (tlv.location) {
-		$("#searchLocationInput").val(tlv.location);
-		$("#searchDialog").modal("hide");
-		beginSearch();
-	}
-	else { $("#searchDialog").modal("show"); }
+	$( "#searchLocationInput" ).val( tlv.location || "" );
 }
 
 function initializeMaxCloudCoverInput() {
@@ -324,6 +323,13 @@ var pageLoadSearch = pageLoad;
 pageLoad = function() {
 	pageLoadSearch();
 	setupSearchMenuDialog();
+
+	if ( tlv.location || tlv.filter ) {
+		beginSearch();
+	}
+	else {
+		$( "#searchDialog" ).modal( "show" );
+	}
 }
 
 function processResults() {
@@ -356,6 +362,18 @@ function processResults() {
 
 			var maxResults = $( "#searchMaxResultsSelect" ).val();
 			if ( tlv.layers.length > maxResults ) { tlv.layers.splice( maxResults ); }
+
+			// if no location is provided, then just use the center of all the images
+			if ( !tlv.location ) {
+				var geometries = tlv.layers.map( function( layer ) {
+					return new ol.format.GeoJSON().readGeometry( layer.metadata.footprint );
+				});
+
+				var extent = new ol.geom.GeometryCollection( geometries ).getExtent();
+				tlv.location = ol.extent.getCenter( extent );
+
+				tlv.bbox = tlv.bbox || extent.join( "," );
+			}
 
 			tlv.bbox = calculateInitialViewBbox();
 			setupTimeLapse();
