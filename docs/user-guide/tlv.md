@@ -71,8 +71,6 @@ The coordinate of the mouse is displayed in the lower-left corner of the map. Cl
 In 2D mode you can rotate the map by holding Shift + Alt while clicking and dragging. In 3D mode, you can hold Alt while clicking and dragging to pitch the globe.
 
 ## Search
-* **Bookmark It!:**
-Get a URL that captures ALL of the current search parameters. You can use that URL and keep certain parameters fixed and bookmark it so that those parameters are automatically set when you bring up a new TLV session.
 * **End Date:**
 The end date of the search. The default is now.
 * **Library:**
