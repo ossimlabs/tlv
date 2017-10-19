@@ -208,3 +208,44 @@ function initializeLoadingDialog() {
 		show: false
 	});
 }
+
+function placenameSearch( inputElement ) {
+	var queryParams = {
+		autocomplete: true,
+		autocompleteBias: "BALANCED",
+		maxInterpretations: 10,
+		query: inputElement.val(),
+		responseIncludes: "WKT_GEOMETRY_SIMPLIFIED"
+	};
+
+	if ( tlv.placenameSearchAjax ) { tlv.placenameSearchAjax.abort(); }
+	tlv.placenameSearchAjax = $.ajax({
+		url: tlv.geocoderUrl + "?" + $.param( queryParams )
+	})
+	.always( function() {
+		inputElement.typeahead( "destroy" );
+	})
+	.done( function( data ) {
+		var places = data.interpretations.map( function( place ) {
+			return { displayName: place.feature.displayName };
+		});
+
+		inputElement.typeahead( null, {
+			display: function( suggestion ) {
+				return suggestion.displayName;
+			},
+			source: function( query, sync ) { return sync( places ); }
+		});
+		inputElement.focus();
+	})
+	.fail( function( jqXHR, textStatus, errorThrown ) {
+		var message;
+		if ( textStatus == "abort" ) { message = "Searching..."; }
+		else { message = "There was an error in the search."; }
+
+		inputElement.typeahead( null, {
+			source: function( query, sync ) { return sync( [ message ] ); }
+		});
+		inputElement.focus();
+	});
+}

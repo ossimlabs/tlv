@@ -1,22 +1,3 @@
-<div class = "modal" id = "searchBookmarkDialog" role = "dialog" tabindex = "-1">
-	<div class = "modal-dialog">
- 		<div class = "modal-content">
-			<div class = "modal-header"></div>
-			<div class = "modal-body">
-				<a id = "searchBookmarkHref">This</a> URL captures ALL of the current search parameters. Keep what you want and delete the rest. Then, bookmark it!
-			</div>
-			<div class = "modal-footer">
-				<button type = "button" class = "btn btn-default" data-dismiss = "modal">Close</button>
-			</div>
- 		</div>
-	</div>
-</div>
-
-<g:javascript>
-        $( "#searchBookmarkDialog" ).on( "hidden.bs.modal", function (event) { hideDialog( "searchBookmarkDialog" ); } );
-        $( "#searchBookmarkDialog" ).on( "shown.bs.modal", function (event) { displayDialog( "searchBookmarkDialog" ); } );
-</g:javascript>
-
 <div class = "modal" id = "searchDialog" role = "dialog" tabindex = "-1">
 	<div class = "modal-dialog">
 		<div class = "modal-content">
@@ -31,7 +12,7 @@
 							if ( params.beLookup?.url ) { placeholder = placeholder.plus( 0, "BE" ) }
 							if ( params.geocoderUrl ) { placeholder.push( "Placename" ) }
 						%>
-  						<input class = "form-control" id = "searchLocationInput" placeholder = "${ placeholder.join( ", " ) }" type = "text">
+  						<input class = "typeahead form-control" id = "searchLocationInput" placeholder = "${ placeholder.join( ", " ) }" type = "text">
 						<span class = "input-group-btn">
 							<button class = "btn btn-primary"  onclick = getLocationGps() title = "Use your GPS location" type = "button"><span class = "glyphicon glyphicon-screenshot"></span></button>
 						</span>
@@ -83,7 +64,6 @@
 			</div>
 			<div class = "modal-footer">
 				<button type = "button" class = "btn btn-primary" data-dismiss = "modal" onclick = beginSearch()>Search</button>
-				<button type = "button" class = "btn btn-primary" data-dismiss = "modal" onclick = bookmarkSearchParams()>Bookmark It!</button>
 				<button type = "button" class = "btn btn-default" data-dismiss = "modal">Close</button>
 			</div>
 		</div>
@@ -91,6 +71,12 @@
 </div>
 
 <g:javascript>
+	$( "#searchLocationInput" ).on( "input", function () {
+		if ( tlv.geocoderUrl ) {
+			placenameSearch( $("#searchLocationInput") );
+		}
+	});
+
 	$( "#searchDialog" ).on( "hidden.bs.modal", function (event) { hideDialog( "searchDialog" ); } );
 	$( "#searchDialog" ).on( "shown.bs.modal", function (event) { displayDialog( "searchDialog" ); } );
 </g:javascript>
