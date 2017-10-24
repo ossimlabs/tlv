@@ -222,7 +222,7 @@ function placenameSearch( inputElement ) {
 	tlv.placenameSearchAjax = $.ajax({
 		url: tlv.geocoderUrl + "?" + $.param( queryParams )
 	})
-	.always( function() {
+	.always( function() { 
 		inputElement.typeahead( "destroy" );
 	})
 	.done( function( data ) {
@@ -232,20 +232,17 @@ function placenameSearch( inputElement ) {
 
 		inputElement.typeahead( null, {
 			display: function( suggestion ) {
+				inputElement.focus();
 				return suggestion.displayName;
 			},
-			source: function( query, sync ) { return sync( places ); }
+			source: function( query, sync ) {
+				inputElement.focus();
+				return sync( places );
+			}
 		});
 		inputElement.focus();
 	})
-	.fail( function( jqXHR, textStatus, errorThrown ) {
-		var message;
-		if ( textStatus == "abort" ) { message = "Searching..."; }
-		else { message = "There was an error in the search."; }
-
-		inputElement.typeahead( null, {
-			source: function( query, sync ) { return sync( [ message ] ); }
-		});
+	.fail( function() {
 		inputElement.focus();
 	});
 }
