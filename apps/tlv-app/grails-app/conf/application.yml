@@ -44,13 +44,13 @@ baseUrl: https://omar-dev.ossim.io
 
 # List the various repository details
 # Required
-libraries:
-    o2-dev:
-        label: O2-DEV
-        layerType: wms
-        name: o2-dev
-        wfsUrl: ${baseUrl}/omar-wfs/wfs
-        wmsUrl: ${baseUrl}/omar-wms/wms
+#libraries:
+#    o2-dev:
+#        label: O2-DEV
+#        layerType: wms
+#        name: o2-dev
+#        wfsUrl: ${baseUrl}/omar-wfs/wfs
+#        wmsUrl: ${baseUrl}/omar-wms/wms
 #    o2-rel:
 #        label: O2-REL
 #        layerType: wms
