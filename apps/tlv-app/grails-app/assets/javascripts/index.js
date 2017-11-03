@@ -79,6 +79,7 @@ function convertGeospatialCoordinateFormat(inputString, callbackFunction) {
 				responseIncludes: "WKT_GEOMETRY_SIMPLIFIED"
 			};
 
+			displayLoadingDialog( "We're checking our maps for that location... BRB!" );
 			$.ajax({
 				dataType: "json",
 				error: function( jqXhr, textStatus, errorThrown ) {
@@ -222,7 +223,7 @@ function placenameSearch( inputElement ) {
 	tlv.placenameSearchAjax = $.ajax({
 		url: tlv.geocoderUrl + "?" + $.param( queryParams )
 	})
-	.always( function() { 
+	.always( function() {
 		inputElement.typeahead( "destroy" );
 	})
 	.done( function( data ) {
