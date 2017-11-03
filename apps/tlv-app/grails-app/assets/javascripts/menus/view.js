@@ -1,6 +1,6 @@
 function addDimension() {
-	if (checkWebGlCompatability()) { tlv.globe.setEnabled(true); }
-	else { $("#dimensionsSelect").val(2); }
+	if ( checkWebGlCompatability() ) { tlv.globe.setEnabled( true ); }
+	else { $( "#dimensionsSelect" ).val( 2 ); }
 }
 
 function addSwipeListenerToMap() {
@@ -8,31 +8,61 @@ function addSwipeListenerToMap() {
 	if (!firstLayer) { firstLayer = tlv.currentLayer; }
 	if (!secondLayer) { secondLayer = tlv.currentLayer >= tlv.layers.length - 1 ? 0 : tlv.currentLayer + 1; }
 
-	tlv.layers[firstLayer].mapLayer.setVisible(true);
-	tlv.layers[firstLayer].mapLayer.setOpacity(1);
-	tlv.layers[secondLayer].mapLayer.setVisible(true);
-	tlv.layers[secondLayer].mapLayer.setOpacity(1);
+	tlv.layers[ firstLayer ].mapLayer.setVisible( true );
+	tlv.layers[ firstLayer ].mapLayer.setOpacity( 1 );
+	tlv.layers[ secondLayer ].mapLayer.setVisible( true );
+	tlv.layers[ secondLayer ].mapLayer.setOpacity( 1 );
 
-	tlv.swipeLayers = [firstLayer, secondLayer].sort();
-	tlv.layers[tlv.swipeLayers[1]].mapLayer.on("precompose", precomposeSwipe);
-	tlv.layers[tlv.swipeLayers[1]].mapLayer.on("postcompose", postcomposeSwipe);
+	tlv.swipeLayers = [ firstLayer, secondLayer ].sort();
+	tlv.layers[ tlv.swipeLayers[ 0 ] ].mapLayer.on( "precompose", precomposeSwipeLeft );
+	tlv.layers[ tlv.swipeLayers[ 0 ] ].mapLayer.on( "postcompose", postcomposeSwipe );
+	tlv.layers[ tlv.swipeLayers[ 1 ] ].mapLayer.on( "precompose", precomposeSwipeRight );
+	tlv.layers[ tlv.swipeLayers[ 1 ] ].mapLayer.on( "postcompose", postcomposeSwipe );
+
+	var globeLayers = tlv.globe.getCesiumScene().imageryLayers;
+	var numberOfBaseLayers = Object.keys( tlv.baseLayers ).length;
+	var splitLeft = Cesium.ImagerySplitDirection.LEFT;
+	var splitRight = Cesium.ImagerySplitDirection.RIGHT;
+	globeLayers.get( tlv.swipeLayers[ 0 ] + numberOfBaseLayers ).splitDirection = splitLeft;
+	globeLayers.get( tlv.swipeLayers[ 1 ] + numberOfBaseLayers ).splitDirection = splitRight;
+
+	tlv.swipeDragStartX = 0;
+	swipeSliderMove({ clientX: $( "#swipeSlider" ).offset().left });
 }
 
 var changeFrameView = changeFrame;
-	changeFrame = function(params) {
-	if ($("#swipeSelect").val() == "on") {
+	changeFrame = function( params ) {
+	if ( $("#swipeSelect").val() == "on" ) {
 		turnOffSwipe();
-		changeFrameView(params);
+		changeFrameView( params );
 		turnOnSwipe();
 	}
-	else { changeFrameView(params); }
+	else { changeFrameView( params ); }
+}
+
+function changeWmsLayerType() {
+	var layerType = $( "#wmsTilesSelect" ).val();
+
+	$.each(
+		tlv.layers,
+		function( index, layer ) {
+			layer.mapLayer.setVisible( false );
+			var styles = layer.mapLayer.getSource().getParams().STYLES;
+
+			layer.mapLayer = layer[ layerType ];
+			layer.mapLayer.getSource().updateParams({ STYLES: styles });
+		}
+	);
+
+	changeFrame( "rewind" );
+	changeFrame( "fastForward" );
 }
 
 var createMapControlsView = createMapControls;
 createMapControls = function() {
 	createMapControlsView();
 
-	$.each(createSwipeControls(), function(i, x) { tlv.mapControls.push(x); });
+	$.each( createSwipeControls(), function( i, x ) { tlv.mapControls.push( x ); } );
 }
 
 function createSwipeControls() {
@@ -47,10 +77,7 @@ function createSwipeControls() {
 	var rightSwipeTextControl = new ol.control.Control({ element: rightSwipeTextDiv });
 
 	var sliderInput = document.createElement("input");
-	sliderInput.id = "swipeSliderInput";
-	sliderInput.style = "width: 100%";
-	sliderInput.type = "text";
-	sliderInput.setAttribute("data-slider-id", "swipeSlider");
+	sliderInput.id = "swipeSlider";
 	var sliderControl = new ol.control.Control({ element: sliderInput });
 
 
@@ -58,55 +85,65 @@ function createSwipeControls() {
 }
 
 function dimensionToggle() {
-	var state = $("#dimensionsSelect").val();
-	if (state == 2) { removeDimension(); }
+	var dimensions = $( "#dimensionsSelect" ).val();
+	if ( dimensions == 2 ) { removeDimension(); }
 	else { addDimension(); }
 }
 
 function initializeSwipeSlider() {
-	var swipeSlider = $("#swipeSliderInput");
-	swipeSlider.slider({
-		max: 100,
-		min: 0,
-		tooltip: "hide",
-		value: 50
-	});
-	swipeSlider.on("slide", function() { tlv.map.render(); });
-
-	$("#swipeSlider").hide();
+	tlv.swipeDragStartX = 0;
+	var swipeSlider = $("#swipeSlider" );
+	swipeSlider.on( "mousedown", swipeSliderMouseDown );
+	$( window ).on( "mouseup", swipeSliderMouseUp );
 }
 
-var precomposeSwipe = function(event) {
+function precomposeSwipeLeft( event ) {
+	// only
+	var swipeSlider = $( "#swipeSlider" );
 	var context = event.context;
-	var width = context.canvas.width * $("#swipeSliderInput").slider("getValue") / 100;
+	var width = context.canvas.width * swipeSlider.offset().left / swipeSlider.parent().width();
 
 	context.save();
 	context.beginPath();
-	context.rect(width, 0, context.canvas.width - width, context.canvas.height);
+	context.rect( 0, 0, width, context.canvas.height);
+	context.clip();
+}
+
+function precomposeSwipeRight( event ) {
+	var swipeSlider = $( "#swipeSlider" );
+	var context = event.context;
+	var width = context.canvas.width * swipeSlider.offset().left / swipeSlider.parent().width();
+
+	context.save();
+	context.beginPath();
+	context.rect( width, 0, context.canvas.width - width, context.canvas.height);
 	context.clip();
 }
 
 var postcomposeSwipe = function(event) { event.context.restore(); }
 
-function removeDimension() { tlv.globe.setEnabled(false); }
+function removeDimension() { tlv.globe.setEnabled( false ); }
 
 function removeSwipeListenerFromMap() {
 	$.each(
 		tlv.layers,
-		function(i, x) {
-			x.mapLayer.un("precompose", precomposeSwipe);
-			x.mapLayer.un("postcompose", postcomposeSwipe);
-			x.mapLayer.setOpacity(0);
-			x.mapLayer.setVisible(false);
+		function( i, x ) {
+			x.mapLayer.un( "precompose", precomposeSwipeLeft );
+			x.mapLayer.un( "precompose", precomposeSwipeRight );
+			x.mapLayer.un( "postcompose", postcomposeSwipe );
+			x.mapLayer.setOpacity( 0 );
+			x.mapLayer.setVisible( false );
+
+			tlv.globe.getCesiumScene().imageryLayers.get( i ).splitDirection = Cesium.ImagerySplitDirection.NONE;
 		}
 	);
 
-	tlv.layers[tlv.currentLayer].mapLayer.setVisible(true);
-	tlv.layers[tlv.currentLayer].mapLayer.setOpacity(1);
+	tlv.layers[ tlv.currentLayer ].mapLayer.setVisible( true );
+	tlv.layers[ tlv.currentLayer ].mapLayer.setOpacity( 1 );
 }
 
 function swipeToggle() {
-	var state = $("#swipeSelect").val();
+	var state = $( "#swipeSelect" ).val();
 	if (state == "on") { turnOnSwipe(); }
 	else { turnOffSwipe(); }
 }
@@ -115,6 +152,25 @@ var setupMapView = setupMap;
 setupMap = function() {
 	setupMapView();
 	initializeSwipeSlider();
+}
+
+function swipeSliderMouseDown( event ) {
+	tlv.swipeDragStartX = event.clientX - $( "#swipeSlider" ).offset().left;
+	$( window ).on( "mousemove", swipeSliderMove );
+}
+
+function swipeSliderMouseUp( event ) {
+	$( "#swipeSlider" ).blur();
+	$( window ).unbind( "mousemove", swipeSliderMove );
+}
+
+function swipeSliderMove( event ) {
+	var swipeSlider = $( "#swipeSlider" )
+	var splitPosition = ( event.clientX - tlv.swipeDragStartX ) / swipeSlider.parent().width();
+	swipeSlider.css( "left", ( 100.0 * splitPosition ) + "%" );
+	tlv.map.render();
+
+	tlv.globe.getCesiumScene().imagerySplitPosition = splitPosition;
 }
 
 function terrainWireframeToggle() {
@@ -128,28 +184,28 @@ function terrainWireframeToggle() {
 }
 
 function turnOffSwipe() {
-	$(".ol-full-screen").show();
-	$(".ol-mouse-position").show();
-	$(".ol-rotate").show();
-	$(".ol-zoom").show();
+	$( ".ol-full-screen" ).show();
+	$( ".ol-mouse-position" ).show();
+	$( ".ol-rotate" ).show();
+	$( ".ol-zoom" ).show();
 
-	$("#leftSwipeTextDiv").hide();
-	$("#rightSwipeTextDiv").hide();
-	$("#swipeSlider").hide();
+	$( "#leftSwipeTextDiv" ).hide();
+	$( "#rightSwipeTextDiv" ).hide();
+	$( "#swipeSlider" ).hide();
 	removeSwipeListenerFromMap();
 
 	updateScreenText();
 }
 
 function turnOnSwipe() {
-	$(".ol-full-screen").hide();
-	$(".ol-mouse-position").hide();
-	$(".ol-rotate").hide();
-	$(".ol-zoom").hide();
+	$( ".ol-full-screen" ).hide();
+	$( ".ol-mouse-position" ).hide();
+	$( ".ol-rotate" ).hide();
+	$( ".ol-zoom" ).hide();
 
-	$("#leftSwipeTextDiv").show();
-	$("#rightSwipeTextDiv").show();
-	$("#swipeSlider").show();
+	$( "#leftSwipeTextDiv" ).show();
+	$( "#rightSwipeTextDiv" ).show();
+	$( "#swipeSlider" ).show();
 	addSwipeListenerToMap();
 
 	updateScreenText();
@@ -159,7 +215,7 @@ var updateScreenTextView = updateScreenText;
 updateScreenText = function() {
 	updateScreenTextView();
 
-	if ( $("#swipeSelect" ).val() == "on" ) {
+	if ( $( "#swipeSelect" ).val() == "on" ) {
 		$( "#acquisitionDateDiv" ).html( "&nbsp;" );
 		$( "#imageIdDiv" ).html( "&nbsp;" );
 
