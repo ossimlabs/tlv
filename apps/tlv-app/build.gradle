@@ -112,7 +112,7 @@ assets {
     excludes = [
         "**/bootstrap/**",
         "**/bootswatch-slate/**",
-        "**/Cesium/**",
+        "**/webjars/cesium/**",
         "**/jquery/**",
         "**/momentjs/**",
         "**/requirejs/**",
