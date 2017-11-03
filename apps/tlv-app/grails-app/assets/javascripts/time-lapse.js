@@ -198,43 +198,40 @@ function getTimeToAdjacentImage( layers, layerIndex, adjacency ) {
 	else { return false; }
 }
 
-function moveLayerDownInStack(layerIndex) {
+function moveLayerDownInStack( layerIndex ) {
 	var nextLayerIndex = layerIndex + 1;
-	if (nextLayerIndex < tlv.layers.length)	{
-		var thisLayer = tlv.layers[layerIndex];
-		tlv.layers[layerIndex] = tlv.layers[nextLayerIndex];
-		tlv.layers[nextLayerIndex] = thisLayer;
+	if ( nextLayerIndex < tlv.layers.length ) {
+		var thisLayer = tlv.layers[ layerIndex ];
+		tlv.layers[ layerIndex ] = tlv.layers[ nextLayerIndex ];
+		tlv.layers[ nextLayerIndex ] = thisLayer;
 
 		var collection = tlv.map.getLayers();
-		var element = collection.removeAt(tlv.layers.length - 1 - layerIndex);
-        	collection.insertAt(tlv.layers.length - 1 - nextLayerIndex, element);
+		var element = collection.removeAt( tlv.layers.length - 1 - layerIndex );
+        collection.insertAt( tlv.layers.length - 1 - nextLayerIndex, element );
 	}
 
-	changeFrame("fastForward");
-	changeFrame("rewind");
+	changeFrame( "fastForward" );
+	changeFrame( "rewind" );
 
-	if ($("#summaryTableDialog").hasClass("in")) { buildSummaryTable(); }
+	if ( $( "#summaryTableDialog" ).hasClass( "in" ) ) { buildSummaryTable(); }
 }
 
-function moveLayerUpInStack(layerIndex) {
-	var collection = tlv.map.getLayers();
-	var element = collection.getArray()[tlv.layers.length - 1 - layerIndex];
-
+function moveLayerUpInStack( layerIndex ) {
 	var previousLayerIndex = layerIndex - 1;
-	if (previousLayerIndex >= 0) {
-		var thisLayer = tlv.layers[layerIndex];
-		tlv.layers[layerIndex] = tlv.layers[previousLayerIndex];
-		tlv.layers[previousLayerIndex] = thisLayer;
+	if ( previousLayerIndex >= 0 ) {
+		var thisLayer = tlv.layers[ layerIndex ];
+		tlv.layers[ layerIndex ] = tlv.layers[ previousLayerIndex ];
+		tlv.layers[ previousLayerIndex ] = thisLayer;
 
 		var collection = tlv.map.getLayers();
-		var element = collection.removeAt(tlv.layers.length - 1 - layerIndex);
-		collection.insertAt(tlv.layers.length - 1 - previousLayerIndex, element);
+		var element = collection.removeAt( tlv.layers.length - 1 - layerIndex );
+		collection.insertAt( tlv.layers.length - 1 - previousLayerIndex, element );
 	}
 
-	changeFrame("fastForward");
-	changeFrame("rewind");
+	changeFrame( "fastForward" );
+	changeFrame( "rewind" );
 
-	if ($("#summaryTableDialog").hasClass("in")) { buildSummaryTable(); }
+	if ( $( "#summaryTableDialog" ).hasClass( "in" ) ) { buildSummaryTable(); }
 }
 
 function orientDevice(event) {
