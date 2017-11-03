@@ -23,7 +23,22 @@
 /* mobile device support */
 .ol-touch .ol-rotate { top: 80px; }
 
+/* mobile device support */
 .ol-touch .ol-full-screen { top: 120px; }
+
+#swipeSlider {
+	display: none;
+	height: 100%;
+	left: 50%;
+	position: absolute;
+	top: 0px;
+	width: 1px;
+}
+
+#swipeSlider:hover {
+	cursor: ew-resize;
+}
+
 
 #tileLoadProgressBar {
 	background: rgba(255, 255, 255, 1);
