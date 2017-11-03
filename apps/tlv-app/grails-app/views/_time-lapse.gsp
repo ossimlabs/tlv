@@ -5,5 +5,7 @@
 <div class = "row">
 	<div id = "tileLoadProgressBar"></div>
 	<g:render template = "/menus/image-properties"/>
-	<div class = "map" id = "map"><div id = "tooltipInfo"></div>
+	<div class = "map" id = "map">
+		<div id = "tooltipInfo"></div>
+	</div>
 </div>
