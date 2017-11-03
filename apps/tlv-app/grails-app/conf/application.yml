@@ -5,20 +5,29 @@ about:
 # List any base layers that may be available
 # Optional
 #baseLayers:
+#    o2Mosaic:
+#        layer: WorldGeographic
+#        matrixSet: WorldGeographic
+#        name: O2 Mosaic
+#        projection: EPSG:4326
+#        style: default
+#        type: wmts
+#        visible: true
+#        url: ${baseUrl}/omar-wmts/wmts/getTile
 #    osmBasic:
 #        layers: o2-basemap-basic
 #        name: OSM Basic
 #        styles:
 #        type: wms
-#        url: ${baseUrl}/service-proxy/wmsProxy
-#        visible: false
+#        url: ${baseUrl}/omar-mapproxy/service
+#        visible: true
 #    osmBright:
 #        layers: o2-basemap-bright
 #        name: OSM Bright
 #        styles:
 #        type: wms
-#        visible: true
-#        url: ${baseUrl}/service-proxy/wmsProxy
+#        visible: false
+#        url: ${baseUrl}/omar-mapproxy/service
 
 baseUrl: https://omar-dev.ossim.io
 
@@ -44,13 +53,13 @@ baseUrl: https://omar-dev.ossim.io
 
 # List the various repository details
 # Required
-libraries:
-    o2-dev:
-        label: O2-DEV
-        layerType: wms
-        name: o2-dev
-        wfsUrl: ${baseUrl}/omar-wfs/wfs
-        wmsUrl: ${baseUrl}/omar-wms/wms
+#libraries:
+#    o2-dev:
+#        label: O2-DEV
+#        layerType: wms
+#        name: o2-dev
+#        wfsUrl: ${baseUrl}/omar-wfs/wfs
+#        wmsUrl: ${baseUrl}/omar-wms/wms
 #    o2-rel:
 #        label: O2-REL
 #        layerType: wms
