@@ -245,7 +245,7 @@ function initializeLibraryCheckboxes() {
 	if ( tlv.searchLibraries ) {
 		$.each(
 			tlv.searchLibraries.split( "," ),
-			function( index, library ) { console.dir("#searchLibrary" + library.capitalize() + "Checkbox");
+			function( index, library ) { 
 				var checkbox = $( "#searchLibrary" + library.capitalize() + "Checkbox" );
 				checkbox.trigger( "click" );
 			}
