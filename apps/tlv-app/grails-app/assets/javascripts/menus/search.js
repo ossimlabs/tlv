@@ -66,8 +66,9 @@ function beginSearch() {
 
 				$.ajax({
 					dataType: "json",
-					error: function() {
+					error: function(x, y, z) {
 						tlv.libraries[ library ].searchComplete = true;
+						tlv.debug = { x: x, y: y, z: z };
 						processResults();
 					},
 					success: function( data ) {
@@ -245,7 +246,7 @@ function initializeLibraryCheckboxes() {
 	if ( tlv.searchLibraries ) {
 		$.each(
 			tlv.searchLibraries.split( "," ),
-			function( index, library ) { 
+			function( index, library ) {
 				var checkbox = $( "#searchLibrary" + library.capitalize() + "Checkbox" );
 				checkbox.trigger( "click" );
 			}
