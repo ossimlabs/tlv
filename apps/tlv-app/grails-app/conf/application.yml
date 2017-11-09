@@ -2,7 +2,8 @@ about:
     release: Egmont Key
     releaseNumber: 2.1.1
 
-# If there is a version to denote in the navbar, set it here
+# If there is a version to denote in the banner, set it here
+# Optional
 #banner:
 #    backgroundColor: darkgray
 #    description: This application is subject to change without notice.
