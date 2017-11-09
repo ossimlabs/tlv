@@ -2,6 +2,9 @@ about:
     release: Egmont Key
     releaseNumber: 2.1.1
 
+# If there is a version to denote in the navbar, set it here
+#banner: "BETA"
+
 # List any base layers that may be available
 # Optional
 #baseLayers:
