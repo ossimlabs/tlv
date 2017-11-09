@@ -39,7 +39,6 @@
 	cursor: ew-resize;
 }
 
-
 #tileLoadProgressBar {
 	background: rgba(255, 255, 255, 1);
 	height: 1px;
@@ -50,18 +49,7 @@
 	width: 0;
 }
 
-.tooltip.in { opacity: 1; }
-
-.tooltip.top .tooltip-arrow { border-top-color: white; }
-
 .tooltip-inner {
-	border: 2px solid white;
-	white-space: pre-wrap;
-}
-
-#tooltipInfo {
-	height: 1px;
-	position: absolute;
-	width: 1px;
-	z-index: 100;
+	max-width: none;
+	white-space: nowrap;
 }

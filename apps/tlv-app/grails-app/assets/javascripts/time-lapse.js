@@ -265,12 +265,6 @@ var pageLoadTimeLapse = pageLoad;
 pageLoad = function() {
 	pageLoadTimeLapse();
 
-	tlv.tooltipInfo = $("#tooltipInfo");
-	tlv.tooltipInfo.tooltip({
-		animation: false,
-		trigger: "manual"
-	});
-
 	if (tlv.layers) {
 		$("#searchDialog").modal("hide");
 		tlv.bbox = calculateInitialViewBbox();
@@ -333,7 +327,6 @@ function setupTimeLapse() {
 	tlv.map.on("pointermove", function(event) {
 		var feature = tlv.map.forEachFeatureAtPixel(event.pixel, function(feature, layer) { return feature; });
 		if (feature) { aFeatureHasBeenSelected(feature, event); }
-		else { tlv.tooltipInfo.tooltip("hide"); }
 	});
 
 

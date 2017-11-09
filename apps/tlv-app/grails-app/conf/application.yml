@@ -4,6 +4,7 @@ about:
 
 # If there is a version to denote in the navbar, set it here
 #banner: "BETA"
+#bannerTooltip: "This application is subject to change without notice."
 
 # List any base layers that may be available
 # Optional
