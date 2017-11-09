@@ -3,11 +3,11 @@ about:
     releaseNumber: 2.1.1
 
 # If there is a version to denote in the navbar, set it here
-banner:
-    backgroundColor: darkgray
-    description: This application is subject to change without notice.
-    text: BETA
-    textColor: white
+#banner:
+#    backgroundColor: darkgray
+#    description: This application is subject to change without notice.
+#    text: BETA
+#    textColor: white
 
 # List any base layers that may be available
 # Optional
