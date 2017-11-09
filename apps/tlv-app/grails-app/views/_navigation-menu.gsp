@@ -28,7 +28,6 @@
 					<g:render template = "/isa-menu"/>
 				</ul>
 				<ul class = "nav navbar-nav navbar-right">
-					<g:render template = "/banner"/>
 					<g:render template = "/user"/>
 					<g:render template = "/menus/help-menu"/>
 				</ul>
