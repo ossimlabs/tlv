@@ -325,18 +325,19 @@ function theTileHasStartedLoadingMap(layerSource) {
 }
 
 function updateMapSize() {
-	if (tlv.map) {
-		var windowHeight = $(window).height();
-		var securityClassificationHeaderHeight = $(".security-classification").parent().height();
-		var navigationMenuHeight = $("#navigationMenu").parent().height();
-		var imageInfoHeight = $("#navigationMenu").parent().next().height();
-		var tileLoadProgressBarHeight = $("#tileLoadProgressBar").height();
+	if ( tlv.map ) {
+		var windowHeight = $( window ).height();
+		var banners = $( ".security-classification" ).length;
+		var bannersHeight = banners * $( ".security-classification" ).height();
+		var navigationMenuHeight = $( "#navigationMenu" ).parent().height();
+		var imageInfoHeight = $( "#navigationMenu" ).parent().next().height();
+		var tileLoadProgressBarHeight = $( "#tileLoadProgressBar" ).height();
 		var mapHeight = windowHeight
-			- securityClassificationHeaderHeight
+			- bannersHeight
 			- navigationMenuHeight
 			- imageInfoHeight
 			- tileLoadProgressBarHeight;
-		$("#map").height(mapHeight);
+		$( "#map" ).height( mapHeight );
 		tlv.map.updateSize();
 	}
 }
