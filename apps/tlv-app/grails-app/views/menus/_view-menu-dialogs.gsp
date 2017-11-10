@@ -22,11 +22,11 @@
 						<option value = "on">ON</option>
 					</select>
 
-					<%--<label>WMS Tiles</label>
+					<label>WMS Tiles</label>
 					<select class = "form-control" id = "wmsTilesSelect" onchange = "changeWmsLayerType(); $( '#viewDialog' ).modal( 'hide' );">
 						<option value = "tileLayer">Multiple Tiles</option>
 						<option value = "imageLayer">Single Tile</option>
-					</select>--%>
+					</select>
 				</div>
 			</div>
 			<div class = "modal-footer">
