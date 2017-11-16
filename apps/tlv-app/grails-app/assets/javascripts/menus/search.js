@@ -66,8 +66,9 @@ function beginSearch() {
 
 				$.ajax({
 					dataType: "json",
-					error: function() {
+					error: function(x, y, z) {
 						tlv.libraries[ library ].searchComplete = true;
+						tlv.debug = { x: x, y: y, z: z };
 						processResults();
 					},
 					success: function( data ) {
@@ -104,30 +105,6 @@ function beginSearch() {
 			}
 		);
 	}
-}
-
-function bookmarkSearchParams() {
-	var url = location.origin + tlv.contextPath + "?";
-
-	var searchParams = getSearchParams();
-	if ( searchParams ) {
-		if ( searchParams.error ) { displayErrorDialog( searchParams.error ); }
-		else {
-			var bookmarkParams = [];
-			$.each(
-				searchParams,
-				function( i, x ) {
-					if ( Array.isArray( x ) ) { bookmarkParams.push( i + "=" + x.join() ); }
-					else { bookmarkParams.push( i + "=" + x ); }
-				}
-			);
-			url += bookmarkParams.join( "&" );
-
-			$( "#searchBookmarkHref" ).attr( "href", url );
-			$( "#searchBookmarkDialog" ).modal( "show" );
-		}
-	}
-	else { displayErrorDialog( "Uh oh, something went wrong." ); }
 }
 
 function getDate(date) {
@@ -269,7 +246,7 @@ function initializeLibraryCheckboxes() {
 	if ( tlv.searchLibraries ) {
 		$.each(
 			tlv.searchLibraries.split( "," ),
-			function( index, library ) { console.dir("#searchLibrary" + library.capitalize() + "Checkbox");
+			function( index, library ) {
 				var checkbox = $( "#searchLibrary" + library.capitalize() + "Checkbox" );
 				checkbox.trigger( "click" );
 			}

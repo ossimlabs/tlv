@@ -79,6 +79,7 @@ function convertGeospatialCoordinateFormat(inputString, callbackFunction) {
 				responseIncludes: "WKT_GEOMETRY_SIMPLIFIED"
 			};
 
+			displayLoadingDialog( "We're checking our maps for that location... BRB!" );
 			$.ajax({
 				dataType: "json",
 				error: function( jqXhr, textStatus, errorThrown ) {
@@ -206,5 +207,43 @@ function initializeLoadingDialog() {
 	$("#loadingDialog").modal({
 		keyboard: false,
 		show: false
+	});
+}
+
+function placenameSearch( inputElement ) {
+	var queryParams = {
+		autocomplete: true,
+		autocompleteBias: "BALANCED",
+		maxInterpretations: 10,
+		query: inputElement.val(),
+		responseIncludes: "WKT_GEOMETRY_SIMPLIFIED"
+	};
+
+	if ( tlv.placenameSearchAjax ) { tlv.placenameSearchAjax.abort(); }
+	tlv.placenameSearchAjax = $.ajax({
+		url: tlv.geocoderUrl + "?" + $.param( queryParams )
+	})
+	.always( function() {
+		inputElement.typeahead( "destroy" );
+	})
+	.done( function( data ) {
+		var places = data.interpretations.map( function( place ) {
+			return { displayName: place.feature.displayName };
+		});
+
+		inputElement.typeahead( null, {
+			display: function( suggestion ) {
+				inputElement.focus();
+				return suggestion.displayName;
+			},
+			source: function( query, sync ) {
+				inputElement.focus();
+				return sync( places );
+			}
+		});
+		inputElement.focus();
+	})
+	.fail( function() {
+		inputElement.focus();
 	});
 }

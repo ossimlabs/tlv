@@ -18,12 +18,38 @@ function addBaseLayersToTheMap() {
 					});
 					break;
 
+				case "wmts":
+					var matrixIds = [];
+					var projection = ol.proj.get( x.projection );
+					var projectionExtent = projection.getExtent();
+					var resolutions = [];
+					var size = ol.extent.getWidth( projectionExtent ) * 0.5 / 256;
+					for ( var i = 0; i < 20; ++i ) {
+						matrixIds.push( i );
+						resolutions.push( size / Math.pow( 2, i ) );
+					}
+
+					source = new ol.source.WMTS({
+						format: "image/png",
+						layer: x.layer,
+						matrixSet: x.matrixSet,
+						projection: projection,
+						style: x.style,
+						tileGrid: new ol.tilegrid.WMTS({
+							origin: ol.extent.getTopLeft( projectionExtent ),
+							resolutions: resolutions,
+							matrixIds: matrixIds
+						}),
+						url: x.url,
+					});
+					break;
+
 				case "xyz":
 					source = new ol.source.XYZ({ url: x.url });
 					break;
 			}
 
-			tlv.baseLayers[i] = new ol.layer.Tile({
+			tlv.baseLayers[ i ] = new ol.layer.Tile({
 				source: source,
 				visible: x.visible
 			});
@@ -36,25 +62,21 @@ function addBaseLayersToTheMap() {
 }
 
 function addLayerToTheMap( layer ) {
-	var source = createImageLayerSource( layer );
-	source.on("tileloadstart", function( event ) { theTileHasStartedLoadingMap( this ); });
-	source.on("tileloadend", function( event ) { theTileHasFinishedLoadingMap( this ); });
+	createLayerSources( layer );
+	createLayers( layer );
 
-	var footprint = layer.metadata.footprint.coordinates;
-	var extent = footprint ? new ol.geom.MultiPolygon( footprint ).getExtent() : null;
-	layer.mapLayer = new ol.layer.Tile({
-		extent: extent ? ol.proj.transformExtent( extent, "EPSG:4326", "EPSG:3857" ) : undefined,
-		opacity: 0,
-		source: source,
-		visible: false
-	});
+	tlv.map.addLayer(layer.imageLayer);
+	tlv.map.addLayer(layer.tileLayer);
+	layer.mapLayer = layer.tileLayer;
+
+
 
 	layer.layerLoaded = false;
 	layer.tilesLoaded = 0;
 	layer.tilesLoading = 0;
 	if ( !layer.opacity ) { layer.opacity = 1; }
 
-	tlv.map.addLayer(layer.mapLayer);
+
 }
 
 function changeBaseLayer(layerName) {
@@ -84,27 +106,56 @@ function createContextMenuContent(coordinate) {
 	$("#imageMetadataPre").html( JSON.stringify( tlv.layers[tlv.currentLayer].metadata, null, 2 ) );
 }
 
-function createImageLayerSource( layer ) {
-	return new ol.source.TileWMS({
-		params: {
-			FILTER: "in(" + layer.metadata.id + ")",
-			FORMAT: "image/png",
-			IDENTIFIER: Math.floor( Math.random() * 1000000 ),
-			LAYERS: "omar:raster_entry",
-			STYLES: JSON.stringify({
-				bands: layer.bands || "default",
-				brightness: layer.brightness || 0,
-				contrast: layer.contrast || 1,
-				hist_center: true,
-				hist_op: layer.histOp || "auto-minmax",
-				resampler_filter: layer.resamplerFilter || "bilinear",
-				sharpen_mode: layer.sharpenMode || "none"
-			}),
-			TRANSPARENT: true,
-			VERSION: "1.1.1"
-		},
+function createLayers( layer ) {
+	var footprint = layer.metadata.footprint.coordinates;
+	var extent = footprint ? new ol.geom.MultiPolygon( footprint ).getExtent() : null;
+	extent = extent ? ol.proj.transformExtent( extent, "EPSG:4326", "EPSG:3857" ) : undefined;
+
+	layer.imageLayer = new ol.layer.Image({
+		extent: extent,
+		opacity: 0,
+		source: layer.imageSource,
+		visible: false
+	});
+
+	layer.tileLayer = new ol.layer.Tile({
+		extent: extent,
+		opacity: 0,
+		source: layer.tileSource,
+		visible: false
+	});
+}
+
+function createLayerSources( layer ) {
+	var params = {
+		FILTER: "in(" + layer.metadata.id + ")",
+		FORMAT: "image/png",
+		IDENTIFIER: Math.floor( Math.random() * 1000000 ),
+		LAYERS: "omar:raster_entry",
+		STYLES: JSON.stringify({
+			bands: layer.bands || "default",
+			brightness: layer.brightness || 0,
+			contrast: layer.contrast || 1,
+			hist_center: true,
+			hist_op: layer.histOp || "auto-minmax",
+			resampler_filter: layer.resamplerFilter || "bilinear",
+			sharpen_mode: layer.sharpenMode || "none"
+		}),
+		TRANSPARENT: true,
+		VERSION: "1.1.1"
+	};
+
+	layer.imageSource = new ol.source.ImageWMS({
+		params: params,
 		url: tlv.libraries[ layer.library ].wmsUrl
 	});
+
+	layer.tileSource = new ol.source.TileWMS({
+		params: params,
+		url: tlv.libraries[ layer.library ].wmsUrl
+	});
+	layer.tileSource.on("tileloadstart", function( event ) { theTileHasStartedLoadingMap( this ); });
+	layer.tileSource.on("tileloadend", function( event ) { theTileHasFinishedLoadingMap( this ); });
 }
 
 function createMapControls() {
@@ -274,18 +325,19 @@ function theTileHasStartedLoadingMap(layerSource) {
 }
 
 function updateMapSize() {
-	if (tlv.map) {
-		var windowHeight = $(window).height();
-		var securityClassificationHeaderHeight = $(".security-classification").parent().height();
-		var navigationMenuHeight = $("#navigationMenu").parent().height();
-		var imageInfoHeight = $("#navigationMenu").parent().next().height();
-		var tileLoadProgressBarHeight = $("#tileLoadProgressBar").height();
+	if ( tlv.map ) {
+		var windowHeight = $( window ).height();
+		var banners = $( ".security-classification" ).length;
+		var bannersHeight = banners * $( ".security-classification" ).height();
+		var navigationMenuHeight = $( "#navigationMenu" ).parent().height();
+		var imageInfoHeight = $( "#navigationMenu" ).parent().next().height();
+		var tileLoadProgressBarHeight = $( "#tileLoadProgressBar" ).height();
 		var mapHeight = windowHeight
-			- securityClassificationHeaderHeight
+			- bannersHeight
 			- navigationMenuHeight
 			- imageInfoHeight
 			- tileLoadProgressBarHeight;
-		$("#map").height(mapHeight);
+		$( "#map" ).height( mapHeight );
 		tlv.map.updateSize();
 	}
 }

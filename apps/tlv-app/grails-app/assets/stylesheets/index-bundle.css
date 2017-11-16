@@ -3,8 +3,9 @@
 *= require webjars/font-awesome/4.4.0/css/font-awesome.css
 *= require bootstrap-datetimepicker-4.15.35
 *= require bootstrap-slider
-*= require ol-3.20
-*= require Cesium/Widgets/widgets.css
+*= require webjars/typeahead.js-bootstrap-css/1.2.1/typeaheadjs.css
+*= require ol-4.4.2
+*= require webjars/cesium/1.38.0/Build/Cesium/Widgets/widgets.css
 *=
 *= require index
 *= require index-plugin

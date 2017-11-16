@@ -14,7 +14,7 @@
 							if ( params.beLookup?.url ) { placeholder = placeholder.plus( 0, "BE" ) }
 							if ( params.geocoderUrl ) { placeholder.push( "Placename" ) }
 						%>
-						<input class = "form-control" id = "geoJumpLocationInput" placeholder = "${ placeholder.join( ", " ) }" type = "text">
+						<input class = "typeahead form-control" id = "geoJumpLocationInput" placeholder = "${ placeholder.join( ", " ) }" type = "text">
 						<span class = "input-group-btn">
 							<button class = "btn btn-primary"  onclick = "geoJump($('#geoJumpLocationInput').val()); $('#timeLapseDialog').modal('hide')" type = "button">Go!</button>
 						</span>
@@ -38,6 +38,12 @@
 </div>
 
 <g:javascript>
+	$( "#geoJumpLocationInput" ).on( "input", function () {
+		if ( tlv.geocoderUrl ) {
+			placenameSearch( $("#geoJumpLocationInput") );
+		}
+	});
+
 	$( "#timeLapseDialog" ).on( "hidden.bs.modal", function (event) { hideDialog( "timeLapseDialog" ); } );
 	$( "#timeLapseDialog" ).on( "shown.bs.modal", function (event) { displayDialog( "timeLapseDialog" ); } );
 </g:javascript>

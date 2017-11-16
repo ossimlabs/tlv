@@ -23,7 +23,21 @@
 /* mobile device support */
 .ol-touch .ol-rotate { top: 80px; }
 
+/* mobile device support */
 .ol-touch .ol-full-screen { top: 120px; }
+
+#swipeSlider {
+	display: none;
+	height: 100%;
+	left: 50%;
+	position: absolute;
+	top: 0px;
+	width: 1px;
+}
+
+#swipeSlider:hover {
+	cursor: ew-resize;
+}
 
 #tileLoadProgressBar {
 	background: rgba(255, 255, 255, 1);
@@ -35,18 +49,7 @@
 	width: 0;
 }
 
-.tooltip.in { opacity: 1; }
-
-.tooltip.top .tooltip-arrow { border-top-color: white; }
-
 .tooltip-inner {
-	border: 2px solid white;
-	white-space: pre-wrap;
-}
-
-#tooltipInfo {
-	height: 1px;
-	position: absolute;
-	width: 1px;
-	z-index: 100;
+	max-width: none;
+	white-space: nowrap;
 }
