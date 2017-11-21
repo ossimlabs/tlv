@@ -7,7 +7,7 @@
 	<g:if test = "${ userName }">
 		<li>
 			<p class = "navbar-text">
-				<span class = "fa fa-user"></span>&nbsp;
+				<span class = "fa fa-user-o"></span>&nbsp;
 				${ userName }
 			</p>
 		</li>
