@@ -15,6 +15,7 @@ class RestApiService {
 		params.remove("controller")
 
 		params.availableBaseLayers = grailsApplication.config.baseLayers
+		params.baseUrl = grailsApplication.config.baseUrl
 		params.beLookup = grailsApplication.config.beLookup
 		params.geocoderUrl = grailsApplication.config.geocoderUrl ?: null
 		params.libraries = grailsApplication.config.libraries

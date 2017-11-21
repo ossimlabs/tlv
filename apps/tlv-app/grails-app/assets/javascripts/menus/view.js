@@ -97,6 +97,38 @@ function initializeSwipeSlider() {
 	$( window ).on( "mouseup", swipeSliderMouseUp );
 }
 
+function openImageSpace() {
+	var layer = tlv.layers[ tlv.currentLayer ];
+	var library = tlv.libraries[ layer.library ];
+	var metadata = layer.metadata;
+	var styles = JSON.parse( layer.mapLayer.getSource().getParams().STYLES );
+
+	var url = library.imageSpaceUrl;
+	var params = {
+		bands: styles.bands,
+		brightness: styles.brightness,
+		contrast: styles.contrast,
+		entry_id: metadata.entry_id,
+		filename: metadata.filename,
+		height: metadata.height,
+		histCenterTile: styles.hist_center,
+		histOp: styles.hist_op,
+		imageId: metadata.id,
+		imageSpaceRequestUrl: tlv.baseUrl + "/omar-oms",
+		mensaRequestUrl: tlv.baseUrl + "/omar-mensa",
+		numOfBands: metadata.number_of_bands,
+		numResLevels: metadata.number_of_res_levels,
+		resamplerFilter: styles.resampler_filter,
+		sharpenMode: styles.sharpen_mode,
+		showModalSplash: false,
+		uiRequestUrl: tlv.baseUrl + "/omar-ui",
+		wfsRequestUrl: library.wfsUrl,
+		width: metadata.width
+	};
+
+	window.open( url + "?" + $.param( params ) );
+}
+
 function precomposeSwipeLeft( event ) {
 	// only
 	var swipeSlider = $( "#swipeSlider" );

@@ -10,6 +10,11 @@
 						<option value = 3>3D</option>
 					</select>
 
+					<label>Image Space:</label>
+					<button class = "btn btn-primary form-control" onclick = "openImageSpace(); $('#viewDialog').modal('hide');">
+						Open
+					</button>
+
 					<label>Swipe</label>
 					<select class = "form-control" id = "swipeSelect" onchange = "swipeToggle(); $('#viewDialog').modal('hide');">
 						<option value = "off">OFF</option>
