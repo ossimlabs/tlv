@@ -1,11 +1,9 @@
 # If there is a version to denote, set it here
-# Optional
 about:
     release: Egmont Key
     releaseNumber: 2.1.2
 
 # If there a page banner is needed, set it here
-# Optional
 #banner:
 #    backgroundColor: darkgray
 #    description: This application is subject to change without notice.
@@ -13,7 +11,6 @@ about:
 #    textColor: white
 
 # List any base layers that may be available
-# Optional
 #baseLayers:
 #    o2Mosaic:
 #        layer: WorldGeographic
@@ -39,21 +36,19 @@ about:
 #        visible: false
 #        url: ${baseUrl}/omar-mapproxy/service
 
+# Define the base URL to be used throughout the configuration
 baseUrl: https://omar-dev.ossim.io
 
-# If BEs are available, define the WFS query schema here
-# Optional
+# If BEs are available, define the WFS query schema
 #beLookup:
 #    columnName: be_number
 #    typeName: omar:facility
 #    url: ${baseUrl}/omar-wfs/wfs
 
 # If documentation is available, define the URL
-# Optional
 #docsUrl: ${baseUrl}/omar-docs
 
 # If the twofishes geocoder is available, define the URL
-# Optional
 #geocoderUrl: ${baseUrl}/omar-ui/twoFishesProxy
 
 # If ISA is available, define the URL
@@ -62,9 +57,10 @@ baseUrl: https://omar-dev.ossim.io
 #isaUrl: ${baseUrl}/isa-ui/
 
 # List the various repository details
-# Required
+# You need at least one
 #libraries:
 #    o2-dev:
+#        imageSpaceUrl: ${baseUrl}/omar-ui/omar/#/mapImage
 #        label: O2-DEV
 #        layerType: wms
 #        name: o2-dev
@@ -78,18 +74,15 @@ baseUrl: https://omar-dev.ossim.io
 #        wmsUrl: https://omar-rel.ossim.io/omar-wms/wms
 
 # Set the security classification banner here
-# Required
 securityClassification:
     backgroundColor: green
     text: UNCLASSIFIED
     textColor: white
 
 # If a terrain server is available, define the URL
-# Optional
 #terrainProvider: //assets.agi.com/stk-terrain/world
 
 # If access requires a PKI, define how to get the username here
-# Optional
 #userInfo:
 #    requestHeaderUserName: username
 #    requestHeaderUserNameDefault: Anonymous
