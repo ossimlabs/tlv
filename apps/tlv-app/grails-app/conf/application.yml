@@ -79,6 +79,10 @@ securityClassification:
     text: UNCLASSIFIED
     textColor: white
 
+# Set the context path of the application
+#server:
+#    contextPath: /tlv
+
 # If a terrain server is available, define the URL
 #terrainProvider: //assets.agi.com/stk-terrain/world
 
