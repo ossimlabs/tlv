@@ -8,14 +8,17 @@ function addBaseLayersToTheMap() {
 				case "wms":
 					source = new ol.source.TileWMS({
 						params: {
-							FORMAT: "image/png",
+							FORMAT: x.format || "image/png",
 							LAYERS: x.layers,
 							STYLES: x.styles || "",
 							TRANSPARENT: true,
-							VERSION: "1.1.1"
+							VERSION: x.version || "1.1.1"
 						},
 						url: x.url
 					});
+
+					if ( x.crs ) { source.updateParams({ CRS: x.crs }); }
+					if ( x.srs ) { source.updateParams({ SRS: x.srs }); }
 					break;
 
 				case "wmts":
@@ -219,6 +222,14 @@ function preloadAnotherLayer(index) {
 	else { layer.mapLayer.setVisible(true); }
 }
 
+function rightClick( event ) {
+	event.preventDefault();
+	var pixel = [event.layerX, event.layerY];
+	var coordinate = tlv.map.getCoordinateFromPixel( pixel );
+	createContextMenuContent( coordinate );
+	$("#contextMenuDialog").modal("show");
+}
+
 function setupMap() {
 	// if a map already exists, reset it and start from scratch
 	if (tlv.map) { tlv.map.setTarget(null); }
@@ -226,7 +237,10 @@ function setupMap() {
 	createMapControls();
 	tlv.map = new ol.Map({
 		controls: ol.control.defaults().extend(tlv.mapControls),
-		interactions: ol.interaction.defaults({ doubleClickZoom: false }).extend([
+		interactions: ol.interaction.defaults({
+			doubleClickZoom: false,
+ 			dragPan: false
+		}).extend([
 			new ol.interaction.DragAndDrop({
 				formatConstructors: [
 					ol.format.GPX,
@@ -235,6 +249,9 @@ function setupMap() {
 					ol.format.KML,
 					ol.format.TopoJSON
 				]
+			}),
+			new ol.interaction.DragPan({
+				condition: function( event ) { ol.events.condition.primaryAction( event ); }
 			})
 		]),
 		logo: false,
@@ -244,15 +261,7 @@ function setupMap() {
 	updateMapSize();
 
 	// setup context menu
-	tlv.map.getViewport().addEventListener("contextmenu",
-		function (event) {
-			event.preventDefault();
-			var pixel = [event.layerX, event.layerY];
-			var coordinate = tlv.map.getCoordinateFromPixel(pixel);
-			createContextMenuContent(coordinate);
-			$("#contextMenuDialog").modal("show");
-		}
-	);
+	tlv.map.getViewport().addEventListener( "contextmenu", rightClick );
 
 	tlv.map.on("moveend", theMapHasMoved);
 

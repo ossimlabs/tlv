@@ -174,6 +174,38 @@ function removeSwipeListenerFromMap() {
 	tlv.layers[ tlv.currentLayer ].mapLayer.setOpacity( 1 );
 }
 
+var rightClickView = rightClick;
+rightClick = function( event ) {
+	event.preventDefault();
+
+	var time = new Date().getTime();
+	var rightClickUp = function( event ) {
+		$( window ).off( "mouseup", rightClickUp );
+		if ( new Date().getTime() - time < 250 ) {
+			clearTimeout( activateSwipeTimeout );
+			rightClickView( event );
+		}
+		else {
+			$( "#swipeSelect" ).val( "off" );
+			swipeSliderMouseUp()
+			turnOffSwipe();
+		}
+	}
+
+	$( window ).on( "mouseup", rightClickUp );
+
+	var activateSwipeTimeout = setTimeout( function() {
+		// move the slider to the current mouse position
+		var swipeSlider = $( "#swipeSlider" );
+		var splitPosition = ( event.clientX - tlv.swipeDragStartX ) / swipeSlider.parent().width();
+		swipeSlider.css( "left", ( 100.0 * splitPosition ) + "%" );
+
+		turnOnSwipe();
+		swipeSliderMouseDown( event );
+	},
+	300 );
+}
+
 function swipeToggle() {
 	var state = $( "#swipeSelect" ).val();
 	if (state == "on") { turnOnSwipe(); }
@@ -197,7 +229,7 @@ function swipeSliderMouseUp( event ) {
 }
 
 function swipeSliderMove( event ) {
-	var swipeSlider = $( "#swipeSlider" )
+	var swipeSlider = $( "#swipeSlider" );
 	var splitPosition = ( event.clientX - tlv.swipeDragStartX ) / swipeSlider.parent().width();
 	swipeSlider.css( "left", ( 100.0 * splitPosition ) + "%" );
 	tlv.map.render();
