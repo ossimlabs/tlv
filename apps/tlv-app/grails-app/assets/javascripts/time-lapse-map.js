@@ -251,7 +251,7 @@ function setupMap() {
 				]
 			}),
 			new ol.interaction.DragPan({
-				condition: function( event ) { ol.events.condition.primaryAction( event ); }
+				condition: function( event ) { return ol.events.condition.primaryAction( event ); }
 			})
 		]),
 		logo: false,
