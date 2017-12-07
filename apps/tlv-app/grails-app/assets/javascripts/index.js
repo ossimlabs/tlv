@@ -154,24 +154,23 @@ function enableMenuButtons() {
 }
 
 function enableKeyboardShortcuts() {
-	$(document).on(
-		"keydown",
-		function(event) {
-			// only if a modal is not open
-			if (!$(".modal-backdrop").is(":visible")) {
-				var keyCode = event.keyCode;
+	$( document ).on( "keydown", function( event ) {
+		// only if a modal is not open
+		if ( !$( ".modal-backdrop" ).is( ":visible" ) ) {
+			var keyCode = event.keyCode;
 
-				switch(keyCode) {
-					// left arrow key
-					case 37: changeFrame("rewind"); break;
-					// right arrow key
-					case 39: changeFrame("fastForward"); break;
-					// delete key
-					case 46: deleteFrame(); break;
-				}
+			switch( keyCode ) {
+				// space bar
+				case 32: $( "button[title='Play/Stop']" ).trigger( "click" ); break;
+				// left arrow key
+				case 37: changeFrame( "rewind" ); break;
+				// right arrow key
+				case 39: changeFrame( "fastForward" ); break;
+				// delete key
+				case 46: deleteFrame(); break;
 			}
 		}
-	);
+	});
 }
 
 function getGpsLocation(callbackFunction) {
