@@ -1,0 +1,116 @@
+apiVersion: v1
+kind: DeploymentConfig
+metadata:
+  name: tlv-app
+  namespace: omar-dev
+  selfLink: /oapi/v1/namespaces/omar-dev/deploymentconfigs/tlv-app
+  uid: dcfad12b-82c2-11e7-ba3b-0e704fd9c8b2
+  resourceVersion: '9376352'
+  generation: 149
+  creationTimestamp: '2017-08-16T20:38:30Z'
+  labels:
+    app: omar-openshift
+  annotations:
+    openshift.io/generated-by: OpenShiftNewApp
+spec:
+  strategy:
+    type: Rolling
+    rollingParams:
+      updatePeriodSeconds: 1
+      intervalSeconds: 1
+      timeoutSeconds: 600
+      maxUnavailable: 25%
+      maxSurge: 25%
+    resources: {}
+    activeDeadlineSeconds: 21600
+  triggers:
+    - type: ConfigChange
+    - type: ImageChange
+      imageChangeParams:
+        automatic: true
+        containerNames:
+          - tlv-app
+        from:
+          kind: ImageStreamTag
+          namespace: o2
+          name: 'tlv-app:latest'
+        lastTriggeredImage: >-
+          172.30.181.173:5000/o2/tlv-app@sha256:c6337f49b56e8c1f177efcf8a3efc434ef0c3d4e9b060ff9d9c8339e08be9168
+  replicas: 1
+  test: false
+  selector:
+    app: omar-openshift
+    deploymentconfig: tlv-app
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: omar-openshift
+        deploymentconfig: tlv-app
+      annotations:
+        openshift.io/generated-by: OpenShiftNewApp
+    spec:
+      containers:
+        - name: tlv-app
+          image: >-
+            172.30.181.173:5000/o2/tlv-app@sha256:c6337f49b56e8c1f177efcf8a3efc434ef0c3d4e9b060ff9d9c8339e08be9168
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: dev
+            - name: SPRING_CLOUD_CONFIG_LABEL
+              value: master
+          resources: {}
+          livenessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 60
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 30
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          terminationMessagePath: /dev/termination-log
+          imagePullPolicy: Always
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+status:
+  latestVersion: 141
+  observedGeneration: 149
+  replicas: 1
+  updatedReplicas: 1
+  availableReplicas: 1
+  unavailableReplicas: 0
+  details:
+    message: image change
+    causes:
+      - type: ImageChange
+        imageTrigger:
+          from:
+            kind: ImageStreamTag
+            namespace: o2
+            name: 'tlv-app:latest'
+  conditions:
+    - type: Available
+      status: 'True'
+      lastUpdateTime: '2017-11-21T16:10:53Z'
+      lastTransitionTime: '2017-11-21T16:10:53Z'
+      message: Deployment config has minimum availability.
+    - type: Progressing
+      status: 'True'
+      lastUpdateTime: '2017-12-06T17:12:51Z'
+      lastTransitionTime: '2017-12-06T17:12:49Z'
+      reason: NewReplicationControllerAvailable
+      message: replication controller "tlv-app-141" successfully rolled out
+  readyReplicas: 1

@@ -97,6 +97,38 @@ function initializeSwipeSlider() {
 	$( window ).on( "mouseup", swipeSliderMouseUp );
 }
 
+function openImageSpace() {
+	var layer = tlv.layers[ tlv.currentLayer ];
+	var library = tlv.libraries[ layer.library ];
+	var metadata = layer.metadata;
+	var styles = JSON.parse( layer.mapLayer.getSource().getParams().STYLES );
+
+	var url = library.imageSpaceUrl;
+	var params = {
+		bands: styles.bands,
+		brightness: styles.brightness,
+		contrast: styles.contrast,
+		entry_id: metadata.entry_id,
+		filename: metadata.filename,
+		height: metadata.height,
+		histCenterTile: styles.hist_center,
+		histOp: styles.hist_op,
+		imageId: metadata.id,
+		imageSpaceRequestUrl: tlv.baseUrl + "/omar-oms",
+		mensaRequestUrl: tlv.baseUrl + "/omar-mensa",
+		numOfBands: metadata.number_of_bands,
+		numResLevels: metadata.number_of_res_levels,
+		resamplerFilter: styles.resampler_filter,
+		sharpenMode: styles.sharpen_mode,
+		showModalSplash: false,
+		uiRequestUrl: tlv.baseUrl + "/omar-ui",
+		wfsRequestUrl: library.wfsUrl,
+		width: metadata.width
+	};
+
+	window.open( url + "?" + $.param( params ) );
+}
+
 function precomposeSwipeLeft( event ) {
 	// only
 	var swipeSlider = $( "#swipeSlider" );
@@ -142,6 +174,38 @@ function removeSwipeListenerFromMap() {
 	tlv.layers[ tlv.currentLayer ].mapLayer.setOpacity( 1 );
 }
 
+var rightClickView = rightClick;
+rightClick = function( event ) {
+	event.preventDefault();
+
+	var time = new Date().getTime();
+	var rightClickUp = function( event ) {
+		$( window ).off( "mouseup", rightClickUp );
+		if ( new Date().getTime() - time < 250 ) {
+			clearTimeout( activateSwipeTimeout );
+			rightClickView( event );
+		}
+		else {
+			$( "#swipeSelect" ).val( "off" );
+			swipeSliderMouseUp()
+			turnOffSwipe();
+		}
+	}
+
+	$( window ).on( "mouseup", rightClickUp );
+
+	var activateSwipeTimeout = setTimeout( function() {
+		// move the slider to the current mouse position
+		var swipeSlider = $( "#swipeSlider" );
+		var splitPosition = ( event.clientX - tlv.swipeDragStartX ) / swipeSlider.parent().width();
+		swipeSlider.css( "left", ( 100.0 * splitPosition ) + "%" );
+
+		turnOnSwipe();
+		swipeSliderMouseDown( event );
+	},
+	300 );
+}
+
 function swipeToggle() {
 	var state = $( "#swipeSelect" ).val();
 	if (state == "on") { turnOnSwipe(); }
@@ -165,7 +229,7 @@ function swipeSliderMouseUp( event ) {
 }
 
 function swipeSliderMove( event ) {
-	var swipeSlider = $( "#swipeSlider" )
+	var swipeSlider = $( "#swipeSlider" );
 	var splitPosition = ( event.clientX - tlv.swipeDragStartX ) / swipeSlider.parent().width();
 	swipeSlider.css( "left", ( 100.0 * splitPosition ) + "%" );
 	tlv.map.render();

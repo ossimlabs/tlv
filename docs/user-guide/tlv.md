@@ -104,5 +104,11 @@ The default order of the image stack is chronological. But, if you prefer the ot
 ## View
 * **Dimensions:**
 If your browser supports it, TLV will give you a 3D view of your images!
+* **Image Space:**
+Feeling like your image is a little squished? Try looking at it in "un-orthorectified"/"as-the-sensor-took-the-image" kind of view.
 * **Swipe:**
-Swipe an image over another. This is TLV's version of "wax on, wax off"... only instead of wax, it's imagery.
+Swipe an image over another. This is TLV's version of "wax on, wax off"... only instead of wax, it's imagery. At no extra charge we put in a "right-click-hold" short-cut to this feature.
+* **Terrain Wireframe:**
+Overlay a raw wireframe representation of your terrain.
+* **WMS Tiles:**
+Instead of your map being composed of multiple tiles that fill in as they are ready, switch to a single tile (to rule them all), if you're in to that kind of thing.
