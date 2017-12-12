@@ -2,8 +2,8 @@
 	<nav class = "navbar navbar-default navbar-static-top" id = "navigationMenu">
 		<div class = "container-fluid">
 			<div class = "navbar-header">
-				<a class = "navbar-brand" href = "${ grailsApplication.config.server.contextPath }" style = "padding-top: 5px">
-					<asset:image height = "40" src = "logos/tlv.png" title = "TLV Home"/>
+				<a class = "navbar-brand" href = "${ grailsApplication.config.baseUrl }" style = "padding-top: 5px">
+					<asset:image height = "40" src = "logos/tlv.png" title = "O2 Home"/>
 				</a>
 
 				<g:render template = "/menus/time-lapse-menu-controls"/>
