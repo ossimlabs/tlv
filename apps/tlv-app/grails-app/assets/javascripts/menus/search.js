@@ -64,9 +64,13 @@ function beginSearch() {
 					queryParams.filter = filter;
 				}
 tlv.debug = null;
+tlv.searchDebug = null;
 				$.ajax({
 					dataType: "json",
 					url: tlv.libraries[ library ].wfsUrl + "?" + $.param( queryParams )
+				})
+				.always( function( data ) {
+					tlv.searchDebug = data;
 				})
 				.done( function( data ) {
 					var images = [];
