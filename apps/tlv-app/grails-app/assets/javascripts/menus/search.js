@@ -65,12 +65,12 @@ function beginSearch() {
 				}
 tlv.debug = null;
 tlv.searchDebug = null;
-				$.ajax({
+tlv.searchAjax = 				$.ajax({
 					dataType: "json",
 					url: tlv.libraries[ library ].wfsUrl + "?" + $.param( queryParams )
 				})
 				.always( function( data ) {
-					tlv.searchDebug = data;
+					//tlv.searchDebug = data;
 				})
 				.done( function( data ) {
 					var images = [];
