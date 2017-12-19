@@ -19,6 +19,7 @@ function beginSearch() {
 	}
 
 	var searchParams = getSearchParams();
+tlv.searchFunction = searchParams;
 	if ( searchParams.error ) { displayErrorDialog( searchParams.error ); }
 	else {
 		displayLoadingDialog( "We are searching the libraries for imagery... fingers crossed!" );
@@ -62,7 +63,7 @@ function beginSearch() {
 					filter += "(niirs >= " + searchParams.minNiirs + " OR niirs IS NULL)";
 
 					queryParams.filter = filter;
-				} 
+				} tlv.searchFunction = filter;
 tlv.searchAjax = 				$.ajax({
 					dataType: "json",
 					url: tlv.libraries[ library ].wfsUrl + "?" + $.param( queryParams )
