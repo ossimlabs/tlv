@@ -19,6 +19,7 @@ function beginSearch() {tlv.searchFunction = true;
 	}
 
 	var searchParams = getSearchParams();
+	tlv.searchParams = searchParams;
 	if ( searchParams.error ) { displayErrorDialog( searchParams.error ); }
 	else {
 		displayLoadingDialog( "We are searching the libraries for imagery... fingers crossed!" );
