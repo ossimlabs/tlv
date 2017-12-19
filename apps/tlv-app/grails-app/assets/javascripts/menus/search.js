@@ -1,4 +1,4 @@
-function beginSearch() {
+function beginSearch() {tlv.searchFunction = true;
 	$( "#searchDialog" ).modal( "hide" );
 
 	var location = getLocation();
@@ -62,7 +62,7 @@ function beginSearch() {
 					filter += "(niirs >= " + searchParams.minNiirs + " OR niirs IS NULL)";
 
 					queryParams.filter = filter;
-				}
+				} tlv.filter = filter;
 tlv.searchAjax = 				$.ajax({
 					dataType: "json",
 					url: tlv.libraries[ library ].wfsUrl + "?" + $.param( queryParams )
