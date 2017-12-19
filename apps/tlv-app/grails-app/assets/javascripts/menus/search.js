@@ -63,14 +63,9 @@ function beginSearch() {
 
 					queryParams.filter = filter;
 				}
-tlv.debug = null;
-tlv.searchDebug = null;
 tlv.searchAjax = 				$.ajax({
 					dataType: "json",
 					url: tlv.libraries[ library ].wfsUrl + "?" + $.param( queryParams )
-				})
-				.always( function( data ) {
-					//tlv.searchDebug = data;
 				})
 				.done( function( data ) {
 					var images = [];
@@ -101,9 +96,8 @@ tlv.searchAjax = 				$.ajax({
 					tlv.libraries[ library ].searchComplete = true;
 					processResults();
 				})
-				.fail( function( x, y, z ) {
+				.fail( function() {
 					tlv.libraries[ library ].searchComplete = true;
-					tlv.debug = JSON.stringify({ x: x, y: y, z: z });
 					processResults();
 				});
 			}
