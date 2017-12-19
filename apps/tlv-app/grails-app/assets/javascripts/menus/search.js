@@ -64,7 +64,7 @@ tlv.searchFunction = searchParams;
 
 					queryParams.filter = filter;
 				} tlv.searchFunction = filter;
-tlv.searchAjax = 				$.ajax({
+tlv.searchFunction = 				$.ajax({
 					dataType: "json",
 					url: tlv.libraries[ library ].wfsUrl + "?" + $.param( queryParams )
 				})
