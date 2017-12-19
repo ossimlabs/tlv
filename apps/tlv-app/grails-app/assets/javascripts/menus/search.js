@@ -1,10 +1,11 @@
-function beginSearch() {tlv.searchFunction = true;
+function beginSearch() {
 	$( "#searchDialog" ).modal( "hide" );
 
 	var location = getLocation();
 	var locationString = $( "#searchLocationInput" ).val();
 	if ( !location && locationString != "" ) {
 		var callbackFunction = function( point ) {
+			tlv.searchFunction = true;
 			var getLocationCallback = getLocation;
 			getLocation = function() { return point; }
 			beginSearch();
