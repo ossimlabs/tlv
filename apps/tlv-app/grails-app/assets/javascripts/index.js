@@ -78,23 +78,23 @@ function convertGeospatialCoordinateFormat(inputString, callbackFunction) {
 				query: inputString,
 				responseIncludes: "WKT_GEOMETRY_SIMPLIFIED"
 			};
-
+tlv.searchFunction = "start";
 			displayLoadingDialog( "We're checking our maps for that location... BRB!" );
 			$.ajax({
 				dataType: "json",
-				error: function( jqXhr, textStatus, errorThrown ) {
-					hideLoadingDialog();
-				},
-				success: function( data ) {
-					hideLoadingDialog();
-					if ( data.interpretations.length > 0 ) {
-						var center = data.interpretations[ 0 ].feature.geometry.center;
-						var point = [ center.lng, center.lat ];
-						callbackFunction( point );
-					}
-					else { displayErrorDialog( "We couldn't find that location. :(" ); }
-				},
 				url: tlv.geocoderUrl + "?" + $.param( queryParams )
+			})
+			.always( function() {
+				tlv.searchFunction = "done";
+				hideLoadingDialog();
+			})
+			.done( function( data ) {
+				if ( data.interpretations.length > 0 ) {
+					var center = data.interpretations[ 0 ].feature.geometry.center;
+					var point = [ center.lng, center.lat ];
+					callbackFunction( point );
+				}
+				else { displayErrorDialog( "We couldn't find that location. :(" ); }
 			});
  		}
 		else { return false; }

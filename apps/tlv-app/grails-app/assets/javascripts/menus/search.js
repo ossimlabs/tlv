@@ -5,7 +5,6 @@ function beginSearch() {
 	var locationString = $( "#searchLocationInput" ).val();
 	if ( !location && locationString != "" ) {
 		var callbackFunction = function( point ) {
-			tlv.searchFunction = true;
 			var getLocationCallback = getLocation;
 			getLocation = function() { return point; }
 			beginSearch();
@@ -20,7 +19,6 @@ function beginSearch() {
 	}
 
 	var searchParams = getSearchParams();
-	tlv.searchParams = searchParams;
 	if ( searchParams.error ) { displayErrorDialog( searchParams.error ); }
 	else {
 		displayLoadingDialog( "We are searching the libraries for imagery... fingers crossed!" );
@@ -64,7 +62,7 @@ function beginSearch() {
 					filter += "(niirs >= " + searchParams.minNiirs + " OR niirs IS NULL)";
 
 					queryParams.filter = filter;
-				} tlv.filter = filter;
+				} 
 tlv.searchAjax = 				$.ajax({
 					dataType: "json",
 					url: tlv.libraries[ library ].wfsUrl + "?" + $.param( queryParams )
