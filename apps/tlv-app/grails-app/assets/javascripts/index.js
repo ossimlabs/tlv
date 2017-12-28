@@ -94,7 +94,8 @@ tlv.searchFunction = "start";
 					var point = [ center.lng, center.lat ];
 					callbackFunction( point );
 				}
-				else { displayErrorDialog( "We couldn't find that location. :(" ); }
+				else { tlv.searchFunction = "failed geocoder search";
+					displayErrorDialog( "We couldn't find that location. :(" ); }
 			});
  		}
 		else { return false; }
