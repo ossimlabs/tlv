@@ -78,14 +78,14 @@ function convertGeospatialCoordinateFormat(inputString, callbackFunction) {
 				query: inputString,
 				responseIncludes: "WKT_GEOMETRY_SIMPLIFIED"
 			};
-tlv.searchFunction = "start";
+
 			displayLoadingDialog( "We're checking our maps for that location... BRB!" );
 			$.ajax({
 				dataType: "json",
 				url: tlv.geocoderUrl + "?" + $.param( queryParams )
 			})
-			.always( function() {
-				tlv.searchFunction = "done";
+			.always( function( data ) {
+				tlv.searchFunction = JSON.stringify( data );
 				hideLoadingDialog();
 			})
 			.done( function( data ) {
@@ -94,7 +94,7 @@ tlv.searchFunction = "start";
 					var point = [ center.lng, center.lat ];
 					callbackFunction( point );
 				}
-				else { tlv.searchFunction = "failed geocoder search";
+				else { 
 					displayErrorDialog( "We couldn't find that location. :(" ); }
 			});
  		}
