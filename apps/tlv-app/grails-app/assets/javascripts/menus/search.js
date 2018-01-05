@@ -19,6 +19,7 @@ function beginSearch() {
 	}
 
 	var searchParams = getSearchParams();
+tlv.searchFunction = searchParams;
 	if ( searchParams.error ) { displayErrorDialog( searchParams.error ); }
 	else {
 		displayLoadingDialog( "We are searching the libraries for imagery... fingers crossed!" );
@@ -62,45 +63,43 @@ function beginSearch() {
 					filter += "(niirs >= " + searchParams.minNiirs + " OR niirs IS NULL)";
 
 					queryParams.filter = filter;
-				}
-
-				$.ajax({
+				} tlv.searchFunction = filter;
+tlv.searchFunction = 				$.ajax({
 					dataType: "json",
-					error: function(x, y, z) {
-						tlv.libraries[ library ].searchComplete = true;
-						tlv.debug = { x: x, y: y, z: z };
-						processResults();
-					},
-					success: function( data ) {
-						var images = []
-						$.each(
-							data.features,
-							function( index, feature ) {
-								var metadata = feature.properties;
-								metadata.footprint = feature.geometry || null;
-
-								var acquisitionDate = "N/A";
-								if ( metadata.acquisition_date ) {
-									var date = getDate( new Date( Date.parse( metadata.acquisition_date ) ) );
-									acquisitionDate = date.year +  "-" + date.month + "-" + date.day + " " +
-										date.hour + ":" + date.minute + ":" + date.second;
-								}
-
-								images.push({
-									acquisitionDate: acquisitionDate,
-									imageId: metadata.image_id || ( metadata.title || metadata.filename.replace( /^.*[\\\/]/, "" ) ),
-									library: library,
-									metadata: metadata,
-									numberOfBands: metadata.number_of_bands || 1
-								});
-							}
-						);
-						tlv.libraries[ library ].searchResults = images;
-
-						tlv.libraries[ library ].searchComplete = true;
-						processResults();
-					},
 					url: tlv.libraries[ library ].wfsUrl + "?" + $.param( queryParams )
+				})
+				.done( function( data ) {
+					var images = [];
+					$.each(
+						data.features,
+						function( index, feature ) {
+							var metadata = feature.properties;
+							metadata.footprint = feature.geometry || null;
+
+							var acquisitionDate = "N/A";
+							if ( metadata.acquisition_date ) {
+								var date = getDate( new Date( Date.parse( metadata.acquisition_date ) ) );
+								acquisitionDate = date.year +  "-" + date.month + "-" + date.day + " " +
+									date.hour + ":" + date.minute + ":" + date.second;
+							}
+
+							images.push({
+								acquisitionDate: acquisitionDate,
+								imageId: metadata.image_id || ( metadata.title || metadata.filename.replace( /^.*[\\\/]/, "" ) ),
+								library: library,
+								metadata: metadata,
+								numberOfBands: metadata.number_of_bands || 1
+							});
+						}
+					);
+					tlv.libraries[ library ].searchResults = images;
+
+					tlv.libraries[ library ].searchComplete = true;
+					processResults();
+				})
+				.fail( function() {
+					tlv.libraries[ library ].searchComplete = true;
+					processResults();
 				});
 			}
 		);

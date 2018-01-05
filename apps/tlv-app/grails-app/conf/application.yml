@@ -1,5 +1,6 @@
 # If there is a version to denote, set it here
 about:
+#    contactEmail: O2Support@digitalglobe.com
     release: Fort Myers
     releaseNumber: 2.2.0
 
@@ -7,6 +8,7 @@ about:
 #banner:
 #    backgroundColor: darkgray
 #    description: This application is subject to change without notice.
+#    enabled: true
 #    text: BETA
 #    textColor: white
 
