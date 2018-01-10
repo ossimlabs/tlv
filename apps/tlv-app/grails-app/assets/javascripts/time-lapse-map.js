@@ -236,7 +236,7 @@ function setupMap() {
 
 	createMapControls();
 	tlv.map = new ol.Map({
-		controls: ol.control.defaults().extend(tlv.mapControls),
+		controls: ol.control.defaults().extend( tlv.mapControls ),
 		interactions: ol.interaction.defaults({
 			doubleClickZoom: false,
  			dragPan: false
@@ -251,7 +251,11 @@ function setupMap() {
 				]
 			}),
 			new ol.interaction.DragPan({
-				condition: function( event ) { return ol.events.condition.primaryAction( event ); }
+				//condition: function( event ) { return ol.events.condition.noModifierKeys( event ) && ol.events.condition.mouseOnly( event ) && ol.events.condition.primaryAction( event ); }
+				condition: function( event ) {
+					return ol.events.condition.noModifierKeys( event ) &&
+						ol.events.condition.primaryAction( event );
+				}
 			})
 		]),
 		logo: false,
