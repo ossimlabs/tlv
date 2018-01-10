@@ -19,7 +19,6 @@ function beginSearch() {
 	}
 
 	var searchParams = getSearchParams();
-tlv.searchFunction = searchParams;
 	if ( searchParams.error ) { displayErrorDialog( searchParams.error ); }
 	else {
 		displayLoadingDialog( "We are searching the libraries for imagery... fingers crossed!" );
@@ -54,17 +53,15 @@ tlv.searchFunction = searchParams;
 
 					filter += " AND ";
 
-					/* 1m * 1Nm / 1852m * 1min / 1Nm * 1deg / 60min */
-					var deltaDegrees =  1 / 1852 / 60;
-					filter += "DWITHIN(ground_geom,POINT(" + searchParams.location.join(" ") + ")," + deltaDegrees + ",meters)";
+					filter += "INTERSECTS(ground_geom,POINT(" + searchParams.location.join(" ") + "))";
 
 					filter += " AND ";
 
 					filter += "(niirs >= " + searchParams.minNiirs + " OR niirs IS NULL)";
 
 					queryParams.filter = filter;
-				} tlv.searchFunction = filter;
-tlv.searchFunction = 				$.ajax({
+				}
+				$.ajax({
 					dataType: "json",
 					url: tlv.libraries[ library ].wfsUrl + "?" + $.param( queryParams )
 				})
@@ -232,13 +229,13 @@ function initializeEndDateTimePicker() {
 
 	// default to current date or user defined
 	var endDate = new Date();
-	if (tlv.endYear) { endDate.setFullYear(tlv.endYear); }
-	if (tlv.endDay) { endDate.setDate(tlv.endDay); }
-	if (tlv.endMonth) { endDate.setMonth(tlv.endMonth - 1); }
-	if (tlv.endHour) { endDate.setHours(tlv.endHour); }
-	if (tlv.endMinute) { endDate.setMinutes(tlv.endMinute); }
-	if (tlv.endSecond) { endDate.setSeconds(tlv.endSecond); }
-	endDateTimePicker.data("DateTimePicker").date(endDate);
+	endDate.setFullYear( tlv.endYear || endDate.getUTCFullYear() );
+	endDate.setDate( tlv.endDay || endDate.getUTCDate() );
+	endDate.setMonth( tlv.endMonth - 1  || endDate.getUTCMonth() );
+	endDate.setHours(tlv.endHour  || endDate.getUTCHours() );
+	endDate.setMinutes( tlv.endMinute || endDate.getUTCMinutes() );
+	endDate.setSeconds( tlv.endSecond || endDate.getUTCSeconds() );
+	endDateTimePicker.data("DateTimePicker").date( endDate );
 }
 
 function initializeLibraryCheckboxes() {
