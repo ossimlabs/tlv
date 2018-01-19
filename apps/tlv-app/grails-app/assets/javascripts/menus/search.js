@@ -53,9 +53,7 @@ function beginSearch() {
 
 					filter += " AND ";
 
-					/* 1m * 1Nm / 1852m * 1min / 1Nm * 1deg / 60min */
-					var deltaDegrees =  1 / 1852 / 60;
-					filter += "DWITHIN(ground_geom,POINT(" + searchParams.location.join(" ") + ")," + deltaDegrees + ",meters)";
+					filter += "INTERSECTS(ground_geom,POINT(" + searchParams.location.join(" ") + "))";
 
 					filter += " AND ";
 
@@ -63,44 +61,42 @@ function beginSearch() {
 
 					queryParams.filter = filter;
 				}
-
 				$.ajax({
 					dataType: "json",
-					error: function(x, y, z) {
-						tlv.libraries[ library ].searchComplete = true;
-						tlv.debug = { x: x, y: y, z: z };
-						processResults();
-					},
-					success: function( data ) {
-						var images = []
-						$.each(
-							data.features,
-							function( index, feature ) {
-								var metadata = feature.properties;
-								metadata.footprint = feature.geometry || null;
-
-								var acquisitionDate = "N/A";
-								if ( metadata.acquisition_date ) {
-									var date = getDate( new Date( Date.parse( metadata.acquisition_date ) ) );
-									acquisitionDate = date.year +  "-" + date.month + "-" + date.day + " " +
-										date.hour + ":" + date.minute + ":" + date.second;
-								}
-
-								images.push({
-									acquisitionDate: acquisitionDate,
-									imageId: metadata.image_id || ( metadata.title || metadata.filename.replace( /^.*[\\\/]/, "" ) ),
-									library: library,
-									metadata: metadata,
-									numberOfBands: metadata.number_of_bands || 1
-								});
-							}
-						);
-						tlv.libraries[ library ].searchResults = images;
-
-						tlv.libraries[ library ].searchComplete = true;
-						processResults();
-					},
 					url: tlv.libraries[ library ].wfsUrl + "?" + $.param( queryParams )
+				})
+				.done( function( data ) {
+					var images = [];
+					$.each(
+						data.features,
+						function( index, feature ) {
+							var metadata = feature.properties;
+							metadata.footprint = feature.geometry || null;
+
+							var acquisitionDate = "N/A";
+							if ( metadata.acquisition_date ) {
+								var date = getDate( new Date( Date.parse( metadata.acquisition_date ) ) );
+								acquisitionDate = date.year +  "-" + date.month + "-" + date.day + " " +
+									date.hour + ":" + date.minute + ":" + date.second;
+							}
+
+							images.push({
+								acquisitionDate: acquisitionDate,
+								imageId: metadata.image_id || ( metadata.title || metadata.filename.replace( /^.*[\\\/]/, "" ) ),
+								library: library,
+								metadata: metadata,
+								numberOfBands: metadata.number_of_bands || 1
+							});
+						}
+					);
+					tlv.libraries[ library ].searchResults = images;
+
+					tlv.libraries[ library ].searchComplete = true;
+					processResults();
+				})
+				.fail( function() {
+					tlv.libraries[ library ].searchComplete = true;
+					processResults();
 				});
 			}
 		);
@@ -233,13 +229,13 @@ function initializeEndDateTimePicker() {
 
 	// default to current date or user defined
 	var endDate = new Date();
-	if (tlv.endYear) { endDate.setFullYear(tlv.endYear); }
-	if (tlv.endDay) { endDate.setDate(tlv.endDay); }
-	if (tlv.endMonth) { endDate.setMonth(tlv.endMonth - 1); }
-	if (tlv.endHour) { endDate.setHours(tlv.endHour); }
-	if (tlv.endMinute) { endDate.setMinutes(tlv.endMinute); }
-	if (tlv.endSecond) { endDate.setSeconds(tlv.endSecond); }
-	endDateTimePicker.data("DateTimePicker").date(endDate);
+	endDate.setFullYear( tlv.endYear || endDate.getUTCFullYear() );
+	endDate.setDate( tlv.endDay || endDate.getUTCDate() );
+	endDate.setMonth( tlv.endMonth - 1  || endDate.getUTCMonth() );
+	endDate.setHours(tlv.endHour  || endDate.getUTCHours() );
+	endDate.setMinutes( tlv.endMinute || endDate.getUTCMinutes() );
+	endDate.setSeconds( tlv.endSecond || endDate.getUTCSeconds() );
+	endDateTimePicker.data("DateTimePicker").date( endDate );
 }
 
 function initializeLibraryCheckboxes() {
