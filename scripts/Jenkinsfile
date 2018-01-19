@@ -19,7 +19,7 @@ node(""){
 
     stage("Checkout"){
         dir(appName) {
-            git branch: "${OSSIM_GIT_BRANCH}", url: "/${appName}.git"
+            git branch: "${OSSIM_GIT_BRANCH}", url: "${GIT_PUBLIC_SERVER_URL}/${appName}.git"
         }
 
         dir(omarCommonProjName) {
