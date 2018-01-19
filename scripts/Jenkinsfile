@@ -23,7 +23,7 @@ node(""){
         }
 
         dir(omarCommonProjName) {
-            git branch: "${OSSIM_GIT_BRANCH}", url: "/${omarCommonProjName}.git"
+            git branch: "${OSSIM_GIT_BRANCH}", url: "${GIT_PUBLIC_SERVER_URL}/${omarCommonProjName}.git"
         }
     }
     stage("Download Artifacts") {
