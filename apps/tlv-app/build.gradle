@@ -124,6 +124,7 @@ assets {
         "**/bootswatch-slate/**/glyphicons*",
         "**/Cesium/Assets/**",
         "**/Cesium/Workers/**",
+        "**/fonts/**",
         "**/index-bundle.*"
     ]
 }

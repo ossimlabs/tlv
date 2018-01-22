@@ -5,6 +5,18 @@ changeFrame = function( params ) {
 	syncImageProperties();
 }
 
+function getDefaultImageProperties() {
+	return {
+		bands: "default",
+		brightness: 0,
+		contrast: 1,
+		hist_center: true,
+		hist_op: "auto-minmax",
+		resampler_filter: "bilinear",
+		sharpen_mode: "none"
+	};
+}
+
 var pageLoadImageProperties = pageLoad;
 pageLoad = function() {
 	pageLoadImageProperties();
@@ -46,6 +58,16 @@ pageLoad = function() {
 		tlv.layers[ tlv.currentLayer ].mapLayer.setOpacity( opacity );
 	});
 	opacitySlider.on("slideStop", function( event ) { updateImageProperties( false ); });
+}
+
+function resetImageProperties() {
+	tlv.layers[ tlv.currentLayer ].mapLayer.getSource().updateParams({
+		STYLES: JSON.stringify(
+			getDefaultImageProperties()
+		)
+	});
+	syncImageProperties();
+	updateImageProperties( true );
 }
 
 function selectBands( selectionMethod ) {
@@ -128,8 +150,8 @@ function updateImageProperties( refreshMap ) {
 				bands: bands,
 				brightness: $( "#brightnessSliderInput" ).slider( "getValue" ) / 100,
 				contrast: $( "#contrastSliderInput" ).slider( "getValue" ) / 100,
+				hist_center: $( "#dynamicRangeRegionSelect" ).val(),
 				hist_op: $( "#dynamicRangeSelect" ).val(),
-				"hist_center": $( "#dynamicRangeRegionSelect" ).val(),
 				resampler_filter: $( "#interpolationSelect" ).val(),
 				sharpen_mode: $( "#sharpenModeSelect" ).val()
 			})
