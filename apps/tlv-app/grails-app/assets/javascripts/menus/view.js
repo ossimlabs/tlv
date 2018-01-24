@@ -159,14 +159,19 @@ function removeDimension() { tlv.globe.setEnabled( false ); }
 function removeSwipeListenerFromMap() {
 	$.each(
 		tlv.layers,
-		function( i, x ) {
-			x.mapLayer.un( "precompose", precomposeSwipeLeft );
-			x.mapLayer.un( "precompose", precomposeSwipeRight );
-			x.mapLayer.un( "postcompose", postcomposeSwipe );
-			x.mapLayer.setOpacity( 0 );
-			x.mapLayer.setVisible( false );
+		function( index, layer ) {
+			layer.mapLayer.un( "precompose", precomposeSwipeLeft );
+			layer.mapLayer.un( "precompose", precomposeSwipeRight );
+			layer.mapLayer.un( "postcompose", postcomposeSwipe );
+			layer.mapLayer.setOpacity( 0 );
+			layer.mapLayer.setVisible( false );
+		}
+	);
 
-			tlv.globe.getCesiumScene().imageryLayers.get( i ).splitDirection = Cesium.ImagerySplitDirection.NONE;
+	$.each(
+		tlv.globe.getCesiumScene().imageryLayers,
+		function( index, layer ) {
+			tlv.globe.getCesiumScene().imageryLayers.get( index ).splitDirection = Cesium.ImagerySplitDirection.NONE;
 		}
 	);
 
