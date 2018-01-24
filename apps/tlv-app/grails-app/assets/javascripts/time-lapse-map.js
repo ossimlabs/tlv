@@ -218,10 +218,10 @@ function preloadAnotherLayer(index) {
 
 function rightClick( event ) {
 	event.preventDefault();
-	var pixel = [event.layerX, event.layerY];
+	var pixel = [ event.clientX, event.clientY ];
 	var coordinate = tlv.map.getCoordinateFromPixel( pixel );
 	createContextMenuContent( coordinate );
-	$("#contextMenuDialog").modal("show");
+	$( "#contextMenuDialog" ).modal( "show" );
 }
 
 function setupMap() {
