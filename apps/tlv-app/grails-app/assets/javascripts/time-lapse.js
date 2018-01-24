@@ -104,20 +104,24 @@ function changeFrame( param ) {
 }
 
 function deleteFrame( index ) {
+    var layer = tlv.layers[ index ];
 	if ( index && index != tlv.currentLayer ) {
+
 		tlv.layers.splice( index, 1 );
 		if ( tlv.currentLayer > tlv.layers.length - 1 ) { tlv.currentLayer = tlv.layers.length - 1; }
-		changeFrame("rewind");
-		changeFrame("fastForward");
+		changeFrame( "rewind" );
+		changeFrame( "fastForward" );
 	}
 	else {
-		changeFrame("rewind");
+		changeFrame( "rewind" );
 		var nextFrameIndex = getNextFrameIndex();
 		tlv.layers.splice( nextFrameIndex, 1 );
 
 		if ( tlv.currentLayer > tlv.layers.length - 1 ) { tlv.currentLayer = tlv.layers.length - 1; }
-		changeFrame("fastForward");
+		changeFrame( "fastForward" );
 	}
+    tlv.map.removeLayer( layer.imageLayer );
+    tlv.map.removeLayer( layer.tileLayer );
 }
 
 function geoJump(location) {
