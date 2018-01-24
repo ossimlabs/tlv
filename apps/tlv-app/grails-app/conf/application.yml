@@ -1,6 +1,6 @@
 # If there is a version to denote, set it here
 about:
-#    contactEmail: O2Support@digitalglobe.com
+    contactEmail: O2Support@digitalglobe.com
     release: Fort Myers
     releaseNumber: 2.2.2
 
