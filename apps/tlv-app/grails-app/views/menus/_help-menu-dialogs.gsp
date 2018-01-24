@@ -3,6 +3,14 @@
 		<div class = "modal-content">
 			<div class = "modal-header"><h4>About</h4></div>
 			<div align = "center" class = "modal-body">
+				<%
+					def contactEmail = grailsApplication.config.about?.contactEmail
+				%>
+				<g:if test = "${ contactEmail }">
+					<b>Contact: </b> <a href = "mailto:${ contactEmail }">${ contactEmail }</a>
+					<hr>
+				</g:if>
+
 				<b>Release:</b> ${ grailsApplication.config.about.release } ${ grailsApplication.config.about.releaseNumber }
 				<br>
 				<b>Build Version:</b> <g:meta name="info.app.version"/>
