@@ -168,12 +168,12 @@ function removeSwipeListenerFromMap() {
 		}
 	);
 
-	$.each(
-		tlv.globe.getCesiumScene().imageryLayers,
-		function( index, layer ) {
-			tlv.globe.getCesiumScene().imageryLayers.get( index ).splitDirection = Cesium.ImagerySplitDirection.NONE;
+	for ( var index = 0; index < tlv.globe.getCesiumScene().imageryLayers.length; index++ ) {
+		var layer = tlv.globe.getCesiumScene().imageryLayers.get( index );
+		if ( layer.splitDirection ) {
+			layer.splitDirection = Cesium.ImagerySplitDirection.NONE;
 		}
-	);
+	}
 
 	tlv.layers[ tlv.currentLayer ].mapLayer.setVisible( true );
 	tlv.layers[ tlv.currentLayer ].mapLayer.setOpacity( 1 );
@@ -183,32 +183,38 @@ var rightClickView = rightClick;
 rightClick = function( event ) {
 	event.preventDefault();
 
-	var time = new Date().getTime();
-	var rightClickUp = function( event ) {
-		$( window ).off( "mouseup", rightClickUp );
-		if ( new Date().getTime() - time < 250 ) {
-			clearTimeout( activateSwipeTimeout );
-			rightClickView( event );
+	if ( tlv.layers.length > 1 ) {
+		var time = new Date().getTime();
+		var rightClickUp = function( event ) {
+			$( window ).off( "mouseup", rightClickUp );
+			console.dir(new Date().getTime() - time);
+			if ( new Date().getTime() - time < 250 ) {
+				clearTimeout( activateSwipeTimeout );
+				rightClickView( event );
+			}
+			else {
+				$( "#swipeSelect" ).val( "off" );
+				swipeSliderMouseUp()
+				turnOffSwipe();
+			}
 		}
-		else {
-			$( "#swipeSelect" ).val( "off" );
-			swipeSliderMouseUp()
-			turnOffSwipe();
-		}
+
+		$( window ).on( "mouseup", rightClickUp );
+
+		var activateSwipeTimeout = setTimeout( function() {
+			// move the slider to the current mouse position
+			var swipeSlider = $( "#swipeSlider" );
+			var splitPosition = ( event.clientX - tlv.swipeDragStartX ) / swipeSlider.parent().width();
+			swipeSlider.css( "left", ( 100.0 * splitPosition ) + "%" );
+
+			turnOnSwipe();
+			swipeSliderMouseDown( event );
+		},
+		300 );
 	}
-
-	$( window ).on( "mouseup", rightClickUp );
-
-	var activateSwipeTimeout = setTimeout( function() {
-		// move the slider to the current mouse position
-		var swipeSlider = $( "#swipeSlider" );
-		var splitPosition = ( event.clientX - tlv.swipeDragStartX ) / swipeSlider.parent().width();
-		swipeSlider.css( "left", ( 100.0 * splitPosition ) + "%" );
-
-		turnOnSwipe();
-		swipeSliderMouseDown( event );
-	},
-	300 );
+	else {
+		rightClickView( event );
+	}
 }
 
 function swipeToggle() {
