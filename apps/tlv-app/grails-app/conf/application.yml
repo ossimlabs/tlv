@@ -76,9 +76,9 @@ baseUrl: https://omar-dev.ossim.io
 #        wmsUrl: https://omar-rel.ossim.io/omar-wms/wms
 
 # Set the security classification banner here
-securityClassification:
+securityClassificationBanner:
     backgroundColor: green
-    text: UNCLASSIFIED
+    classification: UNCLASSIFIED
     textColor: white
 
 # Set the context path of the application
