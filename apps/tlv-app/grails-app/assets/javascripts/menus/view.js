@@ -159,16 +159,21 @@ function removeDimension() { tlv.globe.setEnabled( false ); }
 function removeSwipeListenerFromMap() {
 	$.each(
 		tlv.layers,
-		function( i, x ) {
-			x.mapLayer.un( "precompose", precomposeSwipeLeft );
-			x.mapLayer.un( "precompose", precomposeSwipeRight );
-			x.mapLayer.un( "postcompose", postcomposeSwipe );
-			x.mapLayer.setOpacity( 0 );
-			x.mapLayer.setVisible( false );
-
-			tlv.globe.getCesiumScene().imageryLayers.get( i ).splitDirection = Cesium.ImagerySplitDirection.NONE;
+		function( index, layer ) {
+			layer.mapLayer.un( "precompose", precomposeSwipeLeft );
+			layer.mapLayer.un( "precompose", precomposeSwipeRight );
+			layer.mapLayer.un( "postcompose", postcomposeSwipe );
+			layer.mapLayer.setOpacity( 0 );
+			layer.mapLayer.setVisible( false );
 		}
 	);
+
+	for ( var index = 0; index < tlv.globe.getCesiumScene().imageryLayers.length; index++ ) {
+		var layer = tlv.globe.getCesiumScene().imageryLayers.get( index );
+		if ( layer.splitDirection ) {
+			layer.splitDirection = Cesium.ImagerySplitDirection.NONE;
+		}
+	}
 
 	tlv.layers[ tlv.currentLayer ].mapLayer.setVisible( true );
 	tlv.layers[ tlv.currentLayer ].mapLayer.setOpacity( 1 );
@@ -178,32 +183,38 @@ var rightClickView = rightClick;
 rightClick = function( event ) {
 	event.preventDefault();
 
-	var time = new Date().getTime();
-	var rightClickUp = function( event ) {
-		$( window ).off( "mouseup", rightClickUp );
-		if ( new Date().getTime() - time < 250 ) {
-			clearTimeout( activateSwipeTimeout );
-			rightClickView( event );
+	if ( tlv.layers.length > 1 ) {
+		var time = new Date().getTime();
+		var rightClickUp = function( event ) {
+			$( window ).off( "mouseup", rightClickUp );
+			console.dir(new Date().getTime() - time);
+			if ( new Date().getTime() - time < 250 ) {
+				clearTimeout( activateSwipeTimeout );
+				rightClickView( event );
+			}
+			else {
+				$( "#swipeSelect" ).val( "off" );
+				swipeSliderMouseUp()
+				turnOffSwipe();
+			}
 		}
-		else {
-			$( "#swipeSelect" ).val( "off" );
-			swipeSliderMouseUp()
-			turnOffSwipe();
-		}
+
+		$( window ).on( "mouseup", rightClickUp );
+
+		var activateSwipeTimeout = setTimeout( function() {
+			// move the slider to the current mouse position
+			var swipeSlider = $( "#swipeSlider" );
+			var splitPosition = ( event.clientX - tlv.swipeDragStartX ) / swipeSlider.parent().width();
+			swipeSlider.css( "left", ( 100.0 * splitPosition ) + "%" );
+
+			turnOnSwipe();
+			swipeSliderMouseDown( event );
+		},
+		300 );
 	}
-
-	$( window ).on( "mouseup", rightClickUp );
-
-	var activateSwipeTimeout = setTimeout( function() {
-		// move the slider to the current mouse position
-		var swipeSlider = $( "#swipeSlider" );
-		var splitPosition = ( event.clientX - tlv.swipeDragStartX ) / swipeSlider.parent().width();
-		swipeSlider.css( "left", ( 100.0 * splitPosition ) + "%" );
-
-		turnOnSwipe();
-		swipeSliderMouseDown( event );
-	},
-	300 );
+	else {
+		rightClickView( event );
+	}
 }
 
 function swipeToggle() {

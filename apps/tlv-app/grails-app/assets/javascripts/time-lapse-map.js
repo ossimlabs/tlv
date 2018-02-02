@@ -135,15 +135,9 @@ function createLayerSources( layer ) {
 		FORMAT: "image/png",
 		IDENTIFIER: Math.floor( Math.random() * 1000000 ),
 		LAYERS: "omar:raster_entry",
-		STYLES: JSON.stringify({
-			bands: layer.bands || "default",
-			brightness: layer.brightness || 0,
-			contrast: layer.contrast || 1,
-			hist_center: true,
-			hist_op: layer.histOp || "auto-minmax",
-			resampler_filter: layer.resamplerFilter || "bilinear",
-			sharpen_mode: layer.sharpenMode || "none"
-		}),
+		STYLES: JSON.stringify(
+			getDefaultImageProperties()
+		),
 		TRANSPARENT: true,
 		VERSION: "1.1.1"
 	};
@@ -224,10 +218,10 @@ function preloadAnotherLayer(index) {
 
 function rightClick( event ) {
 	event.preventDefault();
-	var pixel = [event.layerX, event.layerY];
+	var pixel = [ event.clientX, event.clientY ];
 	var coordinate = tlv.map.getCoordinateFromPixel( pixel );
 	createContextMenuContent( coordinate );
-	$("#contextMenuDialog").modal("show");
+	$( "#contextMenuDialog" ).modal( "show" );
 }
 
 function setupMap() {
@@ -236,7 +230,7 @@ function setupMap() {
 
 	createMapControls();
 	tlv.map = new ol.Map({
-		controls: ol.control.defaults().extend(tlv.mapControls),
+		controls: ol.control.defaults().extend( tlv.mapControls ),
 		interactions: ol.interaction.defaults({
 			doubleClickZoom: false,
  			dragPan: false
@@ -251,7 +245,11 @@ function setupMap() {
 				]
 			}),
 			new ol.interaction.DragPan({
-				condition: function( event ) { return ol.events.condition.primaryAction( event ); }
+				//condition: function( event ) { return ol.events.condition.noModifierKeys( event ) && ol.events.condition.mouseOnly( event ) && ol.events.condition.primaryAction( event ); }
+				condition: function( event ) {
+					return ol.events.condition.noModifierKeys( event ) &&
+						ol.events.condition.primaryAction( event );
+				}
 			})
 		]),
 		logo: false,

@@ -84,8 +84,7 @@ function convertGeospatialCoordinateFormat(inputString, callbackFunction) {
 				dataType: "json",
 				url: tlv.geocoderUrl + "?" + $.param( queryParams )
 			})
-			.always( function( data ) {
-				tlv.searchFunction = JSON.stringify( data );
+			.always( function() {
 				hideLoadingDialog();
 			})
 			.done( function( data ) {
@@ -94,8 +93,7 @@ function convertGeospatialCoordinateFormat(inputString, callbackFunction) {
 					var point = [ center.lng, center.lat ];
 					callbackFunction( point );
 				}
-				else { 
-					displayErrorDialog( "We couldn't find that location. :(" ); }
+				else { displayErrorDialog( "We couldn't find that location. :(" ); }
 			});
  		}
 		else { return false; }

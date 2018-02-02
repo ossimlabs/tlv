@@ -41,20 +41,24 @@ function setupGlobe() {
 
 	var globe = tlv.globe.getCesiumScene().globe;
 	// make the globe background color the same as the body background
-	globe.baseColor = new Cesium.Color(0.153, 0.169, 0.188, 1);
+	globe.baseColor = new Cesium.Color( 0.153, 0.169, 0.188, 1 );
+	// dont display tiles that are hidden by the terrain
+	tlv.globe.depthTestAgainstTerrain = true;
+	// make the cache size large so the scene render is faster
+	tlv.globe.globe_.tileCacheSize = 5000;
 	// add a tile loading function to tell when the glove had finished loading
 	globe.tileLoadProgressEvent.addEventListener(
 		function(event) {
-			var layer = tlv.layers[tlv.currentLayer];
+			var layer = tlv.layers[ tlv.currentLayer ];
 
-			if (layer.layerLoaded) {
+			if ( layer.layerLoaded ) {
 				layer.layerLoaded = false;
 				layer.tilesLoaded = 0;
 				layer.tilesLoading = 0;
 			}
 
-			if (event == 0) { layer.layerLoaded = true; }
-			else if (event > layer.tilesLoading) { layer.tilesLoading = event; }
+			if ( event == 0 ) { layer.layerLoaded = true; }
+			else if ( event > layer.tilesLoading ) { layer.tilesLoading = event; }
 			layer.tilesLoaded = layer.tilesLoading - event;
 			updateTileLoadingProgressBar();
 		}

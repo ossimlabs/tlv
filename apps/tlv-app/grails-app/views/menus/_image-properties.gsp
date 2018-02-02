@@ -1,6 +1,9 @@
  <div id = "imagePropertiesDiv">
 	<div>
         <div style = "text-align: right">
+            <button class = "btn btn-default btn-sm" onclick = resetImageProperties() title = "Reset" type = "button">
+                <span class = "fa fa-undo"></span>
+            </button>
             <button class = "btn btn-default btn-sm" onclick = 'javascript:$( "#imagePropertiesDiv" ).hide()' type = "button">
                 <span class = "glyphicon glyphicon-remove"></span>
             </button>
