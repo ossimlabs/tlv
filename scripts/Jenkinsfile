@@ -32,8 +32,6 @@ node(""){
                filter: "ossim-ci-${OSSIM_GIT_BRANCH}.tgz",
                flatten: true])
         sh "tar xvfz ossim-ci-${OSSIM_GIT_BRANCH}.tgz"
-        sh "${OPENSHIFT_URL}"
-        sh "${env.OPENSHIFT_URL}"
         notifyObj = load "${env.WORKSPACE}/ossim-ci/jenkins/pipeline/notify.groovy"
     }
 
