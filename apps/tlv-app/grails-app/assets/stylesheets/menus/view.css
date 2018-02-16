@@ -3,15 +3,3 @@
 .swipe-text-div {
     display: none;
 }
-
-.swipe-text-div-left {
-    left: 0.5em;
-    text-align: left;
-    top: 0.5em;
-}
-
-.swipe-text-div-right {
-    right: 0.5em;
-    text-align: right;
-    top: 0.5em;
-}

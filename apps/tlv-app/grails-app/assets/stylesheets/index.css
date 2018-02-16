@@ -1,3 +1,9 @@
+#acquisitionDateDiv {
+	bottom: 0.5em;
+    right: 0.5em;
+    text-align: right;
+}
+
 .custom-map-control {
 	background-color: rgba(0, 0, 0, 0.5);
 	color: white;
@@ -12,6 +18,12 @@
     text-align: center;
     width: 100%;
     z-index: 9999;
+}
+
+#imageIdDiv {
+	bottom: 0.5em;
+    left: 0.5em;
+    text-align: left;
 }
 
 .navbar { margin-bottom: 0px; }

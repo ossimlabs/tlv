@@ -156,13 +156,26 @@ function createLayerSources( layer ) {
 }
 
 function createMapControls() {
-	var span = document.createElement("span");
-	span.className = "glyphicon glyphicon-fullscreen";
-	var fullScreenControl = new ol.control.FullScreen({ label: span });
+	var acquisitionDateDiv = document.createElement( "div" );
+	acquisitionDateDiv.className = "custom-map-control";
+	acquisitionDateDiv.id = "acquisitionDateDiv";
+	var acquisitionDateControl = new ol.control.Control({ element: acquisitionDateDiv });
+
+	var fullScreenSpan = document.createElement( "span" );
+	fullScreenSpan.className = "glyphicon glyphicon-fullscreen";
+	var fullScreenControl = new ol.control.FullScreen({ label: fullScreenSpan });
+
+	var imageIdDiv = document.createElement( "div" );
+	imageIdDiv.className = "custom-map-control";
+	imageIdDiv.id = "imageIdDiv";
+	var imageIdControl = new ol.control.Control({ element: imageIdDiv });
+
 
 	tlv.mapControls = [
+		acquisitionDateControl,
 		createMousePositionControl(),
-		fullScreenControl
+		fullScreenControl,
+		imageIdControl
 	];
 }
 
@@ -245,7 +258,6 @@ function setupMap() {
 				]
 			}),
 			new ol.interaction.DragPan({
-				//condition: function( event ) { return ol.events.condition.noModifierKeys( event ) && ol.events.condition.mouseOnly( event ) && ol.events.condition.primaryAction( event ); }
 				condition: function( event ) {
 					return ol.events.condition.noModifierKeys( event ) &&
 						ol.events.condition.primaryAction( event );

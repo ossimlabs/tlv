@@ -66,22 +66,12 @@ createMapControls = function() {
 }
 
 function createSwipeControls() {
-	var leftSwipeTextDiv = document.createElement("div");
-	leftSwipeTextDiv.className = "custom-map-control swipe-text-div swipe-text-div-left";
-	leftSwipeTextDiv.id = "leftSwipeTextDiv";
-	var leftSwipeTextControl = new ol.control.Control({ element: leftSwipeTextDiv });
-
-	var rightSwipeTextDiv = document.createElement("div");
-	rightSwipeTextDiv.className = "custom-map-control swipe-text-div swipe-text-div-right";
-	rightSwipeTextDiv.id = "rightSwipeTextDiv";
-	var rightSwipeTextControl = new ol.control.Control({ element: rightSwipeTextDiv });
-
-	var sliderInput = document.createElement("input");
+	var sliderInput = document.createElement( "input" );
 	sliderInput.id = "swipeSlider";
 	var sliderControl = new ol.control.Control({ element: sliderInput });
 
 
-	return [leftSwipeTextControl, rightSwipeTextControl, sliderControl];
+	return [ sliderControl ];
 }
 
 function dimensionToggle() {
@@ -187,7 +177,6 @@ rightClick = function( event ) {
 		var time = new Date().getTime();
 		var rightClickUp = function( event ) {
 			$( window ).off( "mouseup", rightClickUp );
-			console.dir(new Date().getTime() - time);
 			if ( new Date().getTime() - time < 250 ) {
 				clearTimeout( activateSwipeTimeout );
 				rightClickView( event );
@@ -259,13 +248,8 @@ function terrainWireframeToggle() {
 }
 
 function turnOffSwipe() {
-	$( ".ol-full-screen" ).show();
-	$( ".ol-mouse-position" ).show();
-	$( ".ol-rotate" ).show();
-	$( ".ol-zoom" ).show();
+	$( "#swipeSelect" ).val( "off" );
 
-	$( "#leftSwipeTextDiv" ).hide();
-	$( "#rightSwipeTextDiv" ).hide();
 	$( "#swipeSlider" ).hide();
 	removeSwipeListenerFromMap();
 
@@ -273,13 +257,8 @@ function turnOffSwipe() {
 }
 
 function turnOnSwipe() {
-	$( ".ol-full-screen" ).hide();
-	$( ".ol-mouse-position" ).hide();
-	$( ".ol-rotate" ).hide();
-	$( ".ol-zoom" ).hide();
+	$( "#swipeSelect" ).val( "on" );
 
-	$( "#leftSwipeTextDiv" ).show();
-	$( "#rightSwipeTextDiv" ).show();
 	$( "#swipeSlider" ).show();
 	addSwipeListenerToMap();
 
@@ -291,17 +270,14 @@ updateScreenText = function() {
 	updateScreenTextView();
 
 	if ( $( "#swipeSelect" ).val() == "on" ) {
-		$( "#acquisitionDateDiv" ).html( "&nbsp;" );
-		$( "#imageIdDiv" ).html( "&nbsp;" );
-
 		$.each(
-			{ left: tlv.swipeLayers[ 0 ], right: tlv.swipeLayers[ 1 ] },
-			function( i, x ) {
-				var layer = tlv.layers[ x ];
+			{ imageId: tlv.swipeLayers[ 0 ], acquisitionDate: tlv.swipeLayers[ 1 ] },
+			function( key, value ) {
+				var layer = tlv.layers[ value ];
 				var acquisitionDate = layer ? layer.acquisitionDate : "";
 				var imageId = layer ? layer.imageId + "<br>" : "";
 				var libraryLabel = layer ? tlv.libraries[ layer.library ].label + ":" : "";
-				$( "#" + i + "SwipeTextDiv" ).html( libraryLabel + imageId + acquisitionDate );
+				$( "#" + key + "Div" ).html( libraryLabel + imageId + acquisitionDate );
 			}
 		);
 	}
