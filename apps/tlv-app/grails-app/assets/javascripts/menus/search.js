@@ -59,6 +59,10 @@ function beginSearch() {
 
 					filter += "(niirs >= " + searchParams.minNiirs + " OR niirs IS NULL)";
 
+					filter += " AND ";
+
+					filter += "(entry_id = 0)";
+
 					queryParams.filter = filter;
 				}
 				$.ajax({
