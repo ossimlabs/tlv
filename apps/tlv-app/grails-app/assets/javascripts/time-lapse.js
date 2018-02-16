@@ -10,7 +10,7 @@ function buildSummaryTable() {
     var cell = row.insertCell( row.cells.length );
     row.insertCell( row.cells.length );
     $.each(
-        [ "Image ID", "Acquisition Date", "NIIRS", "Az.", "El.", "Library" ],
+        [ "Image ID", "Acquisition Date", "NIIRS", "Az.", "El.", "Sun Az.", "Sun El.", "Library" ],
         function( index, value ) {
             var cell = row.insertCell( row.cells.length );
             $( cell ).append( value );
@@ -52,6 +52,12 @@ function buildSummaryTable() {
 
             cell = row.insertCell( row.cells.length );
             $( cell ).append( x.metadata.grazing_angle ? x.metadata.grazing_angle.toFixed( 2 ) : "" );
+
+            cell = row.insertCell( row.cells.length );
+            $( cell ).append( x.metadata.sun_azimuth ? x.metadata.sun_azimuth.toFixed( 2 ) : "" );
+
+            cell = row.insertCell( row.cells.length );
+            $( cell ).append( x.metadata.sun_elevation ? x.metadata.sun_elevation.toFixed( 2 ) : "" );
 
             cell = row.insertCell( row.cells.length );
             $( cell ).append( x.library );
