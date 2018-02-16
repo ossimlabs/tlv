@@ -77,6 +77,15 @@ function selectBands( selectionMethod ) {
 	updateImageProperties( true );
 }
 
+var setupMapImageProperties = setupMap;
+setupMap = function() {
+	setupMapImageProperties();
+
+	tlv.map.on( "click", function() {
+		$( "#imagePropertiesDiv" ).hide();
+	});
+}
+
 var setupTimeLapseImageProperties = setupTimeLapse;
 setupTimeLapse = function() {
 	setupTimeLapseImageProperties();
