@@ -161,6 +161,27 @@ function createMapControls() {
 	acquisitionDateDiv.id = "acquisitionDateDiv";
 	var acquisitionDateControl = new ol.control.Control({ element: acquisitionDateDiv });
 
+	var FastForwardControl = function() {
+		var button = document.createElement( "button" );
+		button.innerHTML = "<span class = 'glyphicon glyphicon-step-forward'></span>";
+		button.title = "Fast Forward";
+
+		var this_ = this;
+		$( button ).on( "click", function( event ) {
+			changeFrame( "fastForward" );
+		});
+
+		var element = document.createElement( "div" );
+		element.className = "fast-forward-control ol-unselectable ol-control";
+		element.appendChild( button );
+
+		ol.control.Control.call( this, {
+			element: element,
+			target: undefined
+		});
+	};
+	ol.inherits( FastForwardControl, ol.control.Control );
+
 	var fullScreenSpan = document.createElement( "span" );
 	fullScreenSpan.className = "glyphicon glyphicon-fullscreen";
 	var fullScreenControl = new ol.control.FullScreen({ label: fullScreenSpan });
@@ -170,12 +191,80 @@ function createMapControls() {
 	imageIdDiv.id = "imageIdDiv";
 	var imageIdControl = new ol.control.Control({ element: imageIdDiv });
 
+	var PlayStopControl = function() {
+		var button = document.createElement( "button" );
+		button.innerHTML = "<span class = 'glyphicon glyphicon-play'></span>";
+		button.title = "Play/Stop";
+
+		var this_ = this;
+		$( button ).on( "click", function( event ) {
+			playStopTimeLapse( $( button ).children()[ 0 ] );
+		});
+
+		var element = document.createElement( "div" );
+		element.className = "play-stop-control ol-unselectable ol-control";
+		element.appendChild( button );
+
+		ol.control.Control.call( this, {
+			element: element,
+			target: undefined
+		});
+	};
+	ol.inherits( PlayStopControl, ol.control.Control );
+
+	var RewindControl = function() {
+		var button = document.createElement( "button" );
+		button.innerHTML = "<span class = 'glyphicon glyphicon-step-backward'></span>";
+		button.title = "Rewind";
+
+		var this_ = this;
+		$( button ).on( "click", function( event ) {
+			changeFrame( "rewind" );
+		});
+
+		var element = document.createElement( "div" );
+		element.className = "rewind-control ol-unselectable ol-control";
+		element.appendChild( button );
+
+		ol.control.Control.call( this, {
+			element: element,
+			target: undefined
+		});
+	};
+	ol.inherits( RewindControl, ol.control.Control );
+
+	var SummaryTableControl = function() {
+		var button = document.createElement( "button" );
+		button.innerHTML = "<span id = 'tlvLayerCountSpan'>0/0</span>&nbsp;<span class = 'glyphicon glyphicon-list-alt'></span>";
+		button.style = "width: auto";
+		button.title = "Summary Table";
+
+		var this_ = this;
+		$( button ).on( "click", function( event ) {
+			buildSummaryTable();
+			$( "#summaryTableDialog" ).modal( "show" );
+		});
+
+		var element = document.createElement( "div" );
+		element.className = "summary-table-control ol-unselectable ol-control";
+		element.appendChild( button );
+
+		ol.control.Control.call( this, {
+			element: element,
+			target: undefined
+		});
+	};
+	ol.inherits( SummaryTableControl, ol.control.Control );
 
 	tlv.mapControls = [
 		acquisitionDateControl,
 		createMousePositionControl(),
+		new FastForwardControl(),
 		fullScreenControl,
-		imageIdControl
+		imageIdControl,
+		new PlayStopControl(),
+		new RewindControl(),
+		new SummaryTableControl()
 	];
 }
 
