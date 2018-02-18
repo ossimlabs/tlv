@@ -273,6 +273,10 @@ function orientationToggle() {
 
 var pageLoadTimeLapse = pageLoad;
 pageLoad = function() {
+    var banners = $( ".security-classification" ).length;
+    var bannersHeight = banners * $( ".security-classification" ).height();
+    $( "#navigationMenu" ).css( "padding-top", bannersHeight );
+
 	pageLoadTimeLapse();
 
 	if (tlv.layers) {
