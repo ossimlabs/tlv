@@ -144,6 +144,12 @@ function displayLoadingDialog(message) {
 	$("#loadingDialogMessageDiv").html(message);
 }
 
+function displayNavbar() {
+	$( ".navbar" ).css( "opacity", 1 );
+	if ( tlv.hideNavbar ) { clearTimeout( tlv.hideNavbar ); }
+    tlv.hideNavbar = setTimeout( function() { $( ".navbar" ).css( "opacity", 0 ); }, 5000 );
+}
+
 function enableMenuButtons() {
 	var menuButtons = $(".navbar-header")[0].children;
 	for (var i = 1; i < menuButtons.length - 1; i++) { $(menuButtons[i]).show(); }
