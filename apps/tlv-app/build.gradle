@@ -126,6 +126,7 @@ assets {
         "**/Cesium/Assets/**",
         "**/Cesium/Workers/**",
         "**/fonts/**",
+        "**/geometries-bundle.*",
         "**/index-bundle.*"
     ]
 }
