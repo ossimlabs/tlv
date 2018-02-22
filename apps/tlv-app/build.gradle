@@ -127,6 +127,7 @@ assets {
         "**/Cesium/Workers/**",
         "**/fonts/**",
         "**/geometries-bundle.*",
+        "**/helvetiker*","
         "**/index-bundle.*"
     ]
 }
