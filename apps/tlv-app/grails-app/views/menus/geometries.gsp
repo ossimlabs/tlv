@@ -87,7 +87,7 @@
                 }
 
 				function addArrowLabel( color, position, text ) {
-                    new THREE.FontLoader().load( "/assets/helvetiker_regular.typeface.json", function ( font ) {
+                    new THREE.FontLoader().load( tlv.contextPath + "/assets/helvetiker_regular.typeface.json", function ( font ) {
                         var geometry = new THREE.TextGeometry( text, {
                             font: font,
                             size: 0.125,
