@@ -11,7 +11,6 @@
 //= require prototype
 //= require page-load
 //= require index
-//= require index-plugin
 //= require time-lapse
 //= require time-lapse-map
 //= require time-lapse-globe
