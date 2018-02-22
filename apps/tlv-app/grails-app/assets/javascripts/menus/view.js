@@ -87,6 +87,22 @@ function initializeSwipeSlider() {
 	$( window ).on( "mouseup", swipeSliderMouseUp );
 }
 
+function openGeometries() {
+	var layer = tlv.layers[ tlv.currentLayer ];
+	var url = tlv.contextPath + "/geometries";
+
+	var metadata = layer.metadata;
+	var params = {
+		azimuth: metadata.azimuth_angle,
+		elevation: metadata.elevation_angle,
+		sunAzimuth: metadata.sun_azimuth,
+		sunElevation: metadata.sun_elevation
+	};
+
+
+	window.open( url + "?" + $.param( params ), "Collection Geometries", "height=512,width=512" );
+}
+
 function openImageSpace() {
 	var layer = tlv.layers[ tlv.currentLayer ];
 	var library = tlv.libraries[ layer.library ];

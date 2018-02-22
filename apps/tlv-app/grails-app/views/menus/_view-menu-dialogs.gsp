@@ -14,7 +14,12 @@
 					<button class = "btn btn-primary form-control" onclick = "openImageSpace(); $('#viewDialog').modal('hide');">
 						Open
 					</button>
-
+<%--
+					<label>Geometries:</label>
+					<button class = "btn btn-primary form-control" onclick = "openGeometries(); $('#viewDialog').modal('hide');">
+						Open
+					</button>
+--%>
 					<label>Swipe</label>
 					<select class = "form-control" id = "swipeSelect" onchange = "swipeToggle(); $('#viewDialog').modal('hide');">
 						<option value = "off">OFF</option>
