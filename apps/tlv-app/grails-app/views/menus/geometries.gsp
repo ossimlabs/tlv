@@ -118,7 +118,7 @@
 				function loadImage() {
 
 
-console.dir(window.URLurlCreator.createObjectURL( tlv.blob ));
+console.dir(window.URL.urlCreator.createObjectURL( tlv.imageBlob ));
 					new THREE.ImageLoader()
 						.setCrossOrigin( '*' )
 						.load( "/assets/earth.jpg", function ( image ) { console.dir(image);

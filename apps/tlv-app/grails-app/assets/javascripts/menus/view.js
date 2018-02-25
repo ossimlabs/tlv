@@ -102,7 +102,7 @@ function openGeometries() {
 				sunAzimuth: metadata.sun_azimuth,
 				sunElevation: metadata.sun_elevation
 			};
-
+console.dir(blob);
 			var form = document.createElement( "form" );
 			form.action = tlv.contextPath + "/geometries";
 			form.method = "post";
