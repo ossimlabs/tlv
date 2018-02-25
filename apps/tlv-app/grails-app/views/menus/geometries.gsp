@@ -33,6 +33,7 @@
 					setupCamera();
 					setupLights();
 					setUpRenderer();
+					loadImage();
 
 					var origin = new THREE.Vector3( 0, 0, 0 );
 					var length = 1;
@@ -75,16 +76,14 @@
 
 					var controls = new THREE.OrbitControls( camera, renderer.domElement );
 
-					//$( window ).resize( onWindowResize );
+					$( window ).resize( function() {
+						camera.aspect = window.innerWidth / window.innerHeight;
+						camera.updateProjectionMatrix();
+						renderer.setSize( window.innerWidth, window.innerHeight );
+					});
 
 					animate();
 				});
-
-                function onWindowResize() {
-                    camera.aspect = window.innerWidth / window.innerHeight;
-                    camera.updateProjectionMatrix();
-                    renderer.setSize( window.innerWidth, window.innerHeight );
-                }
 
 				function addArrowLabel( color, position, text ) {
                     new THREE.FontLoader().load( tlv.contextPath + "/assets/helvetiker_regular.typeface.json", function ( font ) {
@@ -93,7 +92,7 @@
                             size: 0.125,
                             height: 0.01
                         });
-                        geometry.center();console.dir(position);
+                        geometry.center();
                         geometry.translate( position.x, position.y, position.z );
 
                         var mesh = new THREE.Mesh(
@@ -114,6 +113,21 @@
 				function animate() {
 					requestAnimationFrame( animate );
 					renderer.render( scene, camera );
+				}
+
+				function loadImage() {
+
+
+console.dir(window.URLurlCreator.createObjectURL( tlv.blob ));
+					new THREE.ImageLoader()
+						.setCrossOrigin( '*' )
+						.load( "/assets/earth.jpg", function ( image ) { console.dir(image);
+							var texture = new THREE.CanvasTexture( image );
+							var material = new THREE.MeshBasicMaterial({ map: texture });
+							var geometry = new THREE.PlaneGeometry( 2, 1 );
+							var plane = new THREE.Mesh( geometry, material );
+							scene.add( plane );
+						});
 				}
 
 				function setupCamera() {
