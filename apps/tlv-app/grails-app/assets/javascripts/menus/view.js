@@ -94,36 +94,33 @@ function openGeometries() {
 	var metadata = layer.metadata;
 	tlv.map.once( "postcompose", function( event ) {
 		var canvas = event.context.canvas;
-		canvas.toBlob( function( blob ) {
-			var params = {
-				azimuth: metadata.azimuth_angle,
-				elevation: metadata.elevation_angle,
-				imageBlob: blob,
-				sunAzimuth: metadata.sun_azimuth,
-				sunElevation: metadata.sun_elevation
-			};
-console.dir(blob);
-			var form = document.createElement( "form" );
-			form.action = tlv.contextPath + "/geometries";
-			form.method = "post";
-			$( "body" ).append( form );
+		var params = {
+			azimuth: metadata.azimuth_angle,
+			base64Image: canvas.toDataURL(),
+			elevation: metadata.elevation_angle,
+			sunAzimuth: metadata.sun_azimuth,
+			sunElevation: metadata.sun_elevation
+		};
+console.dir(params.base64Image);
+		var form = document.createElement( "form" );
+		form.action = tlv.contextPath + "/geometries";
+		form.method = "post";
+		$( "body" ).append( form );
 
-			$.each( params, function( key, value ) {
-				var input = document.createElement( "input" );
-				input.name = key;
-				input.type = "hidden";
-				input.value = value;
+		$.each( params, function( key, value ) {
+			var input = document.createElement( "input" );
+			input.name = key;
+			input.type = "hidden";
+			input.value = value;
 
-				$( form ).append( input );
-			});
-
-			var popup = window.open( "about:blank", "Collection Geometrie", "height=512,width=512" );
-			form.target = "Collection Geometries";
-
-			form.submit();
-			form.remove();
-
+			$( form ).append( input );
 		});
+
+		var popup = window.open( "about:blank", "Collection Geometrie", "height=512,width=512" );
+		form.target = "Collection Geometries";
+
+		form.submit();
+		form.remove();
 	});
 	tlv.map.renderSync();
 }
