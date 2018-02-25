@@ -116,18 +116,16 @@
 				}
 
 				function loadImage() {
+					var image = document.createElement( "img" );
+					image.src = tlv.base64Image;
 
-
-console.dir( tlv.base64Image );
-					new THREE.ImageLoader()
-						.setCrossOrigin( '*' )
-						.load( "/assets/earth.jpg", function ( image ) { console.dir(image);
-							var texture = new THREE.CanvasTexture( image );
-							var material = new THREE.MeshBasicMaterial({ map: texture });
-							var geometry = new THREE.PlaneGeometry( 2, 1 );
-							var plane = new THREE.Mesh( geometry, material );
-							scene.add( plane );
-						});
+					var plane = new THREE.Mesh(
+						new THREE.PlaneGeometry( 2, 1 ),
+						new THREE.MeshBasicMaterial({
+							map: new THREE.CanvasTexture( image )
+						})
+					);
+					scene.add( plane );
 				}
 
 				function setupCamera() {
