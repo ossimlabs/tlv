@@ -113,11 +113,11 @@ function openGeometries() {
 
 			$( form ).append( input );
 		});
-
-		var textArea = document.createElement( "textarea" );
-		textArea.name = "base64Image";
-		textArea.value = event.context.canvas.toDataURL();
-		$( form ).append( textArea );
+		tlv.mapCanvas = event.context.canvas;
+		//var textArea = document.createElement( "textarea" );
+		//textArea.name = "base64Image";
+		//textArea.value = event.context.canvas.toDataURL();
+		//$( form ).append( textArea );
 
 		var popup = window.open( "about:blank", "Collection Geometries", "height=512,width=512" );
 		form.target = "Collection Geometries";

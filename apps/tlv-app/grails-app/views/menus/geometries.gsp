@@ -160,7 +160,7 @@
 					}
 					else {
 						var image = document.createElement( "img" );
-						image.src = tlv.base64Image;
+						image.src = window.opener.tlv.mapCanvas.toDataURL();
 						addImageToTexture( image );
 					}
 				}
