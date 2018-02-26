@@ -15,14 +15,14 @@
     pointer-events: none;
 }
 
-.navbar-right {
-    pointer-events: auto;
-}
-
-.navbar li {
+.navbar-button {
     background-image: -webkit-linear-gradient(#484e55, #3a3f44 60%, #313539);
     background-image: -webkit-gradient(linear, left top, left bottom, from(#484e55), color-stop(60%, #3a3f44), to(#313539));
     background-image: linear-gradient(#484e55, #3a3f44 60%, #313539);
+}
+
+.navbar-right {
+    pointer-events: auto;
 }
 
 .security-classification {
