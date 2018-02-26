@@ -88,25 +88,23 @@ function initializeSwipeSlider() {
 }
 
 function openGeometries() {
-	var layer = tlv.layers[ tlv.currentLayer ];
-	var url = tlv.contextPath + "/geometries";
-
-	var metadata = layer.metadata;
 	tlv.map.once( "postcompose", function( event ) {
-		var canvas = event.context.canvas;
-		var params = {
-			azimuth: metadata.azimuth_angle,
-			base64Image: canvas.toDataURL(),
-			elevation: metadata.elevation_angle,
-			sunAzimuth: metadata.sun_azimuth,
-			sunElevation: metadata.sun_elevation
-		};
-
 		var form = document.createElement( "form" );
 		form.action = tlv.contextPath + "/geometries";
 		form.method = "post";
 		$( "body" ).append( form );
 
+		var metadata = tlv.layers[ tlv.currentLayer ].metadata;
+		var size = tlv.map.getSize();
+		var params = {
+			azimuth: metadata.azimuth_angle,
+			elevation: metadata.elevation_angle,
+			height: size[ 1 ],
+			imageRotation: 0,
+			sunAzimuth: metadata.sun_azimuth,
+			sunElevation: metadata.sun_elevation,
+			width: size[ 0 ]
+		};
 		$.each( params, function( key, value ) {
 			var input = document.createElement( "input" );
 			input.name = key;
@@ -116,7 +114,12 @@ function openGeometries() {
 			$( form ).append( input );
 		});
 
-		var popup = window.open( "about:blank", "Collection Geometrie", "height=512,width=512" );
+		var textArea = document.createElement( "textarea" );
+		textArea.name = "base64Image";
+		textArea.value = event.context.canvas.toDataURL();
+		$( form ).append( textArea );
+
+		var popup = window.open( "about:blank", "Collection Geometries", "height=512,width=512" );
 		form.target = "Collection Geometries";
 
 		form.submit();
@@ -319,4 +322,19 @@ updateScreenText = function() {
 			}
 		);
 	}
+}
+
+function zoomToFullResolution() {
+	var metadata = tlv.layers[ tlv.currentLayer ].metadata;
+	var gsdX = metadata.gsdx;
+	var gsdY = metadata.gsdy;
+	var resolution = Math.sqrt( Math.pow( gsdX, 2 ) + Math.pow( gsdY, 2 ) );
+	tlv.map.getView().setResolution( resolution );
+}
+
+function zoomToMaximumExtent() {
+	var footprint = tlv.layers[ tlv.currentLayer ].metadata.footprint;
+	var polygon = new ol.geom.MultiPolygon( footprint.coordinates );
+	var extent = ol.proj.transformExtent( polygon.getExtent(), "EPSG:4326", "EPSG:3857" );
+	tlv.map.getView().fit( extent );
 }
