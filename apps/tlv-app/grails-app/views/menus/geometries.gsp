@@ -25,65 +25,9 @@
 	<body>
 		<div id = "container"></div>
 		<script>
-				var camera, renderer, scene;
+				var aspectRatio, camera, imageRotation, renderer, scene;
 
-				$( document ).ready( function() {
-					scene = new THREE.Scene();
-
-					setupCamera();
-					setupLights();
-					setUpRenderer();
-					loadImage();
-
-					var origin = new THREE.Vector3( 0, 0, 0 );
-					var length = 1;
-
-					var az = tlv.azimuth ? parseFloat( tlv.azimuth ) : null;
-					var el = tlv.elevation ? parseFloat( tlv.elevation ) : null;
-					var sunAz = tlv.sunAzimuth ? parseFloat( tlv.sunAzimuth ) : null;
-					var sunEl = tlv.sunElevation ? parseFloat( tlv.sunElevation ) : null;
-					$.each(
-						[
-							{
-								color: "rgb( 126, 126, 126 )",
-								direction: new THREE.Vector3( 1, 0, 0 ).normalize(),
-								label: "E"
-							},
-							{
-								color: "rgb( 255, 0, 0 )",
-								direction: new THREE.Vector3( 0, 1, 0 ).normalize(),
- 								label: "N"
-							},
-							{
-								color: "rgb( 0, 0, 255 )",
-								direction: ( az && el ) ? sphericalToXYZ( az + 90, el, 1 ).normalize() : null,
-								label: "Sat."
-							},
-							{
-								color: "rgb( 255, 255, 0 )",
-								direction: ( sunAz && sunEl ) ? sphericalToXYZ( sunAz + 180, sunEl, 1 ).normalize() : null,
-								label: "Sun"
-							}
-						],
-						function ( index, arrow ) {
-							if ( arrow.direction ) {
-								var arrowHelper = new THREE.ArrowHelper( arrow.direction, origin, length, arrow.color );
-								scene.add( arrowHelper );
-								addArrowLabel( arrow.color, arrow.direction.clone().multiplyScalar( 1.125 ), arrow.label );
-							}
-						}
-					);
-
-					var controls = new THREE.OrbitControls( camera, renderer.domElement );
-
-					$( window ).resize( function() {
-						camera.aspect = window.innerWidth / window.innerHeight;
-						camera.updateProjectionMatrix();
-						renderer.setSize( window.innerWidth, window.innerHeight );
-					});
-
-					animate();
-				});
+				$( document ).ready( function() { init(); } );
 
 				function addArrowLabel( color, position, text ) {
                     new THREE.FontLoader().load( tlv.contextPath + "/assets/helvetiker_regular.typeface.json", function ( font ) {
@@ -106,7 +50,6 @@
                         object.add( mesh );
 
                         scene.add( object );
-
                     });
                 }
 
@@ -115,17 +58,111 @@
 					renderer.render( scene, camera );
 				}
 
-				function loadImage() {
-					var image = document.createElement( "img" );
-					image.src = tlv.base64Image;
 
-					var plane = new THREE.Mesh(
-						new THREE.PlaneGeometry( 2, 1 ),
-						new THREE.MeshBasicMaterial({
-							map: new THREE.CanvasTexture( image )
-						})
+				function init() {
+					aspectRatio = parseFloat( tlv.width ) / parseFloat( tlv.height );
+					var az = tlv.azimuth ? parseFloat( tlv.azimuth ) : null;
+					var el = tlv.elevation ? parseFloat( tlv.elevation ) : null;
+					imageRotation = tlv.imageRotation ? parseFloat( tlv.imageRotation ) : 0;
+					var north = tlv.north ? parseFloat( tlv.north ) : null;
+					var sunAz = tlv.sunAzimuth ? parseFloat( tlv.sunAzimuth ) : null;
+					var sunEl = tlv.sunElevation ? parseFloat( tlv.sunElevation ) : null;
+					var up = tlv.up ? parseFloat( tlv.up ) : null;
+
+					scene = new THREE.Scene();
+
+					setupCamera();
+					setupLights();
+					setUpRenderer();
+					loadImage();
+
+					var origin = new THREE.Vector3( 0, 0, 0 );
+					var length = 1;
+					$.each(
+						[
+							{
+								color: "rgb( 126, 126, 126 )",
+								direction: sphericalToXYZ( 0, 0, 1).normalize(),
+								label: "E",
+								length: 1
+							},
+							{
+								color: "rgb( 255, 0, 0 )",
+								direction: sphericalToXYZ( 90, 0, 1).normalize(),
+				 				label: "N",
+								length: 1
+							},
+							{
+								color: "rgb( 0, 0, 255 )",
+								direction: ( az && el ) ? sphericalToXYZ( az + 90, el, 1 ).normalize() : null,
+								label: "Sat.",
+								length: 1
+							},
+							{
+								color: "rgb( 255, 255, 0 )",
+								direction: ( sunAz && sunEl ) ? sphericalToXYZ( sunAz + 180, sunEl, 1 ).normalize() : null,
+								label: "Sun",
+								length: 1
+							},
+							{
+								color: "rgb( 0, 0, 126 )",
+								direction: up ? sphericalToXYZ( 90, 0, 1 ).normalize() : null,
+								label: "Up",
+								length: 1
+							}
+						],
+						function ( index, arrow ) {
+							if ( arrow.direction ) {
+								var zAxis = new THREE.Vector3( 0, 0 ,1 );
+								var direction = arrow.direction.applyAxisAngle( zAxis, imageRotation );
+
+								var arrowHelper = new THREE.ArrowHelper( direction, origin, arrow.length, arrow.color );
+								scene.add( arrowHelper );
+
+								addArrowLabel( arrow.color, direction.clone().multiplyScalar( arrow.length + 0.125 ), arrow.label );
+							}
+						}
 					);
-					scene.add( plane );
+
+					var controls = new THREE.OrbitControls( camera, renderer.domElement );
+
+					$( window ).resize( function() {
+						camera.aspect = window.innerWidth / window.innerHeight;
+						camera.updateProjectionMatrix();
+						renderer.setSize( window.innerWidth, window.innerHeight );
+					});
+
+					animate();
+				}
+
+				function loadImage() {
+					var addImageToTexture = function( image ) {
+						var texture = new THREE.CanvasTexture( image );
+
+						var geometry = new THREE.PlaneGeometry( aspectRatio, 1 );
+						geometry.rotateZ( imageRotation ? imageRotation * Math.PI / 180 : 0 );
+
+						var plane = new THREE.Mesh(
+							geometry,
+							new THREE.MeshBasicMaterial({
+								map: new THREE.CanvasTexture( image )
+							})
+						);
+						scene.add( plane );
+					}
+
+					if ( tlv.imageUrl ) {
+						new THREE.ImageLoader()
+						.setCrossOrigin( '*' )
+						.load( tlv.imageUrl, function ( image ) {
+							addImageToTexture( image );
+						});
+					}
+					else {
+						var image = document.createElement( "img" );
+						image.src = tlv.base64Image;
+						addImageToTexture( image );
+					}
 				}
 
 				function setupCamera() {
