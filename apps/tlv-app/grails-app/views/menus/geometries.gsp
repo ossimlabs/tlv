@@ -100,13 +100,13 @@
 							},
 							{
 								color: "rgb( 255, 255, 0 )",
-								direction: ( sunAz && sunEl ) ? sphericalToXYZ( sunAz + 180, sunEl, 1 ).normalize() : null,
+								direction: ( sunAz && sunEl ) ? sphericalToXYZ( sunAz, sunEl, 1 ).normalize() : null,
 								label: "Sun",
 								length: 1
 							},
 							{
 								color: "rgb( 0, 0, 126 )",
-								direction: up ? sphericalToXYZ( 90, 0, 1 ).normalize() : null,
+								direction: up ? sphericalToXYZ( up, 0, 1 ).normalize() : null,
 								label: "Up",
 								length: 1
 							}

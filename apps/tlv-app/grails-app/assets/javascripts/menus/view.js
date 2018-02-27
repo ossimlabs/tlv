@@ -88,44 +88,54 @@ function initializeSwipeSlider() {
 }
 
 function openGeometries() {
-	tlv.map.once( "postcompose", function( event ) {
-		var form = document.createElement( "form" );
-		form.action = tlv.contextPath + "/geometries";
-		form.method = "post";
-		$( "body" ).append( form );
+	var layer = tlv.layers[ tlv.currentLayer ];
+	var metadata = layer.metadata;
+	$.ajax({
+        data: $.param({
+            entry: metadata.entry_id,
+            filename: metadata.filename
+        }),
+        url: tlv.libraries[ layer.library ].imageSpaceUrl + "/getAngles"
+    })
+    .done( function( data ) {
+		var north = data.northAngle * 180 / Math.PI;
+		var up = data.upAngle * 180 / Math.PI;
 
-		var metadata = tlv.layers[ tlv.currentLayer ].metadata;
-		var size = tlv.map.getSize();
-		var params = {
-			azimuth: metadata.azimuth_angle,
-			elevation: metadata.elevation_angle,
-			height: size[ 1 ],
-			imageRotation: 0,
-			sunAzimuth: metadata.sun_azimuth,
-			sunElevation: metadata.sun_elevation,
-			width: size[ 0 ]
-		};
-		$.each( params, function( key, value ) {
-			var input = document.createElement( "input" );
-			input.name = key;
-			input.type = "hidden";
-			input.value = value;
+		tlv.map.once( "postcompose", function( event ) {
+			var form = document.createElement( "form" );
+			form.action = tlv.contextPath + "/geometries";
+			form.method = "post";
+			$( "body" ).append( form );
 
-			$( form ).append( input );
+			var size = tlv.map.getSize();
+			var params = {
+				azimuth: metadata.azimuth_angle,
+				elevation: metadata.elevation_angle,
+				height: size[ 1 ],
+				imageRotation: 0,
+				sunAzimuth: metadata.sun_azimuth,
+				sunElevation: metadata.sun_elevation,
+				up: up + north + 90,
+				width: size[ 0 ]
+			};
+			$.each( params, function( key, value ) {
+				var input = document.createElement( "input" );
+				input.name = key;
+				input.type = "hidden";
+				input.value = value;
+
+				$( form ).append( input );
+			});
+			tlv.mapCanvas = event.context.canvas;
+
+			var popup = window.open( "about:blank", "Collection Geometries", "height=512,width=512" );
+			form.target = "Collection Geometries";
+
+			form.submit();
+			form.remove();
 		});
-		tlv.mapCanvas = event.context.canvas;
-		//var textArea = document.createElement( "textarea" );
-		//textArea.name = "base64Image";
-		//textArea.value = event.context.canvas.toDataURL();
-		//$( form ).append( textArea );
-
-		var popup = window.open( "about:blank", "Collection Geometries", "height=512,width=512" );
-		form.target = "Collection Geometries";
-
-		form.submit();
-		form.remove();
+		tlv.map.renderSync();
 	});
-	tlv.map.renderSync();
 }
 
 function openImageSpace() {
