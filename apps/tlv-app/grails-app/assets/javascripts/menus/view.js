@@ -101,21 +101,22 @@ function openGeometries() {
 		var north = data.northAngle * 180 / Math.PI;
 		var up = data.upAngle * 180 / Math.PI;
 
-		tlv.map.once( "postcompose", function( event ) {
+		tlv.map.once( "postcompose", function( event ) { console.dir("cheese");
 			var form = document.createElement( "form" );
 			form.action = tlv.contextPath + "/geometries";
 			form.method = "post";
 			$( "body" ).append( form );
 
 			var size = tlv.map.getSize();
+			var viewRotation = tlb.map.getView().getRotation() * 180 / Math.PI;
 			var params = {
-				azimuth: metadata.azimuth_angle,
-				elevation: metadata.elevation_angle,
+				azimuth: metadata.azimuth_angle - viewRotation,
+				elevation: metadata.grazing_angle,
 				height: size[ 1 ],
-				imageRotation: 0,
-				sunAzimuth: metadata.sun_azimuth,
+				north: 90 - viewRotation,
+				sunAzimuth: metadata.sun_azimuth - viewRotation,
 				sunElevation: metadata.sun_elevation,
-				up: up + north + 90,
+				up: up + north + 90 - viewRotation,
 				width: size[ 0 ]
 			};
 			$.each( params, function( key, value ) {
