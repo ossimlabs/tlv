@@ -108,7 +108,7 @@ function openGeometries() {
 			$( "body" ).append( form );
 
 			var size = tlv.map.getSize();
-			var viewRotation = tlb.map.getView().getRotation() * 180 / Math.PI;
+			var viewRotation = tlv.map.getView().getRotation() * 180 / Math.PI;
 			var params = {
 				azimuth: metadata.azimuth_angle - viewRotation,
 				elevation: metadata.grazing_angle,
