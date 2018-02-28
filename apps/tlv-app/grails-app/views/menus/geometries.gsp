@@ -116,7 +116,7 @@
 								var arrowHelper = new THREE.ArrowHelper( arrow.direction, origin, arrow.length, arrow.color );
 								scene.add( arrowHelper );
 
-								addArrowLabel( arrow.color, direction.clone().multiplyScalar( arrow.length + 0.125 ), arrow.label );
+								addArrowLabel( arrow.color, arrow.direction.clone().multiplyScalar( arrow.length + 0.125 ), arrow.label );
 							}
 						}
 					);
