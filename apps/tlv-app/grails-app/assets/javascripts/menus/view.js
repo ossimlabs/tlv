@@ -95,7 +95,7 @@ function openGeometries() {
             entry: metadata.entry_id,
             filename: metadata.filename
         }),
-        url: tlv.libraries[ layer.library ].imageSpaceUrl + "/getAngles"
+        url: tlv.libraries[ layer.library ].omsUrl + "/getAngles"
     })
     .done( function( data ) {
 		var north = data.northAngle * 180 / Math.PI;
@@ -126,7 +126,7 @@ function openGeometries() {
 
 				$( form ).append( input );
 			});
-			tlv.mapCanvas = event.context.canvas;
+			mapCanvas = event.context.canvas;
 
 			var popup = window.open( "about:blank", "Collection Geometries", "height=512,width=512" );
 			form.target = "Collection Geometries";

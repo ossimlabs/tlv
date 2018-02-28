@@ -160,7 +160,7 @@
 					}
 					else {
 						var image = document.createElement( "img" );
-						image.src = window.opener.tlv.mapCanvas.toDataURL();
+						image.src = window.opener.mapCanvas.toDataURL();
 						addImageToTexture( image );
 					}
 				}
