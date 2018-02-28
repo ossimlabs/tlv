@@ -64,7 +64,7 @@
 					var az = tlv.azimuth ? parseFloat( tlv.azimuth ) : null;
 					var el = tlv.elevation ? parseFloat( tlv.elevation ) : null;
 					imageRotation = tlv.imageRotation ? parseFloat( tlv.imageRotation ) : 0;
-					var north = tlv.north ? parseFloat( tlv.north ) : null;
+					var north = tlv.north ? parseFloat( tlv.north ) : 90;
 					var sunAz = tlv.sunAzimuth ? parseFloat( tlv.sunAzimuth ) : null;
 					var sunEl = tlv.sunElevation ? parseFloat( tlv.sunElevation ) : null;
 					var up = tlv.up ? parseFloat( tlv.up ) : null;
@@ -82,13 +82,13 @@
 						[
 							{
 								color: "rgb( 126, 126, 126 )",
-								direction: sphericalToXYZ( 0, 0, 1).normalize(),
+								direction: sphericalToXYZ( north - 90, 0, 1).normalize(),
 								label: "E",
 								length: 1
 							},
 							{
 								color: "rgb( 255, 0, 0 )",
-								direction: sphericalToXYZ( 90, 0, 1).normalize(),
+								direction: sphericalToXYZ( north, 0, 1).normalize(),
 				 				label: "N",
 								length: 1
 							},
