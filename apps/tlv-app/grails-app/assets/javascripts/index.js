@@ -172,7 +172,7 @@ function enableKeyboardShortcuts() {
 				// right arrow key
 				case 39: changeFrame( "fastForward" ); break;
 				// delete key
-				case 46: deleteFrame(); break;
+				case 46: deleteFrame(  tlv.currentLayer ); break;
 			}
 		}
 	});
