@@ -101,7 +101,7 @@ function openGeometries() {
 		var north = data.northAngle * 180 / Math.PI;
 		var up = data.upAngle * 180 / Math.PI;
 
-		tlv.map.once( "postcompose", function( event ) { console.dir("cheese");
+		tlv.map.once( "postcompose", function( event ) {
 			var form = document.createElement( "form" );
 			form.action = tlv.contextPath + "/geometries";
 			form.method = "post";
