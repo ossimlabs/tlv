@@ -5,7 +5,7 @@
 		def userName = request.getHeader( requestHeaderUserName ) ?: requestHeaderUserNameDefault
 	%>
 	<g:if test = "${ userName }">
-		<li>
+		<li class = "navbar-button">
 			<p class = "navbar-text">
 				<span class = "fa fa-user"></span>&nbsp;
 				${ userName }

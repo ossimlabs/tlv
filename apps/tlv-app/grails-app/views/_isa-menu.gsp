@@ -1,5 +1,5 @@
 <g:if test = "${ grailsApplication.config.isaUrl }">
-	<li>
+	<li class = "navbar-button">
 		<a href = "javascript:void(0)" onclick = exportToISA()>3DISA</a>
 	</li>
 

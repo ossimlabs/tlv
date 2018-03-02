@@ -5,6 +5,11 @@ function pageLoad() {
 
 	enableKeyboardShortcuts();
 
+	$( window ).mousemove( function() {
+		displayNavbar();
+	});
+	displayNavbar();
+
 	$( window ).resize( function() { updateMapSize(); } );
 
 	$( '[data-toggle = "tooltip"]' ).tooltip();

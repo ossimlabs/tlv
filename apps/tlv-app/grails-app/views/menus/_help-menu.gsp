@@ -1,4 +1,4 @@
-<li class = "dropdown">
+<li class = "dropdown navbar-button">
 	<a href = "javascript:void(0)" class = "dropdown-toggle" data-toggle = "dropdown" role = "button">
 		<span class = "glyphicon glyphicon-question-sign"></span>
 		<span class="caret"></span>

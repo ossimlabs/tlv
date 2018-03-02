@@ -1,3 +1,26 @@
+#acquisitionDateDiv {
+	bottom: 0.5em;
+    right: 0.5em;
+    text-align: right;
+}
+
+.custom-map-control {
+	background-color: rgba(0, 0, 0, 0.5);
+	color: white;
+    position: absolute;
+}
+
+.fast-forward-control {
+	left: 8em;
+	top: 0.5em;
+}
+
+#imageIdDiv {
+	bottom: 0.5em;
+    left: 0.5em;
+    text-align: left;
+}
+
 .ol-full-screen {
 	left: 0.5em;
 	right: auto;
@@ -5,19 +28,23 @@
 }
 
 .ol-mouse-position {
-	background-color: rgba(0, 0, 0, 0.5);
+	background-color: none;
+	bottom: 0.5em;
 	color: white;
 	cursor: pointer;
-	right: 0.5em;
-	top: 0.5em;
+	right: auto;
+	text-align: center;
+	text-shadow: 2px 2px black;
+	top: auto;
+	width: 100%;
 }
 
 .ol-rotate, .ol-rotate.ol-hidden {
-        left: 0.5em;
-        opacity: 1;
-        right: auto;
-        top: 60px;
-        visibility: visible;
+    left: 0.5em;
+    opacity: 1;
+    right: auto;
+    top: 60px;
+    visibility: visible;
 }
 
 /* mobile device support */
@@ -25,6 +52,22 @@
 
 /* mobile device support */
 .ol-touch .ol-full-screen { top: 120px; }
+
+.play-stop-control {
+	left: 5.5em;
+	top: 0.5em;
+}
+
+.rewind-control {
+	left: 3em;
+	top: 0.5em;
+}
+
+.summary-table-control {
+	left: 10.5em;
+	top: 0.5em;
+	width: auto;
+}
 
 #swipeSlider {
 	display: none;

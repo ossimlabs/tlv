@@ -45,7 +45,7 @@ function setupGlobe() {
 	// dont display tiles that are hidden by the terrain
 	tlv.globe.depthTestAgainstTerrain = true;
 	// make the cache size large so the scene render is faster
-	tlv.globe.globe_.tileCacheSize = 5000;
+	//tlv.globe.globe_.tileCacheSize = 5000;
 	// add a tile loading function to tell when the glove had finished loading
 	globe.tileLoadProgressEvent.addEventListener(
 		function(event) {

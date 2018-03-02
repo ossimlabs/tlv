@@ -1,9 +1,3 @@
-.custom-map-control {
-	background-color: rgba(0, 0, 0, 0.5);
-	color: white;
-    position: absolute;
-}
-
 #errorDialog {
     display: none;
     bottom: 0;
@@ -14,7 +8,22 @@
     z-index: 9999;
 }
 
-.navbar { margin-bottom: 0px; }
+.navbar {
+	background: none;
+	border: none;
+	margin-bottom: 0px;
+    pointer-events: none;
+}
+
+.navbar-button {
+    background-image: -webkit-linear-gradient(#484e55, #3a3f44 60%, #313539);
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#484e55), color-stop(60%, #3a3f44), to(#313539));
+    background-image: linear-gradient(#484e55, #3a3f44 60%, #313539);
+}
+
+.navbar-right {
+    pointer-events: auto;
+}
 
 .security-classification {
 	font-weight: bold;
@@ -31,3 +40,9 @@
 .slider-selection, .slider-track-high { background: #303c3a; }
 
 .table th, .table td { border-top: none !important; }
+
+.transition {
+    -moz-transition: all 1s;
+    transition: all 1s;
+    -webkit-transition: all 1s;
+}

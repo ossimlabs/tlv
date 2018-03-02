@@ -10,9 +10,24 @@
 						<option value = 3>3D</option>
 					</select>
 
+					<label>Full Resolution:</label>
+					<button class = "btn btn-primary form-control" data-dismiss = "modal" onclick = zoomToFullResolution()>
+						Adjust Zoom
+					</button>
+
+					<%--<label>Geometries:</label>
+					<button class = "btn btn-primary form-control" onclick = "openGeometries(); $('#viewDialog').modal('hide');">
+						Open
+					</button>--%>
+
 					<label>Image Space:</label>
 					<button class = "btn btn-primary form-control" onclick = "openImageSpace(); $('#viewDialog').modal('hide');">
 						Open
+					</button>
+
+					<label>Maximum Extent:</label>
+					<button class = "btn btn-primary form-control" data-dismiss = "modal" onclick = zoomToMaximumExtent()>
+						Adjust Zoom
 					</button>
 
 					<label>Swipe</label>
