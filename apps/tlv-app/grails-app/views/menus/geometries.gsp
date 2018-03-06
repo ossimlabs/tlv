@@ -164,7 +164,7 @@
 
 				function setupCamera() {
 					camera = new THREE.PerspectiveCamera( 10, window.innerWidth / window.innerHeight, 1, 1000 );
-					camera.position.set( 10, 10, 10 );
+					camera.position.set( 0, 0, 10 );
 					camera.lookAt( scene.position );
 				}
 
