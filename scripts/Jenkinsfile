@@ -45,7 +45,7 @@ node(""){
             {
               sh """
               pushd ${workspaceDir}/${appName}/apps/${appName}-app
-              ./gradlew artifactoryPublish
+              gradle artifactoryPublish
               popd
               """
             }
@@ -62,7 +62,7 @@ node(""){
             // Run all tasks on the app. This includes pushing to OpenShift and S3.
             sh """
             pushd ${workspaceDir}/${appName}/apps/${appName}-app
-            ./gradlew ${GRADLE_TASK}
+            gradle ${GRADLE_TASK}
             popd
             """
         }
@@ -80,7 +80,7 @@ node(""){
                 // It's important to add --info because of SONARJNKNS-281
                 sh """
                   pushd ${workspaceDir}/${appName}/apps/${appName}-app
-                  ./gradlew --info sonarqube -Dsonar.projectKey=${appName}
+                  gradle --info sonarqube -Dsonar.projectKey=${appName}
                   popd
                 """
             }
