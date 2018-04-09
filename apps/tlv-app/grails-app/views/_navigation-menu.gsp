@@ -12,6 +12,11 @@
 
 			<div class = "collapse navbar-collapse" id = "navigationMenuList">
 				<ul class = "nav navbar-nav navbar-right">
+					<li class = "navbar-button">
+						<a href = "${ grailsApplication.config.baseUrl }" target = "_blank">
+							<span class = "glyphicon glyphicon-home"></span>
+						</a>
+					</li>
 					<g:render template = "/menus/search-menu"/>
 					<g:render template = "/menus/annotations-menu"/>
 					<g:render template = "/menus/export-menu"/>
