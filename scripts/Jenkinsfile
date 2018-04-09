@@ -16,6 +16,7 @@ node(""){
     def appName = "tlv"
     def omarCommonProjName = "omar-common"
     env.OMAR_COMMON_PROPERTIES="${workspaceDir}/${omarCommonProjName}/omar-common-properties.gradle"
+    env.O2_DEV_HOME=pwd()
 
     stage("Checkout"){
         dir(appName) {
@@ -44,8 +45,8 @@ node(""){
                             passwordVariable: 'ARTIFACTORY_PASSWORD']])
             {
               sh """
-              pushd ${workspaceDir}/${appName}/apps/${appName}-app
-              gradle artifactoryPublish
+              pushd ${workspaceDir}/${appName}
+              gradle :${appName}-app:artifactoryPublish
               popd
               """
             }
@@ -61,8 +62,8 @@ node(""){
         {
             // Run all tasks on the app. This includes pushing to OpenShift and S3.
             sh """
-            pushd ${workspaceDir}/${appName}/apps/${appName}-app
-            gradle ${GRADLE_TASK}
+            pushd ${workspaceDir}/${appName}
+            gradle :${appName}-app:${GRADLE_TASK}
             popd
             """
         }
@@ -79,8 +80,8 @@ node(""){
                 // requires SonarQube Scanner for Gradle 2.1+
                 // It's important to add --info because of SONARJNKNS-281
                 sh """
-                  pushd ${workspaceDir}/${appName}/apps/${appName}-app
-                  gradle --info sonarqube -Dsonar.projectKey=${appName}
+                  pushd ${workspaceDir}/${appName}
+                  gradle --info :${appName}-app:sonarqube -Dsonar.projectKey=${appName}
                   popd
                 """
             }
