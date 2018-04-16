@@ -10,6 +10,13 @@ function clientFileDownload(filename, blob) {
 	link.remove();
 }
 
+function exportKml() {
+	var layer = tlv.layers[ tlv.currentLayer ];
+	var url = tlv.libraries[ layer.library ].kmlUrl;
+	url += "/" + layer.metadata.id;
+	window.open( url );
+}
+
 function exportMetadata() {
 	var csvData = [];
 

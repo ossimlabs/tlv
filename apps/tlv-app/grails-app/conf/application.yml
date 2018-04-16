@@ -63,12 +63,15 @@ baseUrl: https://omar-dev.ossim.io
 #libraries:
 #    o2-dev:
 #        imageSpaceUrl: ${baseUrl}/omar-ui/omar/#/mapImage
+#        kmlUrl: ${baseUrl}/omar-superoverlay/superOverlay/createKml
 #        label: O2-DEV
 #        layerType: wms
 #        name: o2-dev
 #        wfsUrl: ${baseUrl}/omar-wfs/wfs
 #        wmsUrl: ${baseUrl}/omar-wms/wms
 #    o2-rel:
+#        imageSpaceUrl: https://omar-rel.ossim.io/omar-ui/omar/#/mapImage
+#        kmlUrl: https://omar-rel.ossim.io/omar-superoverlay/superOverlay/createKml
 #        label: O2-REL
 #        layerType: wms
 #        name: o2-rel
