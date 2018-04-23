@@ -1,11 +1,14 @@
+pluginRepositories {
+	maven { url "${ System.getenv('ARTIFACOTRY_URL') }/ossim-deps"
+	gradlePluginPortal()
+}
+
 def final O2_DEV_HOME = System.getenv('O2_DEV_HOME')
-
 if ( O2_DEV_HOME ) {
+	include
+		'omar-core-plugin',
+		'tlv-app'
 
-   include 'tlv-app',
-	   'omar-core-plugin'
-
-   project(':tlv-app').projectDir = "${O2_DEV_HOME}/tlv/apps/tlv-app" as File
-   project(':omar-core-plugin').projectDir = "${O2_DEV_HOME}/omar-core/plugins/omar-core-plugin" as File
-
+	project(':omar-core-plugin').projectDir = "${O2_DEV_HOME}/omar-core/plugins/omar-core-plugin" as File
+	project(':tlv-app').projectDir = "${O2_DEV_HOME}/tlv/apps/tlv-app" as File
 }
