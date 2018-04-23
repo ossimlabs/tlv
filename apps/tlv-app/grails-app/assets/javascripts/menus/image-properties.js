@@ -10,7 +10,7 @@ function getDefaultImageProperties() {
 		bands: "default",
 		brightness: 0,
 		contrast: 1,
-		hist_center: true,
+		hist_center: false,
 		hist_op: "auto-minmax",
 		resampler_filter: "bilinear",
 		sharpen_mode: "none"
