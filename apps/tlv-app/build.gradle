@@ -7,9 +7,11 @@ buildscript {
         apply from: System.env.OMAR_COMMON_PROPERTIES
     }
     repositories {
-        mavenLocal()
         maven { url "${ossimMavenProxy}" }
-        maven { url "https://repo.grails.org/grails/core" }
+        if( !System.env.WWW_CONNECTED || Boolean.parseBoolean( System.env.WWW_CONNECTED ) ) {
+            mavenLocal()
+            maven { url "https://repo.grails.org/grails/core" }
+        }
     }
     dependencies {
         classpath "org.grails:grails-gradle-plugin:$grailsVersion"
@@ -19,9 +21,10 @@ buildscript {
 }
 
 plugins {
-  id "com.github.ben-manes.versions" version "0.17.0"
-  id "org.sonarqube" version "2.6.2"
+    id "com.github.ben-manes.versions" version "0.17.0"
+    id "org.sonarqube" version "2.6.2"
 }
+
 
 apply plugin: "eclipse"
 apply plugin: "idea"
@@ -40,9 +43,11 @@ ext {
 }
 
 repositories {
-    mavenLocal()
     maven { url "${ossimMavenProxy}" }
-    maven { url "https://repo.grails.org/grails/core" }
+    if( !System.env.WWW_CONNECTED || Boolean.parseBoolean( System.env.WWW_CONNECTED ) ) {
+        mavenLocal()
+        maven { url "https://repo.grails.org/grails/core" }
+    }
 }
 
 dependencyManagement {
