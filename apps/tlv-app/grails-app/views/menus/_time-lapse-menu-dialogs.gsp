@@ -37,7 +37,7 @@
 	</div>
 </div>
 
-<g:javascript>
+<asset:script type = "text/javascript">
 	$( "#geoJumpLocationInput" ).on( "input", function () {
 		if ( tlv.geocoderUrl ) {
 			placenameSearch( $("#geoJumpLocationInput") );
@@ -46,4 +46,4 @@
 
 	$( "#timeLapseDialog" ).on( "hidden.bs.modal", function (event) { hideDialog( "timeLapseDialog" ); } );
 	$( "#timeLapseDialog" ).on( "shown.bs.modal", function (event) { displayDialog( "timeLapseDialog" ); } );
-</g:javascript>
+</asset:script>

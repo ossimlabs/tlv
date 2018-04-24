@@ -56,7 +56,7 @@
 	</div>
 </div>
 
-<g:javascript>
+<asset:script type = "text/javascript">
 	$( "#viewDialog" ).on( "hidden.bs.modal", function (event) { hideDialog( "viewDialog" ); } );
 	$( "#viewDialog" ).on( "shown.bs.modal", function (event) { displayDialog( "viewDialog" ); } );
-</g:javascript>
+</asset:script>

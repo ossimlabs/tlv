@@ -32,10 +32,10 @@
 	</div>
 </div>
 
-<g:javascript>
+<asset:script type = "text/javascript">
 	$( "#annotationsDialog" ).on( "hidden.bs.modal", function (event) {
 		hideDialog( "annotationsDialog" );
 		removeInteractions();
 	});
 	$( "#annotationsDialog" ).on( "shown.bs.modal", function (event) { displayDialog( "annotationsDialog" ); } );
-</g:javascript>
+</asset:script>

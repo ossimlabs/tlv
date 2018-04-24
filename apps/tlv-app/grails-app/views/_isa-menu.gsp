@@ -3,7 +3,7 @@
 		<a href = "javascript:void(0)" onclick = exportToISA()>3DISA</a>
 	</li>
 
-	<g:javascript>
+	<asset:script type = "text/javascript">
 	    function exportToISA() {
 	        var form = document.createElement( "form" );
 	        form.action = "${ grailsApplication.config.isaUrl }";
@@ -34,5 +34,5 @@
 	        form.submit();
 	        form.remove();
 	    }
-	</g:javascript>
+	</asset:script>
 </g:if>

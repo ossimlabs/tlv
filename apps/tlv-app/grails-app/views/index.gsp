@@ -11,11 +11,6 @@
 		<link href = "${ request.contextPath }/assets/tlvicon.ico" rel = "shortcut icon" type = "image/x-icon">
 
 		<asset:stylesheet src = "index-bundle.css"/>
-		<asset:javascript src = "index-bundle.js"/>
-		<asset:script type = "text/javascript">
-			var tlv = ${raw(tlvParams)};
-			tlv.contextPath = "${request.contextPath}";
-		</asset:script>
 	</head>
 	<body>
 		<div class = "container-fluid">
@@ -27,6 +22,11 @@
 			<g:render template = "/dialogs"/>
 		</div>
 
+		<asset:javascript src = "index-bundle.js"/>
+		<asset:script type = "text/javascript">
+			var tlv = ${raw(tlvParams)};
+			tlv.contextPath = "${request.contextPath}";
+		</asset:script>
 		<asset:deferredScripts/>
 	</body>
 </html>

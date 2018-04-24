@@ -70,7 +70,7 @@
 	</div>
 </div>
 
-<g:javascript>
+<asset:script type = "text/javascript">
 	$( "#searchLocationInput" ).on( "input", function () {
 		if ( tlv.geocoderUrl ) {
 			placenameSearch( $("#searchLocationInput") );
@@ -79,4 +79,4 @@
 
 	$( "#searchDialog" ).on( "hidden.bs.modal", function (event) { hideDialog( "searchDialog" ); } );
 	$( "#searchDialog" ).on( "shown.bs.modal", function (event) { displayDialog( "searchDialog" ); } );
-</g:javascript>
+</asset:script>

@@ -32,7 +32,7 @@
 	</div>
 </div>
 
-<g:javascript>
+<asset:script type = "text/javascript">
 	$( "#layersDialog" ).on( "hidden.bs.modal", function (event) { hideDialog( "layersDialog" ); } );
 	$( "#layersDialog" ).on( "shown.bs.modal", function (event) { displayDialog( "layersDialog" ); } );
-</g:javascript>
+</asset:script>
