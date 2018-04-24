@@ -12,6 +12,7 @@ function getDefaultImageProperties() {
 		contrast: 1,
 		hist_center: false,
 		hist_op: "auto-minmax",
+		nullPixelFlip: true,
 		resampler_filter: "bilinear",
 		sharpen_mode: "none"
 	};
@@ -137,6 +138,7 @@ function syncImageProperties() {
 	$( "#dynamicRangeSelect option[value='" + styles.hist_op + "']" ).prop( "selected", true );
 	$( "#dynamicRangeRegionSelect option[value='" + styles["hist_center"] + "']" ).prop( "selected", true );
 	$( "#interpolationSelect option[value='" + styles.resampler_filter + "']" ).prop( "selected", true );
+	$( "#nullPixelFlipSelect option[value='" + styles.nullPixelFlip + "']" ).prop( "selected", true );
 	$( "#sharpenModeSelect option[value='" + styles.sharpen_mode + "']" ).prop( "selected", true );
 }
 
@@ -161,6 +163,7 @@ function updateImageProperties( refreshMap ) {
 				contrast: $( "#contrastSliderInput" ).slider( "getValue" ) / 100,
 				hist_center: $( "#dynamicRangeRegionSelect" ).val(),
 				hist_op: $( "#dynamicRangeSelect" ).val(),
+				nullPixelFlip: $( "#nullPixelFlipSelect" ).val(),
 				resampler_filter: $( "#interpolationSelect" ).val(),
 				sharpen_mode: $( "#sharpenModeSelect" ).val()
 			})

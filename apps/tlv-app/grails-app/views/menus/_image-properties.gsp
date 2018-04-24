@@ -106,6 +106,19 @@
                 </td>
             </tr>
             <tr>
+                <td>Null Pixel Flip:</td>
+                <td>
+                    <select class = "form-control" id = "nullPixelFlipSelect" onchange = "updateImageProperties( true )">
+                        <g:each in = "${[
+                            [ name: "False", value: "false" ],
+                            [ name: "True", value: "true" ]
+                        ]}">
+                            <option value = ${ it.value }>${ it.name }</option>
+                        </g:each>
+                    </select>
+                </td>
+            </tr>
+            <tr>
                 <td>Opacity: <span id = "opacityValueSpan"></span></td>
                 <td>
                     <input data-slider-id = "opacitySlider" id = "opacitySliderInput" type = "text"/>
@@ -120,6 +133,7 @@
                         </g:each>
                     </select>
                 </td>
+            </tr>
         </table>
 	</div>
 </div>
