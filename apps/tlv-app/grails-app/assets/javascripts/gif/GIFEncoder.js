@@ -206,7 +206,10 @@ GIFEncoder = function() {
 			filename= filename !== undefined ? ( filename.endsWith(".gif")? filename: filename+".gif" ): "download.gif";
 			var templink = document.createElement("a");
 			templink.download=filename;
-			templink.href= URL.createObjectURL(new Blob([new Uint8Array(out.bin)], {type : "image/gif" } ));
+			var out_bin = out.bin;
+			var array = new Uint8Array(out_bin);
+			var blob = new Blob( [array], {type : "image/gif" } )
+			templink.href= URL.createObjectURL( blob );
 			templink.click();
 		}
 	}
