@@ -10,6 +10,11 @@ function clientFileDownload(filename, blob) {
 	link.remove();
 }
 
+function exportGif() {
+	if ( getCurrentDimension() == 2 ) { exportGifMap(); }
+	else { exportGifGlobe(); }
+}
+
 function exportKml() {
 	var layer = tlv.layers[ tlv.currentLayer ];
 	var url = tlv.libraries[ layer.library ].kmlUrl;

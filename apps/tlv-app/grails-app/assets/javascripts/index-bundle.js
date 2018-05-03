@@ -23,3 +23,5 @@
 //= require menus/layers
 //= require menus/search
 //= require menus/view
+
+//= require_tree gif
