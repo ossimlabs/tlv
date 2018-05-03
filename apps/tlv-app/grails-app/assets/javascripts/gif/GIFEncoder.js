@@ -182,7 +182,7 @@ GIFEncoder = function() {
 			if (!firstFrame) writePalette(); // local color table
 			writePixels(); // encode and write pixel data
 			firstFrame = false;
-		} catch (e) {
+		} catch (e) { console.dir(e);
 			ok = false;
 		}
 
