@@ -24,4 +24,6 @@
 //= require menus/search
 //= require menus/view
 
-//= require_tree gif
+//= require gif/LZWEncoder
+//= require gif/NeuQuant
+//= require gif/GIFEncoder
