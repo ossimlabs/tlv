@@ -140,7 +140,7 @@ GIFEncoder = function() {
 
 		try {
 			if (!is_imageData) {
-				image = im.getImageData(0, 0, im.canvas.width, im.canvas.height).data; console.dir(image);
+				image = im.getImageData(0, 0, im.canvas.width, im.canvas.height).data; 
 				if (!sizeSet) setSize(im.canvas.width, im.canvas.height);
 			} else {
 				if(im instanceof ImageData) {
@@ -182,7 +182,7 @@ GIFEncoder = function() {
 			if (!firstFrame) writePalette(); // local color table
 			writePixels(); // encode and write pixel data
 			firstFrame = false;
-		} catch (e) { console.dir(e);
+		} catch (e) {
 			ok = false;
 		}
 

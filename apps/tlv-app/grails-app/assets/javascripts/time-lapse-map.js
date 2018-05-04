@@ -143,11 +143,13 @@ function createLayerSources( layer ) {
 	};
 
 	layer.imageSource = new ol.source.ImageWMS({
+		//crossOrigin: "anonymous",
 		params: params,
 		url: tlv.libraries[ layer.library ].wmsUrl
 	});
 
 	layer.tileSource = new ol.source.TileWMS({
+		//crossOrigin: "anonymous",
 		params: params,
 		url: tlv.libraries[ layer.library ].wmsUrl
 	});
