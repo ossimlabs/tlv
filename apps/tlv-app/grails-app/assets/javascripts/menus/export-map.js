@@ -11,6 +11,7 @@ function exportGifMap() {
 			tlv.map.once( "postcompose", function( event ) {
 
 				var context = event.context.canvas.getContext( "2d" );
+
 				encoder.addFrame( context );
 
 				if ( tlv.currentLayer == tlv.layers.length - 1 ) {
@@ -21,6 +22,7 @@ function exportGifMap() {
 					encoder.download( filename );
 				}
 				else {
+console.dir(encoder);
 					changeFrame( "fastForward" );
 					encodeFrameMap();
 				}
