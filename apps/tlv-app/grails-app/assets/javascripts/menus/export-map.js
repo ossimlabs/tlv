@@ -22,7 +22,6 @@ function exportGifMap() {
 					encoder.download( filename );
 				}
 				else {
-console.dir(encoder);
 					changeFrame( "fastForward" );
 					encodeFrameMap();
 				}

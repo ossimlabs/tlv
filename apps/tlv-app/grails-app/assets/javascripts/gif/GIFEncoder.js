@@ -140,7 +140,7 @@ GIFEncoder = function() {
 
 		try {
 			if (!is_imageData) {
-				image = im.getImageData(0, 0, im.canvas.width, im.canvas.height).data; 
+				image = im.getImageData(0, 0, im.canvas.width, im.canvas.height).data;
 				if (!sizeSet) setSize(im.canvas.width, im.canvas.height);
 			} else {
 				if(im instanceof ImageData) {
@@ -209,8 +209,10 @@ GIFEncoder = function() {
 			var out_bin = out.bin;
 			var array = new Uint8Array(out_bin);
 			var blob = new Blob( [array], {type : "image/gif" } )
-			templink.href= URL.createObjectURL( blob );
+			templink.href= window.URL.createObjectURL( blob );
+			$( "body" ).append( templink );
 			templink.click();
+			templink.remove();
 		}
 	}
 

@@ -113,7 +113,7 @@ task wrapper(type: Wrapper) {
 }
 
 assets {
-    minifyJs = false
+    minifyJs = true
     minifyCss = true
     excludes = [
         "**/bootstrap/**",
