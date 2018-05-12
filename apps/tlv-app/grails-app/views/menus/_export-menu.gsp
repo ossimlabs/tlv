@@ -13,7 +13,7 @@
 <asset:script>
 	function exportGifCheck() {
 		// only load the files if needed
-		if ( typeof GIFEncoder === undefined ) {
+		if ( typeof GIFEncoder === "undefined" ) {
 			$.ajax({
 				dataType: "script",
 				url: "${ assetPath( src: "gif/gif-bundle.js" ) }"
