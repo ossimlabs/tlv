@@ -1,5 +1,15 @@
 function addDimension() {
-	if ( checkWebGlCompatability() ) { tlv.globe.setEnabled( true ); }
+	if ( checkWebGlCompatability() ) {
+		if ( tlv.globe === undefined ) {
+			loadCesiumJavascript().done( function() {
+				setupGlobe();
+				tlv.globe.setEnabled( true );
+			});
+		}
+		else {
+			tlv.globe.setEnabled( true );
+		}
+	}
 	else { $( "#dimensionsSelect" ).val( 2 ); }
 }
 
@@ -102,11 +112,6 @@ function openGeometries() {
 		var up = data.upAngle * 180 / Math.PI;
 
 		tlv.map.once( "postcompose", function( event ) {
-			var form = document.createElement( "form" );
-			form.action = tlv.contextPath + "/geometries";
-			form.method = "post";
-			$( "body" ).append( form );
-
 			var size = tlv.map.getSize();
 			var viewRotation = tlv.map.getView().getRotation() * 180 / Math.PI;
 			var params = {
@@ -119,21 +124,10 @@ function openGeometries() {
 				up: up + north + 90 - viewRotation,
 				width: size[ 0 ]
 			};
-			$.each( params, function( key, value ) {
-				var input = document.createElement( "input" );
-				input.name = key;
-				input.type = "hidden";
-				input.value = value;
 
-				$( form ).append( input );
-			});
 			mapCanvas = event.context.canvas;
 
-			var popup = window.open( "about:blank", "Collection Geometries", "height=512,width=512" );
-			form.target = "Collection Geometries";
-
-			form.submit();
-			form.remove();
+			var popup = window.open( tlv.contextPath + "/geometries?" + $.param( params ), "Collection Geometries", "height=512,width=512" );
 		});
 		tlv.map.renderSync();
 	});

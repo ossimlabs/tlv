@@ -128,10 +128,12 @@ assets {
     includes = [
         "**/application.*",
         "**/bootswatch-slate/**/glyphicons*",
+        "**/Cesium.js",
         "**/Cesium/Assets/**",
         "**/Cesium/Workers/**",
         "**/fonts/**",
         "**/geometries-bundle.*",
+        "**/gif-bundle.*",
         "**/helvetiker*",
         "**/index-bundle.*"
     ]

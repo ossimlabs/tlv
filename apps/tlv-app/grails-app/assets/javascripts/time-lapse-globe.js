@@ -82,5 +82,5 @@ var setupTimeLapseGlobe = setupTimeLapse;
 setupTimeLapse = function() {
 	setupTimeLapseGlobe();
 
-	setupGlobe();
+	//setupGlobe();
 }

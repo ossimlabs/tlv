@@ -5,7 +5,7 @@
 			<div class = "modal-body">
 				<div class = "form-group">
 					<label>Dimensions:</label>
-					<select class = "form-control" id = "dimensionsSelect" onchange = "dimensionToggle(); $('#viewDialog').modal('hide');">
+					<select class = "form-control" id = "dimensionsSelect" onchange = "$('#viewDialog').modal('hide'); dimensionToggle();">
 						<option value = 2>2D</option>
 						<option value = 3>3D</option>
 					</select>
@@ -57,6 +57,13 @@
 </div>
 
 <asset:script type = "text/javascript">
+	function loadCesiumJavascript() {
+		return $.ajax({
+			dataType: "script",
+			url: "${ assetPath( src: "webjars/cesium/1.38.0/Build/Cesium/Cesium.js" ) }"
+		});
+	}
+
 	$( "#viewDialog" ).on( "hidden.bs.modal", function (event) { hideDialog( "viewDialog" ); } );
 	$( "#viewDialog" ).on( "shown.bs.modal", function (event) { displayDialog( "viewDialog" ); } );
 </asset:script>
