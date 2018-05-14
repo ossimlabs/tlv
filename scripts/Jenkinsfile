@@ -82,7 +82,7 @@ node(""){
                 // It's important to add --info because of SONARJNKNS-281
                 sh """
                   pushd ${workspaceDir}/${appName}
-                  gradle --debug :${appName}-app:sonarqube -Dsonar.projectKey=${appName}
+                  gradle --info :${appName}-app:sonarqube -Dsonar.projectKey=${appName}
                   popd
                 """
             }
@@ -91,7 +91,7 @@ node(""){
     catch (e) {
         echo e.toString()
     }
-//  stage("Clean Workspace"){
-//     step([$class: 'WsCleanup'])
-//  }
+  stage("Clean Workspace"){
+     step([$class: 'WsCleanup'])
+  }
 }
