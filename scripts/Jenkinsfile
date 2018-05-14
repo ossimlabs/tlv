@@ -82,7 +82,7 @@ node(""){
                 // It's important to add --info because of SONARJNKNS-281
                 sh """
                   pushd ${workspaceDir}/${appName}
-                  gradle --info :${appName}-app:sonarqube -Dsonar.projectKey=${appName}
+                  gradle --debug :${appName}-app:sonarqube -Dsonar.projectKey=${appName}
                   popd
                 """
             }
