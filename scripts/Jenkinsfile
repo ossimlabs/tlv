@@ -91,7 +91,7 @@ node(""){
     catch (e) {
         echo e.toString()
     }
-  stage("Clean Workspace"){
-     step([$class: 'WsCleanup'])
-  }
+//  stage("Clean Workspace"){
+//     step([$class: 'WsCleanup'])
+//  }
 }
