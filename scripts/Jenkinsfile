@@ -75,6 +75,7 @@ node("ossim-build"){
         currentBuild.result = "FAILED"
         notifyObj?.notifyFailed()
     }
+   if (project.name == ${appName} && project.group == ${appName}) {
     try {
         stage('SonarQube analysis') {
             withSonarQubeEnv('sonar_cloud') {
@@ -91,6 +92,7 @@ node("ossim-build"){
     catch (e) {
         echo e.toString()
     }
+   }
   stage("Clean Workspace"){
      step([$class: 'WsCleanup'])
   }
