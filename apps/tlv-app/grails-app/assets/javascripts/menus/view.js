@@ -1,7 +1,11 @@
 function addDimension() {
 	if ( checkWebGlCompatability() ) {
 		if ( tlv.globe === undefined ) {
+			displayLoadingDialog( "Retrieving globe... yes, the ENTIRE globe." );
+
 			loadCesiumJavascript().done( function() {
+				hideLoadingDialog();
+
 				setupGlobe();
 				tlv.globe.setEnabled( true );
 			});
