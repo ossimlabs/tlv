@@ -79,7 +79,8 @@ function beginSearch() {
 
 							var acquisitionDate = "N/A";
 							if ( metadata.acquisition_date ) {
-								var date = getDate( new Date( Date.parse( metadata.acquisition_date ) ) );
+								var parsedDate = Date.parse( metadata.acquisition_date.replace( "+0000", "Z" ) );
+								var date = getDate( new Date( parsedDate ) );
 								acquisitionDate = date.year +  "-" + date.month + "-" + date.day + " " +
 									date.hour + ":" + date.minute + ":" + date.second;
 							}
