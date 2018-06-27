@@ -1,6 +1,7 @@
 # tlv
-#
 
-[![Build Status](http://jenkins.radiantbluecloud.com/buildStatus/icon?job=tlv-dev)]() (dev)  
+## Description
 
-[![Build Status](http://jenkins.radiantbluecloud.com/buildStatus/icon?job=tlv-master)]() (master)
+The Time Lapse Viewer is a web-based tool, dedicated to producing on-demand imagery flipbooks.
+
+
