@@ -53,6 +53,10 @@ baseUrl: https://omar-dev.ossim.io
 # If the twofishes geocoder is available, define the URL
 #geocoderUrl: ${baseUrl}/omar-ui/twoFishesProxy
 
+# A list of regular expressions that append a match to the image Id
+#imageIdFilters:
+#    - (_2CMV_[A-Z])
+
 # If ISA is available, define the URL
 # Make sure the trailing forward slash is included
 # Optional

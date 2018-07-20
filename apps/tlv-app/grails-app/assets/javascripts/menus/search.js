@@ -87,7 +87,7 @@ function beginSearch() {
 
 							images.push({
 								acquisitionDate: acquisitionDate,
-								imageId: metadata.image_id || ( metadata.title || metadata.filename.replace( /^.*[\\\/]/, "" ) ),
+								imageId: processImageId( metadata ),
 								library: library,
 								metadata: metadata,
 								numberOfBands: metadata.number_of_bands || 1
@@ -308,6 +308,22 @@ pageLoad = function() {
 	else {
 		$( "#searchDialog" ).modal( "show" );
 	}
+}
+
+function processImageId( metadata ) {
+	var imageId = metadata.image_id;
+	if ( !imageId ) {
+ 		imageId = metadata.title || metadata.filename.replace( /^.*[\\\/]/, "" );
+	}
+
+	$.each( tlv.imageIdFilters, function( index, filter ) {
+		if ( metadata.filename.match( filter ) ) {
+			imageId += RegExp.$1;
+		}
+	});
+
+
+	return imageId;
 }
 
 function processResults() {
