@@ -10,7 +10,7 @@ function buildSummaryTable() {
     var cell = row.insertCell( row.cells.length );
     row.insertCell( row.cells.length );
     $.each(
-        [ "Image ID", "Acquisition Date", "NIIRS", "Az.", "El.", "Sun Az.", "Sun El.", "Library" ],
+        [ "Image ID", "Acquisition Date", "NIIRS", "Az.", "El.", "Sun Az.", "Sun El.", "Entry", "Library" ],
         function( index, value ) {
             var cell = row.insertCell( row.cells.length );
             $( cell ).append( value );
@@ -58,6 +58,9 @@ function buildSummaryTable() {
 
             cell = row.insertCell( row.cells.length );
             $( cell ).append( x.metadata.sun_elevation ? x.metadata.sun_elevation.toFixed( 2 ) : "" );
+
+            cell = row.insertCell( row.cells.length );
+            $( cell ).append( x.metadata.entry_id );
 
             cell = row.insertCell( row.cells.length );
             $( cell ).append( x.library );
