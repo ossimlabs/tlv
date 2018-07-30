@@ -40,13 +40,13 @@ node("ossim-build"){
       stage ("Publish App Artifactory")
       {
           withCredentials([[$class: 'UsernamePasswordMultiBinding',
-                            credentialsId: 'artifactoryCredentials',
-                            usernameVariable: 'ARTIFACTORY_USER',
-                            passwordVariable: 'ARTIFACTORY_PASSWORD']])
+                            credentialsId: 'nexusCredentials',
+                            usernameVariable: 'REPOSITORY_MANAGER_USER',
+                            passwordVariable: 'REPOSITORY_MANAGER_PASSWORD']])
             {
               sh """
               pushd ${workspaceDir}/${appName}
-              gradle :${appName}-app:artifactoryPublish
+              gradle :${appName}-app:upload
               popd
               """
             }
