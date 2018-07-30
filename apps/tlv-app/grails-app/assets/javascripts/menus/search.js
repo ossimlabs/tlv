@@ -350,7 +350,13 @@ function processResults() {
 		if ( searchResults.length > 0 ) {
 			tlv.layers = searchResults.sort( function( a, b ) {
 				if ( a.acquisitionDate < b.acquisitionDate ) { return -1; }
-				if ( a.acquisitionDate > b.acquisitionDate ) { return 1; }
+				else if ( a.acquisitionDate > b.acquisitionDate ) { return 1; }
+
+				// if the acquisiton dates are the same, sort by entry id
+				else if ( a.metadata.entry_id < b.metadata.entry_id ) { return -1; }
+				else if ( a.metadata.entry_id > b.metadata.entry_id ) { return 1; }
+
+
 				return 0;
 			});
 
