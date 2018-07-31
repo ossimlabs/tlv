@@ -11,7 +11,7 @@
 //==================================================================================================
 
 def notifyObj
-node("ossim-build"){
+node("omar-build"){
     def workspaceDir = pwd()
     def appName = "tlv"
     def omarCommonProjName = "omar-common"
