@@ -57,6 +57,12 @@ function applyAnnotationStyle() {
 	// refresh the layer for the new style to take effect
 	tlv.layers[tlv.currentLayer].annotationsLayer.setVisible(false);
 	tlv.layers[tlv.currentLayer].annotationsLayer.setVisible(true);
+
+	feature.setProperties({
+		be: $( "#beInput" ).val(),
+		type: $( "#typeInput" ).val(),
+		user: $( "#userInput" ).val()
+	});
 }
 
 function calculateCircleFromRadius(center, radius) {
@@ -161,15 +167,15 @@ function drawPolygon() {
 
 function drawRectangle() {
 	tlv.drawAnnotationInteraction = new ol.interaction.Draw({
-		geometryFunction: function(coordinates, geometry) {
-			if (!geometry) { geometry = new ol.geom.Polygon(null); }
-			var start = coordinates[0];
-			var end = coordinates[1];
+		geometryFunction: function( coordinates, geometry ) {
+			if ( !geometry ) { geometry = new ol.geom.Polygon( null ); }
+			var start = coordinates[ 0 ];
+			var end = coordinates[ 1 ];
 			geometry.setCoordinates([[
 				start,
-				[start[0], end[1]],
+				[ start[ 0 ], end[ 1 ] ],
 				end,
-				[end[0], start[1]],
+				[ end[ 0 ], start[ 1 ] ],
 				start
 			]]);
 
@@ -177,7 +183,7 @@ function drawRectangle() {
 			return geometry;
         },
 		maxPoints: 2,
-        source: tlv.layers[tlv.currentLayer].annotationsLayer.getSource(),
+        source: tlv.layers[ tlv.currentLayer ].annotationsLayer.getSource(),
 		type: "LineString"
 	});
 }
@@ -301,6 +307,11 @@ function openAnnotationsDialog() {
 	$("#strokeColorInput").val(strokeColorHex);
 	$("#strokeTransparencyInput").val(strokeColor[3]);
 	$("#strokeWidthInput").val(strokeWidth);
+
+	var properties = feature.getProperties();
+	$( "#beInput" ).val( properties.be );
+	$( "#typeInput" ).val( properties.type );
+	$( "#userInput" ).val( properties.user );
 }
 
 function removeInteractions() {
@@ -317,3 +328,33 @@ function removeInteractions() {
 }
 
 function rgbToHex(r, g, b) { return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b); }
+
+function saveAnnotations() {
+	var geometryWriter = new ol.format.WKT();
+
+	var layer = tlv.layers[ tlv.currentLayer ];
+	if ( layer.annotationsLayer ) {
+		$.each( layer.annotationsLayer.getSource().getFeatures(), function( index, feature ) {
+			var geometry = geometryWriter.writeGeometry( feature.getGeometry() );
+			var properties = feature.getProperties();
+			var data = {
+				be: properties.be,
+				geometry: geometry.transform( "EPSG:3857", "EPSG:4326" ),
+				imageId: layer.metadata.image_id,
+				type: properties.type,
+				user: properties.user
+			};
+			$.ajax({
+				contentType: "application/json",
+				data: JSON.stringify( data ),
+				dataType: "json",
+				type: "post",
+				url: tlv.contextPath + "/home/saveAnnotations"
+			})
+			.done( function( data ) {
+			})
+			.fail( function() {
+			});
+		});
+	}
+}

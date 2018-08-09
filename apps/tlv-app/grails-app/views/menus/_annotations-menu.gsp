@@ -11,5 +11,7 @@
 		<li><a href = javascript:void(0) onclick = "drawAnnotation( 'square' )">Square</a></li>
 		<li class = "divider" role = "seperator"></li>
 		<li><a href = javascript:void(0) onclick = modifyAnnotations()>Modify</a></li>
+		<li class = "divider" role = "seperator"></li>
+		<li><a href = javascript:void(0) onclick = saveAnnotations()>Save</a></li>
 	</ul>
 </li>

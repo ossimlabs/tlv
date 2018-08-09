@@ -21,6 +21,17 @@
 
 					<label>Stroke Width</label>
 					<input class = "form-control" id = "strokeWidthInput" max = "100" min = "1" step = "1" type = "number">
+
+					<hr>
+
+					<label>BE</label>
+					<input class = "form-control" id = "beInput" type = "text">
+
+					<label>Type</label>
+					<input class = "form-control" id = "typeInput" type = "text">
+
+					<label>User</label>
+					<input class = "form-control" id = "userInput" type = "text">
 				</div>
 			</div>
 			<div class = "modal-footer">
