@@ -208,7 +208,7 @@ function getSelectedLibraries() {
 		$.each(
 			tlv.libraries,
 			function( key, value ) {
-				var checkbox = $( "#searchLibrary" + value.name.capitalize() + "Checkbox" );
+				var checkbox = $( "#searchLibrary" + key.capitalize() + "Checkbox" );
 				if ( checkbox.is( ":checked" ) ) { libraries.push( key ); }
 			}
 		);

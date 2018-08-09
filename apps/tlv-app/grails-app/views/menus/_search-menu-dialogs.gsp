@@ -52,8 +52,8 @@
 						<div class = "input-group">
 							<div class = "btn-group" data-toggle = "buttons">
 								<g:each in = "${ params.libraries }">
-									<label class = "btn btn-primary" id = "searchLibrary${ it.value.name.capitalize() }Label">
-										<input id = "searchLibrary${ it.value.name.capitalize() }Checkbox" type = "checkbox">
+									<label class = "btn btn-primary" id = "searchLibrary${ it.key.capitalize() }Label">
+										<input id = "searchLibrary${ it.key.capitalize() }Checkbox" type = "checkbox">
 										${ it.value.label }
 									</label>
 								</g:each>
