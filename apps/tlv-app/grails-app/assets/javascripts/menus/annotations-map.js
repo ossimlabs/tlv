@@ -335,15 +335,33 @@ function saveAnnotations() {
 	var layer = tlv.layers[ tlv.currentLayer ];
 	if ( layer.annotationsLayer ) {
 		$.each( layer.annotationsLayer.getSource().getFeatures(), function( index, feature ) {
-			var geometry = geometryWriter.writeGeometry( feature.getGeometry() );
+			var geometry = geometryWriter.writeGeometry( feature.getGeometry().clone().transform( "EPSG:3857", "EPSG:4326" ) );
 			var properties = feature.getProperties();
 			var data = {
 				be: properties.be,
-				geometry: geometry.transform( "EPSG:3857", "EPSG:4326" ),
+				geometry: geometry,
 				imageId: layer.metadata.image_id,
 				type: properties.type,
 				user: properties.user
 			};
+
+
+			$( "#dragoDialog" ).modal( "show" );
+			tlv.map.once(
+				"postcompose",
+				function(event) {
+					var canvas = event.context.canvas;
+					canvas.toBlob(function(blob) {
+						var urlCreator = window.URL || window.webkitURL;
+						var imageUrl = urlCreator.createObjectURL( blob );
+						$( "#dragoImage" ).attr("src", imageUrl );
+					});
+				}
+			);
+			tlv.map.renderSync();
+			$( "#dragoMetadata" ).html( JSON.stringify( data, null, 2 ) );
+
+
 			$.ajax({
 				contentType: "application/json",
 				data: JSON.stringify( data ),

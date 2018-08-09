@@ -28,3 +28,22 @@
 <g:render template = "/menus/search-menu-dialogs"/>
 <g:render template = "/menus/time-lapse-menu-dialogs"/>
 <g:render template = "/menus/view-menu-dialogs"/>
+
+<div class = "modal" id = "dragoDialog" role = "dialog" style = "z-index: 2147483647" tabindex = "-1">
+	<div class = "modal-dialog">
+		<div class = "modal-content">
+			<div class = "modal-header"><h4>DRAGO Info</h4></div>
+			<div class = "modal-body">
+				<div class = "row">
+					<img size = "25%" id = "dragoImage" width = "100%"/>
+				</div>
+				<div class = "row">
+					<pre id = "dragoMetadata" style = "background: none; color: #c8c8c8"></pre>
+				</div>
+			</div>
+			<div class = "modal-footer">
+				<button type = "button" class = "btn btn-default" data-dismiss = "modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
