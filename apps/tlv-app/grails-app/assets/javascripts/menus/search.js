@@ -316,7 +316,9 @@ function processImageId( metadata ) {
  		imageId = metadata.title || metadata.filename.replace( /^.*[\\\/]/, "" );
 	}
 
-	$.each( JSON.parse( tlv.imageIdFilters ), function( index, filter ) {
+	$.each(
+		typeof tlv.imageIdFilters == "array" ? tlv.imageIdFilters : JSON.parse( tlv.imageIdFilters ), 
+		function( index, filter ) {
 		if ( metadata.filename.match( filter ) ) {
 			imageId += RegExp.$1;
 		}
