@@ -317,12 +317,13 @@ function processImageId( metadata ) {
 	}
 
 	$.each(
-		typeof tlv.imageIdFilters == "array" ? tlv.imageIdFilters : JSON.parse( tlv.imageIdFilters ), 
+		typeof tlv.imageIdFilters == "object" ? tlv.imageIdFilters : JSON.parse( tlv.imageIdFilters ),
 		function( index, filter ) {
-		if ( metadata.filename.match( filter ) ) {
-			imageId += RegExp.$1;
+			if ( metadata.filename.match( filter ) ) {
+				imageId += RegExp.$1;
+			}
 		}
-	});
+	);
 
 
 	return imageId;
