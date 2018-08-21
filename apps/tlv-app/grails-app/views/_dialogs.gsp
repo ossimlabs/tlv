@@ -23,6 +23,7 @@
 <g:render template = "/time-lapse-dialogs"/>
 
 <g:render template = "/menus/annotations-menu-dialogs"/>
+<g:render template = "/menus/export-menu-dialogs"/>
 <g:render template = "/menus/help-menu-dialogs"/>
 <g:render template = "/menus/layers-menu-dialogs"/>
 <g:render template = "/menus/search-menu-dialogs"/>
