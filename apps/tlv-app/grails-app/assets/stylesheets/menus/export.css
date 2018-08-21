@@ -1,0 +1,30 @@
+.template {
+    display: inline-block;
+    height: 100%;
+    margin-left: 0px;
+    margin-right: 0px;
+    padding: 0;
+    vertical-align: middle;
+}
+
+/*.template-header-text {
+    display: inline-block;
+    height: 100%;
+    margin-left: 0px;
+    margin-right: 0px;
+    padding: 0;
+}
+*/
+.template-logo {
+    height: 100%;
+    padding: 10%;
+}
+
+.template-text {
+    font-family: Arial;
+    height: 100%;
+    line-height: normal;
+    margin-left: 0px;
+    margin-right: 0px;
+    padding: 0;
+}
