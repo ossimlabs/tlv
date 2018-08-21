@@ -60,6 +60,7 @@ function applyAnnotationStyle() {
 
 	feature.setProperties({
 		be: $( "#beInput" ).val(),
+		confidence: $( "#confidenceSelect" ).val(),
 		type: $( "#typeInput" ).val(),
 		user: $( "#userInput" ).val()
 	});
@@ -310,6 +311,7 @@ function openAnnotationsDialog() {
 
 	var properties = feature.getProperties();
 	$( "#beInput" ).val( properties.be );
+	$( "#confidenceSelect" ).val( properties.confidence );
 	$( "#typeInput" ).val( properties.type );
 	$( "#userInput" ).val( properties.user );
 }
@@ -335,11 +337,14 @@ function saveAnnotations() {
 	var layer = tlv.layers[ tlv.currentLayer ];
 	if ( layer.annotationsLayer ) {
 		$.each( layer.annotationsLayer.getSource().getFeatures(), function( index, feature ) {
-			var geometry = geometryWriter.writeGeometry( feature.getGeometry().clone().transform( "EPSG:3857", "EPSG:4326" ) );
+			var geometry = feature.getGeometry();
 			var properties = feature.getProperties();
 			var data = {
 				be: properties.be,
-				geometry: geometry,
+				confidence: properties.confidence,
+				geometry: geometryWriter.writeGeometry(
+					geometry.clone().transform( "EPSG:3857", "EPSG:4326" )
+				),
 				imageId: layer.metadata.image_id,
 				type: properties.type,
 				user: properties.user
