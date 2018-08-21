@@ -1,6 +1,7 @@
 <li class = "dropdown navbar-button">
-	<a href = "javascript:void(0)" class = "dropdown-toggle" data-toggle = "dropdown" role = "button">
-		Annotations <span class = "caret"></span>
+	<a href = "javascript:void(0)" class = "dropdown-toggle" data-toggle = "dropdown" role = "button" title = "Annotations">
+		<span class = "glyphicon glyphicon-pencil"></span>
+		<span class = "caret"></span>
 	</a>
 	<ul class = "dropdown-menu">
 		<li><a href = javascript:void(0) onclick = "drawAnnotation( 'circle' )">Circle</a></li>
