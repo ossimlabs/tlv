@@ -119,8 +119,8 @@ function disableMenuButtons() {
 
 function displayDialog( dialog ) {
 	var header = $( "#" + dialog + " .modal-header" );
-	var paddingHeight = header.offset().top;
-	var headerHeight = header.outerHeight();
+	var paddingHeight = header.offset() ? header.offset().top : 0;
+	var headerHeight = header.offset() ? header.outerHeight() : 0;
 	var footerHeight = $( "#" + dialog + " .modal-footer" ).outerHeight();
 
 	var body = $( "#" + dialog + " .modal-body" );
