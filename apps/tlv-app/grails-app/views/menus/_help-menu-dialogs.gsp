@@ -1,7 +1,9 @@
 <div class = "modal" id = "aboutDialog" role = "dialog" tabindex = "-1">
 	<div class = "modal-dialog">
 		<div class = "modal-content">
-			<div class = "modal-header"><h4>About</h4></div>
+			<div class = "modal-header">
+				<asset:image height = "40" src = "logos/tlv.png"/>
+			</div>
 			<div align = "center" class = "modal-body">
 				<%
 					def contactEmail = grailsApplication.config.about?.contactEmail
