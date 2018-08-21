@@ -15,10 +15,10 @@
 	top: 0.5em;
 }
 
-#imageIdDiv {
-	bottom: 0.5em;
-    left: 0.5em;
-    text-align: left;
+#imageIdOuterDiv {
+    text-align: center;
+	top: 0.5em;
+	width: 100%
 }
 
 .ol-full-screen {
