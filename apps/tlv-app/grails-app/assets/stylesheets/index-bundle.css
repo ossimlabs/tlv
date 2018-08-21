@@ -10,6 +10,7 @@
 *= require index
 *= require time-lapse
 *= require menus/search
+*= require menus/export
 *= require image-properties
 *= require menus/view
 */
