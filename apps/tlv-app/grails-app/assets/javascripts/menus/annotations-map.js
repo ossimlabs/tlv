@@ -311,7 +311,7 @@ function openAnnotationsDialog() {
 
 	var properties = feature.getProperties();
 	$( "#beInput" ).val( properties.be );
-	$( "#confidenceSelect" ).val( properties.confidence );
+	$( "#confidenceSelect option[value=" + properties.confidence + "]" ).prop( "selected", true );
 	$( "#typeInput" ).val( properties.type );
 	$( "#userInput" ).val( properties.user );
 }
