@@ -4,6 +4,36 @@ about:
     release: Islamorada
     releaseNumber: 2.5.0
 
+annotations:
+    types:
+        Alpha:
+        Bravo:
+        Charlie:
+        Delta:
+        Echo:
+        Foxtrot:
+        Golf:
+        Hotel:
+        India:
+        Juliet:
+        Kilo:
+        Lima:
+        Mike:
+        November:
+        Oscar:
+        Papa:
+        Quebec:
+        Romeo:
+        Sierra:
+        Tango:
+        Uniform:
+        Victor:
+        Whiskey:
+        Xray:
+        Yankee:
+        Zulu:
+
+
 # If there a page banner is needed, set it here
 #banner:
 #    backgroundColor: darkgray
@@ -90,6 +120,46 @@ securityClassificationBanner:
 # Set the context path of the application
 #server:
 #    contextPath: /tlv
+
+templates:
+    default:
+        header:
+            height: 10%
+            logo: tlv
+            text:
+                securityClassification:
+                    defaultValue: Security Classification
+                    style:
+                        color: "#add8e6"
+                        height: 25%
+                title:
+                    defaultValue: tlv.layers[ tlv.currentLayer ].imageId
+                    style:
+                        color: "#ffff00"
+                        height: 43%
+                description:
+                    defaultValue: '"CC: " + tlv.layers[ tlv.currentLayer ].metadata.country_code'
+                    style:
+                        color: "#ffffff"
+                        height: 32%
+        footer:
+            height: 3%
+            text:
+                securityClassification:
+                    defaultValue: Security Classification
+                    style:
+                        color: "#add8e6"
+                        text-align: left
+                location:
+                    defaultValue: 'getMapCenterText( "dms" )'
+                    style:
+                        color: "#add8e6"
+                        text-align: center
+                acquisitionDate:
+                    defaultValue: tlv.layers[ tlv.currentLayer ].acquisitionDate
+                    style:
+                        color: "#add8e6"
+                        text-align: right
 
 # If a terrain server is available, define the URL
 #terrainProvider: //assets.agi.com/stk-terrain/world
