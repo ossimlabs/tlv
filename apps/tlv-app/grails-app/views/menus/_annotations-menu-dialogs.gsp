@@ -84,7 +84,7 @@
 					<input class = "form-control" id = "userInput" type = "text">
 
 					<label>Confidence</label>
-					<select class = "form-control" id = "confidenceSelectSelect">
+					<select class = "form-control" id = "confidenceSelect">
 						<g:each in = "${[ "High", "Medium", "Low" ]}">
 							<option value = "${ it.toLowerCase() }">${ it }</option>
 						</g:each>
