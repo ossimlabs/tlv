@@ -20,6 +20,7 @@ class RestApiService {
 		params.geocoderUrl = grailsApplication.config.geocoderUrl ?: null
 		params.imageIdFilters = grailsApplication.config.imageIdFilters ?: []
 		params.libraries = grailsApplication.config.libraries
+		params.templates = grailsApplication.config.templates ?: [:]
 		params.terrainProvider = params.terrainProvider ?: ( grailsApplication.config.terrainProvider ?: null )
 
 
