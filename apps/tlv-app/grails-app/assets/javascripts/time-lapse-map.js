@@ -186,10 +186,17 @@ function createMapControls() {
 	fullScreenSpan.className = "glyphicon glyphicon-fullscreen";
 	var fullScreenControl = new ol.control.FullScreen({ label: fullScreenSpan });
 
+	var imageIdOuterDiv = document.createElement( "div" );
+	imageIdOuterDiv.className = "custom-map-control";
+	imageIdOuterDiv.id = "imageIdOuterDiv";
+	imageIdOuterDiv.style = "background-color: rgba(0, 0, 0, 0);"
+
 	var imageIdDiv = document.createElement( "div" );
-	imageIdDiv.className = "custom-map-control";
 	imageIdDiv.id = "imageIdDiv";
-	var imageIdControl = new ol.control.Control({ element: imageIdDiv });
+	imageIdDiv.style = "background-color: rgba(0, 0, 0, 0.5); display: inline-block; text-align: left";
+	$( imageIdOuterDiv ).append( imageIdDiv );
+
+	var imageIdControl = new ol.control.Control({ element: imageIdOuterDiv });
 
 	var PlayStopControl = function() {
 		var button = document.createElement( "button" );
@@ -259,11 +266,11 @@ function createMapControls() {
 	tlv.mapControls = [
 		acquisitionDateControl,
 		createMousePositionControl(),
-		new FastForwardControl(),
 		fullScreenControl,
 		imageIdControl,
-		new PlayStopControl(),
 		new RewindControl(),
+		new PlayStopControl(),
+		new FastForwardControl(),
 		new SummaryTableControl()
 	];
 }
