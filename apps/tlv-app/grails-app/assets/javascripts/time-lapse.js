@@ -149,6 +149,25 @@ function getCurrentDimension() {
 	return parseInt(dimension, 10);
 }
 
+function getMapCenterText( format ) {
+    var center = tlv.map.getView().getCenter();
+    var coordinate = ol.proj.transform( center, "EPSG:3857", "EPSG:4326");
+	var convert = new CoordinateConversion();
+	var lat = coordinate[ 1 ];
+	var lon = coordinate[ 0 ];
+
+    switch ( format ) {
+        case "dms":
+            return convert.ddToDms( lat, "lat" ) + " " + convert.ddToDms( lon, "lon" );
+            break;
+        case "mgrs":
+            return convert.ddToMgrs( lat, lon );
+            break;
+        default:
+            return latitude.toFixed( 6 ) + ", " + longitude.toFixed( 6 );
+    }
+}
+
 function getNextFrameIndex() { return tlv.currentLayer >= tlv.layers.length - 1 ? 0 : tlv.currentLayer + 1; }
 
 function getPreviousFrameIndex() { return tlv.currentLayer <= 0 ? tlv.layers.length - 1 : tlv.currentLayer - 1; }
@@ -374,7 +393,8 @@ function updateAcquisitionDate() {
 function updateImageId() {
 	var layer = tlv.layers[ tlv.currentLayer ];
 	var libraryLabel = tlv.libraries[ layer.library ].label;
-	$( "#imageIdDiv" ).html( libraryLabel + ": " + layer.imageId );
+    var text = Object.keys( tlv.libraries ).length > 1 ? libraryLabel + ": " : "";
+	$( "#imageIdDiv" ).html( text + layer.imageId );
 }
 
 function updateScreenText() {
