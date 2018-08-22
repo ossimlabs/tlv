@@ -36,12 +36,14 @@ function exportGifGlobe() {
 }
 
 function exportScreenshotGlobe() {
-	var callback = function( canvas ) { console.dir(canvas);
+	var callback = function( canvas ) {
 		canvas.toBlob(function(blob) {
 			var filename = "tlv_screenshot_" + new Date().generateFilename() + ".png";
 			clientFileDownload(filename, blob);
 		});
 	};
+
+	getScreenshotGlobe( callback );
 }
 
 function getScreenshotGlobe( callback ) {
