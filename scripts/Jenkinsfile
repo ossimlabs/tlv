@@ -74,9 +74,8 @@ node("omar-build"){
         currentBuild.result = "FAILED"
         notifyObj?.notifyFailed()
     }
-//   if (project.name == ${appName} && project.group == ${appName}) {
     try {
-        stage('SonarQube analysis') {
+        stage('SonarQube Analysis') {
             withSonarQubeEnv('sonar_cloud') {
                 // requires SonarQube Scanner for Gradle 2.1+
                 // It's important to add --info because of SONARJNKNS-281
@@ -91,8 +90,21 @@ node("omar-build"){
     catch (e) {
         echo e.toString()
     }
-//   }
-  stage("Clean Workspace"){
-     step([$class: 'WsCleanup'])
-  }
+    try {
+        stage('HPFortify Analysis') {
+              sh "/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin/sourceanalyzer -64 -b ${appName} -clean"
+              sh "/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin/sourceanalyzer -64 -b ${appName} ./**/*.js"
+              sh "/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin/sourceanalyzer -64 -b ${appName} -scan -Xmx8G -f fortifyResults-${appName}-app.fpr"
+              //sh "aws s3 cp fortifyResults-${appName}-app.fpr s3://o2-private/hpfortify/"
+              sh "/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin/fortifyclient -url http://hpfortify.ossim.io:8080/ssc -authtoken 139fe681-2bf0-4184-bd30-988f1cb6ef91 uploadFPR -file fortifyResults-${appName}-app.fpr -applicationVersionID 2"
+        }
+   }
+   catch (e) {
+      echo e.toString()
+   }
+  stage("Clean Workspace")
+   {
+      if ("${CLEAN_WORKSPACE}" == "true")
+        step([$class: 'WsCleanup'])
+   }
 }
