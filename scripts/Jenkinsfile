@@ -93,7 +93,7 @@ node("omar-build"){
     try {
         stage('HPFortify Analysis') {
               sh "/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin/sourceanalyzer -64 -b ${appName} -clean"
-              sh "/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin/sourceanalyzer -64 -b ${appName} ./tlv/app/tlv-app/grails-app/assets/javascripts/**/*.js -exclude="./tlv/app/tlv-app/grails-app/assets/javascripts/three.js/*" -exclude="./tlv/app/tlv-app/grails-app/assets/javascripts/gif/*" -exclude="./tlv/**/*-bundle.js""
+              sh "/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin/sourceanalyzer -64 -b ${appName} ./tlv/app/tlv-app/grails-app/assets/javascripts/**/*.js -exclude=\"./tlv/app/tlv-app/grails-app/assets/javascripts/three.js/*\" -exclude=\"./tlv/app/tlv-app/grails-app/assets/javascripts/gif/*\" -exclude=\"./tlv/**/*-bundle.js\""
               sh "/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin/sourceanalyzer -64 -b ${appName} -show-files"
               sh "/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin/sourceanalyzer -64 -b ${appName} -scan -Xmx8G -f fortifyResults-${appName}-app.fpr"
               sh "/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin/fortifyclient -url http://hpfortify.ossim.io:8080/ssc -authtoken 139fe681-2bf0-4184-bd30-988f1cb6ef91 uploadFPR -file fortifyResults-${appName}-app.fpr -applicationVersionID 2"
