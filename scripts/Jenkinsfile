@@ -52,14 +52,6 @@ node("omar-build"){
             }
       }
 
-      stage ("Test push to S3")
-      {
-        sh """
-        echo "cheese" >> cheese.txt
-        aws s3 cp cheese.txt s3://o2-delivery/dev/docker/cheese.txt
-        """
-      }
-
       stage ("Publish Docker App")
       {
         withCredentials([[$class: 'UsernamePasswordMultiBinding',
