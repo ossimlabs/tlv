@@ -69,7 +69,6 @@ function clientFileDownload(filename, blob) {
 function downloadTemplate( templateStyle ) {
 	templateStyle = "default";
 
-
 	var callback = function( mapCanvas ) {
 		var template = tlv.templates[ templateStyle ];
 
@@ -189,13 +188,21 @@ function downloadTemplate( templateStyle ) {
 		});
 	}
 
-	if ( getCurrentDimension() == 2 ) { getScreenshotMap( callback ); }
-	else { getScreenshotGlobe( callback ); }
+	if ( getCurrentDimension() == 2 ) {
+		getScreenshotMap( callback );
+	}
+	else {
+		getScreenshotGlobe( callback );
+	}
 }
 
 function exportGif() {
-	if ( getCurrentDimension() == 2 ) { exportGifMap(); }
-	else { exportGifGlobe(); }
+	if ( getCurrentDimension() == 2 ) {
+		exportGifMap();
+	}
+	else {
+		exportGifGlobe();
+	}
 }
 
 function exportKml() {
@@ -259,132 +266,135 @@ function exportScreenshot() {
 function exportTemplate( templateStyle ) {
 	displayLoadingDialog( "Hunting for map data, hange on..." );
 
- 	tlv.map.once(
-		"postcompose",
-		function( event ) {
-			var canvas = event.context.canvas;
-			canvas.toBlob(function( blob ) {
-				$( "#templateImage" ).load( function() {
-					hideLoadingDialog();
+	var callback = function( canvas ) {
+		canvas.toBlob(function( blob ) {
+			$( "#templateImage" ).load( function() {
+				hideLoadingDialog();
 
-					var imageHeight = $( "#templateImage" ).height();
- 					var imageWidth = $( "#templateImage" ).width();
+				var imageHeight = $( "#templateImage" ).height();
+ 				var imageWidth = $( "#templateImage" ).width();
 
-					var template = tlv.templates[ templateStyle ];
+				var template = tlv.templates[ templateStyle ];
 
+				// header
+				$( "#templateHeader" ).html( " " );
+				$( "#templateHeader" ).width( imageWidth );
+				var header  = template.header;
+				var headerHeight = parseFloat( header.height ) / 100 * imageHeight;
+				$( "#templateHeader" ).css( "height", headerHeight );
+				$( "#templateHeader" ).css( "background", "linear-gradient(#595454, #000000)" );
 
-					$( "#templateHeader" ).width( imageWidth );
-					var header  = template.header;
-					var headerHeight = parseFloat( header.height ) / 100 * imageHeight;
-					$( "#templateHeader" ).css( "height", headerHeight );
-					$( "#templateHeader" ).css( "background", "linear-gradient(#595454, #000000)" );
+				// logo
+				var logoDiv = document.createElement( "div" );
+				$( logoDiv ).addClass( "row" );
+				$( logoDiv ).addClass( "template" );
+				$( "#templateHeader" ).append( logoDiv );
 
+				var templateLogo = document.createElement( "img" );
+				$( templateLogo ).addClass( "template-logo" );
+				$( templateLogo ).attr( "id", "templateLogo" );
+				$( templateLogo ).attr( "src", "/assets/logos/" + header.logo );
+				$( logoDiv ).append( templateLogo );
 
-					var logoDiv = document.createElement( "div" );
-					$( logoDiv ).addClass( "row" );
-					$( logoDiv ).addClass( "template" );
-					$( "#templateHeader" ).append( logoDiv );
+				// header text
+				var headerTextDiv = document.createElement( "div" );
+				$( headerTextDiv ).addClass( "row" );
+				$( headerTextDiv ).addClass( "template" );
+				$( "#templateHeader" ).append( headerTextDiv );
 
-					var templateLogo = document.createElement( "img" );
-					$( templateLogo ).addClass( "template-logo" );
-					$( templateLogo ).attr( "id", "templateLogo" );
-					$( templateLogo ).attr( "src", "/assets/logos/" + header.logo );
-					$( logoDiv ).append( templateLogo );
-
-
-					var headerTextDiv = document.createElement( "div" );
-					$( headerTextDiv ).addClass( "row" );
-					$( headerTextDiv ).addClass( "template" );
-					$( "#templateHeader" ).append( headerTextDiv );
-
-					$.each( header.text, function( name, attributes ) {
-						var div = document.createElement( "div" );
-						$( div ).addClass( "row" );
-						$( div ).addClass( "template-text" );
-						$( div ).attr( "id", "header" + name );
-						$( div ).click( function() {
-							changeTemplateText( div );
-						});
-
-						var text = attributes.defaultValue;
-						try { text = eval( attributes.defaultValue ); }
-						catch ( exception ) { /* do nothing */ }
-						$( div ).html( text );
-
-						$.each( attributes.style, function( key, value ) {
-							$( div ).css( key, value );
-						});
-
-						$( headerTextDiv ).append( div );
-						$( div ).css( "font-size", $( div ).height() - 1 );
+				$.each( header.text, function( name, attributes ) {
+					var div = document.createElement( "div" );
+					$( div ).addClass( "row" );
+					$( div ).addClass( "template-text" );
+					$( div ).attr( "id", "header" + name );
+					$( div ).click( function() {
+						changeTemplateText( div );
 					});
 
+					var text = attributes.defaultValue;
+					try { text = eval( attributes.defaultValue ); }
+					catch ( exception ) { /* do nothing */ }
+					$( div ).html( text );
 
-					var northArrowContainer = document.createElement( "div" );
-					$( northArrowContainer ).addClass( "row" );
-					$( northArrowContainer ).addClass( "template" );
-					$( northArrowContainer ).css( "text-align", "right" );
-					var width = $( "#templateHeader" ).width() - $( "#templateHeader" ).height() - $( headerTextDiv ).width();
-					$( northArrowContainer ).css( "width", width );
-					$( "#templateHeader" ).append( northArrowContainer );
-
-					var northArrowDiv = document.createElement( "div" );
-					$( northArrowDiv ).addClass( "template" );
-					$( northArrowDiv ).css( "width", $( northArrowContainer ).height() );
-					$( northArrowContainer ).append( northArrowDiv );
-
-
-					var templateNorthArrow = document.createElement( "img" );
-					$( templateNorthArrow ).addClass( "template-logo" );
-					$( templateNorthArrow ).attr( "id", "templateNorthArrow" );
-					$( templateNorthArrow ).attr( "src", "/assets/logos/" + header.northArrow );
-					var rotation = tlv.map.getView().getRotation() * 180 / Math.PI;
-					$( templateNorthArrow ).css( "transform", "rotate(" + rotation + "deg)" );
-					$( northArrowDiv ).append( templateNorthArrow );
-
-
-					$( "#templateFooter" ).width( imageWidth );
-					var footer = template.footer;
-					var footerHeight = parseFloat( footer.height ) / 100 * imageHeight;
-					var templateFooter = $( "#templateFooter" );
-					templateFooter.css( "background", "linear-gradient(#595454, #000000)" );
-					templateFooter.css( "height", footerHeight );
-
-
-					var columns = 1;
-					if ( 12 % Object.keys( footer.text ).length == 0 ) {
-						columns = 12 / Object.keys( footer.text ).length;
-					}
-					$.each( footer.text, function( name, attributes ) {
-						var div = document.createElement( "div" );
-						$( div ).addClass( "template-text" );
-						$( div ).addClass( "col-md-" + columns );
-
-						$( div ).attr( "id", "footer" + name );
-						$( div ).click( function() {
-							changeTemplateText( div );
-						});
-
-						var text = attributes.defaultValue;
-						try { text = eval( attributes.defaultValue ); }
-						catch ( exception ) { /* do nothing */ }
-						$( div ).html( text );
-
-						$.each( attributes.style, function( key, value ) {
-							$( div ).css( key, value );
-						});
-
-						templateFooter.append( div );
-						$( div ).css( "font-size", $( div ).height() - 1 );
+					$.each( attributes.style, function( key, value ) {
+						$( div ).css( key, value );
 					});
+
+					$( headerTextDiv ).append( div );
+					$( div ).css( "font-size", $( div ).height() - 1 );
 				});
 
-				var urlCreator = window.URL || window.webkitURL;
-				var imageUrl = urlCreator.createObjectURL( blob );
-				$( "#templateImage" ).attr( "src", imageUrl );
-				$( "#templateDialog" ).modal( "show" );
+				// north arrow
+				var northArrowContainer = document.createElement( "div" );
+				$( northArrowContainer ).addClass( "row" );
+				$( northArrowContainer ).addClass( "template" );
+				$( northArrowContainer ).css( "text-align", "right" );
+				var width = $( "#templateHeader" ).width() - $( "#templateHeader" ).height() - $( headerTextDiv ).width();
+				$( northArrowContainer ).css( "width", width );
+				$( "#templateHeader" ).append( northArrowContainer );
+
+				var northArrowDiv = document.createElement( "div" );
+				$( northArrowDiv ).addClass( "template" );
+				$( northArrowDiv ).css( "width", $( northArrowContainer ).height() );
+				$( northArrowContainer ).append( northArrowDiv );
+
+				var templateNorthArrow = document.createElement( "img" );
+				$( templateNorthArrow ).addClass( "template-logo" );
+				$( templateNorthArrow ).attr( "id", "templateNorthArrow" );
+				$( templateNorthArrow ).attr( "src", "/assets/logos/" + header.northArrow );
+				var rotation = tlv.map.getView().getRotation() * 180 / Math.PI;
+				$( templateNorthArrow ).css( "transform", "rotate(" + rotation + "deg)" );
+				$( northArrowDiv ).append( templateNorthArrow );
+
+				// footer
+				$( "#templateFooter" ).html( "" );
+				$( "#templateFooter" ).width( imageWidth );
+				var footer = template.footer;
+				var footerHeight = parseFloat( footer.height ) / 100 * imageHeight;
+				var templateFooter = $( "#templateFooter" );
+				templateFooter.css( "background", "linear-gradient(#595454, #000000)" );
+				templateFooter.css( "height", footerHeight );
+
+				// footer text
+				var columns = 1;
+				if ( 12 % Object.keys( footer.text ).length == 0 ) {
+					columns = 12 / Object.keys( footer.text ).length;
+				}
+				$.each( footer.text, function( name, attributes ) {
+					var div = document.createElement( "div" );
+					$( div ).addClass( "template-text" );
+					$( div ).addClass( "col-md-" + columns );
+
+					$( div ).attr( "id", "footer" + name );
+					$( div ).click( function() {
+						changeTemplateText( div );
+					});
+
+					var text = attributes.defaultValue;
+					try { text = eval( attributes.defaultValue ); }
+					catch ( exception ) { /* do nothing */ }
+					$( div ).html( text );
+
+					$.each( attributes.style, function( key, value ) {
+						$( div ).css( key, value );
+					});
+
+					templateFooter.append( div );
+					$( div ).css( "font-size", $( div ).height() - 1 );
+				});
 			});
-		}
-	);
-	tlv.map.renderSync();
+
+			var urlCreator = window.URL || window.webkitURL;
+			var imageUrl = urlCreator.createObjectURL( blob );
+			$( "#templateImage" ).attr( "src", imageUrl );
+			$( "#templateDialog" ).modal( "show" );
+		});
+	}
+
+	if ( getCurrentDimension() == 2 ) {
+		getScreenshotMap( callback );
+	}
+	else {
+		getScreenshotGlobe( callback );
+	}
 }
