@@ -125,7 +125,8 @@ templates:
     default:
         header:
             height: 10%
-            logo: tlv
+            logo: tlv.png
+            northArrow: north-arrow.png
             text:
                 securityClassification:
                     defaultValue: Security Classification

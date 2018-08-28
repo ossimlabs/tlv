@@ -16,6 +16,7 @@
 	</div>
 </div>
 
+
 <asset:script type = "text/javascript">
 	$( "#templateDialog" ).on( "hidden.bs.modal", function ( event ) {
 		hideDialog( "templateDialog" );

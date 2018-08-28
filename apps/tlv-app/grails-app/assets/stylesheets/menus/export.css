@@ -7,16 +7,29 @@
     vertical-align: middle;
 }
 
+.template-color-input {
+    display: inline-block;
+    padding: 0;
+    vertical-align: middle;
+}
+
 .template-logo {
     height: 100%;
     padding: 10%;
 }
 
 .template-text {
+    cursor: pointer;
     font-family: Arial;
     height: 100%;
     line-height: normal;
     margin-left: 0px;
     margin-right: 0px;
     padding: 0;
+}
+
+.template-text-edit-button {
+    display: inline-block;
+    padding: 0;
+    vertical-align: middle;
 }

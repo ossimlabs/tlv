@@ -8,7 +8,7 @@
 		<li><a href = javascript:void(0) onclick = exportMetadata()>Metadata</a></li>
 		<li><a href = javascript:void(0) onclick = exportKml()>KML</a></li>
 		<li><a href = javascript:void(0) onclick = exportScreenshot()>Screenshot</a></li>
-		<%--<li><a href = javascript:void(0) onclick = "javascript:exportTemplate( 'default' )">Template</a></li>--%>
+		<li><a href = javascript:void(0) onclick = "javascript:exportTemplate( 'default' )">Template</a></li>
 	</ul>
 </li>
 

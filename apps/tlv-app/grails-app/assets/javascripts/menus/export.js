@@ -3,21 +3,53 @@ function changeTemplateText( element ) {
 
 	if ( $( element ).children().length > 0 ) {
 		var input = $( element ).children()[ 0 ];
+		var color = $( element ).children()[ 1 ];
 		var value = $( input ).val();
+		$( element ).css( "color", $( color ).val() );
 		$( element ).html( value );
 	}
 	else {
-		var input = document.createElement( "input" );
-		$( input ).addClass( "form-control" );
-		$( input ).attr( "type", "text" );
-		$( input ).css( "height", $( element ).height() );
-		$( input ).css( "width", "100%" );
-		$( input).val( $( element ).html() );
-		$( element ).html( input );
-		$( input ).focus();
+		var textInput = document.createElement( "input" );
+		$( textInput ).addClass( "form-control" );
+		$( textInput ).attr( "type", "text" );
+		$( textInput ).css( "display", "inline-block" );
+		$( textInput ).css( "height", $( element ).height() );
+		$( textInput ).css( "padding", 0 );
+		$( textInput ).css( "vertical-align", "middle" );
+		$( textInput ).css( "width", $( element ).width() - 2 * $( element ).height() );
+		$( textInput).val( $( element ).html() );
+		$( element ).html( textInput );
+		$( textInput ).focus();
 
-		$( input ).blur( function() {
+		var colorInput = document.createElement( "input" );
+		$( colorInput ).addClass( "form-control" );
+		$( colorInput ).addClass( "template-color-input" );
+		$( colorInput ).attr( "type", "color" );
+		$( colorInput ).attr( "value", $( element )[ 0 ].style.color );
+		$( colorInput ).css( "height", $( element ).height() );
+		$( colorInput ).css( "width", $( element ).height() );
+		$( element ).append( colorInput );
+
+		var button = document.createElement( "button" );
+		$( button ).addClass( "btn" );
+		$( button ).addClass( "btn-primary" );
+		$( button ).addClass( "form-control" );
+		$( button ).addClass( "template-text-edit-button" );
+		$( button ).css( "height", $( element ).height() );
+		$( button ).css( "width", $( element ).height() );
+		var span = document.createElement( "span" );
+		$( span ).addClass( "glyphicon glyphicon-ok" );
+		$( button ).html( span );
+		$( element ).append( button );
+
+		$( button ).click( function() {
 			changeTemplateText( element );
+
+			setTimeout( function() {
+				$( element ).click( function() {
+					changeTemplateText( element );
+				});
+			}, 100 );
 		});
 	}
 }
@@ -34,11 +66,16 @@ function clientFileDownload(filename, blob) {
 	link.remove();
 }
 
-function downloadTemplate() {
+function downloadTemplate( templateStyle ) {
+	templateStyle = "default";
+
+
 	var callback = function( mapCanvas ) {
+		var template = tlv.templates[ templateStyle ];
+
 		var canvas = document.createElement( "canvas" );
 		var size = tlv.map.getSize();
-		canvas.height = 1.13 * mapCanvas.height;
+		canvas.height = ( parseFloat( template.header.height ) / 100 + parseFloat( template.footer.height ) /100 + 1 ) * mapCanvas.height;
 		canvas.width = mapCanvas.width;
 
 		var context = canvas.getContext( "2d" );
@@ -47,7 +84,9 @@ function downloadTemplate() {
 		context.fillRect( 0, 0, canvas.width, canvas.height );
 
 
-		var headerHeight = parseInt( 0.1 * mapCanvas.height );
+		var header = template.header;
+		var headerHeight = parseFloat( header.height ) / 100 * mapCanvas.height;
+		var headerWidth = canvas.width;
 		var headerGradient = context.createLinearGradient( 0, 0, 0, headerHeight);
 		headerGradient.addColorStop( 0, "#595454" );
 		headerGradient.addColorStop( 1, "#000000" );
@@ -55,46 +94,35 @@ function downloadTemplate() {
 		context.fillRect( 0, 0, mapCanvas.width, headerHeight );
 
 
-		var templateLogo = $( "#templateLogo" );
-		var logoHeight = headerHeight;
-		var logoWidth = headerHeight;
+		// the logo goes next but must be loaded at the end
 
 
-		var headerSecurityClassification = $( "#headerSecurityClassification" );
-		var headerSecurityClassificationSize = parseFloat( headerSecurityClassification[ 0 ].style.height ) / 100 * headerHeight;
-		var headerSecurityClassificationText = headerSecurityClassification.html();
+		var textY = 0;
+		$.each( header.text, function( name, attributes ) {
+			var div = $( "#header" + name );
+			var text = div.html();
+			var size = parseFloat( attributes.style.height ) / 100 * headerHeight;
 
-		context.fillStyle = "#ADD8E6";
-		context.font = headerSecurityClassificationSize + "px Arial";
-		context.textAlign = "left";
-		context.fillText( headerSecurityClassificationText, logoWidth, headerSecurityClassificationSize );
+			context.fillStyle = div.css( "color" );
+			context.font = size + "px Arial";
+			context.textAlign = div.css( "text-align" ) || "center";
+			context.textBaseline = "bottom";
 
-
-		var headerTitle = $( "#headerTitle" );
-		var headerTitleSize = parseFloat( headerTitle[ 0 ].style.height ) / 100 * headerHeight;
-		var headerTitleText = headerTitle.html();
-
-		context.fillStyle = "yellow";
-		context.font = headerTitleSize + "px Arial";
-		context.textAlign = "left";
-		context.fillText( headerTitleText, logoWidth, headerSecurityClassificationSize + headerTitleSize );
+			textY += size;
+			context.fillText( text, headerHeight, textY );
+		});
 
 
-		var headerDescription = $( "#headerDescription" );
-		var headerDescriptionSize = parseFloat( headerDescription[ 0 ].style.height ) / 100 * headerHeight;
-		var headerDescriptionText = headerDescription.html();
-
-		context.fillStyle = "white";
-		context.font = headerDescriptionSize + "px Arial";
-		context.textAlign = "left";
-		context.fillText( headerDescriptionText, logoWidth, headerSecurityClassificationSize + headerTitleSize + headerDescriptionSize );
+		// the north arrow goes next but must be loaded at the end
 
 
+		// map image
 		context.drawImage( mapCanvas, 0, 0.1 * mapCanvas.height );
 
 
-		var footerHeight = parseInt( 0.03 * mapCanvas.height );
-		var footerWidth = mapCanvas.width;
+		// footer
+		var footer = template.footer;
+		var footerHeight = parseFloat( footer.height ) / 100 * mapCanvas.height;
 
 		var footerGradientHeightMin = headerHeight + mapCanvas.height;
 		var footerGradientHeightMax = footerGradientHeightMin + footerHeight;
@@ -102,47 +130,61 @@ function downloadTemplate() {
 		footerGradient.addColorStop( 0, "#595454" );
 		footerGradient.addColorStop( 1, "#000000" );
 		context.fillStyle = footerGradient;
-		context.fillRect( 0, headerHeight + mapCanvas.height, footerWidth, footerHeight );
+		context.fillRect( 0, headerHeight + mapCanvas.height, mapCanvas.width, footerHeight );
 
 
-		var footerSecurityClassification = $( "#footerSecurityClassification" );
-		var footerSecurityClassificationSize = footerSecurityClassification.height();
-		var footerSecurityClassificationText = footerSecurityClassification.html();
+		var columnSize = mapCanvas.width / Object.keys( footer.text ).length;
+		var textX = 0;
+		$.each( footer.text, function( name, attributes ) {
+			var div = $( "#footer" + name );
+			var text = div.html();
 
-		context.fillStyle = "#ADD8E6";
-		context.font = footerHeight + "px Arial";
-		context.textAlign = "left";
-		context.fillText( footerSecurityClassificationText, 0, headerHeight + mapCanvas.height + footerHeight );
+			context.fillStyle = div.css( "color" );
+			context.font = footerHeight + "px Arial";
+			context.textAlign = div.css( "text-align" ) || "center";
+			context.textBaseline = "bottom";
 
+			var textXCursor = textX;
+			switch ( context.textAlign ) {
+				case "center":
+					textXCursor += columnSize / 2;
+					break;
+				case "right":
+					textXCursor += columnSize;
+					break;
+			}
 
-		var footerLocation = $( "#footerLocation" );
-		var footerLocationSize = footerLocation.height();
-		var footerLocationText = footerLocation.html();
-
-		context.fillStyle = "#ADD8E6";
-		context.font = footerHeight + "px Arial";
-		context.textAlign = "center";
-		context.fillText( footerLocationText, mapCanvas.width / 2, headerHeight + mapCanvas.height + footerHeight );
-
-
-		var footerAcquisitionDate = $( "#footerAcquisitionDate" );
-		var footerAcquisitionDateSize = footerAcquisitionDate.height();
-		var footerAcquisitionDateText = footerAcquisitionDate.html();
-
-		context.fillStyle = "#ADD8E6";
-		context.font = footerHeight + "px Arial";
-		context.textAlign = "right";
-		context.fillText( footerAcquisitionDateText, mapCanvas.width, headerHeight + mapCanvas.height + footerHeight );
+			context.fillText( text, textXCursor, headerHeight + mapCanvas.height + footerHeight );
+			textX += mapCanvas.width / Object.keys( footer.text ).length;
+		});
 
 
+		var templateLogo = $( "#templateLogo" );
 		var logo = new Image();
 		$( logo ).attr( "src", templateLogo.attr( "src" ) );
 		$( logo ).load( function() {
-			context.drawImage( logo, 0, 0, logoWidth, logoHeight );
+			var paddingSize = parseFloat( templateLogo.css( "padding" ) ) / 100 * headerHeight;
+			var logoHeight = headerHeight -  2 * paddingSize;
+			var logoWidth = headerHeight - 2 * paddingSize;
+			context.drawImage( logo, paddingSize, paddingSize, logoWidth, logoHeight );
 
-			canvas.toBlob(function( blob ) {
-				var filename = "tlv_template_" + new Date().generateFilename() + ".png";
-				clientFileDownload( filename, blob );
+			var templateNorthArrow = $( "#templateNorthArrow" );
+			var northArrow = new Image();
+			$( northArrow ).attr( "src", templateNorthArrow.attr( "src" ) );
+			$( northArrow ).load( function() {
+				var paddingSize = parseFloat( templateNorthArrow.css( "padding" ) ) / 100 * headerHeight;
+				var northArrowSize = headerHeight -  2 * paddingSize;
+
+				var translateX = headerWidth - paddingSize - northArrowSize / 2;
+				var translateY = paddingSize + northArrowSize / 2;
+				context.translate( translateX, translateY );
+				context.rotate( tlv.map.getView().getRotation() );
+				context.drawImage( northArrow, -northArrowSize / 2, -northArrowSize / 2, northArrowSize, northArrowSize );
+
+				canvas.toBlob(function( blob ) {
+					var filename = "tlv_template_" + new Date().generateFilename() + ".png";
+					clientFileDownload( filename, blob );
+				});
 			});
 		});
 	}
@@ -246,7 +288,7 @@ function exportTemplate( templateStyle ) {
 					var templateLogo = document.createElement( "img" );
 					$( templateLogo ).addClass( "template-logo" );
 					$( templateLogo ).attr( "id", "templateLogo" );
-					$( templateLogo ).attr( "src", "/assets/logos/" + header.logo + ".png");
+					$( templateLogo ).attr( "src", "/assets/logos/" + header.logo );
 					$( logoDiv ).append( templateLogo );
 
 
@@ -274,7 +316,31 @@ function exportTemplate( templateStyle ) {
 						});
 
 						$( headerTextDiv ).append( div );
+						$( div ).css( "font-size", $( div ).height() - 1 );
 					});
+
+
+					var northArrowContainer = document.createElement( "div" );
+					$( northArrowContainer ).addClass( "row" );
+					$( northArrowContainer ).addClass( "template" );
+					$( northArrowContainer ).css( "text-align", "right" );
+					var width = $( "#templateHeader" ).width() - $( "#templateHeader" ).height() - $( headerTextDiv ).width();
+					$( northArrowContainer ).css( "width", width );
+					$( "#templateHeader" ).append( northArrowContainer );
+
+					var northArrowDiv = document.createElement( "div" );
+					$( northArrowDiv ).addClass( "template" );
+					$( northArrowDiv ).css( "width", $( northArrowContainer ).height() );
+					$( northArrowContainer ).append( northArrowDiv );
+
+
+					var templateNorthArrow = document.createElement( "img" );
+					$( templateNorthArrow ).addClass( "template-logo" );
+					$( templateNorthArrow ).attr( "id", "templateNorthArrow" );
+					$( templateNorthArrow ).attr( "src", "/assets/logos/" + header.northArrow );
+					var rotation = tlv.map.getView().getRotation() * 180 / Math.PI;
+					$( templateNorthArrow ).css( "transform", "rotate(" + rotation + "deg)" );
+					$( northArrowDiv ).append( templateNorthArrow );
 
 
 					$( "#templateFooter" ).width( imageWidth );
@@ -291,7 +357,7 @@ function exportTemplate( templateStyle ) {
 					}
 					$.each( footer.text, function( name, attributes ) {
 						var div = document.createElement( "div" );
-$( div ).addClass( "template-text" );
+						$( div ).addClass( "template-text" );
 						$( div ).addClass( "col-md-" + columns );
 
 						$( div ).attr( "id", "footer" + name );
@@ -309,6 +375,7 @@ $( div ).addClass( "template-text" );
 						});
 
 						templateFooter.append( div );
+						$( div ).css( "font-size", $( div ).height() - 1 );
 					});
 				});
 
