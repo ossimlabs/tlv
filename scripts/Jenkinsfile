@@ -94,7 +94,7 @@ node("omar-build"){
             dir(appName) {
               sh "/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin/sourceanalyzer -64 -b ${appName} -clean"
               sh "pwd"
-              sh "/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin/sourceanalyzer -64 -b ${appName} -exclude './app/tlv-app/grails-app/assets/javascripts/three.js/:./app/tlv-app/grails-app/assets/javascripts/gif:.app/tlv-app/grails-app/assets/javascripts/*bundle.js' ./apps/tlv-app/grails-app/assets/javascripts/*.js ./apps/tlv-app/grails-app/assets/javascripts/menus/*.js"
+              sh "/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin/sourceanalyzer -64 -b ${appName} -exclude './app/tlv-app/grails-app/assets/javascripts/three.js/:./app/tlv-app/grails-app/assets/javascripts/gif:./app/tlv-app/grails-app/assets/javascripts/*bundle.js:./app/tlv-app/grails-app/assets/javascripts/menus/*bundle.js' ./apps/tlv-app/grails-app/assets/javascripts/*.js ./apps/tlv-app/grails-app/assets/javascripts/menus/*.js"
               sh "/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin/sourceanalyzer -64 -b ${appName} -show-files"
               sh "/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin/sourceanalyzer -64 -b ${appName} -show-build-warnings"
               sh "/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin/sourceanalyzer -64 -b ${appName} -scan -Xmx8G -f fortifyResults-${appName}-app.fpr"
