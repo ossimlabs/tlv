@@ -197,6 +197,27 @@ function getGpsLocation(callbackFunction) {
 	else { displayErrorDialog("Sorry, you're device doesn't support geolocation. :("); }
 }
 
+function groundToImagePoints( coordinates, layer, callback ) {
+    return $.ajax({
+        contentType: "application/json",
+        data: JSON.stringify({
+            "entryId": layer.metadata.entry_id || 0,
+            "filename": layer.metadata.filename,
+            "pointList": coordinates.map( function( coordinate ) {
+				return { "lat": coordinate[ 1 ], "lon": coordinate[0] };
+			}),
+        }),
+        success: function( data ) {
+            var pixels = data.data.map(
+                function( point ) { return [ point.x, point.y ] }
+            );
+            callback( pixels, layer );
+        },
+        type: "post",
+        url: tlv.libraries[ layer.library ].mensaUrl + "/groundToImagePoints"
+    });
+}
+
 function hideDialog(dialog) {
 	var dialogBody = $("#" + dialog + " .modal-body");
 	dialogBody.css("max-height", "");
