@@ -92,8 +92,8 @@ node("omar-build"){
     try {
         stage('HPFortify Analysis') {
             dir(appName) {
-              def tlvpath = "app/tlv-app/grails-app/assets"
               sh "/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin/sourceanalyzer -64 -b ${appName} -clean"
+              sh "pwd"
               sh "/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin/sourceanalyzer -64 -b ${appName} ./app/tlv-app/grails-app/assets/javascripts/*.js ./app/tlv-app/grails-app/assets/javascripts/menus/*.js"
               sh "/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin/sourceanalyzer -64 -b ${appName} -show-files"
               sh "/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin/sourceanalyzer -64 -b ${appName} -show-build-warnings"
