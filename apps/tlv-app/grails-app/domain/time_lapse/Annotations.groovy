@@ -3,10 +3,11 @@ package time_lapse
 
 class Annotation {
 
-    String be
     String confidence
-    String geometry
+    String geometryOrtho
+    String geometryPixel
     String imageId
+    Double ontology
     String type
     String user
 

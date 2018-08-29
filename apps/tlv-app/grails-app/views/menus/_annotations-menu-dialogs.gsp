@@ -4,55 +4,6 @@
 			<div class = "modal-header"><h4>Annotation Style</h4></div>
 			<div class = "modal-body">
 				<div class = "form-group">
-					<label>BE</label>
-					<input class = "typeahead form-control" id = "beInput" placeholder = "Start Typing..." type = "text">
-					<asset:script type = "text/javascript">
-						$( "#beInput" ).on( "input", function () {
-							var inputElement = $( "#beInput" );
-							setTimeout( function() {
-								var bbox = ol.proj.transformExtent( tlv.map.getView().calculateExtent(), "EPSG:3857", "EPSG:4326" );
-								var queryParams = {
-									filter: "bbox(location," + bbox.join( "," ) + ") AND " +
-										tlv.beLookup.columnName + " LIKE '" + inputElement.val() + "%'",
-									maxFeatures: 10,
-									outputFormat: "JSON",
-									request: "GetFeature",
-									service: "WFS",
-									typeName: tlv.beLookup.typeName,
-									version: "1.1.0"
-								};
-
-								if ( tlv.beSearchAjax ) { tlv.beSearchAjax.abort(); }
-								tlv.beSearchAjax = $.ajax({
-									dataType: "json",
-									url: tlv.beLookup.url + "?" + $.param( queryParams )
-								})
-								.always( function() {
-									inputElement.typeahead( "destroy" );
-								})
-								.done( function( data ) {
-									var source = data.features.map( function( feature ) {
-										return feature.properties.be;
-									});
-									inputElement.typeahead( null, {
-										display: function( suggestion ) {
-											inputElement.focus();
-											return suggestion;
-										},
-										source: function( query, sync ) {
-											inputElement.focus();
-											return sync( source );
-										}
-									});
-									inputElement.focus();
-								})
-								.fail( function() {
-									inputElement.focus();
-								});
-							}, 10);
-						});
-					</asset:script>
-
 					<label>Type</label>
 					<input class = "typeahead form-control" id = "typeInput" placeholder = "Start Typing..." type = "text">
 					<asset:script type = "text/javascript">
@@ -79,6 +30,9 @@
 							}, 10);
 						});
 					</asset:script>
+
+					<label>Ontology</label>
+					<input class = "form-control" id = "ontologyInput" type = "number">
 
 					<label>User</label>
 					<input class = "form-control" id = "userInput" type = "text">

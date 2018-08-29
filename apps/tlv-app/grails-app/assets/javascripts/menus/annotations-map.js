@@ -59,8 +59,8 @@ function applyAnnotationStyle() {
 	tlv.layers[tlv.currentLayer].annotationsLayer.setVisible(true);
 
 	feature.setProperties({
-		be: $( "#beInput" ).val(),
 		confidence: $( "#confidenceSelect" ).val(),
+		ontology: $( "#ontologyInput" ).val(),
 		type: $( "#typeInput" ).val(),
 		user: $( "#userInput" ).val()
 	});
@@ -310,8 +310,8 @@ function openAnnotationsDialog() {
 	$("#strokeWidthInput").val(strokeWidth);
 
 	var properties = feature.getProperties();
-	$( "#beInput" ).val( properties.be );
 	$( "#confidenceSelect option[value=" + properties.confidence + "]" ).prop( "selected", true );
+	$( "#ontologyInput" ).val( properties.ontology );
 	$( "#typeInput" ).val( properties.type );
 	$( "#userInput" ).val( properties.user );
 }
@@ -332,40 +332,32 @@ function removeInteractions() {
 function rgbToHex(r, g, b) { return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b); }
 
 function saveAnnotations() {
+	displayLoadingDialog( "Saving..." );
+
 	var geometryWriter = new ol.format.WKT();
 
 	var layer = tlv.layers[ tlv.currentLayer ];
 	if ( layer.annotationsLayer ) {
-		$.each( layer.annotationsLayer.getSource().getFeatures(), function( index, feature ) {
-			var geometry = feature.getGeometry();
-			var properties = feature.getProperties();
-			var data = {
-				be: properties.be,
-				confidence: properties.confidence,
-				geometry: geometryWriter.writeGeometry(
-					geometry.clone().transform( "EPSG:3857", "EPSG:4326" )
-				),
-				imageId: layer.metadata.image_id,
-				type: properties.type,
-				user: properties.user
-			};
+		var feature = layer.annotationsLayer.getSource().getFeatures()[ 0 ];
+		var geometry = feature.getGeometry();
+		var properties = feature.getProperties();
+		var data = {
+			confidence: properties.confidence,
+			geometryOrtho: geometryWriter.writeGeometry(
+				geometry.clone().transform( "EPSG:3857", "EPSG:4326" )
+			),
+			imageId: layer.metadata.image_id,
+			ontology: properties.ontology,
+			type: properties.type,
+			user: properties.user
+		};
 
 
-			$( "#dragoDialog" ).modal( "show" );
-			tlv.map.once(
-				"postcompose",
-				function(event) {
-					var canvas = event.context.canvas;
-					canvas.toBlob(function(blob) {
-						var urlCreator = window.URL || window.webkitURL;
-						var imageUrl = urlCreator.createObjectURL( blob );
-						$( "#dragoImage" ).attr("src", imageUrl );
-					});
-				}
-			);
-			tlv.map.renderSync();
-			$( "#dragoMetadata" ).html( JSON.stringify( data, null, 2 ) );
-
+		var geometryPixels = geometry.clone().transform( "EPSG:3857", "EPSG:4326" );
+		var coordinates = geometryPixels.getCoordinates()[ 0 ];
+		groundToImagePoints( coordinates, layer, function( pixels, layer ) {
+			geometryPixels.setCoordinates([ pixels ]);
+			data.geometryPixel = geometryWriter.writeGeometry( geometryPixels );
 
 			$.ajax({
 				contentType: "application/json",
@@ -374,7 +366,24 @@ function saveAnnotations() {
 				type: "post",
 				url: tlv.contextPath + "/home/saveAnnotations"
 			})
-			.done( function( data ) {
+			.always( function() {
+				hideLoadingDialog();
+			})
+			.done( function() {
+				$( "#dragoDialog" ).modal( "show" );
+				tlv.map.once(
+					"postcompose",
+					function( event ) {
+						var canvas = event.context.canvas;
+						canvas.toBlob(function( blob ) {
+							var urlCreator = window.URL || window.webkitURL;
+							var imageUrl = urlCreator.createObjectURL( blob );
+							$( "#dragoImage" ).attr( "src", imageUrl );
+						});
+					}
+				);
+				tlv.map.renderSync();
+				$( "#dragoMetadata" ).html( JSON.stringify( data, null, 2 ) );
 			})
 			.fail( function() {
 			});
