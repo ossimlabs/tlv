@@ -99,7 +99,7 @@ baseUrl: https://omar-dev.ossim.io
 #        kmlUrl: ${baseUrl}/omar-superoverlay/superOverlay/createKml
 #        label: O2-DEV
 #        layerType: wms
-#        name: o2-dev
+#        mensaUrl: ${baseUrl}/omar-mensa/mensa
 #        wfsUrl: ${baseUrl}/omar-wfs/wfs
 #        wmsUrl: ${baseUrl}/omar-wms/wms
 #    o2-rel:
@@ -107,7 +107,7 @@ baseUrl: https://omar-dev.ossim.io
 #        kmlUrl: https://omar-rel.ossim.io/omar-superoverlay/superOverlay/createKml
 #        label: O2-REL
 #        layerType: wms
-#        name: o2-rel
+#        mensaUrl: https://omar-rel.ossim.io/omar-mensa/mensa
 #        wfsUrl: https://omar-rel.ossim.io/omar-wfs/wfs
 #        wmsUrl: https://omar-rel.ossim.io/omar-wms/wms
 
