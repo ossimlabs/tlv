@@ -94,7 +94,7 @@ node("omar-build"){
             dir(appName) {
               def tlvpath = "app/tlv-app/grails-app/assets"
               sh "/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin/sourceanalyzer -64 -b ${appName} -clean"
-              sh "/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin/sourceanalyzer -64 -b ${appName} -exclude './${tlvpath}/javascripts/three.js/:./${tlvpath}/javascripts/index-bundle.js:./${tlvpath}/javascripts/menus/geometries-bundle.js' ./${tlvpath}/javascripts/*.js ./${tlvpath}/javascripts/menus/*.js"
+              sh "/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin/sourceanalyzer -64 -b ${appName} ./${tlvpath}/javascripts/*.js ./${tlvpath}/javascripts/menus/*.js"
               sh "/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin/sourceanalyzer -64 -b ${appName} -show-files"
               sh "/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin/sourceanalyzer -64 -b ${appName} -show-build-warnings"
               sh "/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin/sourceanalyzer -64 -b ${appName} -scan -Xmx8G -f fortifyResults-${appName}-app.fpr"
