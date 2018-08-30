@@ -293,7 +293,7 @@ function exportTemplate( templateStyle ) {
 				var templateLogo = document.createElement( "img" );
 				$( templateLogo ).addClass( "template-logo" );
 				$( templateLogo ).attr( "id", "templateLogo" );
-				$( templateLogo ).attr( "src", "/assets/logos/" + header.logo );
+				$( templateLogo ).attr( "src", tlv.contextPath + "/assets/logos/" + header.logo );
 				$( logoDiv ).append( templateLogo );
 
 				// header text
@@ -341,7 +341,7 @@ function exportTemplate( templateStyle ) {
 				var templateNorthArrow = document.createElement( "img" );
 				$( templateNorthArrow ).addClass( "template-logo" );
 				$( templateNorthArrow ).attr( "id", "templateNorthArrow" );
-				$( templateNorthArrow ).attr( "src", "/assets/logos/" + header.northArrow );
+				$( templateNorthArrow ).attr( "src", tlv.contextPath + "/assets/logos/" + header.northArrow );
 				var rotation = tlv.map.getView().getRotation() * 180 / Math.PI;
 				$( templateNorthArrow ).css( "transform", "rotate(" + rotation + "deg)" );
 				$( northArrowDiv ).append( templateNorthArrow );
