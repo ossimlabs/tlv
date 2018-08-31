@@ -94,6 +94,7 @@ dependencies {
     testRuntime "org.seleniumhq.selenium:selenium-htmlunit-driver:${seleniumHtmlUnitDriverV}"
     testRuntime "net.sourceforge.htmlunit:htmlunit:${htmlUnitV}"
 
+    compile "org.grails.plugins:scaffolding"
     compile "org.webjars:bootstrap:3.3.5"
     compile "org.webjars:bootswatch-slate:3.3.5+4"
     compile "org.webjars.bower:typeahead.js:0.11.1"
@@ -105,7 +106,6 @@ dependencies {
 
     compile "org.springframework.cloud:spring-cloud-starter-config"
     compile "org.springframework.cloud:spring-cloud-starter-eureka"
-    compile "org.springframework.cloud:spring-cloud-starter-zipkin"
 }
 
 task wrapper(type: Wrapper) {
