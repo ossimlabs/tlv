@@ -5,8 +5,24 @@ import grails.transaction.Transactional
 
 
 @Transactional
-class AnnotationsService {
+class AnnotationService {
 
+
+	def getDistinctValues( params ) {
+		def results = []
+		switch ( params.property ) {
+			case "type" :
+			case "user" :
+				results = Annotation.withCriteria {
+					projections {
+						distinct( "${ params.property }" )
+					}
+			}
+		}
+
+
+		return results
+	}
 
 	def save( json ) {
 		def annotation = new Annotation( json )

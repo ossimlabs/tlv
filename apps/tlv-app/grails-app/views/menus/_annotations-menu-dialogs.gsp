@@ -35,7 +35,41 @@
 					<input class = "form-control" id = "ontologyInput" type = "number">
 
 					<label>User</label>
-					<input class = "form-control" id = "userInput" type = "text">
+					<input class = "typeahead form-control" id = "userInput" placeholder = "Start Typing..." type = "text">
+					<asset:script type = "text/javascript">
+						//$( document ).ready( function() {
+							var pageLoadAnnoationUser = pageLoad;
+							pageLoad = function() {
+								pageLoadAnnoationUser();
+
+								var inputElement = $( "#userInput" );
+								$.ajax({
+									data: "property=user",
+									url: tlv.contextPath + "/annotation/getDistinctValues"
+								})
+								.always( function() {
+									inputElement.typeahead( "destroy" );
+								})
+								.done( function( data ) {
+									var source = data;
+									inputElement.typeahead( null, {
+										display: function( suggestion ) {
+											inputElement.focus();
+											return suggestion;
+										},
+										source: function( query, sync ) {
+											inputElement.focus();
+											return sync( source );
+										}
+									});
+									//inputElement.focus();
+								})
+								.fail( function() {
+								});
+							}
+						//});
+					</asset:script>
+
 
 					<label>Confidence</label>
 					<select class = "form-control" id = "confidenceSelect">

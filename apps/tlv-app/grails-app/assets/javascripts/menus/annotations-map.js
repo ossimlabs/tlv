@@ -364,7 +364,7 @@ function saveAnnotations() {
 				data: JSON.stringify( data ),
 				dataType: "json",
 				type: "post",
-				url: tlv.contextPath + "/home/saveAnnotations"
+				url: tlv.contextPath + "/annotation/saveAnnotation"
 			})
 			.always( function() {
 				hideLoadingDialog();
