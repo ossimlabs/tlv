@@ -5,6 +5,7 @@ class Annotation {
 
     String confidence
     Date date = new Date()
+    String dted
     String geometryOrtho
     String geometryPixel
     String imageId
@@ -15,8 +16,8 @@ class Annotation {
 
 
     static mapping = {
-        geometryOrtho index: "annotation_geometry_ortho_idx"
-        geometryPixel index: "annotation_geometry_pixel_idx"
+        geometryOrtho index: "annotation_geometry_ortho_idx", type: "text"
+        geometryPixel index: "annotation_geometry_pixel_idx", type: "text"
         imageId index: "annotation_image_id_idx"
         type index: "annotation_type_idx"
         user index: "annotation_user_idx"
