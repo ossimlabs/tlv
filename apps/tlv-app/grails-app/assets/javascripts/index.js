@@ -181,7 +181,7 @@ function enableKeyboardShortcuts() {
 function getDtedHeight( longitude, latitude, callback ) {
 	$.ajax({
 		data: "longitude=" + longitude + "&latitude=" + latitude,
-		url: tlv.contextPath + "ossim/getHeight"
+		url: tlv.contextPath + "/ossim/getHeight"
 	})
 	.done( function( data ) {
 		callback( data );
