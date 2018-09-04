@@ -359,34 +359,41 @@ function saveAnnotations() {
 			geometryPixels.setCoordinates([ pixels ]);
 			data.geometryPixel = geometryWriter.writeGeometry( geometryPixels );
 
-			$.ajax({
-				contentType: "application/json",
-				data: JSON.stringify( data ),
-				dataType: "json",
-				type: "post",
-				url: tlv.contextPath + "/annotation/saveAnnotation"
-			})
-			.always( function() {
-				hideLoadingDialog();
-			})
-			.done( function() {
-				$( "#dragoDialog" ).modal( "show" );
-				tlv.map.once(
-					"postcompose",
-					function( event ) {
-						var canvas = event.context.canvas;
-						canvas.toBlob(function( blob ) {
-							var urlCreator = window.URL || window.webkitURL;
-							var imageUrl = urlCreator.createObjectURL( blob );
-							$( "#dragoImage" ).attr( "src", imageUrl );
-						});
-					}
-				);
-				tlv.map.renderSync();
-				$( "#dragoMetadata" ).html( JSON.stringify( data, null, 2 ) );
-			})
-			.fail( function() {
-			});
+			var callback = function( dted ) {
+				var dtedCellPattern = /Opened cell:\s*([^\s]*)/;
+				data.dted = dted.match( dtedCellPattern ) ? RegExp.$1 : "N/A";
+
+				$.ajax({
+					contentType: "application/json",
+					data: JSON.stringify( data ),
+					dataType: "json",
+					type: "post",
+					url: tlv.contextPath + "/annotation/saveAnnotation"
+				})
+				.always( function() {
+					hideLoadingDialog();
+				})
+				.done( function() {
+					$( "#dragoDialog" ).modal( "show" );
+					tlv.map.once(
+						"postcompose",
+						function( event ) {
+							var canvas = event.context.canvas;
+							canvas.toBlob(function( blob ) {
+								var urlCreator = window.URL || window.webkitURL;
+								var imageUrl = urlCreator.createObjectURL( blob );
+								$( "#dragoImage" ).attr( "src", imageUrl );
+							});
+						}
+					);
+					tlv.map.renderSync();
+					$( "#dragoMetadata" ).html( JSON.stringify( data, null, 2 ) );
+				})
+				.fail( function() {});
+			}
+
+			var mapCenter = tlv.map.getView().getCenter();
+			getDtedHeight( mapCenter[ 1 ], mapCenter[ 0 ], callback );
 		});
 	}
 }
