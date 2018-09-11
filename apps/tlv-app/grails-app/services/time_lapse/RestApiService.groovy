@@ -14,6 +14,7 @@ class RestApiService {
 		params.remove("action")
 		params.remove("controller")
 
+		params.annotation = params.annotation
 		params.availableBaseLayers = grailsApplication.config.baseLayers
 		params.baseUrl = grailsApplication.config.baseUrl
 		params.beLookup = grailsApplication.config.beLookup

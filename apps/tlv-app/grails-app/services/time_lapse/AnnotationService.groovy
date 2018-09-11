@@ -26,6 +26,7 @@ class AnnotationService {
 
 	def save( json ) {
 		def annotation = new Annotation( json )
+		annotation.link += "&annotation=${ Annotation.count() + 1 }"
 		annotation.save()
 
 		if ( annotation.hasErrors() ) {
@@ -37,5 +38,9 @@ class AnnotationService {
 		else {
 			return [ response: true ]
 		}
+	}
+
+	def search( id ) {
+		return Annotation.get( id )
 	}
 }
