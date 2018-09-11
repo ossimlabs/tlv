@@ -316,6 +316,39 @@ function openAnnotationsDialog() {
 	$( "#userInput" ).val( properties.user );
 }
 
+var pageLoadAnnotation = pageLoad
+pageLoad = function() {
+	pageLoadAnnotation();
+
+	if ( tlv.annotation ) {
+		var applyAnnotation = function( data ) {
+			if ( tlv.layers && tlv.layers.length > 0 ) {
+				var geometry = new ol.format.WKT().readGeometry( data.geometryOrtho ).transform( "EPSG:4326", "EPSG:3857" );
+				var feature = new ol.Feature( geometry );
+				feature.setProperties({
+					confidence: data.confidence,
+					ontology: data.ontology,
+					type: data.type,
+					user: data.user
+				});
+
+				createAnnotationsLayer();
+				tlv.layers[ tlv.currentLayer ].annotationsLayer.getSource().addFeature( feature );
+			}
+			else {
+				setTimeout( function() { applyAnnotation( data ); }, 1000 );
+			}
+		}
+
+		$.ajax({
+			url: tlv.contextPath + "annotation/search?id=" + tlv.annotation
+		})
+		.done( function( data ) {
+			applyAnnotation( data );
+		});
+	}
+}
+
 function removeInteractions() {
 	$.each(
 		[tlv.drawAnnotationInteraction, tlv.modifyAnnotationsInteraction, tlv.selectAnnotationInteraction],
@@ -338,6 +371,16 @@ function saveAnnotations() {
 
 	var layer = tlv.layers[ tlv.currentLayer ];
 	if ( layer.annotationsLayer ) {
+		var bbox = ol.proj.transformExtent( tlv.map.getView().calculateExtent(), "EPSG:3857", "EPSG:4326" );
+		var center = ol.proj.transform( tlv.map.getView().getCenter(), "EPSG:3857", "EPSG:4326" );
+		var location = document.location;
+		var urlParams = {
+			bbox: bbox.join( "," ),
+			filter: "filename LIKE '" + layer.metadata.filename + "'",
+			location: center.join( "," )
+		};
+		var link = location.protocol + "//" + location.host + tlv.contextPath + "?" + $.param( urlParams )
+
 		var feature = layer.annotationsLayer.getSource().getFeatures()[ 0 ];
 		var geometry = feature.getGeometry();
 		var properties = feature.getProperties();
@@ -348,6 +391,7 @@ function saveAnnotations() {
 				geometry.clone().transform( "EPSG:3857", "EPSG:4326" )
 			),
 			imageId: layer.metadata.image_id,
+			link: link,
 			ontology: properties.ontology,
 			type: properties.type,
 			user: properties.user
