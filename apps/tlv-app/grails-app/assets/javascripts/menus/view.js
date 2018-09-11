@@ -155,6 +155,7 @@ function openImageSpace() {
 		histOp: styles.hist_op,
 		imageId: metadata.id,
 		imageSpaceRequestUrl: tlv.baseUrl + "/omar-oms",
+		imageRenderType: "tile",
 		mensaRequestUrl: tlv.baseUrl + "/omar-mensa",
 		numOfBands: metadata.number_of_bands,
 		numResLevels: metadata.number_of_res_levels,
@@ -163,7 +164,8 @@ function openImageSpace() {
 		showModalSplash: false,
 		uiRequestUrl: tlv.baseUrl + "/omar-ui",
 		wfsRequestUrl: library.wfsUrl,
-		width: metadata.width
+		width: metadata.width,
+		wmsRequestUrl: tlv.baseUrl + "/omar-wms"
 	};
 
 	window.open( url + "?" + $.param( params ) );

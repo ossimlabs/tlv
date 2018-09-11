@@ -32,7 +32,7 @@
 					</asset:script>
 
 					<label>Ontology</label>
-					<input class = "form-control" id = "ontologyInput" type = "number">
+					<input class = "form-control" id = "ontologyInput" placeholder = "e.g. 2.1" type = "number">
 
 					<label>User</label>
 					<input class = "typeahead form-control" id = "userInput" placeholder = "Start Typing..." type = "text">
