@@ -94,7 +94,7 @@ node("ossim-build"){
             dir(appName) {
               sh "/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin/sourceanalyzer -64 -b ${appName} -clean"
               sh "pwd"
-              sh "/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin/sourceanalyzer -64 -b ${appName} /media/ephemeral0/jenkins/workspace/tlv-dev/tlv/app/tlv-app/grails-app/assets/javascripts/menus/*.js"
+              sh "/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin/sourceanalyzer -64 -b ${appName} /media/ephemeral0/jenkins/workspace/tlv-dev/tlv/apps/tlv-app/grails-app/assets/javascripts/menus/*.js"
               //sh "/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin/sourceanalyzer -64 -b ${appName} -show-files"
               //sh "/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin/sourceanalyzer -64 -b ${appName} -show-build-warnings"
               sh "/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin/sourceanalyzer -64 -b ${appName} -scan -Xmx8G -f fortifyResults-${appName}-app.fpr"
