@@ -10,16 +10,27 @@ class Annotation {
     String geometryOrtho
     String geometryPixel
     String imageId
+    String link
     Double ontology
     String type
     String user
     Boolean validated = false
 
 
+    static constraints = {
+        date()
+        validated()
+        type()
+        imageId()
+        ontology()
+        user()
+        link()
+    }
+
     static mapping = {
         geometryOrtho index: "annotation_geometry_ortho_idx", type: "text"
         geometryPixel index: "annotation_geometry_pixel_idx", type: "text"
-        imageId index: "annotation_image_id_idx"
+        link type: "text"
         type index: "annotation_type_idx"
         user index: "annotation_user_idx"
     }
