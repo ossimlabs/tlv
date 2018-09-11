@@ -343,6 +343,7 @@ function saveAnnotations() {
 		var properties = feature.getProperties();
 		var data = {
 			confidence: properties.confidence,
+			filename: layer.metadata.filename,
 			geometryOrtho: geometryWriter.writeGeometry(
 				geometry.clone().transform( "EPSG:3857", "EPSG:4326" )
 			),

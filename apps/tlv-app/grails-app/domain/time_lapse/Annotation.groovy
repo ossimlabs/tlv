@@ -6,6 +6,7 @@ class Annotation {
     String confidence
     Date date = new Date()
     String dted
+    String filename
     String geometryOrtho
     String geometryPixel
     String imageId
