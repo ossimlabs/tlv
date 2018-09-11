@@ -21,4 +21,8 @@ class AnnotationController {
 	def saveAnnotation() {
 		render annotationService.save( request.JSON ) as JSON
 	}
+
+	def search() {
+		render annotationService.search( params.id ) as JSON  
+	}
 }
