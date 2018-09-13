@@ -341,7 +341,7 @@ pageLoad = function() {
 		}
 
 		$.ajax({
-			url: tlv.contextPath + "annotation/search?id=" + tlv.annotation
+			url: tlv.contextPath + "/annotation/search?id=" + tlv.annotation
 		})
 		.done( function( data ) {
 			applyAnnotation( data );
