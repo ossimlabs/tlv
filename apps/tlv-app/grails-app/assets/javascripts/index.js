@@ -114,7 +114,7 @@ function disableMenuButtons() {
 	for ( var i = 2; i < menuButtons.length - 1; i++ ) { $( menuButtons[ i ] ).hide(); }
 
 	var menuButtons = $( ".navbar-nav" )[ 0 ].children;
-	for ( var i = 2; i < menuButtons.length; i++ ) { $( menuButtons[ i ] ).hide(); }
+	for ( var i = 2; i < menuButtons.length - 1; i++ ) { $( menuButtons[ i ] ).hide(); }
 }
 
 function displayDialog( dialog ) {
