@@ -390,7 +390,7 @@ function saveAnnotations() {
 			geometryOrtho: geometryWriter.writeGeometry(
 				geometry.clone().transform( "EPSG:3857", "EPSG:4326" )
 			),
-			imageId: layer.metadata.image_id,
+			imageId: layer.imageId,
 			link: link,
 			ontology: properties.ontology,
 			type: properties.type,
