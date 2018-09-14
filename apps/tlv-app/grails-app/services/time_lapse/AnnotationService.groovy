@@ -26,8 +26,12 @@ class AnnotationService {
 
 	def save( json ) {
 		def annotation = new Annotation( json )
-		annotation.link += "&annotation=${ Annotation.count() + 1 }"
-		annotation.save( flush: true )
+		annotation.save()
+
+		def id = annotation.id
+		annotation.link += "&annotation=${ id }"
+		annotation.save()
+
 
 		if ( annotation.hasErrors() ) {
 			annotation.errors.allErrors.each { println it }
