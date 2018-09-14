@@ -80,7 +80,7 @@ node("ossim-build"){
                 // It's important to add --info because of SONARJNKNS-281
                 sh """
                   pushd ${workspaceDir}/${appName}
-                  gradle --info :${appName}-app:sonar-scanner -Dsonar.projectKey=${appName}
+                  gradle --info :${appName}-app:sonarqube -Dsonar.projectKey=${appName}
                   popd
                 """
             }
