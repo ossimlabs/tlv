@@ -365,80 +365,94 @@ function removeInteractions() {
 function rgbToHex(r, g, b) { return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b); }
 
 function saveAnnotations() {
-	displayLoadingDialog( "Saving..." );
-
 	var geometryWriter = new ol.format.WKT();
 
 	var layer = tlv.layers[ tlv.currentLayer ];
 	if ( layer.annotationsLayer ) {
-		var bbox = ol.proj.transformExtent( tlv.map.getView().calculateExtent(), "EPSG:3857", "EPSG:4326" );
-		var center = ol.proj.transform( tlv.map.getView().getCenter(), "EPSG:3857", "EPSG:4326" );
-		var location = document.location;
-		var urlParams = {
-			bbox: bbox.join( "," ),
-			filter: "filename LIKE '" + layer.metadata.filename + "'",
-			location: center.join( "," )
-		};
-		var link = location.protocol + "//" + location.host + tlv.contextPath + "?" + $.param( urlParams )
+		var displayData = [];
 
-		var feature = layer.annotationsLayer.getSource().getFeatures()[ 0 ];
-		var geometry = feature.getGeometry();
-		var properties = feature.getProperties();
-		var data = {
-			confidence: properties.confidence,
-			filename: layer.metadata.filename,
-			geometryOrtho: geometryWriter.writeGeometry(
-				geometry.clone().transform( "EPSG:3857", "EPSG:4326" )
-			),
-			imageId: layer.imageId,
-			link: link,
-			ontology: properties.ontology,
-			type: properties.type,
-			user: properties.user
-		};
+		var features = layer.annotationsLayer.getSource().getFeatures();
+		$( "#dragoMetadata" ).html( "" );
+		$.each( features, function( index, feature ) {
+			var geometry = feature.getGeometry().clone().transform( "EPSG:3857", "EPSG:4326" );
+
+			var bbox = geometry.getExtent();
+			var center = ol.extent.getCenter( bbox );
+			var location = document.location;
+			var urlParams = {
+				bbox: bbox.join( "," ),
+				filter: "filename LIKE '" + layer.metadata.filename + "'",
+				location: center.join( "," )
+			};
+			var link = location.protocol + "//" + location.host + tlv.contextPath + "?" + $.param( urlParams )
+
+			var properties = feature.getProperties();
+			var data = {
+				confidence: properties.confidence,
+				filename: layer.metadata.filename,
+				geometryOrtho: geometryWriter.writeGeometry( geometry ),
+				imageId: layer.imageId,
+				link: link,
+				ontology: properties.ontology,
+				type: properties.type,
+				user: properties.user
+			};
 
 
-		var geometryPixels = geometry.clone().transform( "EPSG:3857", "EPSG:4326" );
-		var coordinates = geometryPixels.getCoordinates()[ 0 ];
-		groundToImagePoints( coordinates, layer, function( pixels, layer ) {
-			geometryPixels.setCoordinates([ pixels ]);
-			data.geometryPixel = geometryWriter.writeGeometry( geometryPixels );
+			var coordinates = geometry.getCoordinates()[ 0 ];
+			groundToImagePoints( coordinates, layer, function( pixels, layer ) {
+				geometry.setCoordinates([ pixels ]);
+				data.geometryPixel = geometryWriter.writeGeometry( geometry );
 
-			var callback = function( dted ) {
-				var dtedCellPattern = /Opened cell:\s*([^\s]*)/;
-				data.dted = dted.match( dtedCellPattern ) ? RegExp.$1 : "N/A";
+				var callback = function( dted ) {
+					var dtedCellPattern = /Opened cell:\s*([^\s]*)/;
+					data.dted = dted.match( dtedCellPattern ) ? RegExp.$1 : "N/A";
 
-				$.ajax({
-					contentType: "application/json",
-					data: JSON.stringify( data ),
-					dataType: "json",
-					type: "post",
-					url: tlv.contextPath + "/annotation/saveAnnotation"
-				})
-				.always( function() {
-					hideLoadingDialog();
-				})
-				.done( function() {
-					$( "#dragoDialog" ).modal( "show" );
-					tlv.map.once(
-						"postcompose",
-						function( event ) {
-							var canvas = event.context.canvas;
-							canvas.toBlob(function( blob ) {
-								var urlCreator = window.URL || window.webkitURL;
-								var imageUrl = urlCreator.createObjectURL( blob );
-								$( "#dragoImage" ).attr( "src", imageUrl );
-							});
-						}
-					);
-					tlv.map.renderSync();
-					$( "#dragoMetadata" ).html( JSON.stringify( data, null, 2 ) );
-				})
-				.fail( function() {});
-			}
+					$.ajax({
+						contentType: "application/json",
+						data: JSON.stringify( data ),
+						dataType: "json",
+						type: "post",
+						url: tlv.contextPath + "/annotation/saveAnnotation"
+					})
+					.always( function() {
+						hideLoadingDialog();
+					})
+					.done( function() {
+						displayData.push( data );
 
-			var mapCenter = tlv.map.getView().getCenter();
-			getDtedHeight( mapCenter[ 1 ], mapCenter[ 0 ], callback );
+						var pre = document.createElement( "pre" );
+						$( pre ).css( "background", "none" );
+						$( pre ).css( "color", "#c8c8c8" );
+						$( pre ).html( JSON.stringify( data, null, 2 ) );
+						$( "#dragoMetadata" ).prepend( pre );
+
+						$( "#dragoMetadata" ).prepend( "Saved  " + displayData.length + " of " + features.length + "..." );
+						displayDialog( "dragoDialog" );
+
+					})
+					.fail( function() {});
+				}
+
+				var mapCenter = tlv.map.getView().getCenter();
+				getDtedHeight( mapCenter[ 1 ], mapCenter[ 0 ], callback );
+			});
 		});
+
+		$( "#dragoDialog" ).modal( "show" );
+		tlv.map.once(
+			"postcompose",
+			function( event ) {
+				var canvas = event.context.canvas;
+				canvas.toBlob(function( blob ) {
+					var urlCreator = window.URL || window.webkitURL;
+					var imageUrl = urlCreator.createObjectURL( blob );
+					$( "#dragoImage" ).attr( "src", imageUrl );
+				});
+			}
+		);
+		tlv.map.renderSync();
+
+		displayLoadingDialog( "Saving..." );
 	}
 }
