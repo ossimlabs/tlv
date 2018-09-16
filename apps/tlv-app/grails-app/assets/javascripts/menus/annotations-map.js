@@ -365,13 +365,28 @@ function removeInteractions() {
 function rgbToHex(r, g, b) { return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b); }
 
 function saveAnnotations() {
-	var geometryWriter = new ol.format.WKT();
-
 	var layer = tlv.layers[ tlv.currentLayer ];
+	var features = layer.annotationsLayer.getSource().getFeatures();
+
+	var values = [].concat.apply( [], features.map( function( feature ) {
+
+
+		return [
+			feature.getProperties().confidence,
+			feature.getProperties().ontology,
+			feature.getProperties().type,
+			feature.getProperties().user
+		];
+	}));
+	if ( values.indexOf( "" ) > -1 ) {
+		displayErrorDialog( "One or more of your annotation properties are blank." );
+		return;
+	}
+
 	if ( layer.annotationsLayer ) {
 		var displayData = [];
 
-		var features = layer.annotationsLayer.getSource().getFeatures();
+		var geometryWriter = new ol.format.WKT();
 		$( "#dragoMetadata" ).html( "" );
 		$.each( features, function( index, feature ) {
 			var geometry = feature.getGeometry().clone().transform( "EPSG:3857", "EPSG:4326" );
@@ -429,7 +444,6 @@ function saveAnnotations() {
 
 						$( "#dragoMetadata" ).prepend( "Saved  " + displayData.length + " of " + features.length + "..." );
 						displayDialog( "dragoDialog" );
-
 					})
 					.fail( function() {});
 				}
