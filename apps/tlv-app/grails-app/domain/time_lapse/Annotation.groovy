@@ -20,11 +20,13 @@ class Annotation {
     static constraints = {
         date()
         validated()
-        type()
+        type( nullable: true )
         imageId()
-        ontology()
-        user()
+        ontology( nullable: true )
+        user( nullable: true )
         link()
+
+        dted( nullable: true )
     }
 
     static mapping = {

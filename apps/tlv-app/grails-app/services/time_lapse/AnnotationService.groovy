@@ -34,6 +34,7 @@ class AnnotationService {
 
 
 		if ( annotation.hasErrors() ) {
+			println json
 			annotation.errors.allErrors.each { println it }
 
 
