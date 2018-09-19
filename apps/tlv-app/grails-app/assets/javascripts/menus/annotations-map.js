@@ -433,16 +433,20 @@ function saveAnnotations() {
 					.always( function() {
 						hideLoadingDialog();
 					})
-					.done( function() {
-						displayData.push( data );
-
+					.done( function( json ) {
 						var pre = document.createElement( "pre" );
 						$( pre ).css( "background", "none" );
 						$( pre ).css( "color", "#c8c8c8" );
 						$( pre ).html( JSON.stringify( data, null, 2 ) );
 						$( "#dragoMetadata" ).prepend( pre );
 
-						$( "#dragoMetadata" ).prepend( "Saved  " + displayData.length + " of " + features.length + "..." );
+						if ( json.response ) {
+							displayData.push( data );
+							$( "#dragoMetadata" ).prepend( "Saved  " + displayData.length + " of " + features.length + "..." );
+						}
+						else {
+							$( "#dragoMetadata" ).prepend( "Not Saved ..." );
+						}
 						displayDialog( "dragoDialog" );
 					})
 					.fail( function() {});
