@@ -106,6 +106,8 @@ dependencies {
 
     compile "org.springframework.cloud:spring-cloud-starter-config"
     compile "org.springframework.cloud:spring-cloud-starter-eureka"
+
+    compile "org.postgresql:postgresql:42.2.1"
 }
 
 task wrapper(type: Wrapper) {
