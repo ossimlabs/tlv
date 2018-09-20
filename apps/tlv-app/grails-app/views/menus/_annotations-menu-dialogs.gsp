@@ -34,17 +34,17 @@
 					<label>Ontology</label>
 					<input class = "form-control" id = "ontologyInput" placeholder = "e.g. 2.1" type = "number">
 
-					<label>User</label>
-					<input class = "typeahead form-control" id = "userInput" placeholder = "Start Typing..." type = "text">
+					<label>Username</label>
+					<input class = "typeahead form-control" id = "usernameInput" placeholder = "Start Typing..." type = "text">
 					<asset:script type = "text/javascript">
 						//$( document ).ready( function() {
-							var pageLoadAnnoationUser = pageLoad;
+							var pageLoadAnnoationUsername = pageLoad;
 							pageLoad = function() {
-								pageLoadAnnoationUser();
+								pageLoadAnnoationUsername();
 
-								var inputElement = $( "#userInput" );
+								var inputElement = $( "#usernameInput" );
 								$.ajax({
-									data: "property=user",
+									data: "property=username",
 									url: tlv.contextPath + "/annotation/getDistinctValues"
 								})
 								.always( function() {

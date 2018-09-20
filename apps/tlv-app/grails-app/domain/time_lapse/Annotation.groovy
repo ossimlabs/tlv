@@ -13,7 +13,7 @@ class Annotation {
     String link
     Double ontology
     String type
-    String user
+    String username
     Boolean validated = false
 
 
@@ -23,7 +23,7 @@ class Annotation {
         type()
         imageId()
         ontology()
-        user()
+        username()
         link()
     }
 
@@ -32,6 +32,6 @@ class Annotation {
         geometryPixel index: "annotation_geometry_pixel_idx", type: "text"
         link type: "text"
         type index: "annotation_type_idx"
-        user index: "annotation_user_idx"
+        username index: "annotation_username_idx"
     }
 }

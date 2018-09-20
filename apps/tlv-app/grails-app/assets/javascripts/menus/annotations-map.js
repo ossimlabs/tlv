@@ -62,7 +62,7 @@ function applyAnnotationStyle() {
 		confidence: $( "#confidenceSelect" ).val(),
 		ontology: $( "#ontologyInput" ).val(),
 		type: $( "#typeInput" ).val(),
-		user: $( "#userInput" ).val()
+		username: $( "#usernameInput" ).val()
 	});
 }
 
@@ -313,7 +313,7 @@ function openAnnotationsDialog() {
 	$( "#confidenceSelect option[value=" + properties.confidence + "]" ).prop( "selected", true );
 	$( "#ontologyInput" ).val( properties.ontology );
 	$( "#typeInput" ).val( properties.type );
-	$( "#userInput" ).val( properties.user );
+	$( "#usernameInput" ).val( properties.username );
 }
 
 var pageLoadAnnotation = pageLoad
@@ -329,7 +329,7 @@ pageLoad = function() {
 					confidence: data.confidence,
 					ontology: data.ontology,
 					type: data.type,
-					user: data.user
+					username: data.username
 				});
 
 				createAnnotationsLayer();
@@ -375,7 +375,7 @@ function saveAnnotations() {
 			feature.getProperties().confidence,
 			feature.getProperties().ontology,
 			feature.getProperties().type,
-			feature.getProperties().user
+			feature.getProperties().username
 		];
 	}));
 	if ( values.indexOf( "" ) > -1 ) {
@@ -410,7 +410,7 @@ function saveAnnotations() {
 				link: link,
 				ontology: properties.ontology,
 				type: properties.type,
-				user: properties.user
+				username: properties.username
 			};
 
 

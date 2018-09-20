@@ -12,7 +12,7 @@ class AnnotationService {
 		def results = []
 		switch ( params.property ) {
 			case "type" :
-			case "user" :
+			case "username" :
 				results = Annotation.withCriteria {
 					projections {
 						distinct( "${ params.property }" )
