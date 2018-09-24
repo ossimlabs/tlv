@@ -25,6 +25,9 @@ class AnnotationService {
 	}
 
 	def save( json ) {
+		def ontology = json.ontology ? new Ontology( json.ontology ) : null
+		json.ontology = ontology
+
 		def annotation = new Annotation( json )
 		annotation.save()
 

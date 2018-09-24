@@ -4,36 +4,6 @@ about:
     release: Islamorada
     releaseNumber: 2.5.0
 
-annotations:
-    types:
-        Alpha:
-        Bravo:
-        Charlie:
-        Delta:
-        Echo:
-        Foxtrot:
-        Golf:
-        Hotel:
-        India:
-        Juliet:
-        Kilo:
-        Lima:
-        Mike:
-        November:
-        Oscar:
-        Papa:
-        Quebec:
-        Romeo:
-        Sierra:
-        Tango:
-        Uniform:
-        Victor:
-        Whiskey:
-        Xray:
-        Yankee:
-        Zulu:
-
-
 # If there a page banner is needed, set it here
 #banner:
 #    backgroundColor: darkgray
@@ -110,6 +80,9 @@ baseUrl: https://omar-dev.ossim.io
 #        mensaUrl: https://omar-rel.ossim.io/omar-mensa/mensa
 #        wfsUrl: https://omar-rel.ossim.io/omar-wfs/wfs
 #        wmsUrl: https://omar-rel.ossim.io/omar-wms/wms
+
+# If an ontology service exists, set it here
+#ontologyUrl: <protocol>://<host>>:<port>/<contextPath>
 
 # Set the security classification banner here
 securityClassificationBanner:

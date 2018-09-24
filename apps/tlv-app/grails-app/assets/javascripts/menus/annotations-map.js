@@ -60,7 +60,7 @@ function applyAnnotationStyle() {
 
 	feature.setProperties({
 		confidence: $( "#confidenceSelect" ).val(),
-		ontology: $( "#ontologyInput" ).val(),
+		ontology: $( "#typeInput" ).data( "ontology" ),
 		type: $( "#typeInput" ).val(),
 		username: $( "#usernameInput" ).val()
 	});
@@ -311,7 +311,6 @@ function openAnnotationsDialog() {
 
 	var properties = feature.getProperties();
 	$( "#confidenceSelect option[value=" + properties.confidence + "]" ).prop( "selected", true );
-	$( "#ontologyInput" ).val( properties.ontology );
 	$( "#typeInput" ).val( properties.type );
 	$( "#usernameInput" ).val( properties.username );
 }
@@ -327,7 +326,6 @@ pageLoad = function() {
 				var feature = new ol.Feature( geometry );
 				feature.setProperties({
 					confidence: data.confidence,
-					ontology: data.ontology,
 					type: data.type,
 					username: data.username
 				});
@@ -373,7 +371,6 @@ function saveAnnotations() {
 
 		return [
 			feature.getProperties().confidence,
-			feature.getProperties().ontology,
 			feature.getProperties().type,
 			feature.getProperties().username
 		];
@@ -402,6 +399,7 @@ function saveAnnotations() {
 			var link = location.protocol + "//" + location.host + tlv.contextPath + "?" + $.param( urlParams )
 
 			var properties = feature.getProperties();
+			properties.ontology.prefLabel = JSON.stringify( properties.ontology.prefLabel );
 			var data = {
 				confidence: properties.confidence,
 				filename: layer.metadata.filename,

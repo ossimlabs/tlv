@@ -11,7 +11,7 @@ class Annotation {
     String geometryPixel
     String imageId
     String link
-    Double ontology
+    Ontology ontology
     String type
     String username
     Boolean validated = false
@@ -25,6 +25,8 @@ class Annotation {
         ontology()
         username()
         link()
+
+        ontology( nullable: true )
     }
 
     static mapping = {
