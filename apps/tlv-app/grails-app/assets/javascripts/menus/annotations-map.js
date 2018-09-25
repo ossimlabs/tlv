@@ -399,7 +399,9 @@ function saveAnnotations() {
 			var link = location.protocol + "//" + location.host + tlv.contextPath + "?" + $.param( urlParams )
 
 			var properties = feature.getProperties();
-			properties.ontology.prefLabel = JSON.stringify( properties.ontology.prefLabel );
+			if ( properties.ontology && properties.ontology.prefLabel ) {
+				properties.ontology.prefLabel = JSON.stringify( properties.ontology.prefLabel );
+			}
 			var data = {
 				confidence: properties.confidence,
 				filename: layer.metadata.filename,
