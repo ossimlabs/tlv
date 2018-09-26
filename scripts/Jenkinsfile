@@ -98,7 +98,7 @@ node("ossim-build"){
               //sh "/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin/sourceanalyzer -64 -b ${appName} -show-files"
               //sh "/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin/sourceanalyzer -64 -b ${appName} -show-build-warnings"
               sh "/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin/sourceanalyzer -64 -b ${appName} -scan -Xmx8G -f fortifyResults-${appName}-app.fpr"
-              sh "/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin/BIRTReportGenerator -template "DISA STIG" -source fortifyResults-${appName}-app.fpr -output fortifyResults-${appName}.pdf -format PDF -showSuppressed --Version "DISA STIG 3.9" -UseFortifyPriorityOrder"
+              sh "/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin/ReportGenerator -format pdf -f fortifyResults-${appName}.pdf -source fortifyResults-${appName}-app.fpr"
               sh "aws s3 cp fortifyResults-${appName}.pdf s3://o2-private/hpfortify/fortify-reports/"
               sh "/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin/fortifyclient -url http://hpfortify.ossim.io:8080/ssc -authtoken 02c59c7f-a092-45c3-be81-9b7f9dae5728 uploadFPR -file fortifyResults-${appName}-app.fpr -applicationVersionID 2"
             }
