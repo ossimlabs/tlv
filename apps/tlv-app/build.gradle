@@ -2,6 +2,7 @@ buildscript {
     ext {
         grailsVersion = project.grailsVersion
         baseImage = "omar-ossim-base"
+        dockerFile ="docker/Dockerfile"
     }
     if( System.env.OMAR_COMMON_PROPERTIES ) {
         apply from: System.env.OMAR_COMMON_PROPERTIES
