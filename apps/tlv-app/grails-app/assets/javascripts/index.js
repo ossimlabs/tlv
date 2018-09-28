@@ -257,7 +257,7 @@ function placenameSearch( inputElement ) {
 		responseIncludes: "WKT_GEOMETRY_SIMPLIFIED"
 	};
 
-	if ( tlv.placenameSearchAjax ) { tlv.placenameSearchAjax.abort(); }
+	//if ( tlv.placenameSearchAjax ) { tlv.placenameSearchAjax.abort(); console.dir("abort"); }
 	tlv.placenameSearchAjax = $.ajax({
 		url: tlv.geocoderUrl + "?" + $.param( queryParams )
 	})
