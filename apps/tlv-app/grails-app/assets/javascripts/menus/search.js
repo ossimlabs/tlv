@@ -381,7 +381,11 @@ function processResults() {
 			tlv.bbox = calculateInitialViewBbox();
 			setupTimeLapse();
 		}
-		else { displayErrorDialog("Sorry, we couldn't find anything that matched your search criteria. Maybe ease up on those search constraints a bit?"); }
+		else {
+			$( "#searchDialog" ).modal( "show" );
+
+			displayErrorDialog("Sorry, we couldn't find anything that matched your search criteria. Maybe ease up on those search constraints a bit?");
+		}
 	}
 }
 
