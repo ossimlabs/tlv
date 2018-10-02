@@ -226,12 +226,6 @@ function getStartDate() {
 }
 
 function initializeEndDateTimePicker() {
-	var endDateTimePicker = $("#searchEndDateTimePicker");
-	endDateTimePicker.datetimepicker({
-		format: "MM/DD/YYYY HH:mm:ss",
-		keyBinds: null
-	});
-
 	// default to current date or user defined
 	var endDate = new Date();
 	endDate.setFullYear( tlv.endYear || endDate.getUTCFullYear() );
@@ -240,7 +234,13 @@ function initializeEndDateTimePicker() {
 	endDate.setHours(tlv.endHour  || endDate.getUTCHours() );
 	endDate.setMinutes( tlv.endMinute || endDate.getUTCMinutes() );
 	endDate.setSeconds( tlv.endSecond || endDate.getUTCSeconds() );
-	endDateTimePicker.data("DateTimePicker").date( endDate );
+
+	var endDateTimePicker = $("#searchEndDateTimePicker");
+	endDateTimePicker.datetimepicker({
+		date: endDate,
+		format: "MM/DD/YYYY HH:mm:ss",
+		keyBinds: null
+	});
 }
 
 function initializeLibraryCheckboxes() {
@@ -279,12 +279,6 @@ function initializeMinNiirsInput() {
 }
 
 function initializeStartDateTimePicker() {
-	var startDateTimePicker = $("#searchStartDateTimePicker");
-	startDateTimePicker.datetimepicker({
-		format: "MM/DD/YYYY HH:mm:ss",
-		keyBinds: null
-	});
-
 	// default to the beginning of the day 30 days prior to the end date
 	var endDate = $("#searchEndDateTimePicker").data("DateTimePicker").date().toDate();
 	var startDate = new Date(endDate - 30 * 24 * 60 * 60 * 1000);
@@ -294,7 +288,13 @@ function initializeStartDateTimePicker() {
 	startDate.setHours(tlv.startHour ? tlv.startHour : 0);
 	startDate.setMinutes(tlv.startMinute ? tlv.startMinute : 0);
 	startDate.setSeconds(tlv.startSecond ? tlv.startSecond : 0);
-	startDateTimePicker.data("DateTimePicker").date(startDate);
+
+	var startDateTimePicker = $("#searchStartDateTimePicker");
+	startDateTimePicker.datetimepicker({
+		date: startDate,
+		format: "MM/DD/YYYY HH:mm:ss",
+		keyBinds: null
+	});
 }
 
 var pageLoadSearch = pageLoad;
