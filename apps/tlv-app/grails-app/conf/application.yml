@@ -51,7 +51,7 @@ baseUrl: https://omar-dev.ossim.io
 #docsUrl: ${baseUrl}/omar-docs
 
 # If the twofishes geocoder is available, define the URL
-geocoderUrl: ${baseUrl}/omar-ui/twoFishesProxy
+#geocoderUrl: ${baseUrl}/omar-ui/twoFishesProxy
 
 # A list of regular expressions that append a match to the image Id
 #imageIdFilters: '[ "(_2CMV_[A-Z])", "(_PSM)" ]'
@@ -63,15 +63,15 @@ geocoderUrl: ${baseUrl}/omar-ui/twoFishesProxy
 
 # List the various repository details
 # You need at least one
-libraries:
-    o2-dev:
-        imageSpaceUrl: ${baseUrl}/omar-ui/omar/#/mapImage
-        kmlUrl: ${baseUrl}/omar-superoverlay/superOverlay/createKml
-        label: O2-DEV
-        layerType: wms
-        mensaUrl: ${baseUrl}/omar-mensa/mensa
-        wfsUrl: ${baseUrl}/omar-wfs/wfs
-        wmsUrl: ${baseUrl}/omar-wms/wms
+#libraries:
+#    o2-dev:
+#        imageSpaceUrl: ${baseUrl}/omar-ui/omar/#/mapImage
+#        kmlUrl: ${baseUrl}/omar-superoverlay/superOverlay/createKml
+#        label: O2-DEV
+#        layerType: wms
+#        mensaUrl: ${baseUrl}/omar-mensa/mensa
+#        wfsUrl: ${baseUrl}/omar-wfs/wfs
+#        wmsUrl: ${baseUrl}/omar-wms/wms
 #    o2-rel:
 #        imageSpaceUrl: https://omar-rel.ossim.io/omar-ui/omar/#/mapImage
 #        kmlUrl: https://omar-rel.ossim.io/omar-superoverlay/superOverlay/createKml
