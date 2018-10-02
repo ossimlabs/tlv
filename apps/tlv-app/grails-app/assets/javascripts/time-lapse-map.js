@@ -168,6 +168,7 @@ function createMapControls() {
 
 		var this_ = this;
 		$( button ).on( "click", function( event ) {
+			$( this ).blur();
 			changeFrame( "fastForward" );
 		});
 
@@ -189,7 +190,7 @@ function createMapControls() {
 	var imageIdOuterDiv = document.createElement( "div" );
 	imageIdOuterDiv.className = "custom-map-control";
 	imageIdOuterDiv.id = "imageIdOuterDiv";
-	imageIdOuterDiv.style = "background-color: rgba(0, 0, 0, 0);"
+	imageIdOuterDiv.style = "background-color: rgba(0, 0, 0, 0); pointer-events: none;"
 
 	var imageIdDiv = document.createElement( "div" );
 	imageIdDiv.id = "imageIdDiv";
@@ -205,6 +206,7 @@ function createMapControls() {
 
 		var this_ = this;
 		$( button ).on( "click", function( event ) {
+			$( this ).blur();
 			playStopTimeLapse( $( button ).children()[ 0 ] );
 		});
 
@@ -226,6 +228,7 @@ function createMapControls() {
 
 		var this_ = this;
 		$( button ).on( "click", function( event ) {
+			$( this ).blur();
 			changeFrame( "rewind" );
 		});
 
