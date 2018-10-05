@@ -98,6 +98,8 @@ Select from an assortment of base layers to bring context to the imagery.
 As the name implies, this places a cross-hair in the center of the map. Whether you are looking to zero-in on the bad guy or just want to center the map on a particular target, this will get the job done.
 * **Search Origin:**
 This will place a marker on the map that indicates the exact location used for the center point search. All the zooming and panning can sometimes disorient you worse than someone waking you up from deep REM sleep. So, in case you forget the point around which you actually were searching, we’ve got you covered.
+* **Overview Map:**
+As the name implies, this shows an overview map that will follow you around as you pan and zoom in and out. In a friendly way though, we promise.
 
 
 ## **<span class="fa fa-history"></span>&nbsp;** : Time Lapse
@@ -131,4 +133,4 @@ Instead of your map being composed of multiple tiles that fill in as they are re
 * **About:**
 Display a dialog box giving details on the instance of TLV.
 * **User Guide:**
-We all need help sometimes, this gets you there straight away. 
+We all need help sometimes, this gets you there straight away.
