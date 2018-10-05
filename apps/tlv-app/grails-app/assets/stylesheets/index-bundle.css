@@ -11,6 +11,7 @@
 *= require time-lapse
 *= require menus/search
 *= require menus/export
+*= require menus/layers
 *= require image-properties
 *= require menus/view
 */

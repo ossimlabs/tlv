@@ -19,6 +19,29 @@ _Note: Use the left and right arrow keys on the keyboard to cycle through the im
 **<span class="glyphicon glyphicon-list-alt"></span>&nbsp;:**
 The summary button will give a list of all images in the stack along with an abbreviated composition of metadata. It's better than cliff notes!
 
+
+**<span class="glyphicon glyphicon-home"></span>&nbsp;:**
+
+
+## **<span class="glyphicon glyphicon-search"></span>&nbsp;:** Search
+* **End Date:**
+The end date of the search. The default is now.
+* **Library:**
+You can select one or more libraries from which to search for imagery. Each selected library will be searched one at a time and the results will be aggregated and sorted before they are returned to the browser.
+* **Location:**
+This will be the center point around which the search is conducted. TLV will bring its A game and attempt to automatically detect which coordinate format you enter. _Note: You can add TLV's custom search toolbar plugin to your browser and use it to search for imagery just like you would when searching for anyting else._
+* **Max. Cloud Cover (%):**
+The maximum amount of cloud cover you want in any of the images that are returned. The default is 100.
+* **Max. Results:**
+The total amount of images you are willing to look through. The default is 10. The ability to examine large amounts of imagery relies heavily on available browser/computer resources.
+* **Min. Niirs:**
+The minimum NIIRS (National Imagery Interpretability Rating Scale) in which you are interested. The default is 0.
+* **Sensor:**
+Discriminate results to specific sensor types.
+* **Start Date:**
+The start date of the search. The default is 30 days prior to today.
+
+
 ## Annotations
 * **Circle:**
 Click to begin a circle center and then click again to end it.
@@ -71,24 +94,6 @@ The coordinate of the mouse is displayed in the lower-left corner of the map. Cl
 
 * **Rotation:**
 In 2D mode you can rotate the map by holding Shift + Alt while clicking and dragging. In 3D mode, you can hold Alt while clicking and dragging to pitch the globe.
-
-## Search
-* **End Date:**
-The end date of the search. The default is now.
-* **Library:**
-You can select one or more libraries from which to search for imagery. Each selected library will be searched one at a time and the results will be aggregated and sorted before they are returned to the browser.
-* **Location:**
-This will be the center point around which the search is conducted. TLV will bring its A game and attempt to automatically detect which coordinate format you enter. _Note: You can add TLV's custom search toolbar plugin to your browser and use it to search for imagery just like you would when searching for anyting else._
-* **Max. Cloud Cover (%):**
-The maximum amount of cloud cover you want in any of the images that are returned. The default is 100.
-* **Max. Results:**
-The total amount of images you are willing to look through. The default is 10. The ability to examine large amounts of imagery relies heavily on available browser/computer resources.
-* **Min. Niirs:**
-The minimum NIIRS (National Imagery Interpretability Rating Scale) in which you are interested. The default is 0.
-* **Sensor:**
-Discriminate results to specific sensor types.
-* **Start Date:**
-The start date of the search. The default is 30 days prior to today.
 
 ## Time Lapse
 * **Delete Frame:**

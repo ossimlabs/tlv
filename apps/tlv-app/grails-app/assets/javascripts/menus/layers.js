@@ -1,3 +1,11 @@
+var createMapControlsLayers = createMapControls;
+createMapControls = function() {
+	createMapControlsLayers();
+
+	var overviewMapControl = new ol.control.OverviewMap();
+	tlv.mapControls.push( overviewMapControl );
+}
+
 function crossHairLayerToggle() {
 	var state = $("#layersCrossHairSelect").val();
 	if (state == "on") { displayCrossHairLayer(); }
@@ -57,6 +65,17 @@ function displaySearchOriginLayer() {
 function hideCrossHairLayer() { tlv.crossHairLayer.setVisible(false); }
 
 function hideSearchOriginLayer() { tlv.searchOriginLayer.setVisible(false); }
+
+function overviewLayerToggle() {
+	$.each(
+		tlv.map.getControls().getArray(), function( index, control ) {
+			if ( control instanceof ol.control.OverviewMap ) {
+				var state = $( "#layersOverviewSelect").val();
+				control.setCollapsed( state );
+			}
+		}
+	);
+}
 
 function refreshCrossHairLayer() {
 	var mapCenter = tlv.map.getView().getCenter();

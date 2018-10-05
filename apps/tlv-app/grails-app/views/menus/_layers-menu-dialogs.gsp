@@ -23,6 +23,12 @@
 						<option value = "off">OFF</option>
 						<option value = "on">ON</option>
 					</select>
+
+					<label>Overview</label>
+					<select class = "form-control" id = "layersOverviewSelect" onchange = overviewLayerToggle()>
+						<option value = "off">OFF</option>
+						<option value = "on">ON</option>
+					</select>
 				</div>
 			</div>
 			<div class = "modal-footer">

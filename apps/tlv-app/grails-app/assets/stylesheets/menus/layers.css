@@ -1,0 +1,7 @@
+.ol-collapsed {
+    background: none;
+}
+
+.ol-overviewmap > button {
+    display: none;
+}
