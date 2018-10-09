@@ -8,9 +8,9 @@
 					<input class = "typeahead form-control" id = "typeInput" placeholder = "Start Typing..." type = "text">
 					<asset:script type = "text/javascript">
 						$( "#typeInput" ).on( "input", function () {
-							$( "#typeInput" ).data( "ontology", null );
-
 							var inputElement = $( "#typeInput" );
+
+							inputElement.data( "ontology", null );
 
 							var queryParams = {
 								searchString: inputElement.val()

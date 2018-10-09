@@ -13,6 +13,13 @@ anAnnotationHasBeenAdded = function(event) {
 function applyAnnotationStyle() {
 	var feature = tlv.selectAnnotationInteraction.getFeatures().getArray()[0];
 
+	feature.setProperties({
+		confidence: $( "#confidenceSelect" ).val(),
+		ontology: $( "#typeInput" ).data( "ontology" ),
+		type: $( "#typeInput" ).val(),
+		username: $( "#usernameInput" ).val()
+	});
+
 	var fillColorHex = $("#fillColorInput").val();
 	var fillColor = hexToRgb(fillColorHex);
 	var fillTransparency = $("#fillTransparencyInput").val();
@@ -57,13 +64,6 @@ function applyAnnotationStyle() {
 	// refresh the layer for the new style to take effect
 	tlv.layers[tlv.currentLayer].annotationsLayer.setVisible(false);
 	tlv.layers[tlv.currentLayer].annotationsLayer.setVisible(true);
-
-	feature.setProperties({
-		confidence: $( "#confidenceSelect" ).val(),
-		ontology: $( "#typeInput" ).data( "ontology" ),
-		type: $( "#typeInput" ).val(),
-		username: $( "#usernameInput" ).val()
-	});
 }
 
 function calculateCircleFromRadius(center, radius) {
