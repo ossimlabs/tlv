@@ -1,3 +1,10 @@
+function componentToHex( component ) {
+    var hex = component.toString( 16 );
+
+
+    return hex.length == 1 ? "0" + hex : hex;
+}
+
 function convertGeospatialCoordinateFormat(inputString, callbackFunction) {
 	var bePattern = /\d{4}[a-z|\-{1}][a-z|0-9]\d{4}/i;
 	var ddPattern = /(\-?\d{1,2}[.]?\d*)[\s+|,?]\s*(\-?\d{1,3}[.]?\d*)/;
@@ -284,4 +291,8 @@ function placenameSearch( inputElement ) {
 	.fail( function() {
 		inputElement.focus();
 	});
+}
+
+function rgbToHex( red, green, blue ) {
+	return "#" + componentToHex( red ) + componentToHex( green ) + componentToHex( blue ); 
 }
