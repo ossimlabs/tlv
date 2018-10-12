@@ -7,7 +7,7 @@ anAnnotationHasBeenAdded = function(event) {
 	event.feature.setStyle(createDefaultStyle());
 	tlv.selectAnnotationInteraction = new ol.interaction.Select({ features: [event.feature] });
 	tlv.map.addInteraction(tlv.selectAnnotationInteraction);
-	openAnnotationsDialog(event.feature);
+	openAnnotationsDialog();
 }
 
 function applyAnnotationStyle() {
@@ -96,13 +96,6 @@ changeFrame = function(param) {
 	if (annotationsLayer) { annotationsLayer.setVisible(true); }
 
 	removeInteractions();
-}
-
-function componentToHex(component) {
-    var hex = component.toString(16);
-
-
-    return hex.length == 1 ? "0" + hex : hex;
 }
 
 function createAnnotationsLayer() {
@@ -359,8 +352,6 @@ function removeInteractions() {
 		}
 	);
 }
-
-function rgbToHex(r, g, b) { return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b); }
 
 function saveAnnotations() {
 	var layer = tlv.layers[ tlv.currentLayer ];
