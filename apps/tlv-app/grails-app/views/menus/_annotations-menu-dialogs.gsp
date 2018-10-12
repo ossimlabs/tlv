@@ -139,9 +139,9 @@
 				</div>
 			</div>
 			<div class = "modal-footer">
-				<button type = "button" class = "btn btn-primary" data-dismiss = "modal" onclick = applyAnnotationStyle()>Apply</button>
-				<button type = "button" class = "btn btn-primary" data-dismiss = "modal" onclick = deleteFeature()>Delete</button>
-                <button type = "button" class = "btn btn-default" data-dismiss = "modal">Close</button>
+				<button type = "button" class = "btn btn-primary" data-dismiss = "modal" onclick = "javascript:applyAnnotationStyle(); removeInteractions();">Apply</button>
+				<button type = "button" class = "btn btn-primary" data-dismiss = "modal" onclick = "javascript: deleteFeature(); removeInteractions();">Delete</button>
+                <button type = "button" class = "btn btn-default" data-dismiss = "modal" onclick = "javascript: removeInteractions();">Close</button>
             </div>
 		</div>
 	</div>
@@ -150,7 +150,6 @@
 <asset:script type = "text/javascript">
 	$( "#annotationsDialog" ).on( "hidden.bs.modal", function (event) {
 		hideDialog( "annotationsDialog" );
-		removeInteractions();
 	});
 	$( "#annotationsDialog" ).on( "shown.bs.modal", function (event) { displayDialog( "annotationsDialog" ); } );
 </asset:script>
