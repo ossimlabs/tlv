@@ -25,7 +25,9 @@ function changeTemplateText( element ) {
 		$( colorInput ).addClass( "form-control" );
 		$( colorInput ).addClass( "template-color-input" );
 		$( colorInput ).attr( "type", "color" );
-		$( colorInput ).attr( "value", $( element )[ 0 ].style.color );
+		var color = ol.color.asArray( $( element )[ 0 ].style.color );
+		var hexColor = rgbToHex( color[ 0 ], color[ 1 ], color[ 2 ] );
+		$( colorInput ).attr( "value", hexColor );
 		$( colorInput ).css( "height", $( element ).height() );
 		$( colorInput ).css( "width", $( element ).height() );
 		$( element ).append( colorInput );
