@@ -11,6 +11,14 @@ class AnnotationController {
 	def annotationService
 
 
+	def export() {
+		def results = Annotation.list( params ).unique { annotation -> annotation.geometryOrtho }
+		def json = new JSON( results ).toString()
+
+
+		render(model: [ annotations : json ], view: "/annotation/export.gsp" )
+	}
+
 	def getDistinctValues() {
 		def results = annotationService.getDistinctValues( params )
 
@@ -19,7 +27,7 @@ class AnnotationController {
 	}
 
 	def index( Integer max ) {
-		params.max = Math.min(max ?: 10, 100)
+		params.max = Math.min(max ?: 10, 10000)
 		def results = Annotation.list( params ).unique { annotation -> annotation.geometryOrtho }
 
 
