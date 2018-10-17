@@ -5,6 +5,8 @@
 	<div></div>
 </div>
 
+<div class = "alert" id = "infoDialog" role = "alert"></div>
+
 <div class = "modal" id = "loadingDialog" role = "dialog" style = "z-index: 2147483647" tabindex = "-1">
 	<div class = "modal-dialog">
 		<div class = "modal-content">

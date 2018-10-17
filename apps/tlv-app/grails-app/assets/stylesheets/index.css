@@ -8,6 +8,17 @@
     z-index: 9999;
 }
 
+#infoDialog {
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+    bottom: 0;
+    left: 0;
+	position: fixed;
+    text-align: center;
+    width: 100%;
+    z-index: 9999;
+}
+
 .navbar {
 	background: none;
 	border: none;
