@@ -5,7 +5,7 @@
 //= require bootstrap-slider
 //= require webjars/typeahead.js/0.11.1/dist/typeahead.bundle.min
 
-//= require olcesium-1.32
+//= require olcesium-1.35
 //= require coordinate-conversion
 
 //= require prototype
