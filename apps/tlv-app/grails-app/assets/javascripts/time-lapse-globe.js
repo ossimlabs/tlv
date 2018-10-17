@@ -23,7 +23,7 @@ var pageLoadTimeLapseGlobe = pageLoad;
 pageLoad = function() {
 	pageLoadTimeLapseGlobe();
 
-	CESIUM_BASE_URL = tlv.contextPath + "/assets/webjars/cesium/1.38.0/Build/Cesium";
+	CESIUM_BASE_URL = tlv.contextPath + "/assets/webjars/cesium/1.43.0/Build/Cesium";
 }
 
 function setupGlobe() {
@@ -69,6 +69,10 @@ function setupGlobe() {
 			url: tlv.terrainProvider
 		});
 	}
+	else if ( tlv.ionAccessToken ) {
+		Cesium.Ion.defaultAccessToken = tlv.ionAccessToken; 
+		tlv.globe.getCesiumScene().terrainProvider = Cesium.createWorldTerrain();
+	}
 
 	if ( tlv.dimensions == "3" ) {
 		tlv.dimensions = null;
@@ -81,6 +85,4 @@ function setupGlobe() {
 var setupTimeLapseGlobe = setupTimeLapse;
 setupTimeLapse = function() {
 	setupTimeLapseGlobe();
-
-	//setupGlobe();
 }
