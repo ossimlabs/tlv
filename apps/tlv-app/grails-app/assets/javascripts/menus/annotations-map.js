@@ -4,14 +4,14 @@ anAnnotationHasBeenAdded = function(event) {
 
 	removeInteractions();
 
-	event.feature.setStyle(createDefaultStyle());
-	tlv.selectAnnotationInteraction = new ol.interaction.Select({ features: [event.feature] });
-	tlv.map.addInteraction(tlv.selectAnnotationInteraction);
+	tlv.currentAnnotation = event.feature;
+	tlv.currentAnnotation.setStyle(createDefaultStyle());
+
 	openAnnotationsDialog();
 }
 
 function applyAnnotationStyle() {
-	var feature = tlv.selectAnnotationInteraction.getFeatures().getArray()[0];
+	var feature = tlv.currentAnnotation;
 
 	feature.setProperties({
 		confidence: $( "#confidenceSelect" ).val(),
@@ -64,6 +64,8 @@ function applyAnnotationStyle() {
 	// refresh the layer for the new style to take effect
 	tlv.layers[tlv.currentLayer].annotationsLayer.setVisible(false);
 	tlv.layers[tlv.currentLayer].annotationsLayer.setVisible(true);
+
+
 }
 
 function calculateCircleFromRadius(center, radius) {
@@ -126,7 +128,7 @@ function createDefaultStyle() {
 }
 
 function deleteFeature() {
-	var feature = tlv.selectAnnotationInteraction.getFeatures().getArray()[0];
+	var feature = tlv.currentAnnotation;
 	var source = tlv.layers[tlv.currentLayer].annotationsLayer.getSource();
 	source.removeFeature(feature);
 }
@@ -246,6 +248,7 @@ function modifyAnnotationsMap() {
 			tlv.selectAnnotationInteraction.once(
 				"select",
 				function(event) {
+					tlv.currentAnnotation = event.selected[ 0 ];
 					openAnnotationsDialog();
 					removeInteractions();
 				}
@@ -259,7 +262,7 @@ function modifyAnnotationsMap() {
 function openAnnotationsDialog() {
 	$("#annotationsDialog").modal("show");
 
-	var feature = tlv.selectAnnotationInteraction.getFeatures().getArray()[0];
+	var feature = tlv.currentAnnotation;
 	var style = feature.getStyle();
 
 	var fillColor = ol.color.asArray(style.getFill().getColor());
