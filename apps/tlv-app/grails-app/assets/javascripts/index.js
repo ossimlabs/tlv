@@ -154,10 +154,16 @@ function displayDialog( dialog ) {
 	body.css( "overflow-y", bodyIsTooTall ? "auto" : "" );
 }
 
-function displayErrorDialog(message) {
-	var messageDiv = $("#errorDialog").children()[1];
-	$(messageDiv).html(message);
-	$("#errorDialog").show();
+function displayInfoDialog( message ) {
+    $( "#infoDialog" ).html( message );
+	$( "#infoDialog" ).fadeIn();
+    setTimeout( function() { $( "#infoDialog" ).fadeOut(); }, 5000 );
+}
+
+function displayErrorDialog( message ) {
+	var messageDiv = $( "#errorDialog" ).children()[ 1 ];
+	$( messageDiv ).html( message );
+	$( "#errorDialog" ).show();
 }
 
 function displayLoadingDialog(message) {

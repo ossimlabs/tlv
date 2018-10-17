@@ -216,7 +216,7 @@ function exportKml() {
 
 function exportLink() {
 	var location = document.location;
-	var url = location.protocol + "//" + location.host + tlv.contectPath;
+	var url = location.protocol + "//" + location.host + ( tlv.contectPath || "" );
 
 	var ids = tlv.layers.map( function( layer ) {
 
@@ -230,6 +230,7 @@ function exportLink() {
 	};
 
 	copyTextToClipboard( url + "?" + $.param( params ) );
+	displayInfoDialog( "The link has been copied to your clipboard..." );
 }
 
 function exportMetadata() {
