@@ -214,6 +214,24 @@ function exportKml() {
 	window.open( url );
 }
 
+function exportLink() {
+	var location = document.location;
+	var url = location.protocol + "//" + location.host;
+
+	var ids = tlv.layers.map( function( layer ) {
+
+
+		return layer.metadata.id;
+	});
+	var params = {
+		bbox: ol.proj.transformExtent( tlv.map.getView().calculateExtent(), "EPSG:3857", "EPSG:4326" ).join( "," ),
+		filter: "in(" + ids.join( ") OR in(" ) + ")",
+		location: ol.proj.transform( tlv.map.getView().getCenter(), "EPSG:3857", "EPSG:4326" ).reverse().join( "," )
+	};
+
+	copyTextToClipboard( url + "?" + $.param( params ) );
+}
+
 function exportMetadata() {
 	var csvData = [];
 
