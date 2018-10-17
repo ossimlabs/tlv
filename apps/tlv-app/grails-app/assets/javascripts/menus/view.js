@@ -1,5 +1,13 @@
 function addDimension() {
 	if ( checkWebGlCompatability() ) {
+		$.each( tlv.layers, function( index, layer ) {
+			var source = layer.mapLayer.getSource();
+			var styles = source.getParams().STYLES;
+			source.updateParams({
+				STYLES: encodeURIComponent( styles )
+			});
+		});
+
 		if ( tlv.globe === undefined ) {
 			displayLoadingDialog( "Retrieving globe... yes, the ENTIRE globe." );
 
@@ -196,7 +204,20 @@ function precomposeSwipeRight( event ) {
 
 var postcomposeSwipe = function(event) { event.context.restore(); }
 
-function removeDimension() { tlv.globe.setEnabled( false ); }
+function removeDimension() {
+	$.each( tlv.layers, function( index, layer ) {
+		var layers = [ layer.imageLayer, layer.mapLayer, layer.tileLayer ];
+		$.each( layers, function( index, layer ) {
+			var source = layer.getSource();
+			var styles = source.getParams().STYLES;
+			source.updateParams({
+				STYLES: decodeURIComponent( styles )
+			});
+		});
+	});
+
+	tlv.globe.setEnabled( false );
+}
 
 function removeSwipeListenerFromMap() {
 	$.each(

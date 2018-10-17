@@ -62,10 +62,15 @@ pageLoad = function() {
 }
 
 function resetImageProperties() {
+	var styles = JSON.stringify(
+		getDefaultImageProperties()
+	);
+	if ( tlv.globe && tlv.globe.getEnabled() ) {
+		styles = encodeURIComponent( styles );
+	}
+
 	tlv.layers[ tlv.currentLayer ].mapLayer.getSource().updateParams({
-		STYLES: JSON.stringify(
-			getDefaultImageProperties()
-		)
+		STYLES: styles
 	});
 	syncImageProperties();
 	updateImageProperties( true );
@@ -96,7 +101,11 @@ setupTimeLapse = function() {
 
 function syncImageProperties() {
 	var layer = tlv.layers[ tlv.currentLayer ];
-	var styles = JSON.parse( layer.mapLayer.getSource().getParams().STYLES );
+	var styles = layer.mapLayer.getSource().getParams().STYLES;
+	if ( tlv.globe && tlv.globe.getEnabled() ) {
+		styles = decodeURIComponent( styles );
+	}
+	styles = JSON.parse( styles );
 
 
 	$.each(
@@ -156,17 +165,20 @@ function updateImageProperties( refreshMap ) {
 			bands = [ red, green, blue ].join( "," );
 		}
 
-		layer.mapLayer.getSource().updateParams({
-			STYLES: JSON.stringify({
-				bands: bands,
-				brightness: $( "#brightnessSliderInput" ).slider( "getValue" ) / 100,
-				contrast: $( "#contrastSliderInput" ).slider( "getValue" ) / 100,
-				hist_center: $( "#dynamicRangeRegionSelect" ).val(),
-				hist_op: $( "#dynamicRangeSelect" ).val(),
-				nullPixelFlip: $( "#nullPixelFlipSelect" ).val(),
-				resampler_filter: $( "#interpolationSelect" ).val(),
-				sharpen_mode: $( "#sharpenModeSelect" ).val()
-			})
+		var styles = JSON.stringify({
+			bands: bands,
+			brightness: $( "#brightnessSliderInput" ).slider( "getValue" ) / 100,
+			contrast: $( "#contrastSliderInput" ).slider( "getValue" ) / 100,
+			hist_center: $( "#dynamicRangeRegionSelect" ).val(),
+			hist_op: $( "#dynamicRangeSelect" ).val(),
+			nullPixelFlip: $( "#nullPixelFlipSelect" ).val(),
+			resampler_filter: $( "#interpolationSelect" ).val(),
+			sharpen_mode: $( "#sharpenModeSelect" ).val()
 		});
+		if ( tlv.globe && tlv.globe.getEnabled() ) {
+			styles = encodeURIComponent( styles );
+		}
+
+		layer.mapLayer.getSource().updateParams({ STYLES: styles });
 	}
 }
