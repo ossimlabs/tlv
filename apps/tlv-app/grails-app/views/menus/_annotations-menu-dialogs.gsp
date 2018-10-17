@@ -18,7 +18,7 @@
 
 							if ( tlv.ontologySearchAjax ) { tlv.ontologySearchAjax.abort(); }
 							tlv.ontologySearchAjax = $.ajax({
-								url: ${ grailsApplication.config.ontologyUrl } + "?" + $.param( queryParams )
+								url: "${ grailsApplication.config.ontologyUrl }?" + $.param( queryParams )
 							})
 							.always( function() {
 								inputElement.typeahead( "destroy" );
@@ -139,9 +139,9 @@
 				</div>
 			</div>
 			<div class = "modal-footer">
-				<button type = "button" class = "btn btn-primary" data-dismiss = "modal" onclick = "javascript:applyAnnotationStyle(); removeInteractions();">Apply</button>
-				<button type = "button" class = "btn btn-primary" data-dismiss = "modal" onclick = "javascript: deleteFeature(); removeInteractions();">Delete</button>
-                <button type = "button" class = "btn btn-default" data-dismiss = "modal" onclick = "javascript: removeInteractions();">Close</button>
+				<button type = "button" class = "btn btn-primary" data-dismiss = "modal" onclick = applyAnnotationStyle()>Apply</button>
+				<button type = "button" class = "btn btn-primary" data-dismiss = "modal" onclick = deleteFeature()>Delete</button>
+                <button type = "button" class = "btn btn-default" data-dismiss = "modal">Close</button>
             </div>
 		</div>
 	</div>
