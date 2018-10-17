@@ -60,7 +60,7 @@
 	function loadCesiumJavascript() {
 		return $.ajax({
 			dataType: "script",
-			url: "${ assetPath( src: "webjars/cesium/1.38.0/Build/Cesium/Cesium.js" ) }"
+			url: "${ assetPath( src: "webjars/cesium/1.43.0/Build/Cesium/Cesium.js" ) }"
 		});
 	}
 
