@@ -65,10 +65,6 @@ function resetImageProperties() {
 	var styles = JSON.stringify(
 		getDefaultImageProperties()
 	);
-	if ( tlv.globe && tlv.globe.getEnabled() ) {
-		styles = encodeURIComponent( styles );
-	}
-
 	tlv.layers[ tlv.currentLayer ].mapLayer.getSource().updateParams({
 		STYLES: styles
 	});
@@ -101,11 +97,7 @@ setupTimeLapse = function() {
 
 function syncImageProperties() {
 	var layer = tlv.layers[ tlv.currentLayer ];
-	var styles = layer.mapLayer.getSource().getParams().STYLES;
-	if ( tlv.globe && tlv.globe.getEnabled() ) {
-		styles = decodeURIComponent( styles );
-	}
-	styles = JSON.parse( styles );
+	var styles = JSON.parse( layer.mapLayer.getSource().getParams().STYLES );
 
 
 	$.each(
@@ -175,9 +167,6 @@ function updateImageProperties( refreshMap ) {
 			resampler_filter: $( "#interpolationSelect" ).val(),
 			sharpen_mode: $( "#sharpenModeSelect" ).val()
 		});
-		if ( tlv.globe && tlv.globe.getEnabled() ) {
-			styles = encodeURIComponent( styles );
-		}
 
 		layer.mapLayer.getSource().updateParams({ STYLES: styles });
 	}

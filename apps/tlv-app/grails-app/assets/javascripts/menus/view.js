@@ -206,13 +206,10 @@ var postcomposeSwipe = function(event) { event.context.restore(); }
 
 function removeDimension() {
 	$.each( tlv.layers, function( index, layer ) {
-		var layers = [ layer.imageLayer, layer.mapLayer, layer.tileLayer ];
-		$.each( layers, function( index, layer ) {
-			var source = layer.getSource();
-			var styles = source.getParams().STYLES;
-			source.updateParams({
-				STYLES: decodeURIComponent( styles )
-			});
+		var source = layer.getSource();
+		var styles = source.getParams().STYLES;
+		source.updateParams({
+			STYLES: decodeURIComponent( styles )
 		});
 	});
 

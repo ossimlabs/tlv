@@ -8,65 +8,68 @@
 					<input class = "typeahead form-control" id = "typeInput" placeholder = "Start Typing..." type = "text">
 					<asset:script type = "text/javascript">
 						$( "#typeInput" ).on( "input", function () {
-							var inputElement = $( "#typeInput" );
+							var ontologyUrl = "${ grailsApplication.config.ontologyUrl }";
+							if ( ontologyUrl ) {
+								var inputElement = $( "#typeInput" );
 
-							inputElement.data( "ontology", null );
+								inputElement.data( "ontology", null );
 
-							var queryParams = {
-								searchString: inputElement.val()
-							};
+								var queryParams = {
+									searchString: inputElement.val()
+								};
 
-							if ( tlv.ontologySearchAjax ) { tlv.ontologySearchAjax.abort(); }
-							tlv.ontologySearchAjax = $.ajax({
-								url: "${ grailsApplication.config.ontologyUrl }?" + $.param( queryParams )
-							})
-							.always( function() {
-								inputElement.typeahead( "destroy" );
-							})
-							.done( function( data ) {
-								var types = data[ "@graph" ].map( function( type ) {
-									var typeAheadReturn = {
-										displayName: type.prefLabel[ "@value" ]
-									};
+								if ( tlv.ontologySearchAjax ) { tlv.ontologySearchAjax.abort(); }
+								tlv.ontologySearchAjax = $.ajax({
+									url: ontologyUrl + "?" + $.param( queryParams )
+								})
+								.always( function() {
+									inputElement.typeahead( "destroy" );
+								})
+								.done( function( data ) {
+									var types = data[ "@graph" ].map( function( type ) {
+										var typeAheadReturn = {
+											displayName: type.prefLabel[ "@value" ]
+										};
 
-									var keys = Object.keys( type );
-									$.each(
-										Object.keys( type ),
-										function( index, key ) {
-											if ( key.contains( "textMatchLabel" ) ) {
-												typeAheadReturn.displayName += " (" + type[ key ] + ")"
+										var keys = Object.keys( type );
+										$.each(
+											Object.keys( type ),
+											function( index, key ) {
+												if ( key.contains( "textMatchLabel" ) ) {
+													typeAheadReturn.displayName += " (" + type[ key ] + ")"
+												}
 											}
+										);
+
+										var contextIds = type[ "@id" ].split( ":" );
+										var context = data[ "@context" ][ contextIds[ 0 ] ];
+										typeAheadReturn.ontology = {
+											uid: context + contextIds[ 1 ],
+											prefLabel: type.prefLabel,
+											textMatchScore: type.textMatchScore,
+											userSearchString: inputElement.val()
+										};
+
+
+										return typeAheadReturn;
+									});
+
+									inputElement.typeahead( null, {
+										display: function( suggestion ) {
+											inputElement.focus();
+											return suggestion.displayName;
+										},
+										source: function( query, sync ) {
+											inputElement.focus();
+											return sync( types );
 										}
-									);
-
-									var contextIds = type[ "@id" ].split( ":" );
-									var context = data[ "@context" ][ contextIds[ 0 ] ];
-									typeAheadReturn.ontology = {
-										uid: context + contextIds[ 1 ],
-										prefLabel: type.prefLabel,
-										textMatchScore: type.textMatchScore,
-										userSearchString: inputElement.val()
-									};
-
-
-									return typeAheadReturn;
+									});
+									inputElement.focus();
+								})
+								.fail( function() {
+									inputElement.focus();
 								});
-
-								inputElement.typeahead( null, {
-									display: function( suggestion ) {
-										inputElement.focus();
-										return suggestion.displayName;
-									},
-									source: function( query, sync ) {
-										inputElement.focus();
-										return sync( types );
-									}
-								});
-								inputElement.focus();
-							})
-							.fail( function() {
-								inputElement.focus();
-							});
+							}
 						});
 
 						$( "#typeInput" ).on( "typeahead:select", function ( event, suggestion ) {
