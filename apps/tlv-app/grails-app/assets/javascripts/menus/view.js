@@ -41,12 +41,14 @@ function addSwipeListenerToMap() {
 	tlv.layers[ tlv.swipeLayers[ 1 ] ].mapLayer.on( "precompose", precomposeSwipeRight );
 	tlv.layers[ tlv.swipeLayers[ 1 ] ].mapLayer.on( "postcompose", postcomposeSwipe );
 
-	var globeLayers = tlv.globe.getCesiumScene().imageryLayers;
-	var numberOfBaseLayers = Object.keys( tlv.baseLayers ).length;
-	var splitLeft = Cesium.ImagerySplitDirection.LEFT;
-	var splitRight = Cesium.ImagerySplitDirection.RIGHT;
-	globeLayers.get( tlv.swipeLayers[ 0 ] + numberOfBaseLayers ).splitDirection = splitLeft;
-	globeLayers.get( tlv.swipeLayers[ 1 ] + numberOfBaseLayers ).splitDirection = splitRight;
+	if ( tlv.globe && tlv.globe.getEnabled() ) {
+		var globeLayers = tlv.globe.getCesiumScene().imageryLayers;
+		var numberOfBaseLayers = Object.keys( tlv.baseLayers ).length;
+		var splitLeft = Cesium.ImagerySplitDirection.LEFT;
+		var splitRight = Cesium.ImagerySplitDirection.RIGHT;
+		globeLayers.get( tlv.swipeLayers[ 0 ] + numberOfBaseLayers ).splitDirection = splitLeft;
+		globeLayers.get( tlv.swipeLayers[ 1 ] + numberOfBaseLayers ).splitDirection = splitRight;
+	}
 
 	tlv.swipeDragStartX = 0;
 	swipeSliderMove({ clientX: $( "#swipeSlider" ).offset().left });
@@ -228,10 +230,12 @@ function removeSwipeListenerFromMap() {
 		}
 	);
 
-	for ( var index = 0; index < tlv.globe.getCesiumScene().imageryLayers.length; index++ ) {
-		var layer = tlv.globe.getCesiumScene().imageryLayers.get( index );
-		if ( layer.splitDirection ) {
-			layer.splitDirection = Cesium.ImagerySplitDirection.NONE;
+	if ( tlv.globe && tlv.globe.getEnabled() ) {
+		for ( var index = 0; index < tlv.globe.getCesiumScene().imageryLayers.length; index++ ) {
+			var layer = tlv.globe.getCesiumScene().imageryLayers.get( index );
+			if ( layer.splitDirection ) {
+				layer.splitDirection = Cesium.ImagerySplitDirection.NONE;
+			}
 		}
 	}
 
@@ -304,7 +308,9 @@ function swipeSliderMove( event ) {
 	swipeSlider.css( "left", ( 100.0 * splitPosition ) + "%" );
 	tlv.map.render();
 
-	tlv.globe.getCesiumScene().imagerySplitPosition = splitPosition;
+	if ( tlv.globe && tlv.globe.getEnabled() ) {
+		tlv.globe.getCesiumScene().imagerySplitPosition = splitPosition;
+	}
 }
 
 function terrainWireframeToggle() {
