@@ -26,6 +26,7 @@ class Annotation {
         username()
         link()
 
+        geometryOrtho( unique: true )
         ontology( nullable: true )
     }
 
