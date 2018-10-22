@@ -73,16 +73,18 @@ baseUrl: https://omar-dev.ossim.io
 #        label: O2-DEV
 #        layerType: wms
 #        mensaUrl: ${baseUrl}/omar-mensa/mensa
+#        stagerUrl: ${baseUrl}/omar-stager/
 #        wfsUrl: ${baseUrl}/omar-wfs/wfs
 #        wmsUrl: ${baseUrl}/omar-wms/wms
-#    o2-rel:
-#        imageSpaceUrl: https://omar-rel.ossim.io/omar-ui/omar/#/mapImage
-#        kmlUrl: https://omar-rel.ossim.io/omar-superoverlay/superOverlay/createKml
-#        label: O2-REL
+#    o2:
+#        imageSpaceUrl: https://omar.ossim.io/omar-ui/omar/#/mapImage
+#        kmlUrl: https://omar.ossim.io/omar-superoverlay/superOverlay/createKml
+#        label: O2
 #        layerType: wms
-#        mensaUrl: https://omar-rel.ossim.io/omar-mensa/mensa
-#        wfsUrl: https://omar-rel.ossim.io/omar-wfs/wfs
-#        wmsUrl: https://omar-rel.ossim.io/omar-wms/wms
+#        mensaUrl: https://omar.ossim.io/omar-mensa/mensa
+#        stagerUrl: https://omar.ossim.io/omar-stager/
+#        wfsUrl: https://omar.ossim.io/omar-wfs/wfs
+#        wmsUrl: https://omar.ossim.io/omar-wms/wms
 
 # If an ontology service exists, set it here
 #ontologyUrl: <protocol>://<host>>:<port>/<contextPath>

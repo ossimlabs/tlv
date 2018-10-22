@@ -34,6 +34,9 @@
 						</span>
 					</div>
 
+					<label>Sensors</label>
+					<select multiple class = "form-control" id = "searchSensorSelect"></select>
+
 					<label>Min. NIIRS</label>
 					<input class = "form-control" id = "searchMinNiirsInput" max = "9" min = "0" step = "0.1" type = "number">
 
