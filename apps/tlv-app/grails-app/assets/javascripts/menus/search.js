@@ -53,6 +53,11 @@ function beginSearch() {
 					filter += " AND ";
 					filter += "(entry_id = 0)";
 
+					if ( searchParams.fsgs.length > 0 ) {
+						filter += " AND ";
+						filter += "(filename LIKE '%" + searchParams.fsgs.join( "%' OR filename LIKE'%" ) + "%')";
+					}
+
 					filter += " AND ";
 					filter += "INTERSECTS(ground_geom,POINT(" + searchParams.location.join(" ") + "))";
 
@@ -205,6 +210,9 @@ function getSearchParams() {
 
 	searchObject.filter = tlv.filter || null;
 
+	var fsgs = $( "#searchFsgSelect" ).val();
+	searchObject.fsgs = fsgs || [];
+
 	var libraries = getSelectedLibraries();
 	if (libraries.length == 0) {
 		//$( "#searchDialog" ).modal( "show" );
@@ -225,7 +233,7 @@ function getSearchParams() {
 	searchObject.minNiirs = parseFloat(minNiirs);
 
 	var sensors = $( "#searchSensorSelect" ).val();
-	searchObject.sensors = sensors;
+	searchObject.sensors = sensors || [];
 
 	var startDate = getStartDate();
 	searchObject.startYear = startDate.year;
@@ -282,6 +290,17 @@ function initializeEndDateTimePicker() {
 		format: "MM/DD/YYYY HH:mm:ss",
 		keyBinds: null
 	});
+}
+
+function initializeFsgSelect() {
+	if ( tlv.fsg ) {
+		var fsgSelect = $( "#searchFsgSelect" );
+		if ( fsgSelect ) {
+			$.each( tlv.fsg.split( "," ), function( index, fsg ) {
+				$( "#searchFsgSelect option:contains('" + fsg + "')" ).prop("selected", true);
+			});
+		}
+	}
 }
 
 function initializeLibraryCheckboxes() {
@@ -372,8 +391,7 @@ function processImageId( metadata ) {
 	}
 
 	$.each(
-		typeof tlv.imageIdFilters == "object" ? tlv.imageIdFilters : JSON.parse( tlv.imageIdFilters ),
-		function( index, filter ) {
+		tlv.imageIdFilters,	function( index, filter ) {
 			if ( metadata.filename.match( filter ) ) {
 				imageId += RegExp.$1;
 			}
@@ -451,6 +469,7 @@ function setupSearchMenuDialog() {
 	initializeEndDateTimePicker();
 	initializeStartDateTimePicker();
 
+	initializeFsgSelect();
 	initializeLibraryCheckboxes();
 	initializeMinNiirsInput();
 	initializeMaxCloudCoverInput();

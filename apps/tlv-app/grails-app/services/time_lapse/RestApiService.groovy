@@ -20,7 +20,7 @@ class RestApiService {
 		params.beLookup = grailsApplication.config.beLookup ?: null
 		params.geocoderUrl = grailsApplication.config.geocoderUrl ?: null
 		params.ionAccessToken = grailsApplication.config.ionAccessToken ?: null
-		params.imageIdFilters = grailsApplication.config.imageIdFilters ?: []
+		params.imageIdFilters = grailsApplication.config.fsg?.collect { it.value.imageIdRegExp } ?: []
 		params.libraries = grailsApplication.config.libraries
 		params.templates = grailsApplication.config.templates ?: [:]
 		params.terrainProvider = params.terrainProvider ?: ( grailsApplication.config.terrainProvider ?: null )

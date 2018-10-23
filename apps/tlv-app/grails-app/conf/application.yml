@@ -50,14 +50,17 @@ baseUrl: https://omar-dev.ossim.io
 # If documentation is available, define the URL
 #docsUrl: ${baseUrl}/omar-docs
 
+# A list of full spectrum geoint products with regular expressions that append it to the image Id
+#fsg:
+#    2CMV:
+#        searchString: 2CMV
+#        imageIdRegExp: (_2CMV_[A-Z])
+
 # If the twofishes geocoder is available, define the URL
-#geocoderUrl: ${baseUrl}/omar-ui/twoFishesProxy
+geocoderUrl: ${baseUrl}/omar-ui/twoFishesProxy
 
 # If there is an available token for Cesium terrain, define it here
 #ionAccessToken: <token>
-
-# A list of regular expressions that append a match to the image Id
-#imageIdFilters: '[ "(_2CMV_[A-Z])", "(_PSM)" ]'
 
 # If ISA is available, define the URL
 # Make sure the trailing forward slash is included
@@ -73,6 +76,7 @@ baseUrl: https://omar-dev.ossim.io
 #        label: O2-DEV
 #        layerType: wms
 #        mensaUrl: ${baseUrl}/omar-mensa/mensa
+#        omsUrl: ${baseUrl}/omar-oms/imageSpace
 #        stagerUrl: ${baseUrl}/omar-stager/
 #        wfsUrl: ${baseUrl}/omar-wfs/wfs
 #        wmsUrl: ${baseUrl}/omar-wms/wms
@@ -82,6 +86,7 @@ baseUrl: https://omar-dev.ossim.io
 #        label: O2
 #        layerType: wms
 #        mensaUrl: https://omar.ossim.io/omar-mensa/mensa
+#        omsUrl: https://omar.ossim.io/omar-oms/imageSpace
 #        stagerUrl: https://omar.ossim.io/omar-stager/
 #        wfsUrl: https://omar.ossim.io/omar-wfs/wfs
 #        wmsUrl: https://omar.ossim.io/omar-wms/wms
