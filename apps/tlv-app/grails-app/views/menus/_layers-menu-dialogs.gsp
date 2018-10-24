@@ -29,6 +29,14 @@
 						<option value = "off">OFF</option>
 						<option value = "on">ON</option>
 					</select>
+
+					<g:each in = "${ grailsApplication.config.layers }">
+						<label>${ it.value.label }</label>
+						<select class = "form-control" id = "layers${it.key}Select" onchange = configLayerToggle("${ it.key }")>
+							<option value = "off">OFF</option>
+							<option value = "on">ON</option>
+						</select>
+					</g:each>
 				</div>
 			</div>
 			<div class = "modal-footer">

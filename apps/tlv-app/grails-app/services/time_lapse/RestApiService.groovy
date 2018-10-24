@@ -18,6 +18,7 @@ class RestApiService {
 		params.availableBaseLayers = grailsApplication.config.baseLayers
 		params.baseUrl = grailsApplication.config.baseUrl
 		params.beLookup = grailsApplication.config.beLookup ?: null
+		params.configLayers = grailsApplication.config.layers ?: [:]
 		params.geocoderUrl = grailsApplication.config.geocoderUrl ?: null
 		params.ionAccessToken = grailsApplication.config.ionAccessToken ?: null
 		params.imageIdFilters = grailsApplication.config.fsg?.collect { it.value.imageIdRegExp } ?: []

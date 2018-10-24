@@ -130,6 +130,31 @@ function copyTextToClipboard( text ) {
     input.remove();
 }
 
+function createDefaultStyle() {
+	return new ol.style.Style({
+		fill: new ol.style.Fill({ color: "rgba(255, 255, 0, 0)" }),
+		image: new ol.style.Circle({
+			fill: new ol.style.Fill({ color: "rgba(255, 255, 0, 1)" }),
+			radius: 5,
+			stroke: new ol.style.Stroke({
+				color: "rgba(255, 255, 0, 0)",
+	            width: 2
+	 		})
+		}),
+		stroke: new ol.style.Stroke({
+			color: "rgba(255, 255, 0, 1)",
+            width: 2
+ 		}),
+        text: new ol.style.Text({
+            fill: new ol.style.Fill({
+                color: "rgba(255, 255, 0, 1)"
+            }),
+            offsetY: -13,
+            overflow: true
+        })
+	});
+}
+
 function disableMenuButtons() {
 	var menuButtons = $( ".navbar-header" )[ 0 ].children;
 	for ( var i = 2; i < menuButtons.length - 1; i++ ) { $( menuButtons[ i ] ).hide(); }

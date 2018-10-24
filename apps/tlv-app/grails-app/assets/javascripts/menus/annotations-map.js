@@ -109,24 +109,6 @@ function createAnnotationsLayer() {
 	tlv.map.addLayer(layer.annotationsLayer);
 }
 
-function createDefaultStyle() {
-	return new ol.style.Style({
-		fill: new ol.style.Fill({ color: "rgba(255, 255, 0, 0)" }),
-		image: new ol.style.Circle({
-			fill: new ol.style.Fill({ color: "rgba(255, 255, 0, 1)" }),
-			radius: 5,
-			stroke: new ol.style.Stroke({
-				color: "rgba(255, 255, 0, 0)",
-	            width: 2
-	 		})
-		}),
-		stroke: new ol.style.Stroke({
-			color: "rgba(255, 255, 0, 1)",
-            width: 2
- 		})
-	});
-}
-
 function deleteFeature() {
 	var feature = tlv.currentAnnotation;
 	var source = tlv.layers[tlv.currentLayer].annotationsLayer.getSource();
