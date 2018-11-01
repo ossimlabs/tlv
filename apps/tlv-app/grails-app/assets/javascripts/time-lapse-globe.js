@@ -64,13 +64,16 @@ function setupGlobe() {
 		}
 	);
 
+	tlv.globe.getCesiumScene().screenSpaceCameraController.zoomEventTypes = Cesium.CameraEventType.WHEEL;
+
+
 	if ( tlv.terrainProvider ) {
 		tlv.globe.getCesiumScene().terrainProvider = new Cesium.CesiumTerrainProvider({
 			url: tlv.terrainProvider
 		});
 	}
 	else if ( tlv.ionAccessToken ) {
-		Cesium.Ion.defaultAccessToken = tlv.ionAccessToken; 
+		Cesium.Ion.defaultAccessToken = tlv.ionAccessToken;
 		tlv.globe.getCesiumScene().terrainProvider = Cesium.createWorldTerrain();
 	}
 
