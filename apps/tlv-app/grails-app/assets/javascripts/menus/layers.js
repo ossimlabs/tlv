@@ -25,13 +25,18 @@ function displayConfigLayer( key ) {
 			format: new ol.format.GeoJSON(),
 			// this forces the features to reload each time
 			strategy: function( extent, resolution ) {
-        		this.loadedExtentsRtree_.clear();
+				if ( this.loadedExtentsRtree_ ) {
+        			this.loadedExtentsRtree_.clear();
+				}
 
 
 				return [ extent ];
 			},
 			url: function() {
-				var url = layer.url;// + "?" + layer.params ? $.param( layer.params ) : "";
+				var url = layer.url;
+ 				if ( layer.params ) {
+					url += "?" + $.param( layer.params );
+				}
 
 				var bbox = ol.proj.transformExtent( tlv.map.getView().calculateExtent(), "EPSG:3857", "EPSG:4326" );
 				url = url.replace( encodeURIComponent( "<BBOX>" ), bbox.join( "," ) );
