@@ -419,3 +419,19 @@ function exportTemplate( templateStyle ) {
 		getScreenshotGlobe( callback );
 	}
 }
+
+function exportWmsGetCapabilities() {
+	var layer = tlv.layers[ tlv.currentLayer ];
+	var url = tlv.libraries[ layer.library ].wfsUrl;
+ 	var params = {
+		filter: "in(" + layer.metadata.id + ")",
+		outputFormat: "WMS130",
+		request: "GetFeature",
+		service: "WFS",
+		typeName: "omar:raster_entry",
+		version: "1.1.0"
+	};
+
+	copyTextToClipboard( url + "?" + $.param( params ) );
+	displayInfoDialog( "The link has been copied to your clipboard..." );
+}

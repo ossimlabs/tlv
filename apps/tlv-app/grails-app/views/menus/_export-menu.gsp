@@ -10,6 +10,7 @@
 		<li><a href = javascript:void(0) onclick = exportLink()>Link</a></li>
 		<li><a href = javascript:void(0) onclick = exportScreenshot()>Screenshot</a></li>
 		<li><a href = javascript:void(0) onclick = "javascript:exportTemplate( 'default' )">Template</a></li>
+		<li><a href = javascript:void(0) onclick = exportWmsGetCapabilities()>WMS GetCapabilities</a></li>
 	</ul>
 </li>
 
