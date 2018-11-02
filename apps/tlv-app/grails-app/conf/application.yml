@@ -105,17 +105,17 @@ baseUrl: https://omar.ossim.io
 
 # List the various repository details
 # You need at least one
-libraries:
-    o2-dev:
-        imageSpaceUrl: ${baseUrl}/omar-ui/omar/#/mapImage
-        kmlUrl: ${baseUrl}/omar-superoverlay/superOverlay/createKml
-        label: O2-DEV
-        layerType: wms
-        mensaUrl: ${baseUrl}/omar-mensa/mensa
-        omsUrl: ${baseUrl}/omar-oms/imageSpace
-        stagerUrl: ${baseUrl}/omar-stager/
-        wfsUrl: ${baseUrl}/omar-wfs/wfs
-        wmsUrl: ${baseUrl}/omar-wms/wms
+#libraries:
+#    o2-dev:
+#        imageSpaceUrl: ${baseUrl}/omar-ui/omar/#/mapImage
+#        kmlUrl: ${baseUrl}/omar-superoverlay/superOverlay/createKml
+#        label: O2-DEV
+#        layerType: wms
+#        mensaUrl: ${baseUrl}/omar-mensa/mensa
+#        omsUrl: ${baseUrl}/omar-oms/imageSpace
+#        stagerUrl: ${baseUrl}/omar-stager/
+#        wfsUrl: ${baseUrl}/omar-wfs/wfs
+#        wmsUrl: ${baseUrl}/omar-wms/wms
 #    o2:
 #        imageSpaceUrl: https://omar.ossim.io/omar-ui/omar/#/mapImage
 #        kmlUrl: https://omar.ossim.io/omar-superoverlay/superOverlay/createKml
