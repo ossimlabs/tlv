@@ -25,7 +25,7 @@ function displayConfigLayer( key ) {
 			format: new ol.format.GeoJSON(),
 			// this forces the features to reload each time
 			strategy: function( extent, resolution ) {
-				if ( this.loadedExtentsRtree_ ) {
+				if ( layer.refresh && this.loadedExtentsRtree_ ) {
         			this.loadedExtentsRtree_.clear();
 				}
 
@@ -51,6 +51,22 @@ function displayConfigLayer( key ) {
 			declutter: true,
 			source: source,
 			style: function( feature ) {
+				// fill
+				if ( layer.style && layer.style.fill ) {
+					var color = layer.style.fill.color;
+					if ( color ) {
+						style.getFill().setColor( color );
+					}
+				}
+
+				// stroke
+				if ( layer.style && layer.style.stroke ) {
+					var color = layer.style.stroke.color;
+					if ( color ) {
+						style.getStroke().setColor( color );
+					}
+				}
+
 				// text
 				if ( layer.style && layer.style.text ) {
 					var color = layer.style.text.color;

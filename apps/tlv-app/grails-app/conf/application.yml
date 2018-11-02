@@ -1,8 +1,8 @@
 # If there is a version to denote, set it here
 about:
     contactEmail: O2Support@digitalglobe.com
-    release: Islamorada
-    releaseNumber: 2.5.2
+    release: Juno
+    releaseNumber: 2.6.0
 
 # If there a page banner is needed, set it here
 #banner:
@@ -69,35 +69,53 @@ baseUrl: https://omar.ossim.io
 
 # If there any feature layers available, list them here
 #layers:
+#    countries:
+#        label: Country Borders
+#        url: ${baseUrl}/omar-wfs/wfs/getFeature
+#        params:
+#            maxFeatures: 1000
+#            outputFormat: JSON
+#            request: GetFeature
+#            service: WFS
+#            typeName: omar:country_border
+#            version: 1.1.0
+#        refresh: false
+#        style:
+#            text:
+#                attribute: name
 #    o2-wfs:
 #        label: O2 WFS
-#        url: ${baseUrl}/omar-wfs/wfs
+#        url: ${baseUrl}/omar-wfs/wfs/getFeature
 #        params:
 #            filter: BBOX(ground_geom,<BBOX>)
-#            maxFeatures: 100
+#            maxFeatures: 1000
 #            outputFormat: JSON
 #            request: GetFeature
 #            service: WFS
 #            sortBy: acquisition_date+D
 #            typeName: omar:raster_entry
 #            version: 1.1.0
+#        refresh: true
 #        style:
+#            stroke:
+#                color: black
 #            text:
+#                color: black
 #                attribute: image_id
 
 # List the various repository details
 # You need at least one
-#libraries:
-#    o2-dev:
-#        imageSpaceUrl: ${baseUrl}/omar-ui/omar/#/mapImage
-#        kmlUrl: ${baseUrl}/omar-superoverlay/superOverlay/createKml
-#        label: O2-DEV
-#        layerType: wms
-#        mensaUrl: ${baseUrl}/omar-mensa/mensa
-#        omsUrl: ${baseUrl}/omar-oms/imageSpace
-#        stagerUrl: ${baseUrl}/omar-stager/
-#        wfsUrl: ${baseUrl}/omar-wfs/wfs
-#        wmsUrl: ${baseUrl}/omar-wms/wms
+libraries:
+    o2-dev:
+        imageSpaceUrl: ${baseUrl}/omar-ui/omar/#/mapImage
+        kmlUrl: ${baseUrl}/omar-superoverlay/superOverlay/createKml
+        label: O2-DEV
+        layerType: wms
+        mensaUrl: ${baseUrl}/omar-mensa/mensa
+        omsUrl: ${baseUrl}/omar-oms/imageSpace
+        stagerUrl: ${baseUrl}/omar-stager/
+        wfsUrl: ${baseUrl}/omar-wfs/wfs
+        wmsUrl: ${baseUrl}/omar-wms/wms
 #    o2:
 #        imageSpaceUrl: https://omar.ossim.io/omar-ui/omar/#/mapImage
 #        kmlUrl: https://omar.ossim.io/omar-superoverlay/superOverlay/createKml
