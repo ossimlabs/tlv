@@ -230,7 +230,7 @@ function exportLink() {
 	};
 
 	copyTextToClipboard( url + "?" + $.param( params ) );
-	displayInfoDialog( "The link has been copied to your clipboard..." );
+	displayInfoDialog( "The TLV link has been copied to your clipboard..." );
 }
 
 function exportMetadata() {
@@ -433,5 +433,5 @@ function exportWmsGetCapabilities() {
 	};
 
 	copyTextToClipboard( url + "?" + $.param( params ) );
-	displayInfoDialog( "The link has been copied to your clipboard..." );
+	displayInfoDialog( "The WMS GetCapabilities link has been copied to your clipboard..." );
 }
