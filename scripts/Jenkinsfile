@@ -92,14 +92,15 @@ node("omar-build"){
     try {
         stage('HPFortify Analysis') {
             dir(appName) {
-              sh "/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin/sourceanalyzer -64 -b ${appName} -clean"
-              sh "pwd"
-              sh "/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin/sourceanalyzer -64 -b ${appName} /media/ephemeral0/jenkins/workspace/tlv-dev/tlv/apps/tlv-app/grails-app/assets/javascripts/menus/*.js"
-              sh "/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin/sourceanalyzer -64 -b ${appName} -scan -Xmx8G -f fortifyResults-${appName}-app.fpr"
-              sh "/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin/ReportGenerator -format pdf -f fortifyResults-${appName}.pdf -source fortifyResults-${appName}-app.fpr"
-              sh "aws s3 cp fortifyResults-${appName}.pdf s3://o2-private/hpfortify/fortify-reports-pdf/"
-              sh "aws s3 cp fortifyResults-${appName}-app.fpr s3://o2-private/hpfortify/fortify-reports-fpr/"
-              sh "/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin/fortifyclient -url http://hpfortify.ossim.io:8080/ssc -authtoken 02c59c7f-a092-45c3-be81-9b7f9dae5728 uploadFPR -file fortifyResults-${appName}-app.fpr -applicationVersionID 2"
+              sh """
+                 export PATH=${PATH}:/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin
+                 sourceanalyzer -64 -b ${appName} -clean
+                 sourceanalyzer -64 -b ${appName} ${workspaceDir}/${appName}-dev/${appName}/apps/${appName}-app/grails-app/assets/javascripts/menus/*.js
+                 sourceanalyzer -64 -b ${appName} -scan -Xmx8G -f fortifyResults-${appName}-app.fpr
+                 ReportGenerator -format pdf -f fortifyResults-${appName}.pdf -source fortifyResults-${appName}-app.fpr
+                 aws s3 cp fortifyResults-${appName}.pdf s3://o2-private/hpfortify/fortify-reports-pdf/
+                 aws s3 cp fortifyResults-${appName}.fpr s3://o2-private/hpfortify/fortify-reports-fpr/
+                 fortifyclient -url http://hpfortify.ossim.io:8080/ssc -authtoken 02c59c7f-a092-45c3-be81-9b7f9dae5728 uploadFPR -file fortifyResults-${appName}-app.fpr -applicationVersionID 2
             }
         }
    }
