@@ -106,6 +106,19 @@
                 </td>
             </tr>
             <tr>
+                <td>Keep Visible:</td>
+                <td>
+                    <select class = "form-control" id = "keepVisibleSelect" onchange = "updateImageProperties( false )">
+                        <g:each in = "${[
+                            [ name: "No", value: false ],
+                            [ name: "Yes", value: true ]
+                        ]}">
+                            <option value = ${ it.value }>${ it.name }</option>
+                        </g:each>
+                    </select>
+                </td>
+            </tr>
+            <tr>
                 <td>Null Pixel Flip:</td>
                 <td>
                     <select class = "form-control" id = "nullPixelFlipSelect" onchange = "updateImageProperties( true )">
