@@ -95,7 +95,7 @@ function calculateInitialViewBbox() {
 
 function changeFrame( param ) {
 	var layer = tlv.layers[ tlv.currentLayer ];
-	layer.mapLayer.setOpacity( 0 );
+	layer.mapLayer.setOpacity( layer.keepVisible ? layer.opacity : 0 );
 	layer.mapLayer.setVisible( layer.keepVisible );
 
 	if ( param === "fastForward" ) { tlv.currentLayer = getNextFrameIndex(); }
@@ -237,9 +237,16 @@ function moveLayerDownInStack( layerIndex ) {
 		tlv.layers[ layerIndex ] = tlv.layers[ nextLayerIndex ];
 		tlv.layers[ nextLayerIndex ] = thisLayer;
 
-		var collection = tlv.map.getLayers();
-		var element = collection.removeAt( tlv.layers.length - 1 - layerIndex );
-        collection.insertAt( tlv.layers.length - 1 - nextLayerIndex, element );
+        var baseLayers = Object.keys( tlv.baseLayers ).length;
+        var collection = tlv.map.getLayers();
+        var totalLayers = collection.getArray().length;
+        var removeIndex = totalLayers - baseLayers - 2 * layerIndex;
+        var imageLayerElement = collection.removeAt( removeIndex );
+        var tileLayerElement = collection.removeAt( removeIndex );
+
+        var insertIndex = totalLayers - 2 * nextLayerIndex - 2;
+        collection.insertAt( insertIndex, tileLayerElement );
+        collection.insertAt( insertIndex, imageLayerElement );
 	}
 
 	changeFrame( "fastForward" );
@@ -255,10 +262,18 @@ function moveLayerUpInStack( layerIndex ) {
 		tlv.layers[ layerIndex ] = tlv.layers[ previousLayerIndex ];
 		tlv.layers[ previousLayerIndex ] = thisLayer;
 
-		var collection = tlv.map.getLayers();
-		var element = collection.removeAt( tlv.layers.length - 1 - layerIndex );
-		collection.insertAt( tlv.layers.length - 1 - previousLayerIndex, element );
+        var baseLayers = Object.keys( tlv.baseLayers ).length;
+        var collection = tlv.map.getLayers();
+        var totalLayers = collection.getArray().length;
+        var removeIndex = totalLayers - baseLayers - 2 * layerIndex;
+        var imageLayerElement = collection.removeAt( removeIndex );
+        var tileLayerElement = collection.removeAt( removeIndex );
+
+        var insertIndex = totalLayers - 2 * previousLayerIndex;
+		collection.insertAt( insertIndex, tileLayerElement );
+        collection.insertAt( insertIndex, imageLayerElement );
 	}
+
 
 	changeFrame( "fastForward" );
 	changeFrame( "rewind" );
@@ -344,15 +359,14 @@ function setupTimeLapse() {
 	setupMap();
 	addBaseLayersToTheMap();
 
-	if (tlv.chronological == "false") { tlv.layers.reverse(); }
+	if ( tlv.chronological == "false" ) { tlv.layers.reverse(); }
 	// add layers to the map
-	$.each(
-		tlv.layers,
-		function(i, x) {
-			x.keepVisible = x.keepVisible || false;
-			addLayerToTheMap(x);
-		}
-	);
+    tlv.layers.reverse();
+	$.each( tlv.layers, function( index, layer ) {
+		layer.keepVisible = layer.keepVisible || false;
+		addLayerToTheMap( layer );
+	});
+    tlv.layers.reverse();
 	tlv.currentLayer = 0;
 
 	var extent = ol.proj.transformExtent(tlv.bbox, "EPSG:4326", "EPSG:3857");
