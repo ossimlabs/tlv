@@ -139,6 +139,7 @@ function syncImageProperties() {
 	$( "#dynamicRangeSelect option[value='" + styles.hist_op + "']" ).prop( "selected", true );
 	$( "#dynamicRangeRegionSelect option[value='" + styles["hist_center"] + "']" ).prop( "selected", true );
 	$( "#interpolationSelect option[value='" + styles.resampler_filter + "']" ).prop( "selected", true );
+	$( "#keepVisibleSelect option[value='" + layer.keepVisible + "']" ).prop( "selected", true );
 	$( "#nullPixelFlipSelect option[value='" + styles.nullPixelFlip + "']" ).prop( "selected", true );
 	$( "#sharpenModeSelect option[value='" + styles.sharpen_mode + "']" ).prop( "selected", true );
 }
@@ -146,6 +147,7 @@ function syncImageProperties() {
 function updateImageProperties( refreshMap ) {
 	var layer = tlv.layers[ tlv.currentLayer ];
 
+	layer.keepVisible = ( $( "#keepVisibleSelect" ).val() == "true" );
 	layer.opacity = $( "#opacitySliderInput" ).slider( "getValue" ) / 100;
 
 	if ( refreshMap ) {
