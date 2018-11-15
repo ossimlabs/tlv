@@ -74,9 +74,11 @@ function displayConfigLayer( key ) {
 						style.getText().getFill().setColor( color );
 					}
 
-					var text = layer.style.text.attribute;
-					if ( text ) {
-						style.getText().setText( feature.get( text ) );
+					var labelKey = layer.style.text.label;
+					if ( labelKey ) { 
+						var text = feature.get( labelKey );
+						if ( typeof text == "object" ) { text = JSON.stringify( text ); }
+						style.getText().setText( text );
 					}
 				}
 
