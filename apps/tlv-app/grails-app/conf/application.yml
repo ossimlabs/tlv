@@ -37,6 +37,31 @@ about:
 #        type: wms
 #        visible: false
 #        url: ${baseUrl}/omar-mapproxy/service
+#    googleMaps:
+#        name: Google Maps
+#        type: xyz
+#        url: https://mt1.google.com/vt/lyrs=r&x={x}&y={y}&z={z}
+#        visible: false
+#    googleSatellite:
+#        name: Google Satellite
+#        type: xyz
+#        url: http://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}
+#        visible: false
+#    googleSatelliteHybrid:
+#        name: Google Satellite Hybrid
+#        type: xyz
+#        url: https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}
+#        visible: false
+#    googleTerrain:
+#        name: Google Terrain
+#        type: xyz
+#        url: https://mt1.google.com/vt/lyrs=t&x={x}&y={y}&z={z}
+#        visible: false
+#    googleRoads:
+#        name: Google Roads
+#        type: xyz
+#        url: https://mt1.google.com/vt/lyrs=h&x={x}&y={y}&z={z}
+#        visible: false
 
 # Define the base URL to be used throughout the configuration
 baseUrl: https://omar.ossim.io
@@ -83,6 +108,7 @@ baseUrl: https://omar.ossim.io
 #        style:
 #            text:
 #                attribute: name
+#                color: white
 #    o2-wfs:
 #        label: O2 WFS
 #        url: ${baseUrl}/omar-wfs/wfs/getFeature
@@ -101,7 +127,7 @@ baseUrl: https://omar.ossim.io
 #                color: black
 #            text:
 #                color: black
-#                attribute: image_id
+#                label: image_id
 
 # List the various repository details
 # You need at least one
