@@ -4,6 +4,8 @@
 		<span class = "caret"></span>
 	</a>
 	<ul class = "dropdown-menu">
+		<li><a href = javascript:void(0) onclick = annotationsLayerToggle()>Toggle Visibility</a></li>
+		<li class = "divider" role = "seperator"></li>
 		<li><a href = javascript:void(0) onclick = "drawAnnotation( 'circle' )">Circle</a></li>
 		<li><a href = javascript:void(0) onclick = "drawAnnotation( 'line' )">Line</a></li>
 		<li><a href = javascript:void(0) onclick = "drawAnnotation( 'point' )">Point</a></li>
