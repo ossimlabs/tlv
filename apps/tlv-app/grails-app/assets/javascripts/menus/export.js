@@ -216,7 +216,7 @@ function exportKml() {
 
 function exportLink() {
 	var location = document.location;
-	var url = location.protocol + "//" + location.host + ( tlv.contectPath || "" );
+	var url = location.protocol + "//" + location.host + ( tlv.contextPath || "" );
 
 	var ids = tlv.layers.map( function( layer ) {
 
