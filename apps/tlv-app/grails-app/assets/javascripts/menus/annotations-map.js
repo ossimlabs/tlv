@@ -1,3 +1,9 @@
+function addAnnotations( geoJsonSource, layer ) {
+	var features =  ol.format.GeoJSON().readFeatures( geoJsonSource );
+	createAnnotationsLayer( layer );
+	layer.annotationsLayer.getSource().addFeatures( features );
+}
+
 var anAnnotationHasBeenAddedMap = anAnnotationHasBeenAdded;
 anAnnotationHasBeenAdded = function(event) {
 	anAnnotationHasBeenAddedMap(event);
@@ -8,6 +14,13 @@ anAnnotationHasBeenAdded = function(event) {
 	tlv.currentAnnotation.setStyle(createDefaultStyle());
 
 	openAnnotationsDialog();
+}
+
+function annotationsLayerToggle() {
+	var layer = tlv.layers[ tlv.currentLayer ].annotationsLayer;
+	if ( layer ) {
+		layer.setVisible( !layer.getVisible() );
+	}
 }
 
 function applyAnnotationStyle() {
@@ -38,34 +51,34 @@ function applyAnnotationStyle() {
 		width: strokeWidth
 	});
 
-	var style;
-	switch (feature.getGeometry().getType()) {
+	var style = feature.getStyle();
+	switch ( feature.getGeometry().getType() ) {
 		case "Point":
 			var image = new ol.style.Circle({
 					fill: fill,
-					radius: parseInt(radius, 10),
+					radius: parseInt( radius, 10 ),
 					stroke: stroke
 				});
-			style = new ol.style.Style({ image: image });
+			style.setImage( image );
 			break;
 		case "Circle":
-			var center = ol.proj.transform(feature.getGeometry().getCenter(), "EPSG:3857", "EPSG:4326");
-			var geometry = calculateCircleFromRadius(center, radius);
+			var center = ol.proj.transform(
+				feature.getGeometry().getCenter(), "EPSG:3857", "EPSG:4326"
+			);
+			var geometry = calculateCircleFromRadius( center, radius );
 			feature.setGeometry(geometry);
 		default:
-			style = new ol.style.Style({
-				fill: fill,
-				stroke: stroke
-			});
+			style.setFill( fill );
+			style.setStroke( stroke );
 			break;
 	}
-	feature.setStyle(style);
+	var label = feature.getProperties().type;
+	style.getText().setText( label );
+	feature.setStyle( style );
 
 	// refresh the layer for the new style to take effect
 	tlv.layers[tlv.currentLayer].annotationsLayer.setVisible(false);
 	tlv.layers[tlv.currentLayer].annotationsLayer.setVisible(true);
-
-
 }
 
 function calculateCircleFromRadius(center, radius) {
@@ -100,13 +113,14 @@ changeFrame = function(param) {
 	removeInteractions();
 }
 
-function createAnnotationsLayer() {
-	var source = new ol.source.Vector();
-	source.on("addfeature", anAnnotationHasBeenAdded);
+function createAnnotationsLayer( layer ) {
+	if ( !layer.annotationsLayer ) {
+		var source = new ol.source.Vector();
+		source.on( "addfeature", anAnnotationHasBeenAdded );
 
-	var layer = tlv.layers[tlv.currentLayer];
-	layer.annotationsLayer = new ol.layer.Vector({ source: source });
-	tlv.map.addLayer(layer.annotationsLayer);
+		layer.annotationsLayer = new ol.layer.Vector({ source: source });
+		tlv.map.addLayer( layer.annotationsLayer );
+	}
 }
 
 function deleteFeature() {
@@ -174,9 +188,9 @@ function drawSquare() {
 	});
 }
 
-function drawAnnotationMap(type) {
-	// create an annotations layer if one does not exist
-	if (!tlv.layers[tlv.currentLayer].annotationsLayer) { createAnnotationsLayer(); }
+function drawAnnotationMap( type ) {
+	var layer = tlv.layers[ tlv.currentLayer ];
+	createAnnotationsLayer( layer );
 
 	// create the right draw interaction
 	switch (type) {
@@ -308,8 +322,9 @@ pageLoad = function() {
 					username: data.username
 				});
 
-				createAnnotationsLayer();
-				tlv.layers[ tlv.currentLayer ].annotationsLayer.getSource().addFeature( feature );
+				var layer = tlv.layers[ tlv.currentLayer ];
+				createAnnotationsLayer( layer );
+				layer.annotationsLayer.getSource().addFeature( feature );
 			}
 			else {
 				setTimeout( function() { applyAnnotation( data ); }, 1000 );
@@ -362,9 +377,9 @@ function saveAnnotations() {
 		var geometryWriter = new ol.format.WKT();
 		$( "#dragoMetadata" ).html( "" );
 		$.each( features, function( index, feature ) {
-			var geometry = feature.getGeometry().clone().transform( "EPSG:3857", "EPSG:4326" );
+			var geometry = feature.getGeometry().clone();
 
-			var bbox = geometry.getExtent();
+			var bbox = ol.proj.transformExtent( geometry.getExtent(), "EPSG:3857", "EPSG:4326" );
 			var center = ol.extent.getCenter( bbox );
 			var location = document.location;
 			var urlParams = {
@@ -374,6 +389,9 @@ function saveAnnotations() {
 			};
 			var link = location.protocol + "//" + location.host + tlv.contextPath + "?" + $.param( urlParams )
 
+			if ( geometry.getType() == "Circle" ) {
+				geometry = new ol.geom.Polygon.fromCircle( geometry, 100 );
+			}
 			var properties = feature.getProperties();
 			if ( properties.ontology && properties.ontology.prefLabel ) {
 				properties.ontology.prefLabel = JSON.stringify( properties.ontology.prefLabel );
@@ -381,7 +399,9 @@ function saveAnnotations() {
 			var data = {
 				confidence: properties.confidence,
 				filename: layer.metadata.filename,
-				geometryOrtho: geometryWriter.writeGeometry( geometry ),
+				geometryOrtho: geometryWriter.writeGeometry(
+					geometry.clone().transform( "EPSG:3857", "EPSG:4326" )
+				),
 				imageId: layer.imageId,
 				link: link,
 				ontology: properties.ontology,
@@ -390,7 +410,12 @@ function saveAnnotations() {
 			};
 
 
-			var coordinates = geometry.getCoordinates()[ 0 ];
+			var coordinates;
+ 			switch ( geometry.getType() ) {
+				case "LineString": coordinates = geometry.getCoordinates(); break;
+				case "Point": coordinates = [ geometry.getCoordinates() ]; break;
+				case "Polygon": coordinates = geometry.getCoordinates()[ 0 ]; break;
+			}
 			groundToImagePoints( coordinates, layer, function( pixels, layer ) {
 				geometry.setCoordinates([ pixels ]);
 				data.geometryPixel = geometryWriter.writeGeometry( geometry );
@@ -449,4 +474,41 @@ function saveAnnotations() {
 
 		displayLoadingDialog( "Saving..." );
 	}
+}
+
+function searchForAnnotations() {
+	$.each( tlv.layers, function( index, layer ) {
+		if ( !layer.annotations ) {
+			var params = {
+				filter: "image_id LIKE '" + layer.imageId + "'",
+				maxResults: 100,
+				outputFormat: "JSON",
+				request: "getFeature",
+				service: "WFS",
+				typeName: "omar:annotation",
+				version: "1.1.0"
+			};
+			$.ajax({
+				url: tlv.libraries[ layer.library ].wfsUrl + "?" + $.param( params )
+			})
+			.done(function( data ) {
+				layer.annotations = data;
+				addAnnotations( data, layer );
+				searchForAnnotations();
+			})
+			.fail( function() {
+				searchForAnnotations();
+			});
+
+
+			return false;
+		}
+	});
+}
+
+var setupTimeLapseAnnotations = setupTimeLapse;
+setupTimeLapse = function() {
+	setupTimeLapseAnnotations();
+
+
 }
