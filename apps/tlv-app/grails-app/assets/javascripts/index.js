@@ -130,6 +130,50 @@ function copyTextToClipboard( text ) {
     input.remove();
 }
 
+function createDefaultStyle() {
+	return new ol.style.Style({
+        geometry: function( feature ) {
+            var geometry = feature.getGeometry();
+            if ( geometry.getType() == "MultiPolygon" ) {
+                // Only render label for the widest polygon of a multipolygon
+                var polygons = geometry.getPolygons();
+                var widest = 0;
+                for ( var i = 0, ii = polygons.length; i < ii; ++i ) {
+                    var polygon = polygons[ i ];
+                    var width = ol.extent.getWidth( polygon.getExtent() );
+                    if ( width > widest ) {
+                        widest = width;
+                        geometry = polygon;
+                    }
+                }
+            }
+
+
+            return geometry;
+        },
+		fill: new ol.style.Fill({ color: "rgba(255, 255, 0, 0)" }),
+		image: new ol.style.Circle({
+			fill: new ol.style.Fill({ color: "rgba(255, 255, 0, 1)" }),
+			radius: 5,
+			stroke: new ol.style.Stroke({
+				color: "rgba(255, 255, 0, 0)",
+	            width: 2
+	 		})
+		}),
+		stroke: new ol.style.Stroke({
+			color: "rgba(255, 255, 0, 1)",
+            width: 2
+ 		}),
+        text: new ol.style.Text({
+            fill: new ol.style.Fill({
+                color: "rgba(255, 255, 0, 1)"
+            }),
+            offsetY: -13,
+            overflow: true
+        })
+	});
+}
+
 function disableMenuButtons() {
 	var menuButtons = $( ".navbar-header" )[ 0 ].children;
 	for ( var i = 2; i < menuButtons.length - 1; i++ ) { $( menuButtons[ i ] ).hide(); }

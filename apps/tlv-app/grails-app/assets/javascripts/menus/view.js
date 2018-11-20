@@ -26,9 +26,8 @@ function addDimension() {
 }
 
 function addSwipeListenerToMap() {
-	var firstLayer, secondLayer = null;
-	if (!firstLayer) { firstLayer = tlv.currentLayer; }
-	if (!secondLayer) { secondLayer = tlv.currentLayer >= tlv.layers.length - 1 ? 0 : tlv.currentLayer + 1; }
+	var firstLayer = tlv.currentLayer;
+	var secondLayer = tlv.currentLayer >= tlv.layers.length - 1 ? 0 : tlv.currentLayer + 1;
 
 	tlv.layers[ firstLayer ].mapLayer.setVisible( true );
 	tlv.layers[ firstLayer ].mapLayer.setOpacity( 1 );
@@ -45,9 +44,9 @@ function addSwipeListenerToMap() {
 		var globeLayers = tlv.globe.getCesiumScene().imageryLayers;
 		var numberOfBaseLayers = Object.keys( tlv.baseLayers ).length;
 		var splitLeft = Cesium.ImagerySplitDirection.LEFT;
-		var splitRight = Cesium.ImagerySplitDirection.RIGHT;
-		globeLayers.get( tlv.swipeLayers[ 0 ] + numberOfBaseLayers ).splitDirection = splitLeft;
-		globeLayers.get( tlv.swipeLayers[ 1 ] + numberOfBaseLayers ).splitDirection = splitRight;
+		var splitRight = Cesium.ImagerySplitDirection.RIGHT;console.dir(globeLayers);console.dir(tlv.swipeLayers);
+		globeLayers.get( 2 * ( tlv.swipeLayers[ 0 ] + 1 ) + numberOfBaseLayers ).splitDirection = splitLeft;
+		globeLayers.get( 2 * ( tlv.swipeLayers[ 1 ] + 1 ) + numberOfBaseLayers ).splitDirection = splitRight;
 	}
 
 	tlv.swipeDragStartX = 0;
@@ -181,6 +180,12 @@ function openImageSpace() {
 	window.open( url + "?" + $.param( params ) );
 }
 
+var pageLoadView = pageLoad;
+pageLoad = function() {
+	pageLoadView();
+	initializeSwipeSlider();
+}
+
 function precomposeSwipeLeft( event ) {
 	// only
 	var swipeSlider = $( "#swipeSlider" );
@@ -210,9 +215,9 @@ function removeDimension() {
 	$.each( tlv.layers, function( index, layer ) {
 		var source = layer.getSource();
 		var styles = source.getParams().STYLES;
-		source.updateParams({
-			STYLES: decodeURIComponent( styles )
-		});
+		//source.updateParams({
+		//	STYLES: decodeURIComponent( styles )
+		//});
 	});
 
 	tlv.globe.setEnabled( false );
@@ -286,10 +291,12 @@ function swipeToggle() {
 	else { turnOffSwipe(); }
 }
 
-var setupMapView = setupMap;
-setupMap = function() {
-	setupMapView();
-	initializeSwipeSlider();
+var setupTimeLapseView = setupTimeLapse;
+setupTimeLapse = function() {
+	setupTimeLapseView();
+	if ( tlv.dimensions == "3" && $( "#dimensionsSelect" ).val() == 2 ) {
+		addDimension();
+	}
 }
 
 function swipeSliderMouseDown( event ) {

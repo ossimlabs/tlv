@@ -1,3 +1,9 @@
+function configLayerToggle( key ) {
+	var state = $("#layers" + key + "Select").val();
+	if ( state == "on" ) { displayConfigLayer( key ); }
+	else { hideConfigLayer( key ); }
+}
+
 var createMapControlsLayers = createMapControls;
 createMapControls = function() {
 	createMapControlsLayers();
@@ -10,6 +16,83 @@ function crossHairLayerToggle() {
 	var state = $("#layersCrossHairSelect").val();
 	if (state == "on") { displayCrossHairLayer(); }
 	else { hideCrossHairLayer(); }
+}
+
+function displayConfigLayer( key ) {
+	var layer = tlv.configLayers[ key ];
+	if ( !layer.mapLayer ) {
+		var source = new ol.source.Vector({
+			format: new ol.format.GeoJSON(),
+			// this forces the features to reload each time
+			strategy: function( extent, resolution ) {
+				if ( layer.refresh && this.loadedExtentsRtree_ ) {
+        			this.loadedExtentsRtree_.clear();
+				}
+
+
+				return [ extent ];
+			},
+			url: function() {
+				var url = layer.url;
+ 				if ( layer.params ) {
+					url += "?" + $.param( layer.params );
+				}
+
+				var bbox = ol.proj.transformExtent( tlv.map.getView().calculateExtent(), "EPSG:3857", "EPSG:4326" );
+				url = url.replace( encodeURIComponent( "<BBOX>" ), bbox.join( "," ) );
+
+
+				return url;
+	        }
+		});
+
+		var style = createDefaultStyle();
+		layer.mapLayer = new ol.layer.Vector({
+			declutter: true,
+			source: source,
+			style: function( feature ) {
+				// fill
+				if ( layer.style && layer.style.fill ) {
+					var color = layer.style.fill.color;
+					if ( color ) {
+						style.getFill().setColor( color );
+					}
+				}
+
+				// stroke
+				if ( layer.style && layer.style.stroke ) {
+					var color = layer.style.stroke.color;
+					if ( color ) {
+						style.getStroke().setColor( color );
+					}
+				}
+
+				// text
+				if ( layer.style && layer.style.text ) {
+					var color = layer.style.text.color;
+					if ( color ) {
+						style.getText().getFill().setColor( color );
+					}
+
+					var labelKey = layer.style.text.label;
+					if ( labelKey ) { 
+						var text = feature.get( labelKey );
+						if ( typeof text == "object" ) { text = JSON.stringify( text ); }
+						style.getText().setText( text );
+					}
+				}
+
+
+
+				return [ style ];
+			}
+		});
+
+		tlv.map.addLayer( layer.mapLayer );
+	}
+	else {
+		layer.mapLayer.setVisible( true );
+	}
 }
 
 function displayCrossHairLayer() {
@@ -62,9 +145,17 @@ function displaySearchOriginLayer() {
 	else { tlv.searchOriginLayer.setVisible(true); }
 }
 
-function hideCrossHairLayer() { tlv.crossHairLayer.setVisible(false); }
+function hideConfigLayer( key ) {
+	tlv.configLayers[ key ].mapLayer.setVisible( false );
+}
 
-function hideSearchOriginLayer() { tlv.searchOriginLayer.setVisible(false); }
+function hideCrossHairLayer() {
+	tlv.crossHairLayer.setVisible( false );
+}
+
+function hideSearchOriginLayer() {
+	tlv.searchOriginLayer.setVisible( false );
+}
 
 function overviewLayerToggle() {
 	$.each(

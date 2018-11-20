@@ -216,7 +216,7 @@ function exportKml() {
 
 function exportLink() {
 	var location = document.location;
-	var url = location.protocol + "//" + location.host + ( tlv.contectPath || "" );
+	var url = location.protocol + "//" + location.host + ( tlv.contextPath || "" );
 
 	var ids = tlv.layers.map( function( layer ) {
 
@@ -230,7 +230,7 @@ function exportLink() {
 	};
 
 	copyTextToClipboard( url + "?" + $.param( params ) );
-	displayInfoDialog( "The link has been copied to your clipboard..." );
+	displayInfoDialog( "The TLV link has been copied to your clipboard..." );
 }
 
 function exportMetadata() {
@@ -418,4 +418,20 @@ function exportTemplate( templateStyle ) {
 	else {
 		getScreenshotGlobe( callback );
 	}
+}
+
+function exportWmsGetCapabilities() {
+	var layer = tlv.layers[ tlv.currentLayer ];
+	var url = tlv.libraries[ layer.library ].wfsUrl;
+ 	var params = {
+		filter: "in(" + layer.metadata.id + ")",
+		outputFormat: "WMS130",
+		request: "GetFeature",
+		service: "WFS",
+		typeName: "omar:raster_entry",
+		version: "1.1.0"
+	};
+
+	copyTextToClipboard( url + "?" + $.param( params ) );
+	displayInfoDialog( "The WMS GetCapabilities link has been copied to your clipboard..." );
 }

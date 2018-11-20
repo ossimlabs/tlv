@@ -48,7 +48,9 @@ function addBaseLayersToTheMap() {
 					break;
 
 				case "xyz":
-					source = new ol.source.XYZ({ url: x.url });
+					source = new ol.source.XYZ({
+						url: x.url
+					});
 					break;
 			}
 
@@ -78,8 +80,6 @@ function addLayerToTheMap( layer ) {
 	layer.tilesLoaded = 0;
 	layer.tilesLoading = 0;
 	if ( !layer.opacity ) { layer.opacity = 1; }
-
-
 }
 
 function changeBaseLayer(layerName) {
@@ -278,6 +278,48 @@ function createMapControls() {
 	];
 }
 
+function createMapInteractions() {
+	var dragAndDropInteraction = new ol.interaction.DragAndDrop({
+		formatConstructors: [
+			ol.format.GPX,
+			ol.format.GeoJSON,
+			ol.format.IGC,
+			ol.format.KML,
+			ol.format.TopoJSON
+		]
+	});
+
+	dragAndDropInteraction.on( "addfeatures", function( event ) {
+        var source = new ol.source.Vector({
+			features: event.features
+		});
+		var styleFunction = function() {
+			createDefaultStyle();
+		}
+		var layer = new ol.layer.Vector({
+			source: source,
+			style: styleFunction
+        })
+        tlv.map.addLayer( layer );
+        tlv.map.getView().fit( source.getExtent() );
+		$.each(event.features, function(index, feature) {
+		console.dir(feature.getStyle());
+		});
+	});
+
+	var dragPanInteraction = new ol.interaction.DragPan({
+		condition: function( event ) {
+			return ol.events.condition.noModifierKeys( event ) &&
+				ol.events.condition.primaryAction( event );
+		}
+	});
+
+	tlv.mapInteractions = [
+		dragAndDropInteraction,
+		dragPanInteraction
+	];
+}
+
 function createMousePositionControl() {
 	var mousePositionControl = new ol.control.MousePosition({
 		coordinateFormat: function(coordinate) {
@@ -341,28 +383,13 @@ function setupMap() {
 	if (tlv.map) { tlv.map.setTarget(null); }
 
 	createMapControls();
+	createMapInteractions();
 	tlv.map = new ol.Map({
 		controls: ol.control.defaults().extend( tlv.mapControls ),
 		interactions: ol.interaction.defaults({
 			doubleClickZoom: false,
  			dragPan: false
-		}).extend([
-			new ol.interaction.DragAndDrop({
-				formatConstructors: [
-					ol.format.GPX,
-					ol.format.GeoJSON,
-					ol.format.IGC,
-					ol.format.KML,
-					ol.format.TopoJSON
-				]
-			}),
-			new ol.interaction.DragPan({
-				condition: function( event ) {
-					return ol.events.condition.noModifierKeys( event ) &&
-						ol.events.condition.primaryAction( event );
-				}
-			})
-		]),
+		}).extend( tlv.mapInteractions ),
 		logo: false,
 		target: "map"
 	});

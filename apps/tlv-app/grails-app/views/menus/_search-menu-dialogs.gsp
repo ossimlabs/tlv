@@ -34,6 +34,18 @@
 						</span>
 					</div>
 
+					<label>Sensors</label>
+					<select multiple class = "form-control" id = "searchSensorSelect"></select>
+
+					<g:if test = "${ grailsApplication.config.fsg }">
+						<label>Full Spectrum GEOINT</label>
+						<select multiple class = "form-control" id = "searchFsgSelect">
+						<g:each in = "${ grailsApplication.config.fsg }">
+							<option value = "${ it.value.searchString }">${ it.key.toUpperCase() }</option>
+						</g:each>
+						</select>
+					</g:if>
+
 					<label>Min. NIIRS</label>
 					<input class = "form-control" id = "searchMinNiirsInput" max = "9" min = "0" step = "0.1" type = "number">
 

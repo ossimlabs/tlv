@@ -48,20 +48,26 @@ function beginSearch() {
 					filter += "((acquisition_date >= " + startDate + " AND acquisition_date <= " + endDate + ") OR acquisition_date IS NULL)";
 
 					filter += " AND ";
-
 					filter += "(cloud_cover <= " + searchParams.maxCloudCover + " OR cloud_cover IS NULL)";
 
 					filter += " AND ";
+					filter += "(entry_id = 0)";
 
+					if ( searchParams.fsgs.length > 0 ) {
+						filter += " AND ";
+						filter += "(filename LIKE '%" + searchParams.fsgs.join( "%' OR filename LIKE'%" ) + "%')";
+					}
+
+					filter += " AND ";
 					filter += "INTERSECTS(ground_geom,POINT(" + searchParams.location.join(" ") + "))";
 
 					filter += " AND ";
-
 					filter += "(niirs >= " + searchParams.minNiirs + " OR niirs IS NULL)";
 
-					filter += " AND ";
-
-					filter += "(entry_id = 0)";
+					if ( searchParams.sensors.length > 0 ) {
+						filter += " AND ";
+						filter += "(sensor_id LIKE '" + searchParams.sensors.join( "' OR sensor_id LIKE'" ) + "')";
+					}
 
 					queryParams.filter = filter;
 				}
@@ -130,6 +136,43 @@ function getDate(date) {
 	return { day: day, hour: hour, minute: minute, month: month, second: second, year: year };
 }
 
+function getDistinctSensors() {
+	var updateSensorSelect = function() {
+		var sensors = [];
+		$.each( tlv.libraries, function( index, library ) {
+		 	sensors.push( library.sensors || [] );
+		});
+
+		var sensorSelect = $( "#searchSensorSelect" );
+		sensorSelect.html( "" );
+		$.each( sensors.flat().unique().sort(), function( index, sensor ) {
+			sensorSelect.append( "<option value = '" + sensor + "'>" + sensor.toUpperCase() + "</option>" );
+		});
+	}
+
+	$.each( tlv.libraries, function( index, library ) {
+		if ( !library.sensors ) {
+			$.ajax({
+				data: "property=sensorId",
+				url: library.stagerUrl + "/dataManager/getDistinctValues"
+			})
+			.done( function( data ) {
+				library.sensors = data;
+				updateSensorSelect();
+				getDistinctSensors();
+			})
+			.fail( function() {
+				library.sensors = [];
+				updateSensorSelect();
+				getDistinctSensors();
+			});
+
+
+			return false;
+		}
+	});
+}
+
 function getEndDate() {
 	var date = $("#searchEndDateTimePicker").data("DateTimePicker").date().toDate();
 
@@ -167,6 +210,9 @@ function getSearchParams() {
 
 	searchObject.filter = tlv.filter || null;
 
+	var fsgs = $( "#searchFsgSelect" ).val();
+	searchObject.fsgs = fsgs || [];
+
 	var libraries = getSelectedLibraries();
 	if (libraries.length == 0) {
 		//$( "#searchDialog" ).modal( "show" );
@@ -185,6 +231,9 @@ function getSearchParams() {
 
 	var minNiirs = $("#searchMinNiirsInput").val();
 	searchObject.minNiirs = parseFloat(minNiirs);
+
+	var sensors = $( "#searchSensorSelect" ).val();
+	searchObject.sensors = sensors || [];
 
 	var startDate = getStartDate();
 	searchObject.startYear = startDate.year;
@@ -243,6 +292,17 @@ function initializeEndDateTimePicker() {
 	});
 }
 
+function initializeFsgSelect() {
+	if ( tlv.fsg ) {
+		var fsgSelect = $( "#searchFsgSelect" );
+		if ( fsgSelect ) {
+			$.each( tlv.fsg.split( "," ), function( index, fsg ) {
+				$( "#searchFsgSelect option:contains('" + fsg + "')" ).prop("selected", true);
+			});
+		}
+	}
+}
+
 function initializeLibraryCheckboxes() {
 	if ( tlv.searchLibraries ) {
 		$.each(
@@ -276,6 +336,20 @@ function initializeMaxResultsSelect() {
 function initializeMinNiirsInput() {
 	var minNiirs = tlv.minNiirs ? tlv.minNiirs : 0;
 	$("#searchMinNiirsInput").val(minNiirs);
+}
+
+function initializeSensorSelect() {
+	if ( tlv.sensors ) {
+		var sensors = tlv.sensors.split( "," );
+		var getDistinctSensorsInit = getDistinctSensors;
+		getDistinctSensors = function() {
+			getDistinctSensorsInit();
+			$.each( sensors, function( index, sensor ) {
+				$( "#searchSensorSelect option[value='" + sensor + "']" ).prop( "selected", true );
+			});
+		}
+	}
+	getDistinctSensors();
 }
 
 function initializeStartDateTimePicker() {
@@ -317,8 +391,7 @@ function processImageId( metadata ) {
 	}
 
 	$.each(
-		typeof tlv.imageIdFilters == "object" ? tlv.imageIdFilters : JSON.parse( tlv.imageIdFilters ),
-		function( index, filter ) {
+		tlv.imageIdFilters,	function( index, filter ) {
 			if ( metadata.filename.match( filter ) ) {
 				imageId += RegExp.$1;
 			}
@@ -396,10 +469,12 @@ function setupSearchMenuDialog() {
 	initializeEndDateTimePicker();
 	initializeStartDateTimePicker();
 
+	initializeFsgSelect();
 	initializeLibraryCheckboxes();
 	initializeMinNiirsInput();
 	initializeMaxCloudCoverInput();
 	initializeMaxResultsSelect();
+	initializeSensorSelect();
 
 	initializeLocationInput();
 }

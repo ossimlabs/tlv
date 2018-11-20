@@ -1,8 +1,8 @@
 # If there is a version to denote, set it here
 about:
     contactEmail: O2Support@digitalglobe.com
-    release: Islamorada
-    releaseNumber: 2.5.2
+    release: Juno
+    releaseNumber: 2.6.0
 
 # If there a page banner is needed, set it here
 #banner:
@@ -37,9 +37,34 @@ about:
 #        type: wms
 #        visible: false
 #        url: ${baseUrl}/omar-mapproxy/service
+#    googleMaps:
+#        name: Google Maps
+#        type: xyz
+#        url: https://mt1.google.com/vt/lyrs=r&x={x}&y={y}&z={z}
+#        visible: false
+#    googleSatellite:
+#        name: Google Satellite
+#        type: xyz
+#        url: http://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}
+#        visible: false
+#    googleSatelliteHybrid:
+#        name: Google Satellite Hybrid
+#        type: xyz
+#        url: https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}
+#        visible: false
+#    googleTerrain:
+#        name: Google Terrain
+#        type: xyz
+#        url: https://mt1.google.com/vt/lyrs=t&x={x}&y={y}&z={z}
+#        visible: false
+#    googleRoads:
+#        name: Google Roads
+#        type: xyz
+#        url: https://mt1.google.com/vt/lyrs=h&x={x}&y={y}&z={z}
+#        visible: false
 
 # Define the base URL to be used throughout the configuration
-baseUrl: https://omar-dev.ossim.io
+baseUrl: https://omar.ossim.io
 
 # If BEs are available, define the WFS query schema
 #beLookup:
@@ -50,19 +75,59 @@ baseUrl: https://omar-dev.ossim.io
 # If documentation is available, define the URL
 #docsUrl: ${baseUrl}/omar-docs
 
+# A list of full spectrum geoint products with regular expressions that append it to the image Id
+#fsg:
+#    2CMV:
+#        searchString: 2CMV
+#        imageIdRegExp: (_2CMV_[A-Z])
+
 # If the twofishes geocoder is available, define the URL
 #geocoderUrl: ${baseUrl}/omar-ui/twoFishesProxy
 
 # If there is an available token for Cesium terrain, define it here
 #ionAccessToken: <token>
 
-# A list of regular expressions that append a match to the image Id
-#imageIdFilters: '[ "(_2CMV_[A-Z])", "(_PSM)" ]'
-
 # If ISA is available, define the URL
 # Make sure the trailing forward slash is included
 # Optional
 #isaUrl: ${baseUrl}/isa-ui/
+
+# If there any feature layers available, list them here
+#layers:
+#    countries:
+#        label: Country Borders
+#        url: ${baseUrl}/omar-wfs/wfs/getFeature
+#        params:
+#            maxFeatures: 1000
+#            outputFormat: JSON
+#            request: GetFeature
+#            service: WFS
+#            typeName: omar:country_border
+#            version: 1.1.0
+#        refresh: false
+#        style:
+#            text:
+#                attribute: name
+#                color: white
+#    o2-wfs:
+#        label: O2 WFS
+#        url: ${baseUrl}/omar-wfs/wfs/getFeature
+#        params:
+#            filter: BBOX(ground_geom,<BBOX>)
+#            maxFeatures: 1000
+#            outputFormat: JSON
+#            request: GetFeature
+#            service: WFS
+#            sortBy: acquisition_date+D
+#            typeName: omar:raster_entry
+#            version: 1.1.0
+#        refresh: true
+#        style:
+#            stroke:
+#                color: black
+#            text:
+#                color: black
+#                label: image_id
 
 # List the various repository details
 # You need at least one
@@ -73,16 +138,20 @@ baseUrl: https://omar-dev.ossim.io
 #        label: O2-DEV
 #        layerType: wms
 #        mensaUrl: ${baseUrl}/omar-mensa/mensa
+#        omsUrl: ${baseUrl}/omar-oms/imageSpace
+#        stagerUrl: ${baseUrl}/omar-stager/
 #        wfsUrl: ${baseUrl}/omar-wfs/wfs
 #        wmsUrl: ${baseUrl}/omar-wms/wms
-#    o2-rel:
-#        imageSpaceUrl: https://omar-rel.ossim.io/omar-ui/omar/#/mapImage
-#        kmlUrl: https://omar-rel.ossim.io/omar-superoverlay/superOverlay/createKml
-#        label: O2-REL
+#    o2:
+#        imageSpaceUrl: https://omar.ossim.io/omar-ui/omar/#/mapImage
+#        kmlUrl: https://omar.ossim.io/omar-superoverlay/superOverlay/createKml
+#        label: O2
 #        layerType: wms
-#        mensaUrl: https://omar-rel.ossim.io/omar-mensa/mensa
-#        wfsUrl: https://omar-rel.ossim.io/omar-wfs/wfs
-#        wmsUrl: https://omar-rel.ossim.io/omar-wms/wms
+#        mensaUrl: https://omar.ossim.io/omar-mensa/mensa
+#        omsUrl: https://omar.ossim.io/omar-oms/imageSpace
+#        stagerUrl: https://omar.ossim.io/omar-stager/
+#        wfsUrl: https://omar.ossim.io/omar-wfs/wfs
+#        wmsUrl: https://omar.ossim.io/omar-wms/wms
 
 # If an ontology service exists, set it here
 #ontologyUrl: <protocol>://<host>>:<port>/<contextPath>
