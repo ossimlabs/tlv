@@ -29,7 +29,7 @@ node("omar-build"){
     }
 
     stage("Load Variables"){
-        load "pipeline-variables-tlv.groovy"
+        load "/tlv/scripts/pipeline-variables-tlv.groovy"
         echo "${env.TEST}"
     }
 
