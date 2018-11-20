@@ -151,9 +151,13 @@ function createDefaultStyle() {
 
             return geometry;
         },
-		fill: new ol.style.Fill({ color: "rgba(255, 255, 0, 0)" }),
+        fill: new ol.style.Fill({
+            color: "rgba(255, 255, 0, 0)"
+        }),
 		image: new ol.style.Circle({
-			fill: new ol.style.Fill({ color: "rgba(255, 255, 0, 1)" }),
+			fill: new ol.style.Fill({
+                color: "rgba(255, 255, 0, 1)"
+            }),
 			radius: 5,
 			stroke: new ol.style.Stroke({
 				color: "rgba(255, 255, 0, 0)",
