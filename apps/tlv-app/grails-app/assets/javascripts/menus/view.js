@@ -213,11 +213,11 @@ var postcomposeSwipe = function(event) { event.context.restore(); }
 
 function removeDimension() {
 	$.each( tlv.layers, function( index, layer ) {
-		var source = layer.getSource();
+		var source = layer.mapLayer.getSource();
 		var styles = source.getParams().STYLES;
-		//source.updateParams({
-		//	STYLES: decodeURIComponent( styles )
-		//});
+		source.updateParams({
+			STYLES: decodeURIComponent( styles )
+		});
 	});
 
 	tlv.globe.setEnabled( false );
