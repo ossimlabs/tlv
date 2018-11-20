@@ -27,6 +27,12 @@ node("omar-build"){
             git branch: "${OSSIM_GIT_BRANCH}", url: "${GIT_PUBLIC_SERVER_URL}/${omarCommonProjName}.git"
         }
     }
+
+    stage("Load Variables"){
+        load "pipeline-variables-tlv.groovy"
+        echo "${env.TEST}"
+    }
+
     stage("Download Artifacts") {
         step ([$class: "CopyArtifact",
                projectName: "ossim-ci-${OSSIM_GIT_BRANCH}",
