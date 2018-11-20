@@ -10,7 +10,7 @@
 //    OPENSHIFT_PASSWORD: The password to use logging into the docker registry
 //==================================================================================================
 
-@BaseScript("Jenkinsfile_Vars_TLV.groovy")
+@BaseScript('Jenkinsfile_Vars_TLV')
 import groovy.transform.BaseScript
 
 def notifyObj
