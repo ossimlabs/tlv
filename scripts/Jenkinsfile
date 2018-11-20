@@ -10,6 +10,9 @@
 //    OPENSHIFT_PASSWORD: The password to use logging into the docker registry
 //==================================================================================================
 
+import groovy.transform.BaseScript
+@BaseScript Jenkinsfile_Vars_TLV tlv_vars
+
 def notifyObj
 node("omar-build"){
     def workspaceDir = pwd()
@@ -17,6 +20,10 @@ node("omar-build"){
     def omarCommonProjName = "omar-common"
     env.OMAR_COMMON_PROPERTIES="${workspaceDir}/${omarCommonProjName}/omar-common-properties.gradle"
     env.O2_DEV_HOME=pwd()
+
+    stage("Test Script Variables"){
+        sh "echo ${OSSIM_GIT_BRANCH}"
+    }
 
     stage("Checkout"){
         dir(appName) {
