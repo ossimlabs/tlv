@@ -1,17 +1,37 @@
 function addAnnotations( geoJsonSource, layer ) {
-	var features =  ol.format.GeoJSON().readFeatures( geoJsonSource );
+	var features = new ol.format.GeoJSON().readFeatures( geoJsonSource );
+	$.each( features, function( index, feature ) {
+		var geometry = new ol.format.WKT().readGeometry(
+			feature.getProperties().geometry_ortho, {
+			dataProjection: "EPSG:4326",
+			featureProjection: "EPSG:3857"
+		});
+		feature.setGeometry( geometry );
+	});
 	createAnnotationsLayer( layer );
+
+	var source = layer.annotationsLayer.getSource();
+	source.un( "addfeature", anAnnotationHasBeenAdded );
 	layer.annotationsLayer.getSource().addFeatures( features );
+	source.on( "addfeature", anAnnotationHasBeenAdded );
+
+	$.each( source.getFeatures(), function( index, feature ) {
+		var style = createDefaultStyle();
+		var label = feature.getProperties().type;
+		style.getText().setText( label );
+		feature.setStyle( style );
+	});
 }
 
 var anAnnotationHasBeenAddedMap = anAnnotationHasBeenAdded;
-anAnnotationHasBeenAdded = function(event) {
-	anAnnotationHasBeenAddedMap(event);
+anAnnotationHasBeenAdded = function( event ) {
+	anAnnotationHasBeenAddedMap( event );
 
 	removeInteractions();
 
-	tlv.currentAnnotation = event.feature;
-	tlv.currentAnnotation.setStyle(createDefaultStyle());
+	var feature = event.feature;
+	feature.setStyle( createDefaultStyle() );
+	tlv.currentAnnotation = feature;
 
 	openAnnotationsDialog();
 }
@@ -118,7 +138,10 @@ function createAnnotationsLayer( layer ) {
 		var source = new ol.source.Vector();
 		source.on( "addfeature", anAnnotationHasBeenAdded );
 
-		layer.annotationsLayer = new ol.layer.Vector({ source: source });
+		layer.annotationsLayer = new ol.layer.Vector({
+			source: source,
+			style: createDefaultStyle()
+		});
 		tlv.map.addLayer( layer.annotationsLayer );
 	}
 }
@@ -314,7 +337,8 @@ pageLoad = function() {
 	if ( tlv.annotation ) {
 		var applyAnnotation = function( data ) {
 			if ( tlv.layers && tlv.layers.length > 0 ) {
-				var geometry = new ol.format.WKT().readGeometry( data.geometryOrtho ).transform( "EPSG:4326", "EPSG:3857" );
+				var geometry = new ol.format.WKT().readGeometry(
+					data.geometryOrtho ).transform( "EPSG:4326", "EPSG:3857" );
 				var feature = new ol.Feature( geometry );
 				feature.setProperties({
 					confidence: data.confidence,
@@ -493,7 +517,9 @@ function searchForAnnotations() {
 			})
 			.done(function( data ) {
 				layer.annotations = data;
-				addAnnotations( data, layer );
+				if ( data.features.length > 0 ) {
+					addAnnotations( data, layer );
+				}
 				searchForAnnotations();
 			})
 			.fail( function() {
@@ -510,5 +536,5 @@ var setupTimeLapseAnnotations = setupTimeLapse;
 setupTimeLapse = function() {
 	setupTimeLapseAnnotations();
 
-
+	searchForAnnotations();
 }
