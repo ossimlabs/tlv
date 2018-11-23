@@ -12,31 +12,33 @@
 
 def notifyObj
 node("omar-build"){
-    stage("Load Variables"){
-        dir("tlv"){
-            git branch: "${OSSIM_GIT_BRANCH}", url: "${GIT_VARIABLE_SCRIPT_URL}.git" 
-        }
-
-        load "tlv/scripts/pipeline-variables-tlv.groovy"
-    }
+    def workspaceDir = pwd()
+    def appName = "tlv"
+    def omarCommonProjName = "omar-common"
+    env.OMAR_COMMON_PROPERTIES="${workspaceDir}/${omarCommonProjName}/omar-common-properties.gradle"
+    env.O2_DEV_HOME=pwd()
 
     stage("Checkout"){
-        dir(env.APP_NAME) { 
-            git branch: "${env.GIT_BRANCH}", url: "${env.GIT_PUBLIC_URL}/${env.APP_NAME}.git"
+        dir(appName) {
+            git branch: "${OSSIM_GIT_BRANCH}", url: "${GIT_PUBLIC_SERVER_URL}/${appName}.git"
         }
 
-        dir(env.OMAR_COMMON_PROJ_NAME) {
-            git branch: "${env.GIT_BRANCH}", url: "${env.GIT_PUBLIC_URL}/${env.OMAR_COMMON_PROJ_NAME}.git"
+        dir(omarCommonProjName) {
+            git branch: "${OSSIM_GIT_BRANCH}", url: "${GIT_PUBLIC_SERVER_URL}/${omarCommonProjName}.git"
         }
     }
 
+    stage("Load Variables"){
+        load "tlv/scripts/pipeline-variables-tlv.groovy"
+        echo "${env.TEST}"
+    }
 
     stage("Download Artifacts") {
         step ([$class: "CopyArtifact",
-               projectName: "ossim-ci-${env.GIT_BRANCH}",
-               filter: "ossim-ci-${env.GIT_BRANCH}.tgz",
+               projectName: "ossim-ci-${OSSIM_GIT_BRANCH}",
+               filter: "ossim-ci-${OSSIM_GIT_BRANCH}.tgz",
                flatten: true])
-        sh "tar xvfz ossim-ci-${env.GIT_BRANCH}.tgz"
+        sh "tar xvfz ossim-ci-${OSSIM_GIT_BRANCH}.tgz"
         notifyObj = load "${env.WORKSPACE}/ossim-ci/jenkins/pipeline/notify.groovy"
     }
 
@@ -49,8 +51,8 @@ node("omar-build"){
                             passwordVariable: 'REPOSITORY_MANAGER_PASSWORD']])
             {
               sh """
-              pushd $env.WORKSPACE_DIR/$env.APP_NAME
-              gradle :$env.APP_NAME-app:upload
+              pushd ${workspaceDir}/${appName}
+              gradle :${appName}-app:upload
               popd
               """
             }
@@ -65,8 +67,8 @@ node("omar-build"){
         {
             // Run all tasks on the app. This includes pushing to OpenShift and S3.
             sh """
-            pushd $env.WORKSPACE_DIR}/$env.APP_NAME
-            gradle :$env.APP_NAME-app:${GRADLE_TASK}
+            pushd ${workspaceDir}/${appName}
+            gradle :${appName}-app:${GRADLE_TASK}
             popd
             """
         }
@@ -83,8 +85,8 @@ node("omar-build"){
                 // requires SonarQube Scanner for Gradle 2.1+
                 // It's important to add --info because of SONARJNKNS-281
                 sh """
-                  pushd ${env.WORKSPACE_DIR}/${env.APP_NAME}
-                  gradle --info :${env.APP_NAME}-app:sonarqube -Dsonar.projectKey=${env.APP_NAME}
+                  pushd ${workspaceDir}/${appName}
+                  gradle --info :${appName}-app:sonarqube -Dsonar.projectKey=${appName}
                   popd
                 """
             }
@@ -95,16 +97,16 @@ node("omar-build"){
     }
     try {
         stage('HPFortify Analysis') {
-            dir(env.APP_NAME) {
+            dir(appName) {
               sh """
                  export PATH=${PATH}:/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin
-                 sourceanalyzer -64 -b ${env.APP_NAME} -clean
-                 sourceanalyzer -64 -b ${env.APP_NAME} ${env.WORKSPACE_DIR}/${env.APP_NAME}-dev/${env.APP_NAME}/apps/${env.APP_NAME}-app/grails-app/assets/javascripts/menus/*.js
-                 sourceanalyzer -64 -b ${env.APP_NAME} -scan -Xmx8G -f fortifyResults-${env.APP_NAME}-app.fpr
-                 ReportGenerator -format pdf -f fortifyResults-${env.APP_NAME}.pdf -source fortifyResults-${env.APP_NAME}-app.fpr
-                 aws s3 cp fortifyResults-${env.APP_NAME}.pdf s3://o2-private/hpfortify/fortify-reports-pdf/
-                 aws s3 cp fortifyResults-${env.APP_NAME}.fpr s3://o2-private/hpfortify/fortify-reports-fpr/
-                 fortifyclient -url http://hpfortify.ossim.io:8080/ssc -authtoken 02c59c7f-a092-45c3-be81-9b7f9dae5728 uploadFPR -file fortifyResults-${env.APP_NAME}-app.fpr -applicationVersionID 2
+                 sourceanalyzer -64 -b ${appName} -clean
+                 sourceanalyzer -64 -b ${appName} ${workspaceDir}/${appName}-dev/${appName}/apps/${appName}-app/grails-app/assets/javascripts/menus/*.js
+                 sourceanalyzer -64 -b ${appName} -scan -Xmx8G -f fortifyResults-${appName}-app.fpr
+                 ReportGenerator -format pdf -f fortifyResults-${appName}.pdf -source fortifyResults-${appName}-app.fpr
+                 aws s3 cp fortifyResults-${appName}.pdf s3://o2-private/hpfortify/fortify-reports-pdf/
+                 aws s3 cp fortifyResults-${appName}.fpr s3://o2-private/hpfortify/fortify-reports-fpr/
+                 fortifyclient -url http://hpfortify.ossim.io:8080/ssc -authtoken 02c59c7f-a092-45c3-be81-9b7f9dae5728 uploadFPR -file fortifyResults-${appName}-app.fpr -applicationVersionID 2
                  """
             }
         }
