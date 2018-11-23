@@ -12,12 +12,6 @@
 
 def notifyObj
 node("omar-build"){
-    def workspaceDir = pwd()
-    def appName = "tlv"
-    def omarCommonProjName = "omar-common"
-    env.OMAR_COMMON_PROPERTIES="${workspaceDir}/${omarCommonProjName}/omar-common-properties.gradle"
-    env.O2_DEV_HOME=pwd()
-
     stage("Checkout"){
         dir(appName) {
             git branch: "${OSSIM_GIT_BRANCH}", url: "${GIT_PUBLIC_SERVER_URL}/${appName}.git"
@@ -85,8 +79,8 @@ node("omar-build"){
                 // requires SonarQube Scanner for Gradle 2.1+
                 // It's important to add --info because of SONARJNKNS-281
                 sh """
-                  pushd ${workspaceDir}/${appName}
-                  gradle --info :${appName}-app:sonarqube -Dsonar.projectKey=${appName}
+                  pushd ${env.WORKSPACE_DIR}/${env.APP_NAME}
+                  gradle --info :${env.APP_NAME}-app:sonarqube -Dsonar.projectKey=${env.APP_NAME}
                   popd
                 """
             }
@@ -97,16 +91,16 @@ node("omar-build"){
     }
     try {
         stage('HPFortify Analysis') {
-            dir(appName) {
+            dir(env.APP_NAME) {
               sh """
                  export PATH=${PATH}:/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin
-                 sourceanalyzer -64 -b ${appName} -clean
-                 sourceanalyzer -64 -b ${appName} ${workspaceDir}/${appName}-dev/${appName}/apps/${appName}-app/grails-app/assets/javascripts/menus/*.js
-                 sourceanalyzer -64 -b ${appName} -scan -Xmx8G -f fortifyResults-${appName}-app.fpr
-                 ReportGenerator -format pdf -f fortifyResults-${appName}.pdf -source fortifyResults-${appName}-app.fpr
-                 aws s3 cp fortifyResults-${appName}.pdf s3://o2-private/hpfortify/fortify-reports-pdf/
-                 aws s3 cp fortifyResults-${appName}.fpr s3://o2-private/hpfortify/fortify-reports-fpr/
-                 fortifyclient -url http://hpfortify.ossim.io:8080/ssc -authtoken 02c59c7f-a092-45c3-be81-9b7f9dae5728 uploadFPR -file fortifyResults-${appName}-app.fpr -applicationVersionID 2
+                 sourceanalyzer -64 -b ${env.APP_NAME} -clean
+                 sourceanalyzer -64 -b ${env.APP_NAME} ${env.WORKSPACE_DIR}/${env.APP_NAME}-dev/${env.APP_NAME}/apps/${env.APP_NAME}-app/grails-app/assets/javascripts/menus/*.js
+                 sourceanalyzer -64 -b ${env.APP_NAME} -scan -Xmx8G -f fortifyResults-${env.APP_NAME}-app.fpr
+                 ReportGenerator -format pdf -f fortifyResults-${env.APP_NAME}.pdf -source fortifyResults-${env.APP_NAME}-app.fpr
+                 aws s3 cp fortifyResults-${env.APP_NAME}.pdf s3://o2-private/hpfortify/fortify-reports-pdf/
+                 aws s3 cp fortifyResults-${env.APP_NAME}.fpr s3://o2-private/hpfortify/fortify-reports-fpr/
+                 fortifyclient -url http://hpfortify.ossim.io:8080/ssc -authtoken 02c59c7f-a092-45c3-be81-9b7f9dae5728 uploadFPR -file fortifyResults-${env.APP_NAME}-app.fpr -applicationVersionID 2
                  """
             }
         }
