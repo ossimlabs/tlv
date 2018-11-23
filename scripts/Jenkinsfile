@@ -12,20 +12,22 @@
 
 def notifyObj
 node("omar-build"){
+    stage("Load Variables"){
+        git branch: "${OSSIM_GIT_BRANCH}", url: "${GIT_PUBLIC_SCRIPT_URL}.git"
+
+        load "tlv/scripts/pipeline-variables-tlv.groovy"
+    }
+
     stage("Checkout"){
         dir(appName) {
-            git branch: "${OSSIM_GIT_BRANCH}", url: "${GIT_PUBLIC_SERVER_URL}/${appName}.git"
+            git branch: "${env.GIT_BRANCH}", url: "${env.GIT_PUBLIC_URL}/${env.APP_NAME}.git"
         }
 
         dir(omarCommonProjName) {
-            git branch: "${OSSIM_GIT_BRANCH}", url: "${GIT_PUBLIC_SERVER_URL}/${omarCommonProjName}.git"
+            git branch: "${env.GIT_BRANCH}", url: "${env.GIT_PUBLIC_URL}/${env.OMAR_COMMON_PROJ_NAME}.git"
         }
     }
 
-    stage("Load Variables"){
-        load "tlv/scripts/pipeline-variables-tlv.groovy"
-        echo "${env.TEST}"
-    }
 
     stage("Download Artifacts") {
         step ([$class: "CopyArtifact",

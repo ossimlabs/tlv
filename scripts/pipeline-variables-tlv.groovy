@@ -1,3 +1,5 @@
+env.GIT_BRANCH = "dev"
+env.GIT_PUBLIC_URL = "git@github.com:ossimlabs"
 env.WORKSPACE_DIR = pwd()
 env.APP_NAME = "tlv"
 env.OMAR_COMMON_PROJ_NAME = "omar-common"
