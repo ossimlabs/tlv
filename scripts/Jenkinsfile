@@ -13,7 +13,10 @@
 def notifyObj
 node("omar-build"){
     stage("Load Variables"){
-        git branch: "${OSSIM_GIT_BRANCH}", url: "${GIT_VARIABLE_SCRIPT_URL}.git"
+        dir("tlv"){}
+            git branch: "${OSSIM_GIT_BRANCH}", url: "${GIT_VARIABLE_SCRIPT_URL}.git"
+        
+        }
         load "tlv/scripts/pipeline-variables-tlv.groovy"
     }
 
