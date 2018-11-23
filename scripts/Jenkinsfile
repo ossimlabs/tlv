@@ -16,7 +16,7 @@ node("omar-build"){
         dir("tlv"){
             git branch: "${OSSIM_GIT_BRANCH}", url: "${GIT_VARIABLE_SCRIPT_URL}.git" 
         }
-        
+
         load "tlv/scripts/pipeline-variables-tlv.groovy"
     }
 
@@ -33,10 +33,10 @@ node("omar-build"){
 
     stage("Download Artifacts") {
         step ([$class: "CopyArtifact",
-               projectName: "ossim-ci-${OSSIM_GIT_BRANCH}",
-               filter: "ossim-ci-${OSSIM_GIT_BRANCH}.tgz",
+               projectName: "ossim-ci-${env.GIT_BRANCH}",
+               filter: "ossim-ci-${env.GIT_BRANCH}.tgz",
                flatten: true])
-        sh "tar xvfz ossim-ci-${OSSIM_GIT_BRANCH}.tgz"
+        sh "tar xvfz ossim-ci-${env.GIT_BRANCH}.tgz"
         notifyObj = load "${env.WORKSPACE}/ossim-ci/jenkins/pipeline/notify.groovy"
     }
 
