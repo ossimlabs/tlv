@@ -49,8 +49,8 @@ node("omar-build"){
                             passwordVariable: 'REPOSITORY_MANAGER_PASSWORD']])
             {
               sh """
-              pushd ${env.WORKSPACE_DIR}/${env.APP_NAME}
-              gradle :${env.APP_NAME}-app:upload
+              pushd $env.WORKSPACE_DIR/$env.APP_NAME
+              gradle :$env.APP_NAME-app:upload
               popd
               """
             }
@@ -65,8 +65,8 @@ node("omar-build"){
         {
             // Run all tasks on the app. This includes pushing to OpenShift and S3.
             sh """
-            pushd ${env.WORKSPACE_DIR}/${env.APP_NAME}/apps
-            gradle :${env.APP_NAME}-app:${GRADLE_TASK}
+            pushd $env.WORKSPACE_DIR}/$env.APP_NAME
+            gradle :$env.APP_NAME-app:${GRADLE_TASK}
             popd
             """
         }
