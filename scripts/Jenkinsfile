@@ -65,7 +65,7 @@ node("omar-build"){
         {
             // Run all tasks on the app. This includes pushing to OpenShift and S3.
             sh """
-            pushd ${env.WORKSPACE_DIR}/${env.APP_NAME}
+            pushd ${env.WORKSPACE_DIR}/${env.APP_NAME}/apps
             gradle :${env.APP_NAME}-app:${GRADLE_TASK}
             popd
             """
