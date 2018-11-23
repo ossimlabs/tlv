@@ -1,1 +1,1 @@
-env.TEST = "Hello World"
+env.TEST = pwd() 
