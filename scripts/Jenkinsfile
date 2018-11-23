@@ -16,15 +16,16 @@ node("omar-build"){
         dir("tlv"){
             git branch: "${OSSIM_GIT_BRANCH}", url: "${GIT_VARIABLE_SCRIPT_URL}.git" 
         }
+        
         load "tlv/scripts/pipeline-variables-tlv.groovy"
     }
 
     stage("Checkout"){
-        dir(appName) { 
+        dir(env.APP_NAME) { 
             git branch: "${env.GIT_BRANCH}", url: "${env.GIT_PUBLIC_URL}/${env.APP_NAME}.git"
         }
 
-        dir(omarCommonProjName) {
+        dir(env.OMAR_COMMON_PROJ_NAME) {
             git branch: "${env.GIT_BRANCH}", url: "${env.GIT_PUBLIC_URL}/${env.OMAR_COMMON_PROJ_NAME}.git"
         }
     }
