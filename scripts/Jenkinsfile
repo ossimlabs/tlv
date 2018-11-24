@@ -12,12 +12,7 @@
 
 def notifyObj
 node("omar-build"){
-    def workspaceDir = pwd()
-    def appName = "tlv"
-    def omarCommonProjName = "omar-common"
-    env.OMAR_COMMON_PROPERTIES="${workspaceDir}/${omarCommonProjName}/omar-common-properties.gradle"
-    env.O2_DEV_HOME=pwd()
-
+    
     stage("Load Variables"){
         dir("tlv"){
             git branch: "${OSSIM_GIT_BRANCH}", url: "${GIT_VARIABLE_SCRIPT_URL}.git"
