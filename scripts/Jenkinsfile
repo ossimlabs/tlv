@@ -55,7 +55,7 @@ node("omar-build"){
             {
               sh """
               pushd ${env.WORKSPACE_DIR}/${env.APP_NAME}
-              gradle :${appName}-app:upload
+              gradle :${env.APP_NAME}-app:upload
               popd
               """
             }
@@ -71,7 +71,7 @@ node("omar-build"){
             // Run all tasks on the app. This includes pushing to OpenShift and S3.
             sh """
             pushd ${env.WORKSPACE_DIR}/${env.APP_NAME}
-            gradle :${appName}-app:${GRADLE_TASK}
+            gradle :${env.APP_NAME}-app:${GRADLE_TASK}
             popd
             """
         }
@@ -89,7 +89,7 @@ node("omar-build"){
                 // It's important to add --info because of SONARJNKNS-281
                 sh """
                   pushd ${env.WORKSPACE_DIR}/${env.APP_NAME}
-                  gradle --info :${appName}-app:sonarqube -Dsonar.projectKey=${appName}
+                  gradle --info :${env.APP_NAME}-app:sonarqube -Dsonar.projectKey=${appName}
                   popd
                 """
             }
