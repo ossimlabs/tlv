@@ -12,6 +12,7 @@
 
 def notifyObj
 node("omar-build"){
+    env.O2_DEV_HOME=pwd()
     
     stage("Load Variables"){
         dir("tlv"){
