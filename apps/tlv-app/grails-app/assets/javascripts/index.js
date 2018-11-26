@@ -237,15 +237,35 @@ function enableKeyboardShortcuts() {
 	$( document ).on( "keydown", function( event ) {
 		// only if a modal is not open
 		if ( !$( ".modal-backdrop" ).is( ":visible" ) ) {
-			var keyCode = event.keyCode;
 
+			var keyCode = event.keyCode;
 			switch( keyCode ) {
 				// space bar
 				case 32: $( "button[title='Play/Stop']" ).trigger( "click" ); break;
 				// left arrow key
-				case 37: changeFrame( "rewind" ); break;
+				case 37:
+                    if ( event.shiftKey ) {
+                        var degrees = tlv.map.getView().getRotation() * 180 / Math.PI - 1;
+                        tlv.map.getView().setRotation( degrees * Math.PI / 180 );
+                    }
+                    else {
+                        changeFrame( "rewind" );
+                    }
+                    break;
+                // up arrow key
+                case 38: tlv.map.getView().setZoom( tlv.map.getView().getZoom() + 1 );
 				// right arrow key
-				case 39: changeFrame( "fastForward" ); break;
+				case 39:
+                    if ( event.shiftKey ) {
+                        var degrees = tlv.map.getView().getRotation() * 180 / Math.PI + 1;
+                        tlv.map.getView().setRotation( degrees * Math.PI / 180 );
+                    }
+                    else {
+                        changeFrame( "fastForward" );
+                    }
+                    break;
+                // down arrow key
+                case 40: tlv.map.getView().setZoom( tlv.map.getView().getZoom() - 1 );
 				// delete key
 				case 46: deleteFrame(  tlv.currentLayer ); break;
 			}
