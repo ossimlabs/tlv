@@ -8,7 +8,9 @@ var createMapControlsLayers = createMapControls;
 createMapControls = function() {
 	createMapControlsLayers();
 
-	var overviewMapControl = new ol.control.OverviewMap();
+	var overviewMapControl = new ol.control.OverviewMap({
+		collapsed: tlv.overviewMapEnabled == "true" ? false : true
+	});
 	tlv.mapControls.push( overviewMapControl );
 }
 
@@ -75,7 +77,7 @@ function displayConfigLayer( key ) {
 					}
 
 					var labelKey = layer.style.text.label;
-					if ( labelKey ) { 
+					if ( labelKey ) {
 						var text = feature.get( labelKey );
 						if ( typeof text == "object" ) { text = JSON.stringify( text ); }
 						style.getText().setText( text );
