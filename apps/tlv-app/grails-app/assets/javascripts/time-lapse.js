@@ -282,15 +282,19 @@ function moveLayerUpInStack( layerIndex ) {
 }
 
 function orientDevice(event) {
-	if (getCurrentDimension() == 2) {
-		if (event.alpha) { tlv.map.getView().rotate((275 + event.alpha) * Math.PI / 180); }
+	if ( getCurrentDimension() == 2 ) {
+		if ( event.alpha ) { tlv.map.getView().rotate( ( 275 + event.alpha ) * Math.PI / 180 ); }
 	}
 	else {
-		if (event.alpha && event.beta && event.gamma) {
+		if ( event.alpha && event.beta && event.gamma ) {
+            var beta = event.beta;
+            if ( window.innerHeight < window.innerWidth ) {
+                    beta = -event.gamma;
+            }
 			tlv.globe.getCesiumScene().camera.setView({
 				orientation: {
-					heading: (90 - event.alpha) * Math.PI / 180,
-					pitch: (event.beta - 90) * Math.PI / 180
+					heading: ( 90 - event.alpha ) * Math.PI / 180,
+					pitch: ( beta - 90 ) * Math.PI / 180
 				}
 			});
 		}
