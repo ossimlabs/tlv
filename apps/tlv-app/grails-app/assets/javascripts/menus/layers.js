@@ -8,9 +8,11 @@ var createMapControlsLayers = createMapControls;
 createMapControls = function() {
 	createMapControlsLayers();
 
-	var overviewMapControl = new ol.control.OverviewMap({
-		collapsed: tlv.overviewMapEnabled == "true" ? false : true
-	});
+	var overviewMapControl = new ol.control.OverviewMap();
+	if ( tlv.overviewMapEnabled == "true" ) { 
+		// hack
+		setTimeout( function() { overviewMapControl.setCollapsed( false ); }, 1000 );
+	}
 	tlv.mapControls.push( overviewMapControl );
 }
 
