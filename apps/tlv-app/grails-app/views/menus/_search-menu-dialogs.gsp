@@ -76,6 +76,7 @@
 			</div>
 			<div class = "modal-footer">
 				<button type = "button" class = "btn btn-primary" onclick = beginSearch()>Search</button>
+				<button type = "button" class = "btn btn-default" data-dismiss = "modal">Close</button>
 
 				<g:if test = "${ grailsApplication.config.docsUrl }">
 					<button type = "button" class = "btn btn-primary">
