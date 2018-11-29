@@ -536,5 +536,5 @@ var setupTimeLapseAnnotations = setupTimeLapse;
 setupTimeLapse = function() {
 	setupTimeLapseAnnotations();
 
-	searchForAnnotations();
+	//searchForAnnotations();
 }
