@@ -15,7 +15,7 @@ function addDimension() {
 				hideLoadingDialog();
 
 				setupGlobe();
-				tlv.globe.setEnabled( true );
+				tlv.globe.setEnabled( true ); 
 			});
 		}
 		else {
@@ -44,9 +44,12 @@ function addSwipeListenerToMap() {
 		var globeLayers = tlv.globe.getCesiumScene().imageryLayers;
 		var numberOfBaseLayers = Object.keys( tlv.baseLayers ).length;
 		var splitLeft = Cesium.ImagerySplitDirection.LEFT;
-		var splitRight = Cesium.ImagerySplitDirection.RIGHT;console.dir(globeLayers);console.dir(tlv.swipeLayers);
-		globeLayers.get( 2 * ( tlv.swipeLayers[ 0 ] + 1 ) + numberOfBaseLayers ).splitDirection = splitLeft;
-		globeLayers.get( 2 * ( tlv.swipeLayers[ 1 ] + 1 ) + numberOfBaseLayers ).splitDirection = splitRight;
+		var splitRight = Cesium.ImagerySplitDirection.RIGHT;
+
+		var leftLayerIndex = globeLayers.length - ( 2 * tlv.swipeLayers[ 0 ] + 1 );
+		var rightLayerIndex = globeLayers.length - ( 2 * tlv.swipeLayers[ 1 ] + 1 );
+		globeLayers.get( leftLayerIndex ).splitDirection = splitLeft;
+		globeLayers.get( rightLayerIndex ).splitDirection = splitRight;
 	}
 
 	tlv.swipeDragStartX = 0;
@@ -180,12 +183,6 @@ function openImageSpace() {
 	window.open( url + "?" + $.param( params ) );
 }
 
-var pageLoadView = pageLoad;
-pageLoad = function() {
-	pageLoadView();
-	initializeSwipeSlider();
-}
-
 function precomposeSwipeLeft( event ) {
 	// only
 	var swipeSlider = $( "#swipeSlider" );
@@ -294,6 +291,8 @@ function swipeToggle() {
 var setupTimeLapseView = setupTimeLapse;
 setupTimeLapse = function() {
 	setupTimeLapseView();
+
+	initializeSwipeSlider();
 	if ( tlv.dimensions == "3" && $( "#dimensionsSelect" ).val() == 2 ) {
 		addDimension();
 	}
