@@ -243,6 +243,72 @@ function createMapControls() {
 	};
 	ol.inherits( RewindControl, ol.control.Control );
 
+	var RotationTiltControl = function() {
+		var rotationInput = document.createElement( "input" );
+		rotationInput.id = "rotationSliderInput";
+		rotationInput.max = "360";
+		rotationInput.min = "0";
+		rotationInput.oninput = function( event ) {
+			var degrees = $( rotationInput ).val();
+			tlv.map.getView().setRotation( degrees * Math.PI / 180 );
+		};
+		rotationInput.step = "1";
+		rotationInput.style.display = "none";
+		rotationInput.style[ "vertical-algin" ] = "middle";
+		rotationInput.type = "range";
+ 		rotationInput.value = "0";
+
+		var tiltInput = document.createElement( "input" );
+		tiltInput.id = "tiltSliderInput";
+		tiltInput.max = "270";
+		tiltInput.min = "-90";
+		tiltInput.oninput = function( event ) {
+			var degrees = $( tiltInput ).val();
+			tlv.globe.getCesiumScene().camera.setView({
+				orientation: {
+					pitch: -degrees * Math.PI / 180
+				}
+			});
+		};
+
+		tiltInput.step = "1";
+		tiltInput.style.display = "none";
+		tiltInput.style[ "vertical-algin" ] = "middle";
+		tiltInput.type = "range";
+		tiltInput.value = "90";
+
+		setTimeout( function() {
+			$( ".ol-rotate" ).on( "click", function( event ) {
+				if ( $( rotationInput ).is( ":visible" ) || $( "#tiltInput" ).is( ":visible" ) ) {
+					$( rotationInput ).fadeOut();
+					$( tiltInput ).fadeOut();
+				}
+				else {
+					$( rotationInput ).fadeIn();
+					if ( $( "#dimensionsSelect" ).val() == "3" ) {
+						$( tiltInput ).fadeIn();
+					}
+				}
+			});
+		}, 2000 );
+
+		var this_ = this;
+
+		var element = document.createElement( "div" );
+		element.appendChild( tiltInput );
+		element.appendChild( rotationInput );
+		element.className = "rotation-tilt-control ol-unselectable ol-control";
+
+
+		ol.control.Control.call( this, {
+			element: element,
+			target: undefined
+		});
+
+
+	};
+	ol.inherits( RotationTiltControl, ol.control.Control );
+
 	var SummaryTableControl = function() {
 		var button = document.createElement( "button" );
 		button.innerHTML = "<span id = 'tlvLayerCountSpan'>0/0</span>&nbsp;<span class = 'glyphicon glyphicon-list-alt'></span>";
@@ -273,6 +339,7 @@ function createMapControls() {
 		imageIdControl,
 		new RewindControl(),
 		new PlayStopControl(),
+		new RotationTiltControl(),
 		new FastForwardControl(),
 		new SummaryTableControl()
 	];
@@ -399,7 +466,8 @@ function setupMap() {
 	// setup context menu
 	tlv.map.getViewport().addEventListener( "contextmenu", rightClick );
 
-	tlv.map.on("moveend", theMapHasMoved);
+	tlv.map.on( "moveend", theMapHasMoved );
+	tlv.map.getView().on( "change:rotation", theMapHasRotated );
 
 	$(".ol-zoom-in").click(function() { $(this).blur(); });
 	$(".ol-zoom-out").click(function() { $(this).blur(); });
@@ -421,6 +489,11 @@ function theMapHasMoved(event) {
 			x.tilesLoading = 0;
 		}
 	);
+}
+
+function theMapHasRotated( event ) {
+	var radians = tlv.map.getView().getRotation();
+	$( "#rotationSliderInput" ).val( radians * 180 / Math.PI );
 }
 
 function theTileHasFinishedLoadingMap(layerSource) {

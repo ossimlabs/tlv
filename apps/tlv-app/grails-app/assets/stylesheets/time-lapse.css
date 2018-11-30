@@ -63,6 +63,13 @@
 	top: 0.5em;
 }
 
+.rotation-tilt-control {
+	left: 0.5em;
+	transform: rotate( 90deg );
+	transform-origin: 2.5em 2.5em;
+	top: 60px;
+}
+
 .summary-table-control {
 	left: 10.5em;
 	top: 0.5em;
