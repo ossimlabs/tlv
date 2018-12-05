@@ -32,7 +32,7 @@ node("${BUILD_NODE}"){
 
         dir(env.omarCommonProjName) {
             git branch: "${env.OSSIM_GIT_BRANCH}", 
-            url: "${env.GIT_PUBLIC_SEVER_URL}/${env.omarCommonProjName}.git",
+            url: "${env.GIT_PUBLIC_SERVER_URL}/${env.omarCommonProjName}.git",
             credentialsId: "${CREDENTIALS_ID}"
         }
     }
