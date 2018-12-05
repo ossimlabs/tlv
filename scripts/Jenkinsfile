@@ -109,7 +109,7 @@ node("${BUILD_NODE}"){
               sh """
                  export PATH=${PATH}:/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin
                  sourceanalyzer -64 -b ${appName} -clean
-                 sourceanalyzer -64 -b ${appName} ${workspaceDir}/${appName}-dev/${appName}/apps/${appName}-app/grails-app/assets/javascripts/menus/*.js
+                 sourceanalyzer -64 -b ${appName} ${workspaceDir}/${appName}/apps/${appName}-app/grails-app/assets/javascripts/menus/*.js
                  sourceanalyzer -64 -b ${appName} -scan -Xmx8G -f fortifyResults-${appName}-app.fpr
                  ReportGenerator -format pdf -f fortifyResults-${appName}.pdf -source fortifyResults-${appName}-app.fpr
                  fortifyclient -url ${HPF_URL} -authtoken ${HPF_AUTH_TOKEN} uploadFPR -file fortifyResults-${appName}-app.fpr -applicationVersionID 2
