@@ -24,25 +24,25 @@ node("${BUILD_NODE}"){
     }
 
     stage("Checkout"){
-        dir(env.appName) {
-            git branch: "${env.OSSIM_GIT_BRANCH}", 
-            url: "${env.GIT_PUBLIC_SERVER_URL}/${appName}.git",
+        dir(appName) {
+            git branch: "${OSSIM_GIT_BRANCH}", 
+            url: "${GIT_PUBLIC_SERVER_URL}/${appName}.git",
             credentialsId: "${CREDENTIALS_ID}"
         }
 
-        dir(env.omarCommonProjName) {
-            git branch: "${env.OSSIM_GIT_BRANCH}", 
-            url: "${env.GIT_PUBLIC_SERVER_URL}/${omarCommonProjName}.git",
+        dir(omarCommonProjName) {
+            git branch: "${OSSIM_GIT_BRANCH}", 
+            url: "${GIT_PUBLIC_SERVER_URL}/${omarCommonProjName}.git",
             credentialsId: "${CREDENTIALS_ID}"
         }
     }
 
     stage("Download Artifacts") {
         step ([$class: "CopyArtifact",
-               projectName: "ossim-ci-${env.OSSIM_GIT_BRANCH}",
-               filter: "ossim-ci-${env.OSSIM_GIT_BRANCH}.tgz",
+               projectName: "ossim-ci-${OSSIM_GIT_BRANCH}",
+               filter: "ossim-ci-${OSSIM_GIT_BRANCH}.tgz",
                flatten: true])
-        sh "tar xvfz ossim-ci-${env.OSSIM_GIT_BRANCH}.tgz"
+        sh "tar xvfz ossim-ci-${OSSIM_GIT_BRANCH}.tgz"
         notifyObj = load "${env.WORKSPACE}/ossim-ci/jenkins/pipeline/notify.groovy"
     }
 
@@ -71,8 +71,8 @@ node("${BUILD_NODE}"){
         {
             // Run all tasks on the app. This includes pushing to OpenShift and S3.
             sh """
-            pushd ${env.workspaceDir}/${env.appName}
-            gradle :${env.appName}-app:${GRADLE_TASK}
+            pushd ${workspaceDir}/${appName}
+            gradle :${appName}-app:${GRADLE_TASK}
             popd
             """
         }
@@ -85,12 +85,12 @@ node("${BUILD_NODE}"){
     }
     try {
         stage('SonarQube Analysis') {
-            withSonarQubeEnv("${env.SONARQUBE_NAME}") {
+            withSonarQubeEnv("${SONARQUBE_NAME}") {
                 // requires SonarQube Scanner for Gradle 2.1+
                 // It's important to add --info because of SONARJNKNS-281
                 sh """
-                  pushd ${env.workspaceDir}/${env.appName}
-                  gradle --info :${env.appName}-app:sonarqube -Dsonar.projectKey=${env.appName}
+                  pushd ${workspaceDir}/${appName}
+                  gradle --info :${appName}-app:sonarqube -Dsonar.projectKey=${appName}
                   popd
                 """
             }
@@ -102,17 +102,17 @@ node("${BUILD_NODE}"){
     try {
         stage('HPFortify Analysis') {
             // Commented out S3 publish stage: 
-            // aws s3 cp fortifyResults-${env.appName}.pdf s3://o2-private/hpfortify/fortify-reports-pdf/
-            // aws s3 cp fortifyResults-${env.appName}.fpr s3://o2-private/hpfortify/fortify-reports-fpr/
+            // aws s3 cp fortifyResults-${appName}.pdf s3://o2-private/hpfortify/fortify-reports-pdf/
+            // aws s3 cp fortifyResults-${appName}.fpr s3://o2-private/hpfortify/fortify-reports-fpr/
                  
-            dir(env.appName) {
+            dir(appName) {
               sh """
                  export PATH=${PATH}:/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin
-                 sourceanalyzer -64 -b ${env.appName} -clean
-                 sourceanalyzer -64 -b ${env.appName} ${env.workspaceDir}/${env.appName}-dev/${env.appName}/apps/${env.appName}-app/grails-app/assets/javascripts/menus/*.js
-                 sourceanalyzer -64 -b ${env.appName} -scan -Xmx8G -f fortifyResults-${env.appName}-app.fpr
-                 ReportGenerator -format pdf -f fortifyResults-${env.appName}.pdf -source fortifyResults-${env.appName}-app.fpr
-                 fortifyclient -url ${env.HPF_URL} -authtoken ${HPF_AUTH_TOKEN} uploadFPR -file fortifyResults-${env.appName}-app.fpr -applicationVersionID 2
+                 sourceanalyzer -64 -b ${appName} -clean
+                 sourceanalyzer -64 -b ${appName} ${workspaceDir}/${appName}-dev/${appName}/apps/${appName}-app/grails-app/assets/javascripts/menus/*.js
+                 sourceanalyzer -64 -b ${appName} -scan -Xmx8G -f fortifyResults-${appName}-app.fpr
+                 ReportGenerator -format pdf -f fortifyResults-${appName}.pdf -source fortifyResults-${appName}-app.fpr
+                 fortifyclient -url ${HPF_URL} -authtoken ${HPF_AUTH_TOKEN} uploadFPR -file fortifyResults-${appName}-app.fpr -applicationVersionID 2
                  """
             }
         }
