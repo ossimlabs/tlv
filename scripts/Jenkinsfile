@@ -26,13 +26,13 @@ node("${BUILD_NODE}"){
     stage("Checkout"){
         dir(env.appName) {
             git branch: "${env.OSSIM_GIT_BRANCH}", 
-            url: "${env.GIT_PUBLIC_SERVER_URL}/${env.appName}.git",
+            url: "${env.GIT_PUBLIC_SERVER_URL}/${appName}.git",
             credentialsId: "${CREDENTIALS_ID}"
         }
 
         dir(env.omarCommonProjName) {
             git branch: "${env.OSSIM_GIT_BRANCH}", 
-            url: "${env.GIT_PUBLIC_SERVER_URL}/${env.omarCommonProjName}.git",
+            url: "${env.GIT_PUBLIC_SERVER_URL}/${omarCommonProjName}.git",
             credentialsId: "${CREDENTIALS_ID}"
         }
     }
@@ -55,8 +55,8 @@ node("${BUILD_NODE}"){
                             passwordVariable: 'REPOSITORY_MANAGER_PASSWORD']])
             {
               sh """
-              pushd ${env.workspaceDir}/${env.appName}
-              gradle :${env.appName}-app:upload
+              pushd ${workspaceDir}/${appName}
+              gradle :${appName}-app:upload
               popd
               """
             }
@@ -101,6 +101,10 @@ node("${BUILD_NODE}"){
     }
     try {
         stage('HPFortify Analysis') {
+            // Commented out S3 publish stage: 
+            // aws s3 cp fortifyResults-${env.appName}.pdf s3://o2-private/hpfortify/fortify-reports-pdf/
+            // aws s3 cp fortifyResults-${env.appName}.fpr s3://o2-private/hpfortify/fortify-reports-fpr/
+                 
             dir(env.appName) {
               sh """
                  export PATH=${PATH}:/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin
@@ -108,8 +112,6 @@ node("${BUILD_NODE}"){
                  sourceanalyzer -64 -b ${env.appName} ${env.workspaceDir}/${env.appName}-dev/${env.appName}/apps/${env.appName}-app/grails-app/assets/javascripts/menus/*.js
                  sourceanalyzer -64 -b ${env.appName} -scan -Xmx8G -f fortifyResults-${env.appName}-app.fpr
                  ReportGenerator -format pdf -f fortifyResults-${env.appName}.pdf -source fortifyResults-${env.appName}-app.fpr
-                 aws s3 cp fortifyResults-${env.appName}.pdf s3://o2-private/hpfortify/fortify-reports-pdf/
-                 aws s3 cp fortifyResults-${env.appName}.fpr s3://o2-private/hpfortify/fortify-reports-fpr/
                  fortifyclient -url ${env.HPF_URL} -authtoken ${HPF_AUTH_TOKEN} uploadFPR -file fortifyResults-${env.appName}-app.fpr -applicationVersionID 2
                  """
             }
