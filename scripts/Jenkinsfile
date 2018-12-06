@@ -20,7 +20,7 @@ node("${BUILD_NODE}"){
             credentialsId: "${CREDENTIALS_ID}"
         }
         
-        printenv
+        sh "printenv"
         load "tlv/scripts/pipeline-variables-tlv.groovy"
     }
 
