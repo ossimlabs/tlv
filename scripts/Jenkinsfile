@@ -21,6 +21,8 @@ node("${BUILD_NODE}"){
         }
 
         load "tlv/scripts/pipeline-variables-tlv.groovy"
+        
+        echo "${TEST_VARIABLE}"
     }
 
     stage("Checkout"){
