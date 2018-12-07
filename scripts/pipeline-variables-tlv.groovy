@@ -6,4 +6,4 @@ env.omarCommonProjName = "omar-common"
 env.OMAR_COMMON_PROPERTIES = "$env.workspaceDir/$env.omarCommonProjName/omar-common-properties.gradle"
 env.O2_DEV_HOME = pwd()
 env.SONARQUBE_NAME = "sonar_cloud"
-env.HPF_URL = "http://hpfortify.ossim.io:8080/ssc"
+env.HP_FORTIFY_URL = "http://hpfortify.ossim.io:8080/ssc"
