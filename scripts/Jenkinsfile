@@ -19,8 +19,7 @@ node("${BUILD_NODE}"){
             url: "${GIT_VARIABLE_SCRIPT_URL}/tlv.git",
             credentialsId: "${CREDENTIALS_ID}"
         }
-        
-        sh "printenv"
+
         load "tlv/scripts/pipeline-variables-tlv.groovy"
     }
 
