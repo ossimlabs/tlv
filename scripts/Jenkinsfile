@@ -17,7 +17,7 @@ node("${BUILD_NODE}"){
     stage("Load Variables"){
         dir("tlv"){
             git branch: "${OSSIM_GIT_BRANCH}", 
-            url: "${GIT_VARIABLE_SCRIPT_URL}/tlv.git",
+            url: "${GIT_PUBLIC_SERVER_URL}/tlv.git",
             credentialsId: "${CREDENTIALS_ID}"
         }
 
