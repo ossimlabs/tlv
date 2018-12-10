@@ -15,12 +15,19 @@ def notifyObj
 node("${BUILD_NODE}"){
 
     stage("Load Variables"){
+        dir("ossim-ci"){
+            git branch: "${OSSIM_GIT_BRANCH}",
+            url: "${GIT_PRIVATE_SERVER_URL}/ossim-ci.git"
+            credentialsId: ${CREDENTIALS_ID}"
+        }
+
         dir("tlv"){
             git branch: "${OSSIM_GIT_BRANCH}", 
             url: "${GIT_PUBLIC_SERVER_URL}/tlv.git",
             credentialsId: "${CREDENTIALS_ID}"
         }
 
+        load "ossim-ci/jenkins/variables/pipeline-variables-common.groovy"
         load "tlv/scripts/pipeline-variables-tlv.groovy"
     }
 
