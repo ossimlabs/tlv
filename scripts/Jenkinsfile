@@ -17,7 +17,7 @@ node("${BUILD_NODE}"){
     stage("Load Variables"){
         dir("ossim-ci"){
             git branch: "${OSSIM_GIT_BRANCH}",
-            url: "${GIT_PRIVATE_SERVER_URL}/ossim-ci.git"
+            url: "${GIT_PRIVATE_SERVER_URL}/ossim-ci.git",
             credentialsId: ${CREDENTIALS_ID}"
         }
 
