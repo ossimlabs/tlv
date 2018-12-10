@@ -18,7 +18,7 @@ node("${BUILD_NODE}"){
         dir("ossim-ci"){
             git branch: "${OSSIM_GIT_BRANCH}",
             url: "${GIT_PRIVATE_SERVER_URL}/ossim-ci.git",
-            credentialsId: ${CREDENTIALS_ID}"
+            credentialsId: "${CREDENTIALS_ID}"
         }
 
         dir("tlv"){
