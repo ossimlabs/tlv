@@ -45,9 +45,6 @@ node("${BUILD_NODE}"){
                flatten: true])
         sh "tar xvfz ossim-ci-${OSSIM_GIT_BRANCH}.tgz"
         notifyObj = load "${env.WORKSPACE}/ossim-ci/jenkins/pipeline/notify.groovy"
-
-        sh "echo ${env.WORKSPACE}"
-        sh "echo ${workspaceDir}"
     }
 
     try {
