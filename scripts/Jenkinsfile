@@ -107,30 +107,9 @@ node("${BUILD_NODE}"){
     catch (e) {
         echo e.toString()
     }
-    try {
-        stage('HPFortify Analysis') {
-            // Commented out S3 publish stage: 
-            // aws s3 cp fortifyResults-${appName}.pdf s3://o2-private/hpfortify/fortify-reports-pdf/
-            // aws s3 cp fortifyResults-${appName}.fpr s3://o2-private/hpfortify/fortify-reports-fpr/
-                 
-            dir(appName) {
-              sh """
-                 export PATH=${PATH}:/opt/HPE_Security/Fortify_SCA_and_Apps_17.20/bin
-                 sourceanalyzer -64 -b ${appName} -clean
-                 sourceanalyzer -64 -b ${appName} ${workspaceDir}/${appName}/apps/${appName}-app/grails-app/assets/javascripts/menus/*.js
-                 sourceanalyzer -64 -b ${appName} -scan -Xmx8G -f fortifyResults-${appName}-app.fpr
-                 ReportGenerator -format pdf -f fortifyResults-${appName}.pdf -source fortifyResults-${appName}-app.fpr
-                 fortifyclient -url ${HP_FORTIFY_URL} -authtoken ${HP_FORTIFY_TOKEN} uploadFPR -file fortifyResults-${appName}-app.fpr -applicationVersionID 2
-                 """
-            }
-        }
-   }
-   catch (e) {
-      echo e.toString()
-   }
-  stage("Clean Workspace")
-   {
-      if ("${CLEAN_WORKSPACE}" == "true")
-        step([$class: 'WsCleanup'])
-   }
+    stage("Clean Workspace")
+    {
+        if ("${CLEAN_WORKSPACE}" == "true")
+            step([$class: 'WsCleanup'])
+    }
 }
