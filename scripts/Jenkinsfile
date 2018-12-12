@@ -29,10 +29,6 @@ node("${BUILD_NODE}"){
 
         load "ossim-ci/jenkins/variables/pipeline-variables-common.groovy"
         load "tlv/scripts/pipeline-variables-tlv.groovy"
-
-        sh "echo ${test}"
-        test = "test2"
-        sh "echo ${test}"
     }
 
     stage("Checkout"){
