@@ -8,8 +8,10 @@ pluginManagement {
 def final O2_DEV_HOME = System.getenv('O2_DEV_HOME')
 if ( O2_DEV_HOME ) {
 	include 'omar-core-plugin',
+        'omar-security-plugin',
 		'tlv-app'
 
 	project(':omar-core-plugin').projectDir = "${O2_DEV_HOME}/omar-core/plugins/omar-core-plugin" as File
+    project(':omar-security-plugin').projectDir = "${O2_DEV_HOME}/omar-security-plugin" as File
 	project(':tlv-app').projectDir = "${O2_DEV_HOME}/tlv/apps/tlv-app" as File
 }
