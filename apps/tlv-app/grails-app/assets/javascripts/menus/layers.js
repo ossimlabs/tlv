@@ -9,7 +9,7 @@ createMapControls = function() {
 	createMapControlsLayers();
 
 	var overviewMapControl = new ol.control.OverviewMap();
-	if ( tlv.overviewMapEnabled == "true" ) { 
+	if ( tlv.overviewMapEnabled == "true" || tlv.preferences.tlvPreference.overviewMap ) {
 		// hack
 		setTimeout( function() { overviewMapControl.setCollapsed( false ); }, 1000 );
 	}
@@ -174,25 +174,27 @@ function overviewLayerToggle() {
 
 function refreshCrossHairLayer() {
 	var mapCenter = tlv.map.getView().getCenter();
-	var centerPixel = tlv.map.getPixelFromCoordinate(mapCenter);
-	var deltaXPixel = [centerPixel[0] + 10, centerPixel[1]];
+	var centerPixel = tlv.map.getPixelFromCoordinate( mapCenter );
+	if ( centerPixel ) {
+		var deltaXPixel = [centerPixel[0] + 10, centerPixel[1]];
 
-	var maxXPoint = new ol.geom.Point( tlv.map.getCoordinateFromPixel( deltaXPixel ) );
-	var minXPoint = maxXPoint.clone();
-	minXPoint.rotate( Math.PI, mapCenter );
-	var horizontalLine = new ol.geom.LineString([
-		minXPoint.getCoordinates(),
-		maxXPoint.getCoordinates()
-	]);
+		var maxXPoint = new ol.geom.Point( tlv.map.getCoordinateFromPixel( deltaXPixel ) );
+		var minXPoint = maxXPoint.clone();
+		minXPoint.rotate( Math.PI, mapCenter );
+		var horizontalLine = new ol.geom.LineString([
+			minXPoint.getCoordinates(),
+			maxXPoint.getCoordinates()
+		]);
 
-	var verticalLine = horizontalLine.clone();
-	verticalLine.rotate( Math.PI / 2, mapCenter );
+		var verticalLine = horizontalLine.clone();
+		verticalLine.rotate( Math.PI / 2, mapCenter );
 
-	var geometryCollection = new ol.geom.GeometryCollection([
-		horizontalLine,
-		verticalLine
-	]);
-	tlv.crossHairLayer.getSource().getFeatures()[0].setGeometry( geometryCollection );
+		var geometryCollection = new ol.geom.GeometryCollection([
+			horizontalLine,
+			verticalLine
+		]);
+		tlv.crossHairLayer.getSource().getFeatures()[0].setGeometry( geometryCollection );
+	}
 }
 
 function searchOriginLayerToggle() {
@@ -206,15 +208,15 @@ setupTimeLapse = function() {
 	setupTimeLapseLayers();
 
 	tlv.crossHairLayer = null;
-	var crossHairLayerSelect = $("#layersCrossHairSelect");
-	if (tlv.crossHairLayerEnabled == "true" || crossHairLayerSelect.val() == "on") {
+	var crossHairLayerSelect = $( "#layersCrossHairSelect" );
+	if ( crossHairLayerSelect.val() == "on" ) {
 		crossHairLayerSelect.val("on");
 		crossHairLayerToggle();
 	}
 
 	tlv.searchOriginLayer = null;
-	var searchOriginLayerSelect = $("#layersSearchOriginSelect");
-	if (tlv.searchOriginLayerEnabled == "true" || searchOriginLayerSelect.val() == "on") {
+	var searchOriginLayerSelect = $( "#layersSearchOriginSelect" );
+	if ( searchOriginLayerSelect.val() == "on" ) {
 		searchOriginLayerSelect.val("on");
 		searchOriginLayerToggle();
 	}

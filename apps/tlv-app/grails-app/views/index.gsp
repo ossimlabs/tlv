@@ -24,7 +24,7 @@
 
 		<asset:javascript src = "index-bundle.js"/>
 		<asset:script type = "text/javascript">
-			var tlv = ${raw(tlvParams)};
+			var tlv = ${raw(tlvParams.encodeAsJSON() as String)};
 			tlv.contextPath = "${request.contextPath}";
 		</asset:script>
 		<asset:deferredScripts/>

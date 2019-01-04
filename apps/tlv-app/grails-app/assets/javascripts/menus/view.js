@@ -15,7 +15,7 @@ function addDimension() {
 				hideLoadingDialog();
 
 				setupGlobe();
-				tlv.globe.setEnabled( true ); 
+				tlv.globe.setEnabled( true );
 			});
 		}
 		else {
@@ -293,8 +293,14 @@ setupTimeLapse = function() {
 	setupTimeLapseView();
 
 	initializeSwipeSlider();
-	if ( tlv.dimensions == "3" && $( "#dimensionsSelect" ).val() == 2 ) {
+	if ( $( "#dimensionsSelect" ).val() == 3 ) {
 		addDimension();
+	}
+	if ( $( "#swipeSelect" ).val() == "on" ) {
+		turnOnSwipe();
+	}
+	if ( $( "#wmsTilesSelect" ).val() == "imageLayer" ) {
+		changeWmsLayerType();
 	}
 }
 
@@ -351,7 +357,7 @@ var updateScreenTextView = updateScreenText;
 updateScreenText = function() {
 	updateScreenTextView();
 
-	if ( $( "#swipeSelect" ).val() == "on" ) {
+	if ( $( "#swipeSelect" ).val() == "on" && tlv.sipwLayers ) {
 		$.each(
 			{ imageId: tlv.swipeLayers[ 0 ], acquisitionDate: tlv.swipeLayers[ 1 ] },
 			function( key, value ) {

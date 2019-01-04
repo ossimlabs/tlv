@@ -1,9 +1,6 @@
 package time_lapse
 
 
-import groovy.json.JsonOutput
-
-
 class HomeController {
 
 	def annotationsService
@@ -15,7 +12,7 @@ class HomeController {
 		def model = restApiService.serviceMethod( params )
 
 
-		render(model: [ tlvParams : JsonOutput.toJson( model ) ], view: "/index.gsp")
+		render(model: [ tlvParams: model ], view: "/index.gsp")
 	}
 
 	def openSearch() {

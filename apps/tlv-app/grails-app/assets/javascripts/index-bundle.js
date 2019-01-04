@@ -1,6 +1,6 @@
 //= require webjars/jquery/2.2.0/jquery.js
 //= require webjars/bootstrap/3.3.5/js/bootstrap.js
-//= require webjars/momentjs/2.10.6/moment.js
+//= require webjars/momentjs/2.11.0/moment.js
 //= require bootstrap-datetimepicker-4.15.35
 //= require bootstrap-slider
 //= require webjars/typeahead.js/0.11.1/dist/typeahead.bundle.min

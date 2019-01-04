@@ -277,6 +277,10 @@ function getStartDate() {
 function initializeEndDateTimePicker() {
 	// default to current date or user defined
 	var endDate = new Date();
+	if ( tlv.preferences.tlvPreference.endDate ) {
+		endDate = new Date( Date.parse( tlv.preferences.tlvPreference.endDate ) );
+	}
+
 	endDate.setFullYear( tlv.endYear || endDate.getUTCFullYear() );
 	endDate.setDate( tlv.endDay || endDate.getUTCDate() );
 	endDate.setMonth( tlv.endMonth - 1  || endDate.getUTCMonth() );
@@ -284,7 +288,7 @@ function initializeEndDateTimePicker() {
 	endDate.setMinutes( tlv.endMinute || endDate.getUTCMinutes() );
 	endDate.setSeconds( tlv.endSecond || endDate.getUTCSeconds() );
 
-	var endDateTimePicker = $("#searchEndDateTimePicker");
+	var endDateTimePicker = $( "#searchEndDateTimePicker" );
 	endDateTimePicker.datetimepicker({
 		date: endDate,
 		format: "MM/DD/YYYY HH:mm:ss",
@@ -320,27 +324,36 @@ function initializeLibraryCheckboxes() {
 }
 
 function initializeLocationInput() {
-	$( "#searchLocationInput" ).val( tlv.location || "" );
+	var location = "";
+	location = tlv.preferences.tlvPreference.location || location;
+	location = tlv.location || location;
+	$( "#searchLocationInput" ).val( location );
 }
 
 function initializeMaxCloudCoverInput() {
-	var maxCloudCover = tlv.maxCloudCover ? tlv.maxCloudCover : 100;
-	$("#searchMaxCloudCoverInput").val(maxCloudCover);
+	var maxCloudCover = 100;
+	maxCloudCover = tlv.preferences.tlvPreference.maxCloudCover || maxCloudCover;
+	maxCloudCover = tlv.maxCloudCover || maxCloudCover;
+	$( "#searchMaxCloudCoverInput" ).val( maxCloudCover );
 }
 
 function initializeMaxResultsSelect() {
-	var maxResults = tlv.maxResults ? tlv.maxResults : 10;
+	var maxResults = 10;
+	maxResults = tlv.preferences.tlvPreference.maxResults || maxResults;
+	maxResults = tlv.maxResults || maxResults;
 	$("#searchMaxResultsSelect option[value = '" + maxResults + "']").prop("selected", true);
 }
 
 function initializeMinNiirsInput() {
-	var minNiirs = tlv.minNiirs ? tlv.minNiirs : 0;
-	$("#searchMinNiirsInput").val(minNiirs);
+	var minNiirs = 0;
+	minNiirs = tlv.preferences.tlvPreference.minNiirs || minNiirs;
+	minNiirs = tlv.minNiirs || minNiirs;
+	$( "#searchMinNiirsInput" ).val( minNiirs );
 }
 
 function initializeSensorSelect() {
-	if ( tlv.sensors ) {
-		var sensors = tlv.sensors.split( "," );
+	if ( tlv.sensors || tlv.preferences.tlvPreference.sensor ) {
+		var sensors = ( tlv.sensors || tlv.preferences.tlvPreference.sensor ).split( "," );
 		var getDistinctSensorsInit = getDistinctSensors;
 		getDistinctSensors = function() {
 			getDistinctSensorsInit();
@@ -354,8 +367,12 @@ function initializeSensorSelect() {
 
 function initializeStartDateTimePicker() {
 	// default to the beginning of the day 30 days prior to the end date
-	var endDate = $("#searchEndDateTimePicker").data("DateTimePicker").date().toDate();
-	var startDate = new Date(endDate - 30 * 24 * 60 * 60 * 1000);
+	var endDate = $( "#searchEndDateTimePicker" ).data( "DateTimePicker" ).date().toDate();
+	var startDate = new Date( endDate - 30 * 24 * 60 * 60 * 1000 );
+	if ( tlv.preferences.tlvPreference.startDate ) {
+		startDate = new Date( Date.parse( tlv.preferences.tlvPreference.startDate ) );
+	}
+
 	if (tlv.startYear) { startDate.setFullYear(tlv.startYear); }
 	if (tlv.startDay) { startDate.setDate(tlv.startDay); }
 	if (tlv.startMonth) { startDate.setMonth(tlv.startMonth - 1); }
@@ -363,7 +380,7 @@ function initializeStartDateTimePicker() {
 	startDate.setMinutes(tlv.startMinute ? tlv.startMinute : 0);
 	startDate.setSeconds(tlv.startSecond ? tlv.startSecond : 0);
 
-	var startDateTimePicker = $("#searchStartDateTimePicker");
+	var startDateTimePicker = $( "#searchStartDateTimePicker" );
 	startDateTimePicker.datetimepicker({
 		date: startDate,
 		format: "MM/DD/YYYY HH:mm:ss",
@@ -376,7 +393,7 @@ pageLoad = function() {
 	pageLoadSearch();
 	setupSearchMenuDialog();
 
-	if ( tlv.location || tlv.filter ) {
+	if ( tlv.location || tlv.filter || tlv.preferences.tlvPreference.location ) {
 		beginSearch();
 	}
 	else {

@@ -5,11 +5,15 @@
 		def userName = request.getHeader( requestHeaderUserName ) ?: requestHeaderUserNameDefault
 	%>
 	<g:if test = "${ userName }">
-		<li class = "navbar-button">
-			<p class = "navbar-text">
-				<span class = "fa fa-user"></span>&nbsp;
-				${ userName }
-			</p>
+		<li class = "dropdown navbar-button">
+			<a href = "javascript:void(0)" class = "dropdown-toggle" data-toggle = "dropdown" role = "button">
+					<span class = "fa fa-user"></span>&nbsp;
+					${ userName }
+					<span class = "caret"></span>
+			</a>
+			<ul class = "dropdown-menu">
+				<li><a href = "${ request.contextPath }/preferences" target = "_blank">Preferences</a></li>
+			</ul>
 		</li>
 	</g:if>
 </g:if>
