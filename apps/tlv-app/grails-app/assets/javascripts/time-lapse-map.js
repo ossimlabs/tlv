@@ -390,22 +390,26 @@ function createMapInteractions() {
 function createMousePositionControl() {
 	var mousePositionControl = new ol.control.MousePosition({
 		coordinateFormat: function(coordinate) {
-			var lat = coordinate[1];
-			var lon = coordinate[0];
+			var lat = coordinate[ 1 ];
+			var lon = coordinate[ 0 ];
 			var coordConvert = new CoordinateConversion();
-			switch(mousePositionControl.coordinateDisplayFormat) {
-				case 0: return coordinate[1].toFixed(6) + ", " + coordinate[0].toFixed(6); break;
-				case 1: return coordConvert.ddToDms(lat, "lat") + " " + coordConvert.ddToDms(lon, "lon"); break;
-				case 2: return coordConvert.ddToMgrs(lat, lon); break;
+			switch( mousePositionControl.coordinateDisplayFormat ) {
+				case 0: return coordinate[ 1 ].toFixed( 6 ) + ", " + coordinate[ 0 ].toFixed( 6 ); break;
+				case 1: return coordConvert.ddToDms( lat, "lat" ) + " " + coordConvert.ddToDms( lon, "lon" ); break;
+				case 2: return coordConvert.ddToMgrs( lat, lon ); break;
 			}
 		},
 		projection: "EPSG:4326"
 	});
 
-	mousePositionControl.coordinateDisplayFormat = 0;
-	$(mousePositionControl.element).click(function() {
+	switch ( tlv.preferences.coordinateFormat ) {
+		case "dd": mousePositionControl.coordinateDisplayFormat = 0; break;
+		case "dms": mousePositionControl.coordinateDisplayFormat = 1; break;
+		case "mgrs": mousePositionControl.coordinateDisplayFormat = 2; break;
+	}
+	$( mousePositionControl.element ).click( function() {
 		mousePositionControl.coordinateDisplayFormat++;
-		if (mousePositionControl.coordinateDisplayFormat >= 3) { mousePositionControl.coordinateDisplayFormat = 0; }
+		if ( mousePositionControl.coordinateDisplayFormat >= 3 ) { mousePositionControl.coordinateDisplayFormat = 0; }
 	});
 
 

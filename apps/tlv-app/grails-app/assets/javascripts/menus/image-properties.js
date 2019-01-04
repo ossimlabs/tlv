@@ -18,6 +18,13 @@ function getDefaultImageProperties() {
 	};
 }
 
+function openImagePropertiesDialog() {
+	var rgb = $( "body" ).css( "background-color" );
+	var colors = ol.color.asArray( rgb ).splice( 0, 3 );
+	$( "#imagePropertiesDiv" ).css( "background-color", "rgba(" + colors.join( "," ) + ", 0.5)" );
+	$( "#imagePropertiesDiv" ).show();
+}
+
 var pageLoadImageProperties = pageLoad;
 pageLoad = function() {
 	pageLoadImageProperties();
