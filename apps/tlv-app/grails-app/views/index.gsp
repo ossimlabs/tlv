@@ -10,6 +10,7 @@
 		<link href = "${createLink( action: "openSearch", controller: "home" )}" rel = "search" title = "Time Lapse Viewer" type = "application/opensearchdescription+xml">
 		<link href = "${ request.contextPath }/assets/tlvicon.ico" rel = "shortcut icon" type = "image/x-icon">
 
+		<asset:stylesheet src = "webjars/bootswatch/3.3.5+4/${ tlvParams.preferences.pageTheme }/bootstrap.min.css"/>
 		<asset:stylesheet src = "index-bundle.css"/>
 	</head>
 	<body>

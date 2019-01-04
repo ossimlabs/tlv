@@ -1,4 +1,4 @@
- <div id = "imagePropertiesDiv">
+ <div id = "imagePropertiesDiv" style = "color: white">
 	<div>
         <div style = "text-align: right">
             <button class = "btn btn-default btn-sm" onclick = resetImageProperties() title = "Reset" type = "button">

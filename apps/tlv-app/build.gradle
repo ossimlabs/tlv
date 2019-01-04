@@ -103,7 +103,6 @@ dependencies {
 
     compile "org.grails.plugins:scaffolding"
     compile "org.webjars:bootstrap:3.3.5"
-    compile "org.webjars:bootswatch-slate:3.3.5+4"
     compile "org.webjars.bower:typeahead.js:0.11.1"
     compile "org.webjars.bower:typeahead.js-bootstrap-css:1.2.1"
     compile "org.webjars:font-awesome:4.4.0"
@@ -125,27 +124,24 @@ assets {
     minifyJs = true
     minifyCss = true
     excludes = [
-        "**/bootstrap/**",
-        "**/bootswatch-slate/**",
-        "**/webjars/cesium/**",
-        "**/jquery/**",
-        "**/momentjs/**",
-        "**/requirejs/**",
-        "**/*.css",
-        "**/*.js"
+        "**"
     ]
     includes = [
+        "**/*-bundle.*",
         "**/application.*",
-        "**/bootswatch-slate/**/glyphicons*",
+        "**/bootstrap/**/fonts/**",
+        "**/bootswatch/**/*.min.css",
+        "**/bootswatch*/**/glyphicons*",
         "**/Cesium.js",
-        "**/Cesium/Assets/**",
-        "**/Cesium/Workers/**",
-        "**/fonts/**",
+        "**/Cesium/Assets/**/*.json",
+        "**/Cesium/Workers/*.js",
+        "**/font-awesome/**/fonts/**",
         "**/geometries-bundle.*",
         "**/gif-bundle.*",
         "**/helvetiker*",
-        "**/index-bundle.*",
-        "**/prototype.*"
+        "**/logos/**",
+        "**/prototype.*",
+        "**/tlvicon.ico"
     ]
 }
 
