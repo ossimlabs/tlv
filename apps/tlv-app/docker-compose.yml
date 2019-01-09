@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+    tlv:
+        image: openjdk:8-alpine
+        ports:
+            - "8080:8080"
+        volumes:
+            - "./config.yml:/home/config.yml"
+            - "./build/lib/tlv-app-1.6.1-SNAPSHOT.jar:/home/tlv.jar"
+        command: java -jar /home/tlv.jar --spring.config.location=/home/config.yml
+
+    postgis:
+        image: mdillon/postgis:latest
+        ports:
+            - "5432:5432"
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: tlv
