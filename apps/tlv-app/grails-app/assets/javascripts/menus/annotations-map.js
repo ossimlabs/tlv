@@ -382,14 +382,21 @@ function saveAnnotations() {
 	var features = layer.annotationsLayer.getSource().getFeatures();
 
 	var values = [].concat.apply( [], features.map( function( feature ) {
-
-
+		var properties = feature.getProperties();
+		
+		feature.setProperties(
+			Object.assign( feature.getProperties(), {
+				saved: true
+			} )
+		);
+		
 		return [
-			feature.getProperties().confidence,
-			feature.getProperties().type,
-			feature.getProperties().username
+			properties.confidence,
+			properties.type,
+			properties.username
 		];
-	}));
+	} ) );
+	
 	if ( values.indexOf( "" ) > -1 ) {
 		displayErrorDialog( "One or more of your annotation properties are blank." );
 		return;
@@ -532,9 +539,30 @@ function searchForAnnotations() {
 	});
 }
 
+function bindWindowUnload() {
+	window.addEventListener( 'beforeunload', function( e ) {
+		e.preventDefault();
+		
+		var unsaved = tlv.layers[ tlv.currentLayer ]
+			.annotationsLayer
+			.getSource()
+			.getFeatures()
+			.filter( function( feature ) {
+				return !feature.getProperties().saved;
+			} );
+		
+		if( unsaved.length ) {
+			var message = 'Important: You have unsaved changes!';
+			e.returnValue = message;
+			return message;
+		}
+	} );
+}
+
 var setupTimeLapseAnnotations = setupTimeLapse;
 setupTimeLapse = function() {
 	setupTimeLapseAnnotations();
-
 	//searchForAnnotations();
-}
+	
+	bindWindowUnload();
+};
