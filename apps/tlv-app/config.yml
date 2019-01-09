@@ -1,4 +1,4 @@
-baseUrl: https://omar-dev.ossim.io
+baseUrl: https://omar.ossim.io
 geocoderUrl: ${baseUrl}/omar-ui/twoFishesProxy
 
 libraries:
