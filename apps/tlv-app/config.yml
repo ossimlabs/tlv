@@ -1,0 +1,20 @@
+baseUrl: https://omar.ossim.io
+geocoderUrl: ${baseUrl}/omar-ui/twoFishesProxy
+
+libraries:
+    o2-dev:
+        imageSpaceUrl: ${baseUrl}/omar-ui/omar/#/mapImage
+        kmlUrl: ${baseUrl}/omar-superoverlay/superOverlay/createKml
+        label: O2-DEV
+        layerType: wms
+        mensaUrl: ${baseUrl}/omar-mensa/mensa
+        wfsUrl: ${baseUrl}/omar-wfs/wfs
+        wmsUrl: ${baseUrl}/omar-wms/wms
+
+environments:
+    production:
+        dataSource:
+            driverClassName: org.postgresql.Driver
+            username: postgres
+            password: postgres
+            url: jdbc:postgresql://postgis:5432/tlv
