@@ -56,3 +56,9 @@ docker-compose up tlv
 ```
 
 6. Navigate to [`http://localhost:8080`](http://localhost:8080)
+
+7. Editing in development mode:
+```
+cd $O2_DEV_HOME/tlv/apps/tlv-app
+grails run-app
+```

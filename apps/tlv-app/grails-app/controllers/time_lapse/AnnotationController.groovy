@@ -10,6 +10,7 @@ class AnnotationController {
 
 	def annotationService
 
+	Writer expressionOut = getExpressionOut()
 
 	def export() {
 		def results = Annotation.list( params ).unique { annotation -> annotation.geometryOrtho }
@@ -30,8 +31,11 @@ class AnnotationController {
 		params.max = Math.min(max ?: 10, 10000)
 		def results = Annotation.list( params ).unique { annotation -> annotation.geometryOrtho }
 
-
-		respond results, model:[ annotationCount: Annotation.count() ], view: "quality-control.gsp"
+		if( request.getHeader( "content-type" ) == "application/json" ) {
+			render new JSON( results )
+		} else {
+			respond results, model:[ annotationCount: Annotation.count() ]
+		}
 	}
 
 	def saveAnnotation() {

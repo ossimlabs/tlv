@@ -516,8 +516,12 @@ function saveAnnotations() {
 }
 
 function searchForAnnotations() {
+	console.log( 'searchForAnnotations' );
+	
 	$.each( tlv.layers, function( index, layer ) {
 		if ( !layer.annotations ) {
+			console.log( layer );
+			
 			var params = {
 				filter: "image_id LIKE '" + layer.imageId + "'",
 				maxResults: 100,
@@ -527,10 +531,11 @@ function searchForAnnotations() {
 				typeName: "omar:annotation",
 				version: "1.1.0"
 			};
-			$.ajax({
+			
+			$.ajax( {
 				url: tlv.libraries[ layer.library ].wfsUrl + "?" + $.param( params )
-			})
-			.done(function( data ) {
+			} )
+			.done( function( data ) {
 				layer.annotations = data;
 				if ( data.features.length > 0 ) {
 					addAnnotations( data, layer );
@@ -570,7 +575,8 @@ function bindWindowUnload() {
 var setupTimeLapseAnnotations = setupTimeLapse;
 setupTimeLapse = function() {
 	setupTimeLapseAnnotations();
-	//searchForAnnotations();
-
+	
+	searchForAnnotations();
+	
 	bindWindowUnload();
 };

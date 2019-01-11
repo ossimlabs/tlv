@@ -1,4 +1,4 @@
-baseUrl: https://omar.ossim.io
+baseUrl: https://omar-dev.ossim.io
 geocoderUrl: ${baseUrl}/omar-ui/twoFishesProxy
 
 libraries:
@@ -17,7 +17,7 @@ environments:
             driverClassName: org.postgresql.Driver
             username: postgres
             password: postgres
-            url: jdbc:postgresql://postgis:5432/tlv
+            url: jdbc:postgresql://0.0.0.0:5432/tlv
 
 ---
 defaultUsername: Anonymous
@@ -74,3 +74,40 @@ grails:
                       filters: 'none'
                     - pattern: '/**'
                       filters: 'JOINED_FILTERS'
+
+---
+#layers:
+#    countries:
+#        label: Country Borders
+#        url: ${baseUrl}/omar-wfs/wfs/getFeature
+#        params:
+#            maxFeatures: 1000
+#            outputFormat: JSON
+#            request: GetFeature
+#            service: WFS
+#            typeName: omar:country_border
+#            version: 1.1.0
+#        refresh: false
+#        style:
+#            text:
+#                attribute: name
+#                color: white
+#    o2-wfs:
+#        label: O2 WFS
+#        url: ${baseUrl}/omar-wfs/wfs/getFeature
+#        params:
+#            filter: BBOX(ground_geom,<BBOX>)
+#            maxFeatures: 1000
+#            outputFormat: JSON
+#            request: GetFeature
+#            service: WFS
+#            sortBy: acquisition_date+D
+#            typeName: omar:raster_entry
+#            version: 1.1.0
+#        refresh: true
+#        style:
+#            stroke:
+#                color: black
+#            text:
+#                color: black
+#                label: image_id
