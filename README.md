@@ -26,12 +26,18 @@ git clone https://github.com/ossimlabs/omar-security-plugin.git
 ```
 
 3. Export necessary variables:
+
 	3a. Set path to project directory:
-	`export O2_DEV_HOME=<path to project>/OSSIM`
-	3b. Set path to common properties:
-	`export OMAR_COMMON_PROPERTIES=$O2_DEV_HOME/omar-common/omar-common-properties.gradle`
-	3c. Set repository manager:
-	`export REPOSITORY_MANAGER_URL=https://nexus.ossim.io/nexus/content/repositories`
+	- `export O2_DEV_HOME=<path to project>/OSSIM`
+	
+	3b. Set application config yaml
+	- `export SPRING_CONFIG_LOCATION=$O2_DEV_HOME/tlv/apps/tlv-app/config.yml`
+
+	3c. Set path to common properties:
+	- `export OMAR_COMMON_PROPERTIES=$O2_DEV_HOME/omar-common/omar-common-properties.gradle`
+
+	3d. Set repository manager:
+	- `export REPOSITORY_MANAGER_URL=https://nexus.ossim.io/nexus/content/repositories`
 
 4. Navigate in and build:
 ```
