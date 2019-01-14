@@ -51,7 +51,16 @@ JVM:          1.8.0_192 (Oracle Corporation 25.192-b12)
 OS:           Mac OS X 10.14.2 x86_64
 ```
 
-5. Install [`docker`](https://docs.docker.com/docker-for-mac/install/)
+5. Install [`grails`](http://grails.org/download.html)
+- `sdk install grails`
+
+Should read:
+```
+| Grails Version: 3.3.9
+| JVM Version: 1.8.0_192
+```
+
+6. Install [`docker`](https://docs.docker.com/docker-for-mac/install/)
 - Includes `docker` and `docker-compose`
 
 Should read:
