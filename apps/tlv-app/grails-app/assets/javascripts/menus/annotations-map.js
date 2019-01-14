@@ -674,11 +674,9 @@ function generateRandomStyle( min, max ) {
 }
 
 function searchForAnnotations() {
-	console.log( tlv.layers );
-	
 	var usernames = {};
-	
-	tlv.layers.forEach( function( layer ) {
+
+	$.each( tlv.layers, function( index, layer ) {
 		$.ajax( {
 			url: '/annotation/imageAnnotations' + '?' + $.param( { imgId: layer.imageId } )
 		} )
@@ -698,31 +696,32 @@ function searchForAnnotations() {
 						}
 					}
 				};
-				
+
 				data.forEach( function( annotation ) {
 					var geoJSON = {
 						id: 'annotation.' + annotation.id,
 						type: 'Feature',
 						properties: annotation
 					};
-					
+
 					if( !usernames.hasOwnProperty( annotation.username ) ) {
 						usernames[ annotation.username ] = generateRandomStyle( 140, 255 );
 					}
-					
+
 					geoJSON.properties.style = usernames[ annotation.username ];
-					
+
 					geoJSON.properties.geometry_ortho = annotation.geometryOrtho;
 					geoJSON.properties.geometry_pixel = annotation.geometryPixel;
 					geoJSON.properties.image_id       = annotation.imageId;
 					geoJSON.properties.saved          = true;
-					
+
 					collection.features.push( geoJSON );
 				} );
-				
+
 				layer.annotations = collection;
 				if( collection.features.length > 0 ) {
 					try {
+						// annotationsLayerToggle();
 						addSavedAnnotations( collection, layer );
 					} catch( e ) {
 						console.error( e );
@@ -732,8 +731,7 @@ function searchForAnnotations() {
 			.fail( function( e ) {
 				console.error( e );
 			} );
-		
-		// annotationsLayerToggle();
+
 		refreshLayer();
 		return false;
 	} );
@@ -742,13 +740,15 @@ function searchForAnnotations() {
 function bindWindowUnload() {
 	window.addEventListener( "beforeunload", function( event ) {
 		e.preventDefault();
-
-		var unsaved = tlv.layers[ tlv.currentLayer ].annotationsLayer.getSource().getFeatures().filter( function( feature ) {
-
-
-			return !feature.getProperties().saved;
-		} );
-
+		
+		var unsaved = tlv.layers[ tlv.currentLayer ]
+			.annotationsLayer
+			.getSource()
+			.getFeatures()
+			.filter( function( feature ) {
+				return !feature.getProperties().saved;
+			} );
+		
 		if( unsaved.length ) {
 			var message   = 'Important: You have unsaved changes!';
 			e.returnValue = message;
@@ -760,10 +760,9 @@ function bindWindowUnload() {
 var setupTimeLapseAnnotations = setupTimeLapse;
 setupTimeLapse                = function() {
 	setupTimeLapseAnnotations();
-	
-	setTimeout( function() {
-		searchForAnnotations();
-	}, 1 );
-	
+
+	searchForAnnotations();
+	annotationsLayerToggle();
+
 	bindWindowUnload();
 };
