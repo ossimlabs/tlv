@@ -165,7 +165,8 @@ function createMapControls() {
 		var button = document.createElement( "button" );
 		button.innerHTML = "<span class = 'glyphicon glyphicon-step-forward'></span>";
 		button.title = "Fast Forward";
-
+		button.id = "fastForward";
+		
 		var this_ = this;
 		$( button ).on( "click", function( event ) {
 			$( this ).blur();

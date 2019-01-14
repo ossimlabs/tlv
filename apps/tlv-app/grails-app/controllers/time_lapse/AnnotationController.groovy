@@ -38,6 +38,12 @@ class AnnotationController {
 		}
 	}
 
+	def imageAnnotations( String imgId ) {
+		params.max = 100
+		def results = Annotation.list( params ).findAll { annotation -> annotation.imageId == imgId }
+		render new JSON( results )
+	}
+
 	def saveAnnotation() {
 		render annotationService.save( request.JSON ) as JSON
 	}
