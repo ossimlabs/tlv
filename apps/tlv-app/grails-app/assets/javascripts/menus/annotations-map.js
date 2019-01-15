@@ -675,8 +675,10 @@ function generateRandomStyle( min, max ) {
 
 function searchForAnnotations() {
 	var usernames = {};
-
-	$.each( tlv.layers, function( index, layer ) {
+	
+	tlv.layers.forEach( function( layer ) {
+		console.log( layer );
+		
 		$.ajax( {
 			url: '/annotation/imageAnnotations' + '?' + $.param( { imgId: layer.imageId } )
 		} )
@@ -696,28 +698,28 @@ function searchForAnnotations() {
 						}
 					}
 				};
-
+				
 				data.forEach( function( annotation ) {
 					var geoJSON = {
 						id: 'annotation.' + annotation.id,
 						type: 'Feature',
 						properties: annotation
 					};
-
+					
 					if( !usernames.hasOwnProperty( annotation.username ) ) {
 						usernames[ annotation.username ] = generateRandomStyle( 140, 255 );
 					}
-
+					
 					geoJSON.properties.style = usernames[ annotation.username ];
-
+					
 					geoJSON.properties.geometry_ortho = annotation.geometryOrtho;
 					geoJSON.properties.geometry_pixel = annotation.geometryPixel;
 					geoJSON.properties.image_id       = annotation.imageId;
 					geoJSON.properties.saved          = true;
-
+					
 					collection.features.push( geoJSON );
 				} );
-
+				
 				layer.annotations = collection;
 				if( collection.features.length > 0 ) {
 					try {
@@ -731,8 +733,7 @@ function searchForAnnotations() {
 			.fail( function( e ) {
 				console.error( e );
 			} );
-
-		refreshLayer();
+		
 		return false;
 	} );
 }
@@ -760,9 +761,9 @@ function bindWindowUnload() {
 var setupTimeLapseAnnotations = setupTimeLapse;
 setupTimeLapse                = function() {
 	setupTimeLapseAnnotations();
-
+	
 	searchForAnnotations();
-	annotationsLayerToggle();
-
+	// annotationsLayerToggle();
+	
 	bindWindowUnload();
 };
