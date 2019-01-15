@@ -17,7 +17,7 @@ environments:
             driverClassName: org.postgresql.Driver
             username: postgres
             password: postgres
-            url: jdbc:postgresql://0.0.0.0:5432/tlv
+            url: jdbc:postgresql://postgis:5432/tlv
 
 ---
 defaultUsername: Anonymous
