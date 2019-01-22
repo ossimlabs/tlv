@@ -48,7 +48,7 @@ function applyAnnotationStyle() {
 
 	feature.setProperties({
 		confidence: $( "#confidenceSelect" ).val(),
-		ontology: $( "#typeInput" ).data( "ontology" ),
+		//ontology: $( "#typeInput" ).data( "ontology" ),
 		type: $( "#typeInput" ).val(),
 		username: $( "#usernameInput" ).val()
 	});
@@ -349,6 +349,12 @@ pageLoad = function() {
 				var layer = tlv.layers[ tlv.currentLayer ];
 				createAnnotationsLayer( layer );
 				layer.annotationsLayer.getSource().addFeature( feature );
+
+				var style = feature.getStyle();
+				style.getText().setText( data.type );
+				feature.setStyle( style );
+
+				$( "#annotationsDialog" ).modal( "hide" );
 			}
 			else {
 				setTimeout( function() { applyAnnotation( data ); }, 1000 );
@@ -383,20 +389,15 @@ function saveAnnotations() {
 
 	var values = [].concat.apply( [], features.map( function( feature ) {
 		var properties = feature.getProperties();
-		
-		feature.setProperties(
-			Object.assign( feature.getProperties(), {
-				saved: true
-			} )
-		);
-		
+
+
 		return [
 			properties.confidence,
 			properties.type,
 			properties.username
 		];
 	} ) );
-	
+
 	if ( values.indexOf( "" ) > -1 ) {
 		displayErrorDialog( "One or more of your annotation properties are blank." );
 		return;
@@ -408,85 +409,92 @@ function saveAnnotations() {
 		var geometryWriter = new ol.format.WKT();
 		$( "#dragoMetadata" ).html( "" );
 		$.each( features, function( index, feature ) {
-			var geometry = feature.getGeometry().clone();
+			if ( !feature.getProperties().saved ) {
+				var geometry = feature.getGeometry().clone();
 
-			var bbox = ol.proj.transformExtent( geometry.getExtent(), "EPSG:3857", "EPSG:4326" );
-			var center = ol.extent.getCenter( bbox );
-			var location = document.location;
-			var urlParams = {
-				bbox: bbox.join( "," ),
-				filter: "filename LIKE '" + layer.metadata.filename + "'",
-				location: center.join( "," )
-			};
-			var link = location.protocol + "//" + location.host + tlv.contextPath + "?" + $.param( urlParams )
+				var bbox = ol.proj.transformExtent( geometry.getExtent(), "EPSG:3857", "EPSG:4326" );
+				var center = ol.extent.getCenter( bbox );
+				var location = document.location;
+				var urlParams = {
+					bbox: bbox.join( "," ),
+					filter: "filename LIKE '" + layer.metadata.filename + "'",
+					location: center.join( "," )
+				};
+				var link = location.protocol + "//" + location.host + tlv.contextPath + "?" + $.param( urlParams )
 
-			if ( geometry.getType() == "Circle" ) {
-				geometry = new ol.geom.Polygon.fromCircle( geometry, 100 );
-			}
-			var properties = feature.getProperties();
-			if ( properties.ontology && properties.ontology.prefLabel ) {
-				properties.ontology.prefLabel = JSON.stringify( properties.ontology.prefLabel );
-			}
-			var data = {
-				confidence: properties.confidence,
-				filename: layer.metadata.filename,
-				geometryOrtho: geometryWriter.writeGeometry(
-					geometry.clone().transform( "EPSG:3857", "EPSG:4326" )
-				),
-				imageId: layer.imageId,
-				link: link,
-				ontology: properties.ontology,
-				type: properties.type,
-				username: properties.username
-			};
-
-
-			var coordinates;
- 			switch ( geometry.getType() ) {
-				case "LineString": coordinates = geometry.getCoordinates(); break;
-				case "Point": coordinates = [ geometry.getCoordinates() ]; break;
-				case "Polygon": coordinates = geometry.getCoordinates()[ 0 ]; break;
-			}
-			groundToImagePoints( coordinates, layer, function( pixels, layer ) {
-				geometry.setCoordinates([ pixels ]);
-				data.geometryPixel = geometryWriter.writeGeometry( geometry );
-
-				var callback = function( dted ) {
-					var dtedCellPattern = /Opened cell:\s*([^\s]*)/;
-					data.dted = dted.match( dtedCellPattern ) ? RegExp.$1 : "N/A";
-
-					$.ajax({
-						contentType: "application/json",
-						data: JSON.stringify( data ),
-						dataType: "json",
-						type: "post",
-						url: tlv.contextPath + "/annotation/saveAnnotation"
-					})
-					.always( function() {
-						hideLoadingDialog();
-					})
-					.done( function( json ) {
-						var pre = document.createElement( "pre" );
-						$( pre ).css( "background", "none" );
-						$( pre ).css( "color", "#c8c8c8" );
-						$( pre ).html( JSON.stringify( data, null, 2 ) );
-						$( "#dragoMetadata" ).prepend( pre );
-
-						if ( json.response ) {
-							displayData.push( data );
-							$( "#dragoMetadata" ).prepend( "Saved  " + displayData.length + " of " + features.length + "..." );
-						}
-						else {
-							$( "#dragoMetadata" ).prepend( "Not Saved ..." );
-						}
-						displayDialog( "dragoDialog" );
-					})
-					.fail( function() {});
+				if ( geometry.getType() == "Circle" ) {
+					geometry = new ol.geom.Polygon.fromCircle( geometry, 100 );
 				}
+				var properties = feature.getProperties();
+				//if ( properties.ontology && properties.ontology.prefLabel ) {
+				//	properties.ontology.prefLabel = JSON.stringify( properties.ontology.prefLabel );
+				//}
+				var data = {
+					confidence: properties.confidence,
+					filename: layer.metadata.filename,
+					geometryOrtho: geometryWriter.writeGeometry(
+						geometry.clone().transform( "EPSG:3857", "EPSG:4326" )
+					),
+					imageId: layer.imageId,
+					link: link,
+					//ontology: properties.ontology,
+					type: properties.type,
+					username: properties.username
+				};
 
-				var mapCenter = tlv.map.getView().getCenter();
-				getDtedHeight( mapCenter[ 1 ], mapCenter[ 0 ], callback );
-			});
+
+				var coordinates;
+ 				switch ( geometry.getType() ) {
+					case "LineString": coordinates = geometry.getCoordinates(); break;
+					case "Point": coordinates = [ geometry.getCoordinates() ]; break;
+					case "Polygon": coordinates = geometry.getCoordinates()[ 0 ]; break;
+				}
+				groundToImagePoints( coordinates, layer, function( pixels, layer ) {
+					geometry.setCoordinates([ pixels ]);
+					data.geometryPixel = geometryWriter.writeGeometry( geometry );
+
+					var callback = function( dted ) {
+						var dtedCellPattern = /Opened cell:\s*([^\s]*)/;
+						data.dted = dted.match( dtedCellPattern ) ? RegExp.$1 : "N/A";
+
+						$.ajax({
+							contentType: "application/json",
+							data: JSON.stringify( data ),
+							dataType: "json",
+							type: "post",
+							url: tlv.contextPath + "/annotation/saveAnnotation"
+						})
+						.always( function() {
+							hideLoadingDialog();
+						})
+						.done( function( json ) {
+							var pre = document.createElement( "pre" );
+							$( pre ).css( "background", "none" );
+							$( pre ).css( "color", "#c8c8c8" );
+							$( pre ).html( JSON.stringify( data, null, 2 ) );
+							$( "#dragoMetadata" ).prepend( pre );
+
+							if ( json.response ) {
+								feature.setProperties({ saved: true });
+
+								displayData.push( data );
+								$( "#dragoMetadata" ).prepend( "Saved  " + displayData.length + " of " + features.length + "..." );
+							}
+							else {
+								$( "#dragoMetadata" ).prepend( "Not Saved ..." );
+							}
+							displayDialog( "dragoDialog" );
+						})
+						.fail( function() {});
+					}
+
+					var mapCenter = tlv.map.getView().getCenter();
+					getDtedHeight( mapCenter[ 1 ], mapCenter[ 0 ], callback );
+				});
+			}
+			else {
+				$( "#dragoMetadata" ).prepend( "Already saved " + displayData.length + " of " + features.length + "..." );
+			}
 		});
 
 		$( "#dragoDialog" ).modal( "show" );
@@ -540,20 +548,20 @@ function searchForAnnotations() {
 }
 
 function bindWindowUnload() {
-	window.addEventListener( 'beforeunload', function( e ) {
+	window.addEventListener( "beforeunload", function( event ) {
 		e.preventDefault();
-		
-		var unsaved = tlv.layers[ tlv.currentLayer ]
-			.annotationsLayer
-			.getSource()
-			.getFeatures()
-			.filter( function( feature ) {
-				return !feature.getProperties().saved;
-			} );
-		
+
+		var unsaved = tlv.layers[ tlv.currentLayer ].annotationsLayer.getSource().getFeatures().filter( function( feature ) {
+
+
+			return !feature.getProperties().saved;
+		} );
+
 		if( unsaved.length ) {
 			var message = 'Important: You have unsaved changes!';
-			e.returnValue = message;
+			event.returnValue = message;
+
+
 			return message;
 		}
 	} );
@@ -563,6 +571,6 @@ var setupTimeLapseAnnotations = setupTimeLapse;
 setupTimeLapse = function() {
 	setupTimeLapseAnnotations();
 	//searchForAnnotations();
-	
+
 	bindWindowUnload();
 };
