@@ -26,12 +26,12 @@ class AnnotationController {
 		render results.findAll { it != null } as JSON
 	}
 
-	def index( Integer max ) {
+	def qualityControl( Integer max ) {
 		params.max = Math.min(max ?: 10, 10000)
 		def results = Annotation.list( params ).unique { annotation -> annotation.geometryOrtho }
 
 
-		respond results, model:[ annotationCount: Annotation.count() ]
+		respond results, model:[ annotationCount: Annotation.count() ], view: "quality-control.gsp"
 	}
 
 	def saveAnnotation() {
