@@ -11,7 +11,17 @@
     <body>
         <div class = "container-fluid">
             <g:render plugin = "omar-security-plugin" template = "/security-classification-header"/>
-            <h1>Annotation Quality Control</h1>
+            <h1 style = "text-align: center">Annotation Quality Control</h1>
+
+            <div class = "row" style = "text-align: center">
+                <ul class="pagination">
+                    <g:paginate total="${annotationCount ?: 0}" />
+                </ul>
+                <asset:script type = "text/javascript">
+                    $( '.pagination' ).find( 'a' ).wrap( '<li></li>' );
+                    $( '.pagination' ).find( 'span' ).wrap( '<li class = "active"></li>' );
+                </asset:script>
+            </div>
             <g:each in = "${ annotationList }">
                 <div class = "row">
                     <div class = "col-md-4">
@@ -45,9 +55,18 @@
                             <tr>
                                 <td style = "text-align: right">Validation:</td>
                                 <td>
-                                    <button class = "btn btn-success ">Approve</button>
-                                    <button class = "btn btn-info ">Pass</button>
-                                    <button class = "btn btn-danger">Decline</button>
+                                    <button class = "btn btn-success" onclick = 'javascript:updateValidation( ${ it.id }, "approved" )'>
+                                        <span class = "glyphicon glyphicon-ok"></span>
+                                        Approve
+                                    </button>
+                                    <button class = "btn btn-info" onclick = goToNextAnnotation()>
+                                        <span class = "glyphicon glyphicon-repeat"></span>
+                                        Skip
+                                    </button>
+                                    <button class = "btn btn-danger" onclick = 'javascript:updateValidation( ${ it.id }, "declined" )'>
+                                        <span class = "glyphicon glyphicon-remove"></span>
+                                        Decline
+                                    </button>
                                 </td>
                             </tr>
                         </table>
@@ -59,11 +78,28 @@
                     </div>
                 </div>
             </g:each>
-
-            <div class="pagination">
-                <g:paginate total="${annotationCount ?: 0}" />
-            </div>
         </div>
-    </body>
 
+        <asset:javascript src = "/annotation-quality-control-bundle.js"/>
+        <asset:script type = "text/javascript">
+            function goToNextAnnotation() {
+                var href = $( 'a:contains("Next")' )[ 0 ].href;
+                window.location.href = href;
+            }
+
+            function updateValidation( id, validation ) {
+                var params = {
+                    id: id,
+                    validation: validation
+                };
+                $.ajax({
+                    url: '${ request.contextPath }/annotation/updateValidation?' + $.param( params )
+                })
+                .always( function() {
+                    goToNextAnnotation();
+                } );
+            }
+        </asset:script>
+        <asset:deferredScripts/>
+    </body>
 </html>

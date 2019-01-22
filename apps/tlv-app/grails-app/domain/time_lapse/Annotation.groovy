@@ -14,26 +14,27 @@ class Annotation {
     //Ontology ontology
     String type
     String username
-    Boolean validated = false
+    String validation
 
 
     static constraints = {
         date()
-        validated()
+        validation()
         type()
         imageId()
         username()
         link()
 
-        geometryOrtho( unique: [ "imageId" ] )
+        geometryOrtho( unique: [ 'imageId' ] )
         //ontology( nullable: true )
+        validation( nullable: true )
     }
 
     static mapping = {
-        geometryOrtho index: "annotation_geometry_ortho_idx", type: "text"
-        geometryPixel index: "annotation_geometry_pixel_idx", type: "text"
-        link type: "text"
-        type index: "annotation_type_idx"
-        username index: "annotation_username_idx"
+        geometryOrtho index: 'annotation_geometry_ortho_idx', type: 'text'
+        geometryPixel index: 'annotation_geometry_pixel_idx', type: 'text'
+        link type: 'text'
+        type index: 'annotation_type_idx'
+        username index: 'annotation_username_idx'
     }
 }

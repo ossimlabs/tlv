@@ -26,12 +26,10 @@ class AnnotationController {
 		render results.findAll { it != null } as JSON
 	}
 
-	def qualityControl( Integer max ) {
-		params.max = Math.min(max ?: 10, 10000)
-		def results = Annotation.list( params ).unique { annotation -> annotation.geometryOrtho }
-
-
-		respond results, model:[ annotationCount: Annotation.count() ], view: "quality-control.gsp"
+	def qualityControl() {
+		def results = Annotation.findAllByValidationIsNull( params )
+		def count = Annotation.findAllByValidationIsNull().size()
+		respond results, model:[ annotationCount: count ], view: "quality-control.gsp"
 	}
 
 	def saveAnnotation() {
@@ -40,5 +38,10 @@ class AnnotationController {
 
 	def search() {
 		render annotationService.search( params.id ) as JSON
+	}
+
+	def updateValidation() {
+		annotationService.updateValidation( params )
+		render "Done"
 	}
 }

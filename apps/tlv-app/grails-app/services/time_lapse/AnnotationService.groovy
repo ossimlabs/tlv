@@ -25,8 +25,8 @@ class AnnotationService {
 	}
 
 	def save( json ) {
-		def ontology = json.ontology ? new Ontology( json.ontology ) : null
-		json.ontology = ontology
+		//def ontology = json.ontology ? new Ontology( json.ontology ) : null
+		//json.ontology = ontology
 
 		def annotation = new Annotation( json )
 		annotation.save()
@@ -50,5 +50,11 @@ class AnnotationService {
 
 	def search( id ) {
 		return Annotation.get( id )
+	}
+
+	def updateValidation( params ) {
+		def annotation = search( params.id )
+		annotation.validation = params.validation
+		annotation.save()
 	}
 }
