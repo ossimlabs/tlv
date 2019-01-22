@@ -10,8 +10,6 @@ class AnnotationController {
 
 	def annotationService
 
-	Writer expressionOut = getExpressionOut()
-
 	def export() {
 		def results = Annotation.list( params ).unique { annotation -> annotation.geometryOrtho }
 		def json = new JSON( results ).toString()
