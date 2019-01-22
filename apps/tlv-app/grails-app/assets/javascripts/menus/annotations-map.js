@@ -763,7 +763,6 @@ setupTimeLapse                = function() {
 	setupTimeLapseAnnotations();
 	
 	searchForAnnotations();
-	// annotationsLayerToggle();
 	
 	bindWindowUnload();
 };
