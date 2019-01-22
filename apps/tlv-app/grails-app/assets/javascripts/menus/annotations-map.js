@@ -611,7 +611,7 @@ function addSavedAnnotations( geoJsonSource, layer ) {
 }
 
 function generateRandomNumber( min, max ) {
-	return ~~( Math.random() * max ) + min;
+	return Math.floor(Math.random() * (max - min) ) + min;
 }
 
 function generateRandomColor( min, max, alpha ) {
