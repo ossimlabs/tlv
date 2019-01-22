@@ -11,7 +11,7 @@ class Annotation {
     String geometryPixel
     String imageId
     String link
-    Ontology ontology
+    //Ontology ontology
     String type
     String username
     Boolean validated = false
@@ -22,12 +22,11 @@ class Annotation {
         validated()
         type()
         imageId()
-        ontology()
         username()
         link()
 
-        geometryOrtho( unique: true )
-        ontology( nullable: true )
+        geometryOrtho( unique: [ "imageId" ] )
+        //ontology( nullable: true )
     }
 
     static mapping = {

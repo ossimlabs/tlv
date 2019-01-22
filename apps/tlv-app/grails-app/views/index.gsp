@@ -15,7 +15,9 @@
 	</head>
 	<body>
 		<div class = "container-fluid">
-			<g:render template = "/security-classification-header"/>
+			<g:if test = "${ tlvParams.hideSecurityBanner != 'true' }">
+				<g:render plugin = "omar-security-plugin" template = "/security-classification-header"/>
+			</g:if>
 			<g:render template = "/banner"/>
 			<g:render template = "/navigation-menu"/>
 			<g:render template = "/time-lapse"/>

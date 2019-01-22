@@ -12,4 +12,6 @@
 *= require menus/layers
 *= require image-properties
 *= require menus/view
+*=
+*= require security
 */
