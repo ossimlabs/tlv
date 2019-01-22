@@ -298,6 +298,7 @@ function createMapControls() {
 		element.appendChild( tiltInput );
 		element.appendChild( rotationInput );
 		element.className = "rotation-tilt-control ol-unselectable ol-control";
+		element.style = "background: none";
 
 
 		ol.control.Control.call( this, {
@@ -332,17 +333,30 @@ function createMapControls() {
 	};
 	ol.inherits( SummaryTableControl, ol.control.Control );
 
-	tlv.mapControls = [
-		acquisitionDateControl,
-		createMousePositionControl(),
+	tlv.mapControls = [];
+	if ( tlv.hideAcquisitionDate != "true" ) {
+		tlv.mapControls.push( acquisitionDateControl );
+	}
+	if ( tlv.hideMapCoordinates != "true" ) {
+		tlv.mapControls.push( createMousePositionControl() );
+	}
+	if ( tlv.hideImageId != "true" ) {
+		tlv.mapControls.push( imageIdControl );
+	}
+
+	tlv.mapControls.push(
 		fullScreenControl,
-		imageIdControl,
-		new RewindControl(),
-		new PlayStopControl(),
-		new RotationTiltControl(),
-		new FastForwardControl(),
-		new SummaryTableControl()
-	];
+		new RotationTiltControl()
+	);
+
+	if ( tlv.layers.length > 1 ) {
+		tlv.mapControls.push(
+			new RewindControl(),
+			new PlayStopControl(),
+			new FastForwardControl(),
+			new SummaryTableControl()
+		);
+	}
 }
 
 function createMapInteractions() {
