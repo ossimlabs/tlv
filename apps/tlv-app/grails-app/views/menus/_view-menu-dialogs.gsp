@@ -26,11 +26,6 @@
 						Open
 					</button>--%>
 
-					<label>Image Space:</label>
-					<button class = "btn btn-primary form-control" onclick = "openImageSpace(); $('#viewDialog').modal('hide');">
-						Open
-					</button>
-
 					<label>Maximum Extent:</label>
 					<button class = "btn btn-primary form-control" data-dismiss = "modal" onclick = zoomToMaximumExtent()>
 						Adjust Zoom
@@ -58,6 +53,18 @@
 						%>
 						<option ${ !terrainWireframeOption ? "selected" : "" } value = "off">OFF</option>
 						<option ${ terrainWireframeOption ? "selected" : "" } value = "on">ON</option>
+					</select>
+
+					<label>View Space:</label>
+					<select class = "form-control" id = "viewSpaceSelect" onchange = "viewSpaceToggle(); $('#viewDialog').modal('hide');">
+						<%
+							def viewSpaceOption = tlvParams.preferences.tlvPreference.viewSpace
+							if ( tlvParams.viewSpace ) {
+								viewSpaceOption = tlvParams.viewSpace
+							}
+						%>
+						<option ${ viewSpaceOption == "imageSpace" ? "selected" : "" } value = "imageSpace">Image Space</option>
+						<option ${ viewSpaceOption == "ortho" ? "selected" : "" } value = "ortho">Orthorectified</option>
 					</select>
 
 					<label>WMS Tiles</label>
