@@ -399,20 +399,34 @@ function updateAcquisitionDate() {
 	if (acquisitionDate) {
 		var timeToNextImage = getTimeToAdjacentImage( tlv.layers, tlv.currentLayer, "next" );
 		var timeToPreviousImage = getTimeToAdjacentImage( tlv.layers, tlv.currentLayer, "previous" );
-		$( "#acquisitionDateDiv" ).html(
+        $( '[id=acquisitionDateDiv]' ).html(
 			(timeToPreviousImage ? timeToPreviousImage + " <- " : "") +
 			acquisitionDate + (acquisitionDate != "N/A" ? "z" : "") +
 			(timeToNextImage ? " -> " + timeToNextImage : "")
 		);
 	}
-	else { $( "#acquisitionDateDiv" ).html( "N/A" ); }
+	else { $( '[id=acquisitionDateDiv]' ).html( "N/A" ); }
 }
 
 function updateImageId() {
 	var layer = tlv.layers[ tlv.currentLayer ];
 	var libraryLabel = tlv.libraries[ layer.library ].label;
     var text = Object.keys( tlv.libraries ).length > 1 ? libraryLabel + ": " : "";
-	$( "#imageIdDiv" ).html( text + layer.imageId );
+    $( '[id=imageIdDiv]').html( text + layer.imageId );
+}
+
+function updateMapSize() {
+	if ( tlv.map ) {
+		var windowHeight = $( window ).height();
+		var banners = $( ".security-classification" ).length;
+		var bannersHeight = banners * $( ".security-classification" ).height();
+		var tileLoadProgressBarHeight = $( "#tileLoadProgressBar" ).height();
+		var mapHeight = windowHeight
+			- bannersHeight
+			- tileLoadProgressBarHeight;
+		$( "#map" ).height( mapHeight );
+		tlv.map.updateSize();
+	}
 }
 
 function updateScreenText() {
