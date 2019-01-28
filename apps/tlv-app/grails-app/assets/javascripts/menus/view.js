@@ -25,6 +25,15 @@ function addDimension() {
 	else { $( "#dimensionsSelect" ).val( 2 ); }
 }
 
+var addLayerToTheMapView = addLayerToTheMap;
+addLayerToTheMap = function( layer ) {
+	addLayerToTheMapView( layer );
+
+	layer.imageSpaceMap.addLayer( layer.imageSpaceImageLayer );
+	layer.imageSpaceMap.addLayer( layer.imageSpaceTileLayer );
+	layer.imageSpaceMapLayer = layer.imageSpaceTileLayer;
+}
+
 function addSwipeListenerToMap() {
 	var firstLayer = tlv.currentLayer;
 	var secondLayer = tlv.currentLayer >= tlv.layers.length - 1 ? 0 : tlv.currentLayer + 1;
@@ -57,13 +66,19 @@ function addSwipeListenerToMap() {
 }
 
 var changeFrameView = changeFrame;
-	changeFrame = function( params ) {
+changeFrame = function( params ) {
+
+	$( '#' + tlv.layers[ tlv.currentLayer ].imageSpaceMap.getTarget() ).hide();
+
 	if ( $("#swipeSelect").val() == "on" ) {
 		turnOffSwipe();
 		changeFrameView( params );
 		turnOnSwipe();
 	}
 	else { changeFrameView( params ); }
+
+	$( '#' + tlv.layers[ tlv.currentLayer ].imageSpaceMap.getTarget() ).show();
+	tlv.layers[ tlv.currentLayer ].imageSpaceMap.updateSize();
 }
 
 function changeWmsLayerType() {
@@ -77,6 +92,9 @@ function changeWmsLayerType() {
 
 			layer.mapLayer = layer[ layerType ];
 			layer.mapLayer.getSource().updateParams({ STYLES: styles });
+
+			layer.imageSpaceMapLayer = layer[ 'imageSpace' + layerType.capitalize() ];
+			layer.imageSpaceMapLayer.getSource().updateParams({ STYLES: styles });
 		}
 	);
 
@@ -84,11 +102,97 @@ function changeWmsLayerType() {
 	changeFrame( "fastForward" );
 }
 
+var createLayersView = createLayers;
+createLayers = function( layer ) {
+	createLayersView( layer );
+
+	var imageHeight = layer.metadata.height;
+	var imageWidth = layer.metadata.width;
+	var imageExtent = [ 0, 0, imageWidth, imageHeight ];
+
+	layer.imageSpaceImageLayer = new ol.layer.Image({
+		extent: imageExtent,
+		source: layer.imageSpaceImageSource,
+		visible: false
+	});
+
+	layer.imageSpaceTileLayer = new ol.layer.Tile({
+		extent: imageExtent,
+		source: layer.imageSpaceTileSource,
+		visible: true
+	});
+}
+
+var createLayerSourcesView = createLayerSources;
+createLayerSources = function( layer ) {
+	createLayerSourcesView( layer );
+
+	var imageHeight = layer.metadata.height;
+	var fixY = function( image, src ) {
+		var regexBbox = /BBOX\=([^&^#]*)/;
+		var url = decodeURIComponent( src );
+		var bbox = url.match( regexBbox )[ 1 ].split( ',' ).map( Number );
+		var height = bbox[ 3 ] - bbox[ 1 ];
+		var requestCenter = ( bbox[ 3 ] + bbox[ 1 ] ) / 2;
+		var newCenter = imageHeight - requestCenter;
+		var minY = newCenter - height / 2;
+		var maxY = minY + height;
+		var bboxOut = bbox[ 0 ] + ',' + minY + ',' + bbox[ 2 ] + ',' + maxY;
+		var newUri = src.replace( regexBbox, 'BBOX=' + encodeURIComponent( bboxOut ) );
+		image.getImage().src = newUri;
+	};
+
+	var imageDatabaseId = layer.metadata.id;
+	layer.imageSpaceImageSource = new ol.source.ImageWMS({
+		imageLoadFunction: fixY,
+		params: {
+			LAYERS: "omar:raster_entry." + imageDatabaseId,
+			STYLES: layer.imageSource.getParams().STYLES,
+			VERSION: "1.3.0"
+		},
+		url: tlv.libraries[ layer.library ].wmsUrl
+	});
+
+	layer.imageSpaceTileSource = new ol.source.TileWMS({
+		params: {
+			LAYERS: "omar:raster_entry." + imageDatabaseId,
+			STYLES: layer.tileSource.getParams().STYLES,
+			VERSION: "1.3.0"
+		},
+		tileLoadFunction: fixY,
+		url: tlv.libraries[ layer.library ].wmsUrl
+	});
+}
+
 var createMapControlsView = createMapControls;
 createMapControls = function() {
 	createMapControlsView();
 
 	$.each( createSwipeControls(), function( i, x ) { tlv.mapControls.push( x ); } );
+
+	$.each( tlv.layers, function( index, layer ) {
+		var acquisitionDateDiv = document.createElement( "div" );
+		acquisitionDateDiv.className = "custom-map-control";
+		acquisitionDateDiv.id = "acquisitionDateDiv";
+		var acquisitionDateControl = new ol.control.Control({ element: acquisitionDateDiv });
+
+		layer.imageSpaceMap.addControl( acquisitionDateControl );
+
+		var imageIdOuterDiv = document.createElement( "div" );
+		imageIdOuterDiv.className = "custom-map-control";
+		imageIdOuterDiv.id = "imageIdOuterDiv";
+		imageIdOuterDiv.style = "background-color: rgba(0, 0, 0, 0); pointer-events: none;"
+
+		var imageIdDiv = document.createElement( "div" );
+		imageIdDiv.id = "imageIdDiv";
+		imageIdDiv.style = "background-color: rgba(0, 0, 0, 0.5); display: inline-block; text-align: left";
+		$( imageIdOuterDiv ).append( imageIdDiv );
+
+		var imageIdControl = new ol.control.Control({ element: imageIdOuterDiv });
+
+		layer.imageSpaceMap.addControl( imageIdControl );
+	} );
+
 }
 
 function createSwipeControls() {
@@ -104,6 +208,26 @@ function dimensionToggle() {
 	var dimensions = $( "#dimensionsSelect" ).val();
 	if ( dimensions == 2 ) { removeDimension(); }
 	else { addDimension(); }
+}
+
+function getNorthAndUpAngles() {
+	$.each( tlv.layers, function( index, layer ) {
+		var metadata = layer.metadata;
+		if ( typeof metadata.upAngle != 'number' || typeof metadata.northAngle != 'number' ) {
+			var params = {
+				entry: layer.metadata.entry_id,
+				filename: layer.metadata.filename
+			};
+			$.ajax({
+				data: $.param( params ),
+				url: tlv.libraries[ layer.library ].omsUrl + '/getAngles'
+			})
+			.done( function( data ) {
+				metadata.northAngle = data.northAngle;
+				metadata.upAngle = data.upAngle;
+			} );
+		}
+	} );
 }
 
 function initializeSwipeSlider() {
@@ -147,40 +271,6 @@ function openGeometries() {
 		});
 		tlv.map.renderSync();
 	});
-}
-
-function openImageSpace() {
-	var layer = tlv.layers[ tlv.currentLayer ];
-	var library = tlv.libraries[ layer.library ];
-	var metadata = layer.metadata;
-	var styles = JSON.parse( layer.mapLayer.getSource().getParams().STYLES );
-
-	var url = library.imageSpaceUrl;
-	var params = {
-		bands: styles.bands,
-		brightness: styles.brightness,
-		contrast: styles.contrast,
-		entry_id: metadata.entry_id,
-		filename: metadata.filename,
-		height: metadata.height,
-		histCenterTile: styles.hist_center,
-		histOp: styles.hist_op,
-		imageId: metadata.id,
-		imageSpaceRequestUrl: tlv.baseUrl + "/omar-oms",
-		imageRenderType: "tile",
-		mensaRequestUrl: tlv.baseUrl + "/omar-mensa",
-		numOfBands: metadata.number_of_bands,
-		numResLevels: metadata.number_of_res_levels,
-		resamplerFilter: styles.resampler_filter,
-		sharpenMode: styles.sharpen_mode,
-		showModalSplash: false,
-		uiRequestUrl: tlv.baseUrl + "/omar-ui",
-		wfsRequestUrl: library.wfsUrl,
-		width: metadata.width,
-		wmsRequestUrl: tlv.baseUrl + "/omar-wms"
-	};
-
-	window.open( url + "?" + $.param( params ) );
 }
 
 function precomposeSwipeLeft( event ) {
@@ -282,14 +372,58 @@ rightClick = function( event ) {
 	}
 }
 
-function swipeToggle() {
-	var state = $( "#swipeSelect" ).val();
-	if (state == "on") { turnOnSwipe(); }
-	else { turnOffSwipe(); }
+function rotateImageSpaceNorthArrow( radians, layer ) {
+	var transform = "rotate(" + radians + "rad)";
+	var arrow = $( '#' + layer.imageSpaceMap.getTarget() ).find( '.ol-compass' );
+	arrow.css( 'msTransform', transform );
+	arrow.css( 'transform', transform );
+	arrow.css( 'webkitTransform', transform );
+}
+
+function setupImageSpaceMaps() {
+    $( '#imageSpaceMaps' ).html( '' );
+
+    $.each( tlv.layers, function( index, layer ) {
+        var div = document.createElement( 'div' );
+        div.className = 'map';
+        div.id = 'imageSpaceMap' + index;
+        div.style = 'display: none; height: 100%';
+        $( '#imageSpaceMaps' ).append( div );
+
+        var imageDatabaseId = layer.metadata.id;
+        var imageHeight = layer.metadata.height;
+        var imageWidth = layer.metadata.width;
+        var imageExtent = [ 0, 0, imageWidth, imageHeight ];
+
+		if ( layer.imageSpaceMap ) { layer.imageSpaceMap.setTarget( null ); }
+        layer.imageSpaceMap = new ol.Map({
+			controls: ol.control.defaults(),
+            target: 'imageSpaceMap' + index,
+            view: new ol.View({
+                center: [ imageWidth / 2, imageHeight / 2 ],
+                extent: imageExtent,
+                //maxResolution: Math.pow( layer.metadata.number_of_res_levels - 1, 2 ),
+                //minResolution: Math.pow( 2, -6 ),
+                projection: new ol.proj.Projection({
+                    code: 'EPSG:99999',
+                    extent: imageExtent,
+                    units: 'm'
+                }),
+                zoom: 1
+            })
+        });
+
+		layer.imageSpaceMap.getView().on( 'change:rotation', function( event ) {
+			var rotation = event.target.get( event.key ) - ( layer.metadata.northAngle || 0 );
+			rotateImageSpaceNorthArrow( rotation, layer );
+		} );
+    } );
 }
 
 var setupTimeLapseView = setupTimeLapse;
 setupTimeLapse = function() {
+	setupImageSpaceMaps();
+
 	setupTimeLapseView();
 
 	initializeSwipeSlider();
@@ -325,6 +459,26 @@ function swipeSliderMove( event ) {
 	}
 }
 
+function swipeToggle() {
+	var state = $( "#swipeSelect" ).val();
+	if (state == "on") { turnOnSwipe(); }
+	else { turnOffSwipe(); }
+}
+
+function switchToOrthoSpace() {
+    $( '#imageSpaceMaps' ).hide();
+	$( '#map' ).show();
+}
+
+function switchToImageSpace() {
+	getNorthAndUpAngles();
+
+    $( '#map' ).hide();
+    $( '#imageSpaceMaps' ).show();
+	$( '#' + tlv.layers[ tlv.currentLayer ].imageSpaceMap.getTarget() ).show();
+	tlv.layers[ tlv.currentLayer ].imageSpaceMap.updateSize();
+}
+
 function terrainWireframeToggle() {
 	var state = $( "#terrainWireframeSelect" ).val();
 	if ( state == "on" ) {
@@ -353,6 +507,20 @@ function turnOnSwipe() {
 	updateScreenText();
 }
 
+var updateMapSizeView = updateMapSize;
+updateMapSize = function() {
+	updateMapSizeView();
+
+	if ( tlv.map ) {
+		var mapSize = tlv.map.getSize();
+		$( '#imageSpaceMaps' ).height( mapSize[ 1 ] );
+		$.each( tlv.layers, function( index, layer ) {
+			layer.imageSpaceMap.setSize( mapSize );
+			layer.imageSpaceMap.updateSize();
+		} );
+	}
+}
+
 var updateScreenTextView = updateScreenText;
 updateScreenText = function() {
 	updateScreenTextView();
@@ -368,6 +536,16 @@ updateScreenText = function() {
 				$( "#" + key + "Div" ).html( libraryLabel + imageId + acquisitionDate );
 			}
 		);
+	}
+}
+
+function viewSpaceToggle() {
+	var viewSpace = $( '#viewSpaceSelect' ).val();
+	if ( viewSpace == "imageSpace" ) {
+		switchToImageSpace();
+	}
+	else if ( viewSpace == "ortho" ) {
+		switchToOrthoSpace();
 	}
 }
 
