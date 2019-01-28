@@ -4,4 +4,5 @@
 <div class = "row">
 	<g:render template = "/menus/image-properties"/>
 	<div class = "map" id = "map"></div>
+	<div id = "imageSpaceMaps" style = "display: none;"></div>
 </div>
