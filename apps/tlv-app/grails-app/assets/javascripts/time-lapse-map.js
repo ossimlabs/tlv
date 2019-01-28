@@ -383,9 +383,6 @@ function createMapInteractions() {
         })
         tlv.map.addLayer( layer );
         tlv.map.getView().fit( source.getExtent() );
-		$.each(event.features, function(index, feature) {
-		console.dir(feature.getStyle());
-		});
 	});
 
 	var dragPanInteraction = new ol.interaction.DragPan({
@@ -465,7 +462,7 @@ function rightClick( event ) {
 
 function setupMap() {
 	// if a map already exists, reset it and start from scratch
-	if (tlv.map) { tlv.map.setTarget(null); }
+	if (tlv.map) { tlv.map.setTarget( null ); }
 
 	createMapControls();
 	createMapInteractions();
@@ -558,24 +555,6 @@ function theTileHasStartedLoadingMap(layerSource) {
 			}
 		}
 	);
-}
-
-function updateMapSize() {
-	if ( tlv.map ) {
-		var windowHeight = $( window ).height();
-		var banners = $( ".security-classification" ).length;
-		var bannersHeight = banners * $( ".security-classification" ).height();
-		var navigationMenuHeight = $( "#navigationMenu" ).parent().height();
-		var imageInfoHeight = $( "#navigationMenu" ).parent().next().height();
-		var tileLoadProgressBarHeight = $( "#tileLoadProgressBar" ).height();
-		var mapHeight = windowHeight
-			- bannersHeight
-			- navigationMenuHeight
-			- imageInfoHeight
-			- tileLoadProgressBarHeight;
-		$( "#map" ).height( mapHeight );
-		tlv.map.updateSize();
-	}
 }
 
 function updateTileLoadingProgressBar() {
