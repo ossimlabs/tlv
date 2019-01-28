@@ -64,6 +64,7 @@ pageLoad = function() {
 		var opacity = event.value.newValue / 100;
 		$( "#opacityValueSpan" ).html( ( opacity ).toFixed( 2 ) );
 		tlv.layers[ tlv.currentLayer ].mapLayer.setOpacity( opacity );
+		tlv.layers[ tlv.currentLayer ].imageSpaceMapLayer.setOpacity( opacity );
 	});
 	opacitySlider.on("slideStop", function( event ) { updateImageProperties( false ); });
 }
@@ -73,6 +74,9 @@ function resetImageProperties() {
 		getDefaultImageProperties()
 	);
 	tlv.layers[ tlv.currentLayer ].mapLayer.getSource().updateParams({
+		STYLES: styles
+	});
+	tlv.layers[ tlv.currentLayer ].imageSpaceMapLayer.getSource().updateParams({
 		STYLES: styles
 	});
 	syncImageProperties();
@@ -178,5 +182,6 @@ function updateImageProperties( refreshMap ) {
 		});
 
 		layer.mapLayer.getSource().updateParams({ STYLES: styles });
+		layer.imageSpaceMapLayer.getSource().updateParams({ STYLES: styles });
 	}
 }
