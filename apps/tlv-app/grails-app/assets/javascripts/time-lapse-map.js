@@ -146,11 +146,20 @@ function createLayerSources( layer ) {
 		params: params,
 		url: tlv.libraries[ layer.library ].wmsUrl
 	});
+	if ( tlv.libraries[ layer.library ].wmsUrlProxy ) {
+		layer.imageSource.updateParams({ redirectUrl: tlv.libraries[ layer.library ].wmsUrlProxy });
+		layer.imageSource.setUrl( tlv.contextPath + '/home/dummyRedirect' );
+	}
 
 	layer.tileSource = new ol.source.TileWMS({
 		params: params,
 		url: tlv.libraries[ layer.library ].wmsUrl
 	});
+	if ( tlv.libraries[ layer.library ].wmsUrlProxy ) {
+		layer.tileSource.updateParams({ redirectUrl: tlv.libraries[ layer.library ].wmsUrlProxy });
+		layer.tileSource.setUrl( tlv.contextPath + '/home/dummyRedirect' );
+	}
+
 	layer.tileSource.on("tileloadstart", function( event ) { theTileHasStartedLoadingMap( this ); });
 	layer.tileSource.on("tileloadend", function( event ) { theTileHasFinishedLoadingMap( this ); });
 }
