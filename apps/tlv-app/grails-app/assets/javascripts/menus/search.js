@@ -40,40 +40,48 @@ function beginSearch() {
 
 				if ( tlv.filter ) { queryParams.filter = tlv.filter; }
 				else {
-					var filter = "";
+					var filter = '';
 
-					var startDate = searchParams.startYear + "-" + searchParams.startMonth + "-" + searchParams.startDay + "T" + searchParams.startHour + ":" + searchParams.startMinute + ":" + searchParams.startSecond + ".000+0000"
-					var endDate = searchParams.endYear + "-" + searchParams.endMonth + "-" + searchParams.endDay +
-						"T" + searchParams.endHour + ":" + searchParams.endMinute + ":" + searchParams.endSecond + ".999+0000"
+					var startDate = "'" + searchParams.startYear + "-" + searchParams.startMonth + "-" + searchParams.startDay + "T" + searchParams.startHour + ":" + searchParams.startMinute + ":" + searchParams.startSecond + ".000'";
+					var endDate = "'" + searchParams.endYear + "-" + searchParams.endMonth + "-" + searchParams.endDay +
+						"T" + searchParams.endHour + ":" + searchParams.endMinute + ":" + searchParams.endSecond + ".999'";
 					filter += "((acquisition_date >= " + startDate + " AND acquisition_date <= " + endDate + ") OR acquisition_date IS NULL)";
 
-					filter += " AND ";
-					filter += "(cloud_cover <= " + searchParams.maxCloudCover + " OR cloud_cover IS NULL)";
+					filter += ' AND ';
+					filter += '(cloud_cover <= ' + searchParams.maxCloudCover + ' OR cloud_cover IS NULL)';
 
-					filter += " AND ";
-					filter += "(entry_id = 0)";
+					//filter += ' AND ';
+					//filter += '(entry_id = 0)';
 
-					if ( searchParams.fsgs.length > 0 ) {
-						filter += " AND ";
+					if ( searchParams.fsgs.length ) {
+						filter += ' AND ';
 						filter += "(filename LIKE '%" + searchParams.fsgs.join( "%' OR filename LIKE'%" ) + "%')";
 					}
 
-					filter += " AND ";
-					filter += "INTERSECTS(ground_geom,POINT(" + searchParams.location.join(" ") + "))";
+					filter += ' AND ';
+					filter += 'INTERSECTS(ground_geom,POINT(' + searchParams.location.join(' ') + '))';
 
-					filter += " AND ";
-					filter += "(niirs >= " + searchParams.minNiirs + " OR niirs IS NULL)";
+					filter += ' AND ';
+					filter += '(niirs >= ' + searchParams.minNiirs + ' OR niirs IS NULL)';
 
-					if ( searchParams.sensors.length > 0 ) {
-						filter += " AND ";
+					if ( searchParams.sensors.length ) {
+						filter += ' AND ';
 						filter += "(sensor_id LIKE '" + searchParams.sensors.join( "' OR sensor_id LIKE'" ) + "')";
 					}
 
 					queryParams.filter = filter;
 				}
+
+				var data = $.param( queryParams );
+				var url = tlv.libraries[ library ].wfsUrl;
+				if ( tlv.libraries[ library ].wfsUrlProxy ) {
+					data = "url=" + encodeURIComponent( tlv.libraries[ library ].wfsUrlProxy + "?" + $.param( queryParams ) );
+					url = tlv.contextPath + "/home/proxy";
+				}
 				$.ajax({
+					data: data,
 					dataType: "json",
-					url: tlv.libraries[ library ].wfsUrl + "?" + $.param( queryParams )
+					url: url
 				})
 				.done( function( data ) {
 					var images = [];
@@ -145,7 +153,7 @@ function getDistinctSensors() {
 
 		var sensorSelect = $( "#searchSensorSelect" );
 		sensorSelect.html( "" );
-		$.each( sensors.flat().unique().sort(), function( index, sensor ) {
+		$.each( [].concat.apply( [], sensors ).unique().sort(), function( index, sensor ) {
 			sensorSelect.append( "<option value = '" + sensor + "'>" + sensor.toUpperCase() + "</option>" );
 		});
 	}
