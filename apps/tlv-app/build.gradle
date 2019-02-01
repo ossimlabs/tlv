@@ -96,19 +96,20 @@ dependencies {
     testRuntime "org.seleniumhq.selenium:selenium-htmlunit-driver:${seleniumHtmlUnitDriverV}"
     testRuntime "net.sourceforge.htmlunit:htmlunit:${htmlUnitV}"
 
-    compile "org.grails.plugins:scaffolding"
-    compile "org.webjars:bootstrap:3.3.5"
-    compile "org.webjars.bower:typeahead.js:0.11.1"
-    compile "org.webjars.bower:typeahead.js-bootstrap-css:1.2.1"
-    compile "org.webjars:font-awesome:4.4.0"
-    compile "org.webjars:jquery:2.2.0"
-    compile "org.webjars:momentjs:2.11.0"
-    compile "org.webjars.npm:cesium:1.43.0"
+    compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1'
+    compile 'org.grails.plugins:scaffolding'
+    compile 'org.webjars:bootstrap:3.3.5'
+    compile 'org.webjars.bower:typeahead.js:0.11.1'
+    compile 'org.webjars.bower:typeahead.js-bootstrap-css:1.2.1'
+    compile 'org.webjars:font-awesome:4.4.0'
+    compile 'org.webjars:jquery:2.2.0'
+    compile 'org.webjars:momentjs:2.11.0'
+    compile 'org.webjars.npm:cesium:1.43.0'
 
-    compile "org.springframework.cloud:spring-cloud-starter-config"
-    compile "org.springframework.cloud:spring-cloud-starter-eureka"
+    compile 'org.springframework.cloud:spring-cloud-starter-config'
+    compile 'org.springframework.cloud:spring-cloud-starter-eureka'
 
-    compile "org.postgresql:postgresql:42.2.1"
+    compile 'org.postgresql:postgresql:42.2.1'
 }
 
 task wrapper(type: Wrapper) {
