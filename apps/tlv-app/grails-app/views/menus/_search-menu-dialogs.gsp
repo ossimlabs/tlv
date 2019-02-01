@@ -10,7 +10,7 @@
 							<label>Location</label>
 							<div class = "input-group">
 								<%
-									def placeholder = [ "Coordinate" ]
+									def placeholder = [ "Coordinate", "Image ID" ]
 									if ( params.beLookup?.url ) { placeholder = placeholder.plus( 0, "BE" ) }
 									if ( params.geocoderUrl ) { placeholder.push( "Placename" ) }
 								%>

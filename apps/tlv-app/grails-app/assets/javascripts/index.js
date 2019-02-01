@@ -47,63 +47,38 @@ function convertGeospatialCoordinateFormat(inputString, callbackFunction) {
 	}
 	else if ( inputString.match( bePattern ) && tlv.beLookup.url && callbackFunction ) {
 		displayLoadingDialog( "We're checking our maps for that location... BRB!" );
-		var queryParams = {
-			filter: tlv.beLookup.columnName + " = '" + inputString + "'",
-			maxFeatures: 1,
-			outputFormat: "JSON",
-			request: "GetFeature",
-			service: "WFS",
-			typeName: tlv.beLookup.typeName,
-			version: "1.1.0"
-		};
-
-		$.ajax({
-			dataType: "json",
-			error: function( jqXhr, textStatus, errorThrown ) {
-				hideLoadingDialog();
-			},
-			success: function( data ) {
-				hideLoadingDialog();
-
-				if ( data.features.length > 0 ) {
-					var point = data.features[ 0 ].geometry.coordinates;
-					callbackFunction( point );
-				}
-				else { displayErrorDialog( "We couldn't find that BE. :(" ); }
-			},
-			url: tlv.beLookup.url + "?" + $.param( queryParams )
-		});
+        beSearch( inputString )
+        .always( function() {
+            hideLoadingDialog();
+        } )
+        .done( function( data ) {
+			if ( data.features.length > 0 ) {
+				var point = data.features[ 0 ].geometry.coordinates;
+				callbackFunction( point );
+			}
+			else { displayErrorDialog( "We couldn't find that BE. :(" ); }
+		} );
 	}
 	else {
 		if ( callbackFunction && tlv.geocoderUrl ) {
-			displayLoadingDialog();
-
-			var queryParams = {
-				autocomplete: true,
-				autocompleteBias: "BALANCED",
-				maxInterpretations: 1,
-				query: inputString,
-				responseIncludes: "WKT_GEOMETRY_SIMPLIFIED"
-			};
-
 			displayLoadingDialog( "We're checking our maps for that location... BRB!" );
-			$.ajax({
-				dataType: "json",
-				url: tlv.geocoderUrl + "?" + $.param( queryParams )
-			})
+            placenameSearch( inputString )
 			.always( function() {
 				hideLoadingDialog();
 			})
 			.done( function( data ) {
+                var point;
 				if ( data.interpretations.length > 0 ) {
 					var center = data.interpretations[ 0 ].feature.geometry.center;
-					var point = [ center.lng, center.lat ];
-					callbackFunction( point );
+					point = [ center.lng, center.lat ];
+
 				}
-				else { displayErrorDialog( "We couldn't find that location. :(" ); }
-			});
+                callbackFunction( point );
+			} );
  		}
-		else { return false; }
+		else {
+            return false;
+        }
 	}
 }
 
@@ -340,44 +315,6 @@ function initializeLoadingDialog() {
 	$("#loadingDialog").modal({
 		keyboard: false,
 		show: false
-	});
-}
-
-function placenameSearch( inputElement ) {
-	var queryParams = {
-		autocomplete: true,
-		autocompleteBias: "BALANCED",
-		maxInterpretations: 10,
-		query: inputElement.val(),
-		responseIncludes: "WKT_GEOMETRY_SIMPLIFIED"
-	};
-
-	//if ( tlv.placenameSearchAjax ) { tlv.placenameSearchAjax.abort(); console.dir("abort"); }
-	tlv.placenameSearchAjax = $.ajax({
-		url: tlv.geocoderUrl + "?" + $.param( queryParams )
-	})
-	.always( function() {
-		inputElement.typeahead( "destroy" );
-	})
-	.done( function( data ) {
-		var places = data.interpretations.map( function( place ) {
-			return { displayName: place.feature.displayName };
-		});
-
-		inputElement.typeahead( null, {
-			display: function( suggestion ) {
-				inputElement.focus();
-				return suggestion.displayName;
-			},
-			source: function( query, sync ) {
-				inputElement.focus();
-				return sync( places );
-			}
-		});
-		inputElement.focus();
-	})
-	.fail( function() {
-		inputElement.focus();
 	});
 }
 
