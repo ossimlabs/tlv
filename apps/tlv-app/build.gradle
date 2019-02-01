@@ -59,13 +59,8 @@ dependencyManagement {
     applyMavenExclusions false
 }
 
-grails {
-    plugins {
-        compile project(':omar-security-plugin')
-    }
-}
-
 dependencies {
+    compile "io.ossim.omar.plugins:omar-security-plugin:+"
 
     compile "de.codecentric:spring-boot-admin-starter-client:${springBootAdminStarterClientV}"
 
