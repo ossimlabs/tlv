@@ -8,11 +8,8 @@ buildscript {
         apply from: System.env.OMAR_COMMON_PROPERTIES
     }
     repositories {
+        mavenLocal()
         maven { url "${ossimMavenProxy}" }
-        if( !System.env.WWW_CONNECTED || Boolean.parseBoolean( System.env.WWW_CONNECTED ) ) {
-            mavenLocal()
-            maven { url "https://repo.grails.org/grails/core" }
-        }
     }
     dependencies {
         classpath "org.grails:grails-gradle-plugin:$grailsVersion"
@@ -44,11 +41,8 @@ ext {
 }
 
 repositories {
+    mavenLocal()
     maven { url "${ossimMavenProxy}" }
-    if( !System.env.WWW_CONNECTED || Boolean.parseBoolean( System.env.WWW_CONNECTED ) ) {
-        mavenLocal()
-        maven { url "https://repo.grails.org/grails/core" }
-    }
 }
 
 dependencyManagement {
