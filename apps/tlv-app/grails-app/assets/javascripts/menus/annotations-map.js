@@ -549,7 +549,7 @@ function searchForAnnotations() {
 
 function bindWindowUnload() {
 	window.addEventListener( "beforeunload", function( event ) {
-		e.preventDefault();
+		event.preventDefault();
 
 		var unsaved = tlv.layers[ tlv.currentLayer ].annotationsLayer.getSource().getFeatures().filter( function( feature ) {
 
