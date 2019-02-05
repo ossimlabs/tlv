@@ -7,14 +7,14 @@ changeFrame = function( params ) {
 
 function getDefaultImageProperties() {
 	return {
-		bands: "default",
-		brightness: 0,
-		contrast: 1,
+		bands: tlv.preferences.bands || "default",
+		brightness: tlv.preferences.brightness || 0,
+		contrast: tlv.preferences.contrast || 1,
 		hist_center: false,
-		hist_op: "auto-minmax",
-		nullPixelFlip: true,
-		resampler_filter: "bilinear",
-		sharpen_mode: "none"
+		hist_op: tlv.preferences.dynamicRangeAdjustment || "auto-minmax",
+		nullPixelFlip: tlv.preferences.nullPixelFlip || true,
+		resampler_filter: tlv.preferences.interpolation || "bilinear",
+		sharpen_mode: tlv.preferences.sharpenMode || "none"
 	};
 }
 
