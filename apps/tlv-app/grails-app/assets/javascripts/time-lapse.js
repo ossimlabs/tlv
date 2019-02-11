@@ -19,51 +19,55 @@ function buildSummaryTable() {
 
     $.each(
         tlv.layers,
-        function( i, x ) {
+        function( index, layer ) {
             row = table.insertRow( table.rows.length );
+            $( row ).click( function() {
+                changeFrame( index );
+            } );
+
             cell = row.insertCell( row.cells.length );
-            $( cell ).append( i + 1 );
+            $( cell ).append( index + 1 );
 
             cell = row.insertCell( row.cells.length );
             $( cell ).css( "white-space", "nowrap" );
             var downButton = "<span class = 'glyphicon glyphicon-arrow-down' title = 'Move Down'></span>";
             var upButton = "<span class = 'glyphicon glyphicon-arrow-up' title = 'Move Up'></span>";
 
-            if ( i == 0 ) {
-                $( cell ).append( "<a href = javascript:moveLayerDownInStack(" + i + ");buildSummaryTable();>" + downButton + "</a>" );
+            if ( index == 0 ) {
+                $( cell ).append( "<a href = javascript:moveLayerDownInStack(" + index + ");buildSummaryTable();>" + downButton + "</a>" );
             }
-            else if ( i == tlv.layers.length - 1 ) { $( cell ).append( "<a href = javascript:moveLayerUpInStack(" + i + ");buildSummaryTable();>" + upButton + "</a>" ); }
+            else if ( index == tlv.layers.length - 1 ) { $( cell ).append( "<a href = javascript:moveLayerUpInStack(" + index + ");buildSummaryTable();>" + upButton + "</a>" ); }
             else {
-                $( cell ).append( "<a href = javascript:moveLayerUpInStack(" + i + ");buildSummaryTable();>" + upButton + "</a>" );
-                $( cell ).append( "<a href = javascript:moveLayerDownInStack(" + i + ");buildSummaryTable();>" + downButton + "</a>" );
+                $( cell ).append( "<a href = javascript:moveLayerUpInStack(" + index + ");buildSummaryTable();>" + upButton + "</a>" );
+                $( cell ).append( "<a href = javascript:moveLayerDownInStack(" + index + ");buildSummaryTable();>" + downButton + "</a>" );
             }
 
             cell = row.insertCell( row.cells.length );
-            $( cell ).append( x.imageId );
+            $( cell ).append( layer.imageId );
 
             cell = row.insertCell( row.cells.length );
-            $( cell ).append( x.acquisitionDate + "z" );
+            $( cell ).append( layer.acquisitionDate + "z" );
 
             cell = row.insertCell( row.cells.length );
-            $( cell ).append( x.metadata.niirs );
+            $( cell ).append( layer.metadata.niirs );
 
             cell = row.insertCell( row.cells.length );
-            $( cell ).append( x.metadata.azimuth_angle ? x.metadata.azimuth_angle.toFixed( 2 ) : "" );
+            $( cell ).append( layer.metadata.azimuth_angle ? layer.metadata.azimuth_angle.toFixed( 2 ) : '' );
 
             cell = row.insertCell( row.cells.length );
-            $( cell ).append( x.metadata.grazing_angle ? x.metadata.grazing_angle.toFixed( 2 ) : "" );
+            $( cell ).append( layer.metadata.grazing_angle ? layer.metadata.grazing_angle.toFixed( 2 ) : '' );
 
             cell = row.insertCell( row.cells.length );
-            $( cell ).append( x.metadata.sun_azimuth ? x.metadata.sun_azimuth.toFixed( 2 ) : "" );
+            $( cell ).append( layer.metadata.sun_azimuth ? layer.metadata.sun_azimuth.toFixed( 2 ) : '' );
 
             cell = row.insertCell( row.cells.length );
-            $( cell ).append( x.metadata.sun_elevation ? x.metadata.sun_elevation.toFixed( 2 ) : "" );
+            $( cell ).append( layer.metadata.sun_elevation ? layer.metadata.sun_elevation.toFixed( 2 ) : '' );
 
             cell = row.insertCell( row.cells.length );
-            $( cell ).append( x.metadata.entry_id );
+            $( cell ).append( layer.metadata.entry_id );
 
             cell = row.insertCell( row.cells.length );
-            $( cell ).append( x.library );
+            $( cell ).append( layer.library );
 
             cell = row.insertCell( row.cells.length );
             var span = document.createElement( "span" );
@@ -72,7 +76,7 @@ function buildSummaryTable() {
             var deleteButton = document.createElement( "button" );
             deleteButton.className = "btn btn-primary btn-xs";
             deleteButton.onclick = function() {
-                deleteFrame( i );
+                deleteFrame( index );
                 buildSummaryTable();
             };
             deleteButton.appendChild( span );
@@ -437,5 +441,5 @@ function updateScreenText() {
 
 function updateTlvLayerCount() {
 	var currentCount = tlv.currentLayer + 1;
-	$("#tlvLayerCountSpan").html(currentCount + "/" + tlv.layers.length);
+	$( '[id=tlvLayerCountSpan' ).html( currentCount + '/' + tlv.layers.length );
 }
