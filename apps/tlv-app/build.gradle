@@ -8,11 +8,8 @@ buildscript {
         apply from: System.env.OMAR_COMMON_PROPERTIES
     }
     repositories {
+        mavenLocal()
         maven { url "${ossimMavenProxy}" }
-        if( !System.env.WWW_CONNECTED || Boolean.parseBoolean( System.env.WWW_CONNECTED ) ) {
-            mavenLocal()
-            maven { url "https://repo.grails.org/grails/core" }
-        }
     }
     dependencies {
         classpath "org.grails:grails-gradle-plugin:$grailsVersion"
@@ -44,11 +41,8 @@ ext {
 }
 
 repositories {
+    mavenLocal()
     maven { url "${ossimMavenProxy}" }
-    if( !System.env.WWW_CONNECTED || Boolean.parseBoolean( System.env.WWW_CONNECTED ) ) {
-        mavenLocal()
-        maven { url "https://repo.grails.org/grails/core" }
-    }
 }
 
 dependencyManagement {
@@ -59,13 +53,8 @@ dependencyManagement {
     applyMavenExclusions false
 }
 
-grails {
-    plugins {
-        compile project(':omar-security-plugin')
-    }
-}
-
 dependencies {
+    compile "io.ossim.omar.plugins:omar-security-plugin:${latestGradleIdentifier}"
 
     compile "de.codecentric:spring-boot-admin-starter-client:${springBootAdminStarterClientV}"
 
@@ -97,7 +86,7 @@ dependencies {
     runtime "com.bertramlabs.plugins:asset-pipeline-grails:${assetPipelineGrailsV}"
     testCompile "org.grails:grails-gorm-testing-support"
     testCompile "org.grails.plugins:geb"
-    testCompile "org.grails:grails-web-testing-support"
+    testCompile "org.grails:grails-web-testing-support:3.2.7"
     testRuntime "org.seleniumhq.selenium:selenium-htmlunit-driver:${seleniumHtmlUnitDriverV}"
     testRuntime "net.sourceforge.htmlunit:htmlunit:${htmlUnitV}"
 
