@@ -604,10 +604,18 @@ function processResults() {
 			var maxResults = $( "#searchMaxResultsSelect" ).val();
 			if ( tlv.layers.length > maxResults ) { tlv.layers.splice( maxResults ); }
 
+			// convert the geometries into WKT
+			$.each( tlv.layers, function( index, layer ) {
+				var geoJson = new ol.format.GeoJSON();
+				var geometry = geoJson.readGeometry( layer.metadata.footprint );
+				var wkt = new ol.format.WKT().writeGeometry( geometry );
+				layer.metadata.footprint = wkt;
+			} );
+
 			// if no location is provided, then just use the center of all the images
 			if ( !tlv.location ) {
 				var geometries = tlv.layers.map( function( layer ) {
-					return new ol.format.GeoJSON().readGeometry( layer.metadata.footprint );
+					return new ol.format.WKT().readGeometry( layer.metadata.footprint );
 				});
 
 				var extent = new ol.geom.GeometryCollection( geometries ).getExtent();
