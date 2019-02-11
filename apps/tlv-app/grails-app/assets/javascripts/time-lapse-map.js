@@ -110,8 +110,8 @@ function createContextMenuContent(coordinate) {
 }
 
 function createLayers( layer ) {
-	var footprint = layer.metadata.footprint.coordinates;
-	var extent = footprint ? new ol.geom.MultiPolygon( footprint ).getExtent() : null;
+	var footprint = layer.metadata.footprint;
+	var extent = footprint ? new ol.format.WKT().readGeometry( footprint ).getExtent() : null;
 	extent = extent ? ol.proj.transformExtent( extent, "EPSG:4326", "EPSG:3857" ) : undefined;
 
 	layer.imageLayer = new ol.layer.Image({
@@ -130,20 +130,29 @@ function createLayers( layer ) {
 }
 
 function createLayerSources( layer ) {
+	var library = tlv.libraries[ layer.library ];
+
 	var params = {
-		FILTER: "in(" + layer.metadata.id + ")",
-		FORMAT: "image/png",
+		FORMAT: 'image/jpeg',
 		IDENTIFIER: Math.floor( Math.random() * 1000000 ),
-		LAYERS: "omar:raster_entry",
-		STYLES: JSON.stringify(
-			getDefaultImageProperties()
-		),
-		TRANSPARENT: true,
-		VERSION: "1.1.1"
+		TRANSPARENT: false,
+		VERSION: '1.1.1'
 	};
+
+	if ( library.wmsUrlProxy ) {
+		params.LAYERS = layer.metadata.index_id;
+	}
+	else {
+		params.FILTER = 'in(' + layer.metadata.id + ')';
+		params.LAYERS = 'omar:raster_entry';
+		params.STYLES = JSON.stringify(
+			getDefaultImageProperties()
+		);
+	}
 
 	layer.imageSource = new ol.source.ImageWMS({
 		params: params,
+		projection: library.wmsUrlProxy ? 'EPSG:4326' : 'EPSG:3857',
 		url: tlv.libraries[ layer.library ].wmsUrl
 	});
 	if ( tlv.libraries[ layer.library ].wmsUrlProxy ) {
@@ -153,6 +162,7 @@ function createLayerSources( layer ) {
 
 	layer.tileSource = new ol.source.TileWMS({
 		params: params,
+		projection: library.wmsUrlProxy ? 'EPSG:4326' : 'EPSG:3857',
 		url: tlv.libraries[ layer.library ].wmsUrl
 	});
 	if ( tlv.libraries[ layer.library ].wmsUrlProxy ) {
