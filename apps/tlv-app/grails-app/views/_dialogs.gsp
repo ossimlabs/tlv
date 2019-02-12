@@ -5,6 +5,8 @@
 	<div></div>
 </div>
 
+<div class = "alert" id = "infoDialog" role = "alert"></div>
+
 <div class = "modal" id = "loadingDialog" role = "dialog" style = "z-index: 2147483647" tabindex = "-1">
 	<div class = "modal-dialog">
 		<div class = "modal-content">
@@ -23,8 +25,30 @@
 <g:render template = "/time-lapse-dialogs"/>
 
 <g:render template = "/menus/annotations-menu-dialogs"/>
+<g:render template = "/menus/export-menu-dialogs"/>
 <g:render template = "/menus/help-menu-dialogs"/>
 <g:render template = "/menus/layers-menu-dialogs"/>
 <g:render template = "/menus/search-menu-dialogs"/>
 <g:render template = "/menus/time-lapse-menu-dialogs"/>
 <g:render template = "/menus/view-menu-dialogs"/>
+
+<div class = "modal" id = "dragoDialog" role = "dialog" style = "z-index: 2147483647" tabindex = "-1">
+	<div class = "modal-dialog">
+		<div class = "modal-content">
+			<div class = "modal-header"><h4>DRAGO Info</h4></div>
+			<div class = "modal-body">
+				<div class = "row">
+					<img size = "25%" id = "dragoImage" width = "100%"/>
+				</div>
+				<div class = "row" id = "dragoMetadata"></div>
+			</div>
+			<div class = "modal-footer">
+				<button type = "button" class = "btn btn-default" data-dismiss = "modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<asset:script type = "text/javascript">
+	$( "#dragoDialog" ).on( "shown.bs.modal", function ( event ) { displayDialog( "dragoDialog" ); } );
+</asset:script>

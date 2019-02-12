@@ -48,7 +48,9 @@ function addBaseLayersToTheMap() {
 					break;
 
 				case "xyz":
-					source = new ol.source.XYZ({ url: x.url });
+					source = new ol.source.XYZ({
+						url: x.url
+					});
 					break;
 			}
 
@@ -78,8 +80,6 @@ function addLayerToTheMap( layer ) {
 	layer.tilesLoaded = 0;
 	layer.tilesLoading = 0;
 	if ( !layer.opacity ) { layer.opacity = 1; }
-
-
 }
 
 function changeBaseLayer(layerName) {
@@ -110,8 +110,8 @@ function createContextMenuContent(coordinate) {
 }
 
 function createLayers( layer ) {
-	var footprint = layer.metadata.footprint.coordinates;
-	var extent = footprint ? new ol.geom.MultiPolygon( footprint ).getExtent() : null;
+	var footprint = layer.metadata.footprint;
+	var extent = footprint ? new ol.format.WKT().readGeometry( footprint ).getExtent() : null;
 	extent = extent ? ol.proj.transformExtent( extent, "EPSG:4326", "EPSG:3857" ) : undefined;
 
 	layer.imageLayer = new ol.layer.Image({
@@ -130,27 +130,46 @@ function createLayers( layer ) {
 }
 
 function createLayerSources( layer ) {
+	var library = tlv.libraries[ layer.library ];
+
 	var params = {
-		FILTER: "in(" + layer.metadata.id + ")",
-		FORMAT: "image/png",
+		FORMAT: 'image/jpeg',
 		IDENTIFIER: Math.floor( Math.random() * 1000000 ),
-		LAYERS: "omar:raster_entry",
-		STYLES: JSON.stringify(
-			getDefaultImageProperties()
-		),
-		TRANSPARENT: true,
-		VERSION: "1.1.1"
+		TRANSPARENT: false,
+		VERSION: '1.1.1'
 	};
+
+	if ( library.wmsUrlProxy ) {
+		params.LAYERS = layer.metadata.index_id;
+	}
+	else {
+		params.FILTER = 'in(' + layer.metadata.id + ')';
+		params.LAYERS = 'omar:raster_entry';
+		params.STYLES = JSON.stringify(
+			getDefaultImageProperties()
+		);
+	}
 
 	layer.imageSource = new ol.source.ImageWMS({
 		params: params,
+		projection: library.wmsUrlProxy ? 'EPSG:4326' : 'EPSG:3857',
 		url: tlv.libraries[ layer.library ].wmsUrl
 	});
+	if ( tlv.libraries[ layer.library ].wmsUrlProxy ) {
+		layer.imageSource.updateParams({ redirectUrl: tlv.libraries[ layer.library ].wmsUrlProxy });
+		layer.imageSource.setUrl( tlv.contextPath + '/home/dummyRedirect' );
+	}
 
 	layer.tileSource = new ol.source.TileWMS({
 		params: params,
+		projection: library.wmsUrlProxy ? 'EPSG:4326' : 'EPSG:3857',
 		url: tlv.libraries[ layer.library ].wmsUrl
 	});
+	if ( tlv.libraries[ layer.library ].wmsUrlProxy ) {
+		layer.tileSource.updateParams({ redirectUrl: tlv.libraries[ layer.library ].wmsUrlProxy });
+		layer.tileSource.setUrl( tlv.contextPath + '/home/dummyRedirect' );
+	}
+
 	layer.tileSource.on("tileloadstart", function( event ) { theTileHasStartedLoadingMap( this ); });
 	layer.tileSource.on("tileloadend", function( event ) { theTileHasFinishedLoadingMap( this ); });
 }
@@ -168,6 +187,7 @@ function createMapControls() {
 
 		var this_ = this;
 		$( button ).on( "click", function( event ) {
+			$( this ).blur();
 			changeFrame( "fastForward" );
 		});
 
@@ -186,10 +206,17 @@ function createMapControls() {
 	fullScreenSpan.className = "glyphicon glyphicon-fullscreen";
 	var fullScreenControl = new ol.control.FullScreen({ label: fullScreenSpan });
 
+	var imageIdOuterDiv = document.createElement( "div" );
+	imageIdOuterDiv.className = "custom-map-control";
+	imageIdOuterDiv.id = "imageIdOuterDiv";
+	imageIdOuterDiv.style = "background-color: rgba(0, 0, 0, 0); pointer-events: none;"
+
 	var imageIdDiv = document.createElement( "div" );
-	imageIdDiv.className = "custom-map-control";
 	imageIdDiv.id = "imageIdDiv";
-	var imageIdControl = new ol.control.Control({ element: imageIdDiv });
+	imageIdDiv.style = "background-color: rgba(0, 0, 0, 0.5); display: inline-block; text-align: left";
+	$( imageIdOuterDiv ).append( imageIdDiv );
+
+	var imageIdControl = new ol.control.Control({ element: imageIdOuterDiv });
 
 	var PlayStopControl = function() {
 		var button = document.createElement( "button" );
@@ -198,6 +225,7 @@ function createMapControls() {
 
 		var this_ = this;
 		$( button ).on( "click", function( event ) {
+			$( this ).blur();
 			playStopTimeLapse( $( button ).children()[ 0 ] );
 		});
 
@@ -219,6 +247,7 @@ function createMapControls() {
 
 		var this_ = this;
 		$( button ).on( "click", function( event ) {
+			$( this ).blur();
 			changeFrame( "rewind" );
 		});
 
@@ -232,6 +261,73 @@ function createMapControls() {
 		});
 	};
 	ol.inherits( RewindControl, ol.control.Control );
+
+	var RotationTiltControl = function() {
+		var rotationInput = document.createElement( "input" );
+		rotationInput.id = "rotationSliderInput";
+		rotationInput.max = "360";
+		rotationInput.min = "0";
+		rotationInput.oninput = function( event ) {
+			var degrees = $( rotationInput ).val();
+			tlv.map.getView().setRotation( degrees * Math.PI / 180 );
+		};
+		rotationInput.step = "1";
+		rotationInput.style.display = "none";
+		rotationInput.style[ "vertical-algin" ] = "middle";
+		rotationInput.type = "range";
+ 		rotationInput.value = "0";
+
+		var tiltInput = document.createElement( "input" );
+		tiltInput.id = "tiltSliderInput";
+		tiltInput.max = "270";
+		tiltInput.min = "-90";
+		tiltInput.oninput = function( event ) {
+			var degrees = $( tiltInput ).val();
+			tlv.globe.getCesiumScene().camera.setView({
+				orientation: {
+					pitch: -degrees * Math.PI / 180
+				}
+			});
+		};
+
+		tiltInput.step = "1";
+		tiltInput.style.display = "none";
+		tiltInput.style[ "vertical-algin" ] = "middle";
+		tiltInput.type = "range";
+		tiltInput.value = "90";
+
+		setTimeout( function() {
+			$( ".ol-rotate" ).on( "click", function( event ) {
+				if ( $( rotationInput ).is( ":visible" ) || $( "#tiltInput" ).is( ":visible" ) ) {
+					$( rotationInput ).fadeOut();
+					$( tiltInput ).fadeOut();
+				}
+				else {
+					$( rotationInput ).fadeIn();
+					if ( $( "#dimensionsSelect" ).val() == "3" ) {
+						$( tiltInput ).fadeIn();
+					}
+				}
+			});
+		}, 2000 );
+
+		var this_ = this;
+
+		var element = document.createElement( "div" );
+		element.appendChild( tiltInput );
+		element.appendChild( rotationInput );
+		element.className = "rotation-tilt-control ol-unselectable ol-control";
+		element.style = "background: none";
+
+
+		ol.control.Control.call( this, {
+			element: element,
+			target: undefined
+		});
+
+
+	};
+	ol.inherits( RotationTiltControl, ol.control.Control );
 
 	var SummaryTableControl = function() {
 		var button = document.createElement( "button" );
@@ -256,37 +352,94 @@ function createMapControls() {
 	};
 	ol.inherits( SummaryTableControl, ol.control.Control );
 
-	tlv.mapControls = [
-		acquisitionDateControl,
-		createMousePositionControl(),
-		new FastForwardControl(),
+	tlv.mapControls = [];
+	if ( tlv.hideAcquisitionDate != "true" ) {
+		tlv.mapControls.push( acquisitionDateControl );
+	}
+	if ( tlv.hideMapCoordinates != "true" ) {
+		tlv.mapControls.push( createMousePositionControl() );
+	}
+	if ( tlv.hideImageId != "true" ) {
+		tlv.mapControls.push( imageIdControl );
+	}
+
+	tlv.mapControls.push(
 		fullScreenControl,
-		imageIdControl,
-		new PlayStopControl(),
-		new RewindControl(),
-		new SummaryTableControl()
+		new RotationTiltControl()
+	);
+
+	if ( tlv.layers.length > 1 ) {
+		tlv.mapControls.push(
+			new RewindControl(),
+			new PlayStopControl(),
+			new FastForwardControl(),
+			new SummaryTableControl()
+		);
+	}
+}
+
+function createMapInteractions() {
+	var dragAndDropInteraction = new ol.interaction.DragAndDrop({
+		formatConstructors: [
+			ol.format.GPX,
+			ol.format.GeoJSON,
+			ol.format.IGC,
+			ol.format.KML,
+			ol.format.TopoJSON
+		]
+	});
+
+	dragAndDropInteraction.on( "addfeatures", function( event ) {
+        var source = new ol.source.Vector({
+			features: event.features
+		});
+		var styleFunction = function() {
+			createDefaultStyle();
+		}
+		var layer = new ol.layer.Vector({
+			source: source,
+			style: styleFunction
+        })
+        tlv.map.addLayer( layer );
+        tlv.map.getView().fit( source.getExtent() );
+	});
+
+	var dragPanInteraction = new ol.interaction.DragPan({
+		condition: function( event ) {
+			return ol.events.condition.noModifierKeys( event ) &&
+				ol.events.condition.primaryAction( event );
+		}
+	});
+
+	tlv.mapInteractions = [
+		dragAndDropInteraction,
+		dragPanInteraction
 	];
 }
 
 function createMousePositionControl() {
 	var mousePositionControl = new ol.control.MousePosition({
 		coordinateFormat: function(coordinate) {
-			var lat = coordinate[1];
-			var lon = coordinate[0];
+			var lat = coordinate[ 1 ];
+			var lon = coordinate[ 0 ];
 			var coordConvert = new CoordinateConversion();
-			switch(mousePositionControl.coordinateDisplayFormat) {
-				case 0: return coordinate[1].toFixed(6) + ", " + coordinate[0].toFixed(6); break;
-				case 1: return coordConvert.ddToDms(lat, "lat") + " " + coordConvert.ddToDms(lon, "lon"); break;
-				case 2: return coordConvert.ddToMgrs(lat, lon); break;
+			switch( mousePositionControl.coordinateDisplayFormat ) {
+				case 0: return coordinate[ 1 ].toFixed( 6 ) + ", " + coordinate[ 0 ].toFixed( 6 ); break;
+				case 1: return coordConvert.ddToDms( lat, "lat" ) + " " + coordConvert.ddToDms( lon, "lon" ); break;
+				case 2: return coordConvert.ddToMgrs( lat, lon ); break;
 			}
 		},
 		projection: "EPSG:4326"
 	});
 
-	mousePositionControl.coordinateDisplayFormat = 0;
-	$(mousePositionControl.element).click(function() {
+	switch ( tlv.preferences.coordinateFormat ) {
+		case "dd": mousePositionControl.coordinateDisplayFormat = 0; break;
+		case "dms": mousePositionControl.coordinateDisplayFormat = 1; break;
+		case "mgrs": mousePositionControl.coordinateDisplayFormat = 2; break;
+	}
+	$( mousePositionControl.element ).click( function() {
 		mousePositionControl.coordinateDisplayFormat++;
-		if (mousePositionControl.coordinateDisplayFormat >= 3) { mousePositionControl.coordinateDisplayFormat = 0; }
+		if ( mousePositionControl.coordinateDisplayFormat >= 3 ) { mousePositionControl.coordinateDisplayFormat = 0; }
 	});
 
 
@@ -328,31 +481,16 @@ function rightClick( event ) {
 
 function setupMap() {
 	// if a map already exists, reset it and start from scratch
-	if (tlv.map) { tlv.map.setTarget(null); }
+	if (tlv.map) { tlv.map.setTarget( null ); }
 
 	createMapControls();
+	createMapInteractions();
 	tlv.map = new ol.Map({
 		controls: ol.control.defaults().extend( tlv.mapControls ),
 		interactions: ol.interaction.defaults({
 			doubleClickZoom: false,
  			dragPan: false
-		}).extend([
-			new ol.interaction.DragAndDrop({
-				formatConstructors: [
-					ol.format.GPX,
-					ol.format.GeoJSON,
-					ol.format.IGC,
-					ol.format.KML,
-					ol.format.TopoJSON
-				]
-			}),
-			new ol.interaction.DragPan({
-				condition: function( event ) {
-					return ol.events.condition.noModifierKeys( event ) &&
-						ol.events.condition.primaryAction( event );
-				}
-			})
-		]),
+		}).extend( tlv.mapInteractions ),
 		logo: false,
 		target: "map"
 	});
@@ -362,7 +500,8 @@ function setupMap() {
 	// setup context menu
 	tlv.map.getViewport().addEventListener( "contextmenu", rightClick );
 
-	tlv.map.on("moveend", theMapHasMoved);
+	tlv.map.on( "moveend", theMapHasMoved );
+	tlv.map.getView().on( "change:rotation", theMapHasRotated );
 
 	$(".ol-zoom-in").click(function() { $(this).blur(); });
 	$(".ol-zoom-out").click(function() { $(this).blur(); });
@@ -384,6 +523,11 @@ function theMapHasMoved(event) {
 			x.tilesLoading = 0;
 		}
 	);
+}
+
+function theMapHasRotated( event ) {
+	var radians = tlv.map.getView().getRotation();
+	$( "#rotationSliderInput" ).val( radians * 180 / Math.PI );
 }
 
 function theTileHasFinishedLoadingMap(layerSource) {
@@ -430,24 +574,6 @@ function theTileHasStartedLoadingMap(layerSource) {
 			}
 		}
 	);
-}
-
-function updateMapSize() {
-	if ( tlv.map ) {
-		var windowHeight = $( window ).height();
-		var banners = $( ".security-classification" ).length;
-		var bannersHeight = banners * $( ".security-classification" ).height();
-		var navigationMenuHeight = $( "#navigationMenu" ).parent().height();
-		var imageInfoHeight = $( "#navigationMenu" ).parent().next().height();
-		var tileLoadProgressBarHeight = $( "#tileLoadProgressBar" ).height();
-		var mapHeight = windowHeight
-			- bannersHeight
-			- navigationMenuHeight
-			- imageInfoHeight
-			- tileLoadProgressBarHeight;
-		$( "#map" ).height( mapHeight );
-		tlv.map.updateSize();
-	}
 }
 
 function updateTileLoadingProgressBar() {

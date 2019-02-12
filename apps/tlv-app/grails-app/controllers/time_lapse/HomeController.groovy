@@ -1,21 +1,44 @@
 package time_lapse
 
 
-import groovy.json.JsonOutput
-
-
 class HomeController {
 
+	def httpProxyService
 	def openSearchService
 	def restApiService
 
 
-	def index() {
-		def model = restApiService.serviceMethod(params)
+	def dummyRedirect() {
+		def url = params.redirectUrl + '?'
+		params.remove( 'action' )
+		params.remove( 'controller' )
+		params.remove( 'format' )
+		params.remove( 'redirectUrl' )
+
+		def urlParams = params.collect {
+			key,value ->
+			URLEncoder.encode( "${ key }" ) + '=' + URLEncoder.encode( "${ value }" )
+		}
 
 
-		render(model: [tlvParams : JsonOutput.toJson(model)], view: "/index.gsp")
+		redirect( url: url + urlParams.join( '&' ) )
 	}
 
-	def openSearch() { render( contentType: "text/xml", text: openSearchService.serviceMethod() )  }
+	def index() {
+		def model = restApiService.serviceMethod( params )
+
+
+		render(model: [ tlvParams: model ], view: "/index.gsp")
+	}
+
+	def openSearch() {
+		render( contentType: "text/xml", text: openSearchService.serviceMethod() )
+	}
+
+	def proxy() {
+		def url = params.url
+
+
+		render httpProxyService.serviceMethod( url )
+	}
 }

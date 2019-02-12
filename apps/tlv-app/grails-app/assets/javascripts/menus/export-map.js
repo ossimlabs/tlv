@@ -8,11 +8,8 @@ function exportGifMap() {
 		displayLoadingDialog( "Getting the 411 on frame " + ( tlv.currentLayer + 1 ) + "..." );
 		// give time for the loading modal to display
 		setTimeout( function() {
-			tlv.map.once( "postcompose", function( event ) {
-
-				var context = event.context.canvas.getContext( "2d" );
-
-				encoder.addFrame( context );
+			var callback = function( canvas ) {
+				encoder.addFrame( canvas.getContext( "2d" ) );
 
 				if ( tlv.currentLayer == tlv.layers.length - 1 ) {
 					hideLoadingDialog();
@@ -25,8 +22,8 @@ function exportGifMap() {
 					changeFrame( "fastForward" );
 					encodeFrameMap();
 				}
-			});
-			tlv.map.renderSync();
+			};
+			getScreenshotMap( callback );
 		}, 100);
 	}
 	changeFrame( 0 );
@@ -34,14 +31,22 @@ function exportGifMap() {
 }
 
 function exportScreenshotMap() {
+	var callback = function( canvas ) {
+		canvas.toBlob(function( blob ) {
+			var filename = "tlv_screenshot_" + new Date().generateFilename() + ".png";
+			clientFileDownload( filename, blob );
+		});
+	};
+
+	getScreenshotMap( callback );
+}
+
+function getScreenshotMap( callback ) {
 	tlv.map.once(
 		"postcompose",
-		function(event) {
+		function( event ) {
 			var canvas = event.context.canvas;
-			canvas.toBlob(function(blob) {
-				var filename = "tlv_screenshot_" + new Date().generateFilename() + ".png";
-				clientFileDownload(filename, blob);
-			});
+			callback( canvas );
 		}
 	);
 	tlv.map.renderSync();

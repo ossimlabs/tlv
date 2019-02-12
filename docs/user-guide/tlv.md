@@ -19,51 +19,6 @@ _Note: Use the left and right arrow keys on the keyboard to cycle through the im
 **<span class="glyphicon glyphicon-list-alt"></span>&nbsp;:**
 The summary button will give a list of all images in the stack along with an abbreviated composition of metadata. It's better than cliff notes!
 
-## Annotations
-* **Circle:**
-Click to begin a circle center and then click again to end it.
-* **Line:**
-Click to begin a line and click again each time you want a new vertex. Double-click to end the line.
-* **Point:**
-Just click anywhere.
-* **Polygon:**
-Click to begin a polygon and click again each time you want a new vertex. Double-click to close the polygon.
-* **Rectangle:**
-Click to start a rectangle and then click again to close it.
-* **Square:**
-Click to start a square center and then click again to close it.
-* **Modify:**
-Click on any annotation to modify its style.
-
-## Export
-* **Metadata:**
-This will take all the metdata from all the layers, convert it to a CSV file and allow you to download it. TLV harvests as much metadata as it can from its libraries and does not make any attempt to change or normalize the data. What TLV sees is what you get.
-* **Screenshot:**
-Think of it like the map taking a selfie. #nofilter
-
-## Image Properties
-* **Bands:**
-For multi-banded imagery, the red, green and blue "color guns" can be routed to any band within the image. Please aim responsibly.
-* **Brightness:**
-Uniformly adjust the brightness value of each pixel.
-* **Contrast:**
-Uniformly adjust the contrast value of each pixel, making the light pixels lighter and the dark pixels darker.
-* **Dynamic Range Adjustmet:**
-Adjust the ratio of the brightest to darkest pixel. Have you had your coffee yet, because this is about to get statistical. If you take the brightness value of each pixel and make a histogram (that bell-curve thing from school that you always seemed to be on the wrong side of) you'll end up with some kind of overall shape. The DRA setting literally "stretches" or "squishes" that shape. Then all those brighrness values are redistributed which can greatly enhance the overall image.
-* **Interpolation:**
-Select the method by which unknown pixels are determined from known pixels. Things get complicated during image processing, for example, when enlarging an image. If you end up with more pixels than you started, how do you determine what those new pixels look like? Do you poll the audience, phone a friend or maybe just look at the neighboring pixels?
-* **Null Pixel Flip:**
-If true pixels with a null value will display black instead of transparent.
-* **Sharpen Mode:**
-Select the kernel size used for sharpening. You can also try squinting really hard to bring things into focus.
-
-## Layers
-* **Base Layer:**
-Select from an assortment of base layers to bring context to the imagery.
-* **Cross-Hair:**
-As the name implies, this places a cross-hair in the center of the map. Whether you are looking to zero-in on the bad guy or just want to center the map on a particular target, this will get the job done.
-* **Search Origin:**
-This will place a marker on the map that indicates the exact location used for the center point search. All the zooming and panning can sometimes disorient you worse than someone waking you up from deep REM sleep. So, in case you forget the point around which you actually were searching, we’ve got you covered.
 
 ## Map
 * **Mouse Coordinates:**
@@ -72,7 +27,11 @@ The coordinate of the mouse is displayed in the lower-left corner of the map. Cl
 * **Rotation:**
 In 2D mode you can rotate the map by holding Shift + Alt while clicking and dragging. In 3D mode, you can hold Alt while clicking and dragging to pitch the globe.
 
-## Search
+
+## **<span class="glyphicon glyphicon-home"></span>&nbsp;** : Home
+
+
+## **<span class="glyphicon glyphicon-search"></span>&nbsp;** : Search
 * **End Date:**
 The end date of the search. The default is now.
 * **Library:**
@@ -90,7 +49,60 @@ Discriminate results to specific sensor types.
 * **Start Date:**
 The start date of the search. The default is 30 days prior to today.
 
-## Time Lapse
+
+## **<span class="glyphicon glyphicon-pencil"></span>&nbsp;** : Annotations
+* **Circle:**
+Click to begin a circle center and then click again to end it.
+* **Line:**
+Click to begin a line and click again each time you want a new vertex. Double-click to end the line.
+* **Point:**
+Just click anywhere.
+* **Polygon:**
+Click to begin a polygon and click again each time you want a new vertex. Double-click to close the polygon.
+* **Rectangle:**
+Click to start a rectangle and then click again to close it.
+* **Square:**
+Click to start a square center and then click again to close it.
+* **Modify:**
+Click on any annotation to modify its style.
+
+
+## **<span class="glyphicon glyphicon-export"></span>&nbsp;** : Export
+* **Metadata:**
+This will take all the metdata from all the layers, convert it to a CSV file and allow you to download it. TLV harvests as much metadata as it can from its libraries and does not make any attempt to change or normalize the data. What TLV sees is what you get.
+* **Screenshot:**
+Think of it like the map taking a selfie. #nofilter
+
+
+## **<span class="glyphicon glyphicon-picture"></span>&nbsp;** : Image Properties
+* **Bands:**
+For multi-banded imagery, the red, green and blue "color guns" can be routed to any band within the image. Please aim responsibly.
+* **Brightness:**
+Uniformly adjust the brightness value of each pixel.
+* **Contrast:**
+Uniformly adjust the contrast value of each pixel, making the light pixels lighter and the dark pixels darker.
+* **Dynamic Range Adjustmet:**
+Adjust the ratio of the brightest to darkest pixel. Have you had your coffee yet, because this is about to get statistical. If you take the brightness value of each pixel and make a histogram (that bell-curve thing from school that you always seemed to be on the wrong side of) you'll end up with some kind of overall shape. The DRA setting literally "stretches" or "squishes" that shape. Then all those brighrness values are redistributed which can greatly enhance the overall image.
+* **Interpolation:**
+Select the method by which unknown pixels are determined from known pixels. Things get complicated during image processing, for example, when enlarging an image. If you end up with more pixels than you started, how do you determine what those new pixels look like? Do you poll the audience, phone a friend or maybe just look at the neighboring pixels?
+* **Null Pixel Flip:**
+If true pixels with a null value will display black instead of transparent.
+* **Sharpen Mode:**
+Select the kernel size used for sharpening. You can also try squinting really hard to bring things into focus.
+
+
+## **<span class="glyphicon glyphicon-menu-hamburger"></span>&nbsp;** : Layers
+* **Base Layer:**
+Select from an assortment of base layers to bring context to the imagery.
+* **Cross-Hair:**
+As the name implies, this places a cross-hair in the center of the map. Whether you are looking to zero-in on the bad guy or just want to center the map on a particular target, this will get the job done.
+* **Search Origin:**
+This will place a marker on the map that indicates the exact location used for the center point search. All the zooming and panning can sometimes disorient you worse than someone waking you up from deep REM sleep. So, in case you forget the point around which you actually were searching, we’ve got you covered.
+* **Overview Map:**
+As the name implies, this shows an overview map that will follow you around as you pan and zoom in and out. In a friendly way though, we promise.
+
+
+## **<span class="fa fa-history"></span>&nbsp;** : Time Lapse
 * **Delete Frame:**
 Kick that image to the curb and remove it from the stack. Get rid of things even faster by using the delete button on the keyboard.
 * **Geo-Jump:**
@@ -103,7 +115,8 @@ TLV will attempt to use your device’s internal sensors to orient the imagery i
 * **Reverse Order:**
 The default order of the image stack is chronological. But, if you prefer the other way, here’s where to do it.
 
-## View
+
+## **<span class="glyphicon glyphicon-eye-open"></span>&nbsp;** : View
 * **Dimensions:**
 If your browser supports it, TLV will give you a 3D view of your images!
 * **Image Space:**
@@ -114,3 +127,10 @@ Swipe an image over another. This is TLV's version of "wax on, wax off"... only 
 Overlay a raw wireframe representation of your terrain.
 * **WMS Tiles:**
 Instead of your map being composed of multiple tiles that fill in as they are ready, switch to a single tile (to rule them all), if you're in to that kind of thing.
+
+
+## **<span class="glyphicon glyphicon-question-sign"></span>&nbsp;** : Help
+* **About:**
+Display a dialog box giving details on the instance of TLV.
+* **User Guide:**
+We all need help sometimes, this gets you there straight away.

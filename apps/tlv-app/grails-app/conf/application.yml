@@ -1,8 +1,8 @@
 # If there is a version to denote, set it here
 about:
     contactEmail: O2Support@digitalglobe.com
-    release: Hollywood
-    releaseNumber: 2.4.0
+    release: Juno
+    releaseNumber: 2.6.0
 
 # If there a page banner is needed, set it here
 #banner:
@@ -37,9 +37,34 @@ about:
 #        type: wms
 #        visible: false
 #        url: ${baseUrl}/omar-mapproxy/service
+#    googleMaps:
+#        name: Google Maps
+#        type: xyz
+#        url: https://mt1.google.com/vt/lyrs=r&x={x}&y={y}&z={z}
+#        visible: false
+#    googleSatellite:
+#        name: Google Satellite
+#        type: xyz
+#        url: http://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}
+#        visible: false
+#    googleSatelliteHybrid:
+#        name: Google Satellite Hybrid
+#        type: xyz
+#        url: https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}
+#        visible: false
+#    googleTerrain:
+#        name: Google Terrain
+#        type: xyz
+#        url: https://mt1.google.com/vt/lyrs=t&x={x}&y={y}&z={z}
+#        visible: false
+#    googleRoads:
+#        name: Google Roads
+#        type: xyz
+#        url: https://mt1.google.com/vt/lyrs=h&x={x}&y={y}&z={z}
+#        visible: false
 
 # Define the base URL to be used throughout the configuration
-baseUrl: https://omar-dev.ossim.io
+baseUrl: https://omar.ossim.io
 
 # If BEs are available, define the WFS query schema
 #beLookup:
@@ -50,13 +75,59 @@ baseUrl: https://omar-dev.ossim.io
 # If documentation is available, define the URL
 #docsUrl: ${baseUrl}/omar-docs
 
+# A list of full spectrum geoint products with regular expressions that append it to the image Id
+#fsg:
+#    2CMV:
+#        searchString: 2CMV
+#        imageIdRegExp: (_2CMV_[A-Z])
+
 # If the twofishes geocoder is available, define the URL
 #geocoderUrl: ${baseUrl}/omar-ui/twoFishesProxy
+
+# If there is an available token for Cesium terrain, define it here
+#ionAccessToken: <token>
 
 # If ISA is available, define the URL
 # Make sure the trailing forward slash is included
 # Optional
 #isaUrl: ${baseUrl}/isa-ui/
+
+# If there any feature layers available, list them here
+#layers:
+#    countries:
+#        label: Country Borders
+#        url: ${baseUrl}/omar-wfs/wfs/getFeature
+#        params:
+#            maxFeatures: 1000
+#            outputFormat: JSON
+#            request: GetFeature
+#            service: WFS
+#            typeName: omar:country_border
+#            version: 1.1.0
+#        refresh: false
+#        style:
+#            text:
+#                attribute: name
+#                color: white
+#    o2-wfs:
+#        label: O2 WFS
+#        url: ${baseUrl}/omar-wfs/wfs/getFeature
+#        params:
+#            filter: BBOX(ground_geom,<BBOX>)
+#            maxFeatures: 1000
+#            outputFormat: JSON
+#            request: GetFeature
+#            service: WFS
+#            sortBy: acquisition_date+D
+#            typeName: omar:raster_entry
+#            version: 1.1.0
+#        refresh: true
+#        style:
+#            stroke:
+#                color: black
+#            text:
+#                color: black
+#                label: image_id
 
 # List the various repository details
 # You need at least one
@@ -66,17 +137,24 @@ baseUrl: https://omar-dev.ossim.io
 #        kmlUrl: ${baseUrl}/omar-superoverlay/superOverlay/createKml
 #        label: O2-DEV
 #        layerType: wms
-#        name: o2-dev
+#        mensaUrl: ${baseUrl}/omar-mensa/mensa
+#        omsUrl: ${baseUrl}/omar-oms/imageSpace
+#        stagerUrl: ${baseUrl}/omar-stager/
 #        wfsUrl: ${baseUrl}/omar-wfs/wfs
 #        wmsUrl: ${baseUrl}/omar-wms/wms
-#    o2-rel:
-#        imageSpaceUrl: https://omar-rel.ossim.io/omar-ui/omar/#/mapImage
-#        kmlUrl: https://omar-rel.ossim.io/omar-superoverlay/superOverlay/createKml
-#        label: O2-REL
+#    o2:
+#        imageSpaceUrl: https://omar.ossim.io/omar-ui/omar/#/mapImage
+#        kmlUrl: https://omar.ossim.io/omar-superoverlay/superOverlay/createKml
+#        label: O2
 #        layerType: wms
-#        name: o2-rel
-#        wfsUrl: https://omar-rel.ossim.io/omar-wfs/wfs
-#        wmsUrl: https://omar-rel.ossim.io/omar-wms/wms
+#        mensaUrl: https://omar.ossim.io/omar-mensa/mensa
+#        omsUrl: https://omar.ossim.io/omar-oms/imageSpace
+#        stagerUrl: https://omar.ossim.io/omar-stager/
+#        wfsUrl: https://omar.ossim.io/omar-wfs/wfs
+#        wmsUrl: https://omar.ossim.io/omar-wms/wms
+
+# If an ontology service exists, set it here
+#ontologyUrl: <protocol>://<host>>:<port>/<contextPath>
 
 # Set the security classification banner here
 securityClassificationBanner:
@@ -87,6 +165,47 @@ securityClassificationBanner:
 # Set the context path of the application
 #server:
 #    contextPath: /tlv
+
+templates:
+    default:
+        header:
+            height: 10%
+            logo: tlv.png
+            northArrow: north-arrow.png
+            text:
+                securityClassification:
+                    defaultValue: Security Classification
+                    style:
+                        color: "#add8e6"
+                        height: 25%
+                title:
+                    defaultValue: tlv.layers[ tlv.currentLayer ].imageId
+                    style:
+                        color: "#ffff00"
+                        height: 43%
+                description:
+                    defaultValue: '"CC: " + tlv.layers[ tlv.currentLayer ].metadata.country_code'
+                    style:
+                        color: "#ffffff"
+                        height: 32%
+        footer:
+            height: 3%
+            text:
+                securityClassification:
+                    defaultValue: Security Classification
+                    style:
+                        color: "#add8e6"
+                        text-align: left
+                location:
+                    defaultValue: 'getMapCenterText( "dms" )'
+                    style:
+                        color: "#add8e6"
+                        text-align: center
+                acquisitionDate:
+                    defaultValue: tlv.layers[ tlv.currentLayer ].acquisitionDate
+                    style:
+                        color: "#add8e6"
+                        text-align: right
 
 # If a terrain server is available, define the URL
 #terrainProvider: //assets.agi.com/stk-terrain/world
@@ -123,7 +242,7 @@ spring:
 
 # Spring Actuator Endpoints are Disabled by Default
 endpoints:
-    enabled: false
+    enabled: true
     jmx:
         enabled: true
 
@@ -206,8 +325,9 @@ environments:
             dbCreate: update
             url: jdbc:h2:mem:testDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE
     production:
+        grails.dbconsole.enabled: true
         dataSource:
-            dbCreate: none
+            dbCreate: update
             url: jdbc:h2:./prodDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE
             properties:
                 jmxEnabled: true
@@ -227,3 +347,59 @@ environments:
                 testOnReturn: false
                 jdbcInterceptors: ConnectionState
                 defaultTransactionIsolation: 2 # TRANSACTION_READ_COMMITTED
+
+---
+defaultUsername: Anonymous
+
+requestHeaderUsername: username
+
+securityClassification:
+    backgroundColor: green
+    classification: Unclassified
+    textColor: white
+
+---
+grails:
+    plugin:
+        springsecurity:
+            userLookup:
+                userDomainClassName: 'omar.security.SecUser'
+                authorityJoinClassName: 'omar.security.SecUserSecRole'
+            authority:
+                className: 'omar.security.SecRole'
+            controllerAnnotations:
+                staticRules:
+                    - pattern: '/**'
+                      access: [ 'permitAll' ]
+                    - pattern: '/error'
+                      access: [ 'permitAll' ]
+                    - pattern: '/index'
+                      access: [ 'permitAll' ]
+                    - pattern: '/index.gsp'
+                      access: [ 'permitAll' ]
+                    - pattern: '/shutdown'
+                      access: [ 'permitAll' ]
+                    - pattern: '/assets/**'
+                      access: [ 'permitAll' ]
+                    - pattern: '/**/js/**'
+                      access: [ 'permitAll' ]
+                    - pattern: '/**/css/**'
+                      access: [ 'permitAll' ]
+                    - pattern: '/**/images/**'
+                      access: [ 'permitAll' ]
+                    - pattern: '/**/favicon.ico'
+                      access: [ 'permitAll' ]
+            filterChain:
+                chainMap:
+                    - pattern: '/assets/**'
+                      filters: 'none'
+                    - pattern: '/**/js/**'
+                      filters: 'none'
+                    - pattern: '/**/css/**'
+                      filters: 'none'
+                    - pattern: '/**/images/**'
+                      filters: 'none'
+                    - pattern: '/**/favicon.ico'
+                      filters: 'none'
+                    - pattern: '/**'
+                      filters: 'JOINED_FILTERS'

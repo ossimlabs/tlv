@@ -23,7 +23,7 @@ var pageLoadTimeLapseGlobe = pageLoad;
 pageLoad = function() {
 	pageLoadTimeLapseGlobe();
 
-	CESIUM_BASE_URL = tlv.contextPath + "/assets/webjars/cesium/1.38.0/Build/Cesium";
+	CESIUM_BASE_URL = tlv.contextPath + "/assets/webjars/cesium/1.43.0/Build/Cesium";
 }
 
 function setupGlobe() {
@@ -64,10 +64,17 @@ function setupGlobe() {
 		}
 	);
 
+	tlv.globe.getCesiumScene().screenSpaceCameraController.zoomEventTypes = Cesium.CameraEventType.WHEEL;
+
+
 	if ( tlv.terrainProvider ) {
 		tlv.globe.getCesiumScene().terrainProvider = new Cesium.CesiumTerrainProvider({
 			url: tlv.terrainProvider
 		});
+	}
+	else if ( tlv.ionAccessToken ) {
+		Cesium.Ion.defaultAccessToken = tlv.ionAccessToken;
+		tlv.globe.getCesiumScene().terrainProvider = Cesium.createWorldTerrain();
 	}
 
 	if ( tlv.dimensions == "3" ) {
@@ -81,6 +88,4 @@ function setupGlobe() {
 var setupTimeLapseGlobe = setupTimeLapse;
 setupTimeLapse = function() {
 	setupTimeLapseGlobe();
-
-	//setupGlobe();
 }

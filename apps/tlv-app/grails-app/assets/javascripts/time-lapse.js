@@ -10,7 +10,7 @@ function buildSummaryTable() {
     var cell = row.insertCell( row.cells.length );
     row.insertCell( row.cells.length );
     $.each(
-        [ "Image ID", "Acquisition Date", "NIIRS", "Az.", "El.", "Sun Az.", "Sun El.", "Library" ],
+        [ "Image ID", "Acquisition Date", "NIIRS", "Az.", "El.", "Sun Az.", "Sun El.", "Entry", "Library" ],
         function( index, value ) {
             var cell = row.insertCell( row.cells.length );
             $( cell ).append( value );
@@ -19,48 +19,55 @@ function buildSummaryTable() {
 
     $.each(
         tlv.layers,
-        function( i, x ) {
+        function( index, layer ) {
             row = table.insertRow( table.rows.length );
+            $( row ).click( function() {
+                changeFrame( index );
+            } );
+
             cell = row.insertCell( row.cells.length );
-            $( cell ).append( i + 1 );
+            $( cell ).append( index + 1 );
 
             cell = row.insertCell( row.cells.length );
             $( cell ).css( "white-space", "nowrap" );
             var downButton = "<span class = 'glyphicon glyphicon-arrow-down' title = 'Move Down'></span>";
             var upButton = "<span class = 'glyphicon glyphicon-arrow-up' title = 'Move Up'></span>";
 
-            if ( i == 0 ) {
-                $( cell ).append( "<a href = javascript:moveLayerDownInStack(" + i + ");buildSummaryTable();>" + downButton + "</a>" );
+            if ( index == 0 ) {
+                $( cell ).append( "<a href = javascript:moveLayerDownInStack(" + index + ");buildSummaryTable();>" + downButton + "</a>" );
             }
-            else if ( i == tlv.layers.length - 1 ) { $( cell ).append( "<a href = javascript:moveLayerUpInStack(" + i + ");buildSummaryTable();>" + upButton + "</a>" ); }
+            else if ( index == tlv.layers.length - 1 ) { $( cell ).append( "<a href = javascript:moveLayerUpInStack(" + index + ");buildSummaryTable();>" + upButton + "</a>" ); }
             else {
-                $( cell ).append( "<a href = javascript:moveLayerUpInStack(" + i + ");buildSummaryTable();>" + upButton + "</a>" );
-                $( cell ).append( "<a href = javascript:moveLayerDownInStack(" + i + ");buildSummaryTable();>" + downButton + "</a>" );
+                $( cell ).append( "<a href = javascript:moveLayerUpInStack(" + index + ");buildSummaryTable();>" + upButton + "</a>" );
+                $( cell ).append( "<a href = javascript:moveLayerDownInStack(" + index + ");buildSummaryTable();>" + downButton + "</a>" );
             }
 
             cell = row.insertCell( row.cells.length );
-            $( cell ).append( x.imageId );
+            $( cell ).append( layer.imageId );
 
             cell = row.insertCell( row.cells.length );
-            $( cell ).append( x.acquisitionDate + "z" );
+            $( cell ).append( layer.acquisitionDate + "z" );
 
             cell = row.insertCell( row.cells.length );
-            $( cell ).append( x.metadata.niirs );
+            $( cell ).append( layer.metadata.niirs );
 
             cell = row.insertCell( row.cells.length );
-            $( cell ).append( x.metadata.azimuth_angle ? x.metadata.azimuth_angle.toFixed( 2 ) : "" );
+            $( cell ).append( layer.metadata.azimuth_angle ? layer.metadata.azimuth_angle.toFixed( 2 ) : '' );
 
             cell = row.insertCell( row.cells.length );
-            $( cell ).append( x.metadata.grazing_angle ? x.metadata.grazing_angle.toFixed( 2 ) : "" );
+            $( cell ).append( layer.metadata.grazing_angle ? layer.metadata.grazing_angle.toFixed( 2 ) : '' );
 
             cell = row.insertCell( row.cells.length );
-            $( cell ).append( x.metadata.sun_azimuth ? x.metadata.sun_azimuth.toFixed( 2 ) : "" );
+            $( cell ).append( layer.metadata.sun_azimuth ? layer.metadata.sun_azimuth.toFixed( 2 ) : '' );
 
             cell = row.insertCell( row.cells.length );
-            $( cell ).append( x.metadata.sun_elevation ? x.metadata.sun_elevation.toFixed( 2 ) : "" );
+            $( cell ).append( layer.metadata.sun_elevation ? layer.metadata.sun_elevation.toFixed( 2 ) : '' );
 
             cell = row.insertCell( row.cells.length );
-            $( cell ).append( x.library );
+            $( cell ).append( layer.metadata.entry_id );
+
+            cell = row.insertCell( row.cells.length );
+            $( cell ).append( layer.library );
 
             cell = row.insertCell( row.cells.length );
             var span = document.createElement( "span" );
@@ -69,7 +76,7 @@ function buildSummaryTable() {
             var deleteButton = document.createElement( "button" );
             deleteButton.className = "btn btn-primary btn-xs";
             deleteButton.onclick = function() {
-                deleteFrame( i );
+                deleteFrame( index );
                 buildSummaryTable();
             };
             deleteButton.appendChild( span );
@@ -92,7 +99,7 @@ function calculateInitialViewBbox() {
 
 function changeFrame( param ) {
 	var layer = tlv.layers[ tlv.currentLayer ];
-	layer.mapLayer.setOpacity( 0 );
+	layer.mapLayer.setOpacity( layer.keepVisible ? layer.opacity : 0 );
 	layer.mapLayer.setVisible( layer.keepVisible );
 
 	if ( param === "fastForward" ) { tlv.currentLayer = getNextFrameIndex(); }
@@ -144,6 +151,25 @@ function getCurrentDimension() {
 
 
 	return parseInt(dimension, 10);
+}
+
+function getMapCenterText( format ) {
+    var center = tlv.map.getView().getCenter();
+    var coordinate = ol.proj.transform( center, "EPSG:3857", "EPSG:4326");
+	var convert = new CoordinateConversion();
+	var lat = coordinate[ 1 ];
+	var lon = coordinate[ 0 ];
+
+    switch ( format ) {
+        case "dms":
+            return convert.ddToDms( lat, "lat" ) + " " + convert.ddToDms( lon, "lon" );
+            break;
+        case "mgrs":
+            return convert.ddToMgrs( lat, lon );
+            break;
+        default:
+            return latitude.toFixed( 6 ) + ", " + longitude.toFixed( 6 );
+    }
 }
 
 function getNextFrameIndex() { return tlv.currentLayer >= tlv.layers.length - 1 ? 0 : tlv.currentLayer + 1; }
@@ -215,9 +241,16 @@ function moveLayerDownInStack( layerIndex ) {
 		tlv.layers[ layerIndex ] = tlv.layers[ nextLayerIndex ];
 		tlv.layers[ nextLayerIndex ] = thisLayer;
 
-		var collection = tlv.map.getLayers();
-		var element = collection.removeAt( tlv.layers.length - 1 - layerIndex );
-        collection.insertAt( tlv.layers.length - 1 - nextLayerIndex, element );
+        var baseLayers = Object.keys( tlv.baseLayers ).length;
+        var collection = tlv.map.getLayers();
+        var totalLayers = collection.getArray().length;
+        var removeIndex = totalLayers - baseLayers - 2 * layerIndex;
+        var imageLayerElement = collection.removeAt( removeIndex );
+        var tileLayerElement = collection.removeAt( removeIndex );
+
+        var insertIndex = totalLayers - 2 * nextLayerIndex - 2;
+        collection.insertAt( insertIndex, tileLayerElement );
+        collection.insertAt( insertIndex, imageLayerElement );
 	}
 
 	changeFrame( "fastForward" );
@@ -233,10 +266,18 @@ function moveLayerUpInStack( layerIndex ) {
 		tlv.layers[ layerIndex ] = tlv.layers[ previousLayerIndex ];
 		tlv.layers[ previousLayerIndex ] = thisLayer;
 
-		var collection = tlv.map.getLayers();
-		var element = collection.removeAt( tlv.layers.length - 1 - layerIndex );
-		collection.insertAt( tlv.layers.length - 1 - previousLayerIndex, element );
+        var baseLayers = Object.keys( tlv.baseLayers ).length;
+        var collection = tlv.map.getLayers();
+        var totalLayers = collection.getArray().length;
+        var removeIndex = totalLayers - baseLayers - 2 * layerIndex;
+        var imageLayerElement = collection.removeAt( removeIndex );
+        var tileLayerElement = collection.removeAt( removeIndex );
+
+        var insertIndex = totalLayers - 2 * previousLayerIndex;
+		collection.insertAt( insertIndex, tileLayerElement );
+        collection.insertAt( insertIndex, imageLayerElement );
 	}
+
 
 	changeFrame( "fastForward" );
 	changeFrame( "rewind" );
@@ -245,15 +286,19 @@ function moveLayerUpInStack( layerIndex ) {
 }
 
 function orientDevice(event) {
-	if (getCurrentDimension() == 2) {
-		if (event.alpha) { tlv.map.getView().rotate((275 + event.alpha) * Math.PI / 180); }
+	if ( getCurrentDimension() == 2 ) {
+		if ( event.alpha ) { tlv.map.getView().rotate( ( 275 + event.alpha ) * Math.PI / 180 ); }
 	}
 	else {
-		if (event.alpha && event.beta && event.gamma) {
+		if ( event.alpha && event.beta && event.gamma ) {
+            var beta = event.beta;
+            if ( window.innerHeight < window.innerWidth ) {
+                    beta = -event.gamma;
+            }
 			tlv.globe.getCesiumScene().camera.setView({
 				orientation: {
-					heading: (90 - event.alpha) * Math.PI / 180,
-					pitch: (event.beta - 90) * Math.PI / 180
+					heading: ( 90 - event.alpha ) * Math.PI / 180,
+					pitch: ( beta - 90 ) * Math.PI / 180
 				}
 			});
 		}
@@ -322,15 +367,14 @@ function setupTimeLapse() {
 	setupMap();
 	addBaseLayersToTheMap();
 
-	if (tlv.chronological == "false") { tlv.layers.reverse(); }
+	if ( tlv.chronological == "false" ) { tlv.layers.reverse(); }
 	// add layers to the map
-	$.each(
-		tlv.layers,
-		function(i, x) {
-			x.keepVisible = x.keepVisible || false;
-			addLayerToTheMap(x);
-		}
-	);
+    tlv.layers.reverse();
+	$.each( tlv.layers, function( index, layer ) {
+		layer.keepVisible = layer.keepVisible || false;
+		addLayerToTheMap( layer );
+	});
+    tlv.layers.reverse();
 	tlv.currentLayer = 0;
 
 	var extent = ol.proj.transformExtent(tlv.bbox, "EPSG:4326", "EPSG:3857");
@@ -359,19 +403,34 @@ function updateAcquisitionDate() {
 	if (acquisitionDate) {
 		var timeToNextImage = getTimeToAdjacentImage( tlv.layers, tlv.currentLayer, "next" );
 		var timeToPreviousImage = getTimeToAdjacentImage( tlv.layers, tlv.currentLayer, "previous" );
-		$( "#acquisitionDateDiv" ).html(
+        $( '[id=acquisitionDateDiv]' ).html(
 			(timeToPreviousImage ? timeToPreviousImage + " <- " : "") +
 			acquisitionDate + (acquisitionDate != "N/A" ? "z" : "") +
 			(timeToNextImage ? " -> " + timeToNextImage : "")
 		);
 	}
-	else { $( "#acquisitionDateDiv" ).html( "N/A" ); }
+	else { $( '[id=acquisitionDateDiv]' ).html( "N/A" ); }
 }
 
 function updateImageId() {
 	var layer = tlv.layers[ tlv.currentLayer ];
 	var libraryLabel = tlv.libraries[ layer.library ].label;
-	$( "#imageIdDiv" ).html( libraryLabel + ": " + layer.imageId );
+    var text = Object.keys( tlv.libraries ).length > 1 ? libraryLabel + ": " : "";
+    $( '[id=imageIdDiv]').html( text + layer.imageId );
+}
+
+function updateMapSize() {
+	if ( tlv.map ) {
+		var windowHeight = $( window ).height();
+		var banners = $( ".security-classification" ).length;
+		var bannersHeight = banners * $( ".security-classification" ).height();
+		var tileLoadProgressBarHeight = $( "#tileLoadProgressBar" ).height();
+		var mapHeight = windowHeight
+			- bannersHeight
+			- tileLoadProgressBarHeight;
+		$( "#map" ).height( mapHeight );
+		tlv.map.updateSize();
+	}
 }
 
 function updateScreenText() {
@@ -382,5 +441,5 @@ function updateScreenText() {
 
 function updateTlvLayerCount() {
 	var currentCount = tlv.currentLayer + 1;
-	$("#tlvLayerCountSpan").html(currentCount + "/" + tlv.layers.length);
+	$( '[id=tlvLayerCountSpan' ).html( currentCount + '/' + tlv.layers.length );
 }

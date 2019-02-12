@@ -1,7 +1,102 @@
+function configLayerToggle( key ) {
+	var state = $("#layers" + key + "Select").val();
+	if ( state == "on" ) { displayConfigLayer( key ); }
+	else { hideConfigLayer( key ); }
+}
+
+var createMapControlsLayers = createMapControls;
+createMapControls = function() {
+	createMapControlsLayers();
+
+	var overviewMapControl = new ol.control.OverviewMap();
+	if ( tlv.overviewMapEnabled == "true" || tlv.preferences.tlvPreference.overviewMap ) {
+		// hack
+		setTimeout( function() { overviewMapControl.setCollapsed( false ); }, 1000 );
+	}
+	tlv.mapControls.push( overviewMapControl );
+}
+
 function crossHairLayerToggle() {
 	var state = $("#layersCrossHairSelect").val();
 	if (state == "on") { displayCrossHairLayer(); }
 	else { hideCrossHairLayer(); }
+}
+
+function displayConfigLayer( key ) {
+	var layer = tlv.configLayers[ key ];
+	if ( !layer.mapLayer ) {
+		var source = new ol.source.Vector({
+			format: new ol.format.GeoJSON(),
+			// this forces the features to reload each time
+			strategy: function( extent, resolution ) {
+				if ( layer.refresh && this.loadedExtentsRtree_ ) {
+        			this.loadedExtentsRtree_.clear();
+				}
+
+
+				return [ extent ];
+			},
+			url: function() {
+				var url = layer.url;
+ 				if ( layer.params ) {
+					url += "?" + $.param( layer.params );
+				}
+
+				var bbox = ol.proj.transformExtent( tlv.map.getView().calculateExtent(), "EPSG:3857", "EPSG:4326" );
+				url = url.replace( encodeURIComponent( "<BBOX>" ), bbox.join( "," ) );
+
+
+				return url;
+	        }
+		});
+
+		var style = createDefaultStyle();
+		layer.mapLayer = new ol.layer.Vector({
+			declutter: true,
+			source: source,
+			style: function( feature ) {
+				// fill
+				if ( layer.style && layer.style.fill ) {
+					var color = layer.style.fill.color;
+					if ( color ) {
+						style.getFill().setColor( color );
+					}
+				}
+
+				// stroke
+				if ( layer.style && layer.style.stroke ) {
+					var color = layer.style.stroke.color;
+					if ( color ) {
+						style.getStroke().setColor( color );
+					}
+				}
+
+				// text
+				if ( layer.style && layer.style.text ) {
+					var color = layer.style.text.color;
+					if ( color ) {
+						style.getText().getFill().setColor( color );
+					}
+
+					var labelKey = layer.style.text.label;
+					if ( labelKey ) {
+						var text = feature.get( labelKey );
+						if ( typeof text == "object" ) { text = JSON.stringify( text ); }
+						style.getText().setText( text );
+					}
+				}
+
+
+
+				return [ style ];
+			}
+		});
+
+		tlv.map.addLayer( layer.mapLayer );
+	}
+	else {
+		layer.mapLayer.setVisible( true );
+	}
 }
 
 function displayCrossHairLayer() {
@@ -54,31 +149,52 @@ function displaySearchOriginLayer() {
 	else { tlv.searchOriginLayer.setVisible(true); }
 }
 
-function hideCrossHairLayer() { tlv.crossHairLayer.setVisible(false); }
+function hideConfigLayer( key ) {
+	tlv.configLayers[ key ].mapLayer.setVisible( false );
+}
 
-function hideSearchOriginLayer() { tlv.searchOriginLayer.setVisible(false); }
+function hideCrossHairLayer() {
+	tlv.crossHairLayer.setVisible( false );
+}
+
+function hideSearchOriginLayer() {
+	tlv.searchOriginLayer.setVisible( false );
+}
+
+function overviewLayerToggle() {
+	$.each(
+		tlv.map.getControls().getArray(), function( index, control ) {
+			if ( control instanceof ol.control.OverviewMap ) {
+				var state = $( "#layersOverviewSelect").val();
+				control.setCollapsed( state );
+			}
+		}
+	);
+}
 
 function refreshCrossHairLayer() {
 	var mapCenter = tlv.map.getView().getCenter();
-	var centerPixel = tlv.map.getPixelFromCoordinate(mapCenter);
-	var deltaXPixel = [centerPixel[0] + 10, centerPixel[1]];
+	var centerPixel = tlv.map.getPixelFromCoordinate( mapCenter );
+	if ( centerPixel ) {
+		var deltaXPixel = [centerPixel[0] + 10, centerPixel[1]];
 
-	var maxXPoint = new ol.geom.Point( tlv.map.getCoordinateFromPixel( deltaXPixel ) );
-	var minXPoint = maxXPoint.clone();
-	minXPoint.rotate( Math.PI, mapCenter );
-	var horizontalLine = new ol.geom.LineString([
-		minXPoint.getCoordinates(),
-		maxXPoint.getCoordinates()
-	]);
+		var maxXPoint = new ol.geom.Point( tlv.map.getCoordinateFromPixel( deltaXPixel ) );
+		var minXPoint = maxXPoint.clone();
+		minXPoint.rotate( Math.PI, mapCenter );
+		var horizontalLine = new ol.geom.LineString([
+			minXPoint.getCoordinates(),
+			maxXPoint.getCoordinates()
+		]);
 
-	var verticalLine = horizontalLine.clone();
-	verticalLine.rotate( Math.PI / 2, mapCenter );
+		var verticalLine = horizontalLine.clone();
+		verticalLine.rotate( Math.PI / 2, mapCenter );
 
-	var geometryCollection = new ol.geom.GeometryCollection([
-		horizontalLine,
-		verticalLine
-	]);
-	tlv.crossHairLayer.getSource().getFeatures()[0].setGeometry( geometryCollection );
+		var geometryCollection = new ol.geom.GeometryCollection([
+			horizontalLine,
+			verticalLine
+		]);
+		tlv.crossHairLayer.getSource().getFeatures()[0].setGeometry( geometryCollection );
+	}
 }
 
 function searchOriginLayerToggle() {
@@ -92,15 +208,15 @@ setupTimeLapse = function() {
 	setupTimeLapseLayers();
 
 	tlv.crossHairLayer = null;
-	var crossHairLayerSelect = $("#layersCrossHairSelect");
-	if (tlv.crossHairLayerEnabled == "true" || crossHairLayerSelect.val() == "on") {
+	var crossHairLayerSelect = $( "#layersCrossHairSelect" );
+	if ( crossHairLayerSelect.val() == "on" ) {
 		crossHairLayerSelect.val("on");
 		crossHairLayerToggle();
 	}
 
 	tlv.searchOriginLayer = null;
-	var searchOriginLayerSelect = $("#layersSearchOriginSelect");
-	if (tlv.searchOriginLayerEnabled == "true" || searchOriginLayerSelect.val() == "on") {
+	var searchOriginLayerSelect = $( "#layersSearchOriginSelect" );
+	if ( searchOriginLayerSelect.val() == "on" ) {
 		searchOriginLayerSelect.val("on");
 		searchOriginLayerToggle();
 	}

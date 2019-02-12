@@ -15,16 +15,16 @@
 	top: 0.5em;
 }
 
-#imageIdDiv {
-	bottom: 0.5em;
-    left: 0.5em;
-    text-align: left;
+#imageIdOuterDiv {
+    text-align: center;
+	top: 0.5em;
+	width: 100%
 }
 
 .ol-full-screen {
 	left: 0.5em;
 	right: auto;
-	top: 90px;
+	top: 60px;
 }
 
 .ol-mouse-position {
@@ -43,7 +43,7 @@
     left: 0.5em;
     opacity: 1;
     right: auto;
-    top: 60px;
+    top: 90px;
     visibility: visible;
 }
 
@@ -61,6 +61,13 @@
 .rewind-control {
 	left: 3em;
 	top: 0.5em;
+}
+
+.rotation-tilt-control {
+	left: 0.5em;
+	transform: rotate( 90deg );
+	transform-origin: 2.5em 2.5em;
+	top: 90px;
 }
 
 .summary-table-control {
@@ -95,4 +102,12 @@
 .tooltip-inner {
 	max-width: none;
 	white-space: nowrap;
+}
+
+.up-is-up-control {
+	left: 0.5em;
+    opacity: 1;
+    right: auto;
+    top: 120px;
+    visibility: visible;
 }

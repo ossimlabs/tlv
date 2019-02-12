@@ -1,3 +1,10 @@
+function componentToHex( component ) {
+    var hex = component.toString( 16 );
+
+
+    return hex.length == 1 ? "0" + hex : hex;
+}
+
 function convertGeospatialCoordinateFormat(inputString, callbackFunction) {
 	var bePattern = /\d{4}[a-z|\-{1}][a-z|0-9]\d{4}/i;
 	var ddPattern = /(\-?\d{1,2}[.]?\d*)[\s+|,?]\s*(\-?\d{1,3}[.]?\d*)/;
@@ -40,63 +47,38 @@ function convertGeospatialCoordinateFormat(inputString, callbackFunction) {
 	}
 	else if ( inputString.match( bePattern ) && tlv.beLookup.url && callbackFunction ) {
 		displayLoadingDialog( "We're checking our maps for that location... BRB!" );
-		var queryParams = {
-			filter: tlv.beLookup.columnName + " = '" + inputString + "'",
-			maxFeatures: 1,
-			outputFormat: "JSON",
-			request: "GetFeature",
-			service: "WFS",
-			typeName: tlv.beLookup.typeName,
-			version: "1.1.0"
-		};
-
-		$.ajax({
-			dataType: "json",
-			error: function( jqXhr, textStatus, errorThrown ) {
-				hideLoadingDialog();
-			},
-			success: function( data ) {
-				hideLoadingDialog();
-
-				if ( data.features.length > 0 ) {
-					var point = data.features[ 0 ].geometry.coordinates;
-					callbackFunction( point );
-				}
-				else { displayErrorDialog( "We couldn't find that BE. :(" ); }
-			},
-			url: tlv.beLookup.url + "?" + $.param( queryParams )
-		});
+        beSearch( inputString )
+        .always( function() {
+            hideLoadingDialog();
+        } )
+        .done( function( data ) {
+			if ( data.features.length > 0 ) {
+				var point = data.features[ 0 ].geometry.coordinates;
+				callbackFunction( point );
+			}
+			else { displayErrorDialog( "We couldn't find that BE. :(" ); }
+		} );
 	}
 	else {
 		if ( callbackFunction && tlv.geocoderUrl ) {
-			displayLoadingDialog();
-
-			var queryParams = {
-				autocomplete: true,
-				autocompleteBias: "BALANCED",
-				maxInterpretations: 1,
-				query: inputString,
-				responseIncludes: "WKT_GEOMETRY_SIMPLIFIED"
-			};
-
 			displayLoadingDialog( "We're checking our maps for that location... BRB!" );
-			$.ajax({
-				dataType: "json",
-				url: tlv.geocoderUrl + "?" + $.param( queryParams )
-			})
+            placenameSearch( inputString )
 			.always( function() {
 				hideLoadingDialog();
 			})
 			.done( function( data ) {
+                var point;
 				if ( data.interpretations.length > 0 ) {
 					var center = data.interpretations[ 0 ].feature.geometry.center;
-					var point = [ center.lng, center.lat ];
-					callbackFunction( point );
+					point = [ center.lng, center.lat ];
+
 				}
-				else { displayErrorDialog( "We couldn't find that location. :(" ); }
-			});
+                callbackFunction( point );
+			} );
  		}
-		else { return false; }
+		else {
+            return false;
+        }
 	}
 }
 
@@ -109,18 +91,80 @@ function convertRadiusToBbox(x, y, radius) {
 	return { maxLat: y + deltaLatitude, maxLon: x + deltaLongitude, minLat: y - deltaLatitude, minLon: x - deltaLongitude };
 }
 
+function copyTextToClipboard( text ) {
+    // note this function must be called from a real button click
+    var input = document.createElement( "input" );
+    input.id = "text";
+    input.value = text;
+    input.type = "text";
+    $( "body" ).append( input );
+
+    document.getElementById( "text" ).select();
+    document.execCommand( "copy" );
+
+    input.remove();
+}
+
+function createDefaultStyle() {
+	return new ol.style.Style({
+        geometry: function( feature ) {
+            var geometry = feature.getGeometry();
+            if ( geometry.getType() == "MultiPolygon" ) {
+                // Only render label for the widest polygon of a multipolygon
+                var polygons = geometry.getPolygons();
+                var widest = 0;
+                for ( var i = 0, ii = polygons.length; i < ii; ++i ) {
+                    var polygon = polygons[ i ];
+                    var width = ol.extent.getWidth( polygon.getExtent() );
+                    if ( width > widest ) {
+                        widest = width;
+                        geometry = polygon;
+                    }
+                }
+            }
+
+
+            return geometry;
+        },
+        fill: new ol.style.Fill({
+            color: "rgba(255, 255, 0, 0)"
+        }),
+		image: new ol.style.Circle({
+			fill: new ol.style.Fill({
+                color: "rgba(255, 255, 0, 1)"
+            }),
+			radius: 5,
+			stroke: new ol.style.Stroke({
+				color: "rgba(255, 255, 0, 0)",
+	            width: 2
+	 		})
+		}),
+		stroke: new ol.style.Stroke({
+			color: "rgba(255, 255, 0, 1)",
+            width: 2
+ 		}),
+        text: new ol.style.Text({
+            fill: new ol.style.Fill({
+                color: "rgba(255, 255, 0, 1)"
+            }),
+            offsetY: -13,
+            overflow: true
+        })
+	});
+}
+
 function disableMenuButtons() {
 	var menuButtons = $( ".navbar-header" )[ 0 ].children;
-	for ( var i = 2; i < menuButtons.length - 1; i++ ) { $( menuButtons[ i ] ).hide(); }
+	for ( var i = 2; i < menuButtons.length - 2; i++ ) { $( menuButtons[ i ] ).hide(); }
 
 	var menuButtons = $( ".navbar-nav" )[ 0 ].children;
-	for ( var i = 2; i < menuButtons.length; i++ ) { $( menuButtons[ i ] ).hide(); }
+	for ( var i = 2; i < menuButtons.length - 2; i++ ) { $( menuButtons[ i ] ).hide(); }
 }
 
 function displayDialog( dialog ) {
 	var header = $( "#" + dialog + " .modal-header" );
-	var paddingHeight = header.offset().top;
-	var headerHeight = header.outerHeight();
+	var paddingHeight = header.offset() ? header.offset().top : 0;
+	var headerHeight = header.offset() ? header.outerHeight() : 0;
 	var footerHeight = $( "#" + dialog + " .modal-footer" ).outerHeight();
 
 	var body = $( "#" + dialog + " .modal-body" );
@@ -133,10 +177,17 @@ function displayDialog( dialog ) {
 	body.css( "overflow-y", bodyIsTooTall ? "auto" : "" );
 }
 
-function displayErrorDialog(message) {
-	var messageDiv = $("#errorDialog").children()[1];
-	$(messageDiv).html(message);
-	$("#errorDialog").show();
+function displayInfoDialog( message ) {
+    $( "#infoDialog" ).html( message );
+	$( "#infoDialog" ).fadeIn();
+    setTimeout( function() { $( "#infoDialog" ).fadeOut(); }, 5000 );
+}
+
+function displayErrorDialog( message ) {
+	var messageDiv = $( '#errorDialog' ).children()[ 1 ];
+	$( messageDiv ).html( message );
+	$( '#errorDialog' ).show();
+    setTimeout( function() { $( '#errorDialog' ).fadeOut(); }, 5000 );
 }
 
 function displayLoadingDialog(message) {
@@ -162,19 +213,52 @@ function enableKeyboardShortcuts() {
 	$( document ).on( "keydown", function( event ) {
 		// only if a modal is not open
 		if ( !$( ".modal-backdrop" ).is( ":visible" ) ) {
-			var keyCode = event.keyCode;
 
+			var keyCode = event.keyCode;
 			switch( keyCode ) {
 				// space bar
 				case 32: $( "button[title='Play/Stop']" ).trigger( "click" ); break;
 				// left arrow key
-				case 37: changeFrame( "rewind" ); break;
+				case 37:
+                    if ( event.shiftKey ) {
+                        var degrees = tlv.map.getView().getRotation() * 180 / Math.PI - 1;
+                        tlv.map.getView().setRotation( degrees * Math.PI / 180 );
+                    }
+                    else {
+                        changeFrame( "rewind" );
+                    }
+                    break;
+                // up arrow key
+                case 38: tlv.map.getView().setZoom( tlv.map.getView().getZoom() + 1 );
 				// right arrow key
-				case 39: changeFrame( "fastForward" ); break;
+				case 39:
+                    if ( event.shiftKey ) {
+                        var degrees = tlv.map.getView().getRotation() * 180 / Math.PI + 1;
+                        tlv.map.getView().setRotation( degrees * Math.PI / 180 );
+                    }
+                    else {
+                        changeFrame( "fastForward" );
+                    }
+                    break;
+                // down arrow key
+                case 40: tlv.map.getView().setZoom( tlv.map.getView().getZoom() - 1 );
 				// delete key
 				case 46: deleteFrame(  tlv.currentLayer ); break;
 			}
 		}
+	});
+}
+
+function getDtedHeight( longitude, latitude, callback ) {
+	$.ajax({
+		data: "longitude=" + longitude + "&latitude=" + latitude,
+		url: tlv.contextPath + "/ossim/getHeight"
+	})
+	.done( function( data ) {
+		callback( data );
+	})
+	.fail( function( data ) {
+		callback( data );
 	});
 }
 
@@ -197,6 +281,27 @@ function getGpsLocation(callbackFunction) {
 	else { displayErrorDialog("Sorry, you're device doesn't support geolocation. :("); }
 }
 
+function groundToImagePoints( coordinates, layer, callback ) {
+    return $.ajax({
+        contentType: "application/json",
+        data: JSON.stringify({
+            "entryId": layer.metadata.entry_id || 0,
+            "filename": layer.metadata.filename,
+            "pointList": coordinates.map( function( coordinate ) {
+				return { "lat": coordinate[ 1 ], "lon": coordinate[0] };
+			}),
+        }),
+        success: function( data ) {
+            var pixels = data.data.map(
+                function( point ) { return [ point.x, point.y ] }
+            );
+            callback( pixels, layer );
+        },
+        type: "post",
+        url: tlv.libraries[ layer.library ].mensaUrl + "/groundToImagePoints"
+    });
+}
+
 function hideDialog(dialog) {
 	var dialogBody = $("#" + dialog + " .modal-body");
 	dialogBody.css("max-height", "");
@@ -207,6 +312,47 @@ function hideErrorDialog() { $("#errorDialog").hide(); }
 
 function hideLoadingDialog() { $("#loadingDialog").modal("hide"); }
 
+function imagePointsToGround( pixels, layer, callback ) {
+    return $.ajax({
+        contentType: "application/json",
+        data: JSON.stringify({
+            "entryId": 0,
+            "filename": layer.metadata.filename,
+            "pointList": pixels.map( function( pixel ) {
+                return { "x": pixel[ 0 ], "y": pixel[ 1 ] };
+            } ),
+            "pqeEllipseAngularIncrement": 10,
+            "pqeEllipsePointType" : "none",
+            "pqeIncludePositionError": true,
+            "pqeProbabilityLevel" : 0.9,
+        }),
+        success: function( data ) {
+            var coordinates = data.data.map(
+                function( point ) { return [ point.lon, point.lat ]; }
+            );
+            var info = data.data.map(
+                function( point ) {
+                    if ( point.pqe.pqeValid ) {
+                        return $.extend( point, {
+                                CE: point.pqe.CE,
+                                LE: point.pqe.LE
+                        } );
+                    }
+                    else {
+                        return $.extend( point, {
+                            CE: null,
+                            LE: null
+                        } );
+                    }
+                }
+            );
+            callback( coordinates, layer, info );
+        },
+        type: "post",
+        url: tlv.libraries[ layer.library ].mensaUrl + "/imagePointsToGround"
+    });
+}
+
 function initializeLoadingDialog() {
 	$("#loadingDialog").modal({
 		keyboard: false,
@@ -214,40 +360,6 @@ function initializeLoadingDialog() {
 	});
 }
 
-function placenameSearch( inputElement ) {
-	var queryParams = {
-		autocomplete: true,
-		autocompleteBias: "BALANCED",
-		maxInterpretations: 10,
-		query: inputElement.val(),
-		responseIncludes: "WKT_GEOMETRY_SIMPLIFIED"
-	};
-
-	if ( tlv.placenameSearchAjax ) { tlv.placenameSearchAjax.abort(); }
-	tlv.placenameSearchAjax = $.ajax({
-		url: tlv.geocoderUrl + "?" + $.param( queryParams )
-	})
-	.always( function() {
-		inputElement.typeahead( "destroy" );
-	})
-	.done( function( data ) {
-		var places = data.interpretations.map( function( place ) {
-			return { displayName: place.feature.displayName };
-		});
-
-		inputElement.typeahead( null, {
-			display: function( suggestion ) {
-				inputElement.focus();
-				return suggestion.displayName;
-			},
-			source: function( query, sync ) {
-				inputElement.focus();
-				return sync( places );
-			}
-		});
-		inputElement.focus();
-	})
-	.fail( function() {
-		inputElement.focus();
-	});
+function rgbToHex( red, green, blue ) {
+	return "#" + componentToHex( red ) + componentToHex( green ) + componentToHex( blue );
 }

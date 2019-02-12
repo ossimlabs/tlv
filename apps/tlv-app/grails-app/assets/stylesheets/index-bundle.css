@@ -1,15 +1,17 @@
 /*
-*= require webjars/bootswatch-slate/3.3.5+4/css/bootstrap.css
 *= require webjars/font-awesome/4.4.0/css/font-awesome.css
 *= require bootstrap-datetimepicker-4.15.35
 *= require bootstrap-slider
 *= require webjars/typeahead.js-bootstrap-css/1.2.1/typeaheadjs.css
 *= require ol-4.4.2
-*= require webjars/cesium/1.38.0/Build/Cesium/Widgets/widgets.css
 *=
 *= require index
 *= require time-lapse
 *= require menus/search
+*= require menus/export
+*= require menus/layers
 *= require image-properties
 *= require menus/view
+*=
+*= require security
 */

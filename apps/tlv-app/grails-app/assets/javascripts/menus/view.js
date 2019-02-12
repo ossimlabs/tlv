@@ -1,7 +1,19 @@
 function addDimension() {
 	if ( checkWebGlCompatability() ) {
+		$.each( tlv.layers, function( index, layer ) {
+			var source = layer.mapLayer.getSource();
+			var styles = source.getParams().STYLES;
+			source.updateParams({
+				STYLES: encodeURIComponent( styles )
+			});
+		});
+
 		if ( tlv.globe === undefined ) {
+			displayLoadingDialog( "Retrieving globe... yes, the ENTIRE globe." );
+
 			loadCesiumJavascript().done( function() {
+				hideLoadingDialog();
+
 				setupGlobe();
 				tlv.globe.setEnabled( true );
 			});
@@ -13,10 +25,18 @@ function addDimension() {
 	else { $( "#dimensionsSelect" ).val( 2 ); }
 }
 
+var addLayerToTheMapView = addLayerToTheMap;
+addLayerToTheMap = function( layer ) {
+	addLayerToTheMapView( layer );
+
+	layer.imageSpaceMap.addLayer( layer.imageSpaceImageLayer );
+	layer.imageSpaceMap.addLayer( layer.imageSpaceTileLayer );
+	layer.imageSpaceMapLayer = layer.imageSpaceTileLayer;
+}
+
 function addSwipeListenerToMap() {
-	var firstLayer, secondLayer = null;
-	if (!firstLayer) { firstLayer = tlv.currentLayer; }
-	if (!secondLayer) { secondLayer = tlv.currentLayer >= tlv.layers.length - 1 ? 0 : tlv.currentLayer + 1; }
+	var firstLayer = tlv.currentLayer;
+	var secondLayer = tlv.currentLayer >= tlv.layers.length - 1 ? 0 : tlv.currentLayer + 1;
 
 	tlv.layers[ firstLayer ].mapLayer.setVisible( true );
 	tlv.layers[ firstLayer ].mapLayer.setOpacity( 1 );
@@ -29,25 +49,57 @@ function addSwipeListenerToMap() {
 	tlv.layers[ tlv.swipeLayers[ 1 ] ].mapLayer.on( "precompose", precomposeSwipeRight );
 	tlv.layers[ tlv.swipeLayers[ 1 ] ].mapLayer.on( "postcompose", postcomposeSwipe );
 
-	var globeLayers = tlv.globe.getCesiumScene().imageryLayers;
-	var numberOfBaseLayers = Object.keys( tlv.baseLayers ).length;
-	var splitLeft = Cesium.ImagerySplitDirection.LEFT;
-	var splitRight = Cesium.ImagerySplitDirection.RIGHT;
-	globeLayers.get( tlv.swipeLayers[ 0 ] + numberOfBaseLayers ).splitDirection = splitLeft;
-	globeLayers.get( tlv.swipeLayers[ 1 ] + numberOfBaseLayers ).splitDirection = splitRight;
+	if ( tlv.globe && tlv.globe.getEnabled() ) {
+		var globeLayers = tlv.globe.getCesiumScene().imageryLayers;
+		var numberOfBaseLayers = Object.keys( tlv.baseLayers ).length;
+		var splitLeft = Cesium.ImagerySplitDirection.LEFT;
+		var splitRight = Cesium.ImagerySplitDirection.RIGHT;
+
+		var leftLayerIndex = globeLayers.length - ( 2 * tlv.swipeLayers[ 0 ] + 1 );
+		var rightLayerIndex = globeLayers.length - ( 2 * tlv.swipeLayers[ 1 ] + 1 );
+		globeLayers.get( leftLayerIndex ).splitDirection = splitLeft;
+		globeLayers.get( rightLayerIndex ).splitDirection = splitRight;
+	}
 
 	tlv.swipeDragStartX = 0;
 	swipeSliderMove({ clientX: $( "#swipeSlider" ).offset().left });
 }
 
 var changeFrameView = changeFrame;
-	changeFrame = function( params ) {
-	if ( $("#swipeSelect").val() == "on" ) {
+changeFrame = function( params ) {
+	var oldLayer = tlv.layers[ tlv.currentLayer ];
+	var oldMap = oldLayer.imageSpaceMap;
+	var center = oldMap.getView().getCenter();
+	center[ 1 ] = oldLayer.metadata.height - center[ 1 ];
+	$( '#' + oldMap.getTarget() ).hide();
+
+
+	if ( $( '#swipeSelect' ).val() == 'on' ) {
 		turnOffSwipe();
 		changeFrameView( params );
 		turnOnSwipe();
 	}
 	else { changeFrameView( params ); }
+
+	var newLayer = tlv.layers[ tlv.currentLayer ];
+	var newMap = newLayer.imageSpaceMap;
+	if ( $( '#imageSpaceMaps' ).is( ':visible' ) ) {
+		imagePointsToGround( [ center ], oldLayer, function( coordinates, layer, info ) {
+			// assume that the layer switched while the AJAX call is being made
+			var newLayer = tlv.layers[ tlv.currentLayer ];
+
+			groundToImagePoints( coordinates, newLayer, function( pixels, layer ) {
+				hideLoadingDialog();
+
+				var center = pixels[ 0 ];
+				center[ 1 ] = layer.metadata.height - center[ 1 ];
+				layer.imageSpaceMap.getView().setCenter( center );
+
+				$( '#' + newMap.getTarget() ).show();
+				newMap.updateSize();
+			} );
+		} );
+	}
 }
 
 function changeWmsLayerType() {
@@ -61,6 +113,9 @@ function changeWmsLayerType() {
 
 			layer.mapLayer = layer[ layerType ];
 			layer.mapLayer.getSource().updateParams({ STYLES: styles });
+
+			layer.imageSpaceMapLayer = layer[ 'imageSpace' + layerType.capitalize() ];
+			layer.imageSpaceMapLayer.getSource().updateParams({ STYLES: styles });
 		}
 	);
 
@@ -68,11 +123,270 @@ function changeWmsLayerType() {
 	changeFrame( "fastForward" );
 }
 
+var createLayersView = createLayers;
+createLayers = function( layer ) {
+	createLayersView( layer );
+
+	var imageHeight = layer.metadata.height;
+	var imageWidth = layer.metadata.width;
+	var imageExtent = [ 0, 0, imageWidth, imageHeight ];
+
+	layer.imageSpaceImageLayer = new ol.layer.Image({
+		extent: imageExtent,
+		source: layer.imageSpaceImageSource,
+		visible: false
+	});
+
+	layer.imageSpaceTileLayer = new ol.layer.Tile({
+		extent: imageExtent,
+		source: layer.imageSpaceTileSource,
+		visible: true
+	});
+}
+
+var createLayerSourcesView = createLayerSources;
+createLayerSources = function( layer ) {
+	createLayerSourcesView( layer );
+
+	var imageHeight = layer.metadata.height;
+	var fixY = function( image, src ) {
+		var regexBbox = /BBOX\=([^&^#]*)/;
+		var url = decodeURIComponent( src );
+		var bbox = url.match( regexBbox )[ 1 ].split( ',' ).map( Number );
+		var height = bbox[ 3 ] - bbox[ 1 ];
+		var requestCenter = ( bbox[ 3 ] + bbox[ 1 ] ) / 2;
+		var newCenter = imageHeight - requestCenter;
+		var minY = newCenter - height / 2;
+		var maxY = minY + height;
+		var bboxOut = bbox[ 0 ] + ',' + minY + ',' + bbox[ 2 ] + ',' + maxY;
+		var newUri = src.replace( regexBbox, 'BBOX=' + encodeURIComponent( bboxOut ) );
+		image.getImage().src = newUri;
+	};
+
+	var imageDatabaseId = layer.metadata.id;
+	layer.imageSpaceImageSource = new ol.source.ImageWMS({
+		imageLoadFunction: fixY,
+		params: {
+			LAYERS: "omar:raster_entry." + imageDatabaseId,
+			STYLES: layer.imageSource.getParams().STYLES,
+			VERSION: "1.3.0"
+		},
+		url: tlv.libraries[ layer.library ].wmsUrl
+	});
+
+	layer.imageSpaceTileSource = new ol.source.TileWMS({
+		params: {
+			LAYERS: "omar:raster_entry." + imageDatabaseId,
+			STYLES: layer.tileSource.getParams().STYLES,
+			VERSION: "1.3.0"
+		},
+		tileLoadFunction: fixY,
+		url: tlv.libraries[ layer.library ].wmsUrl
+	});
+}
+
 var createMapControlsView = createMapControls;
 createMapControls = function() {
 	createMapControlsView();
 
 	$.each( createSwipeControls(), function( i, x ) { tlv.mapControls.push( x ); } );
+
+	$.each( tlv.layers, function( index, layer ) {
+		var acquisitionDateDiv = document.createElement( "div" );
+		acquisitionDateDiv.className = "custom-map-control";
+		acquisitionDateDiv.id = "acquisitionDateDiv";
+		var acquisitionDateControl = new ol.control.Control({ element: acquisitionDateDiv });
+		layer.imageSpaceMap.addControl( acquisitionDateControl );
+
+
+		var FastForwardControl = function() {
+			var button = document.createElement( "button" );
+			button.innerHTML = "<span class = 'glyphicon glyphicon-step-forward'></span>";
+			button.title = "Fast Forward";
+
+			var this_ = this;
+			$( button ).on( "click", function( event ) {
+				$( this ).blur();
+				changeFrame( "fastForward" );
+			});
+
+			var element = document.createElement( "div" );
+			element.className = "fast-forward-control ol-unselectable ol-control";
+			element.appendChild( button );
+
+			ol.control.Control.call( this, {
+				element: element,
+				target: undefined
+			});
+		};
+		ol.inherits( FastForwardControl, ol.control.Control );
+		layer.imageSpaceMap.addControl( new FastForwardControl() );
+
+
+		var fullScreenSpan = document.createElement( "span" );
+		fullScreenSpan.className = "glyphicon glyphicon-fullscreen";
+		var fullScreenControl = new ol.control.FullScreen({ label: fullScreenSpan });
+		layer.imageSpaceMap.addControl( fullScreenControl );
+
+
+		var imageIdOuterDiv = document.createElement( "div" );
+		imageIdOuterDiv.className = "custom-map-control";
+		imageIdOuterDiv.id = "imageIdOuterDiv";
+		imageIdOuterDiv.style = "background-color: rgba(0, 0, 0, 0); pointer-events: none;"
+
+		var imageIdDiv = document.createElement( "div" );
+		imageIdDiv.id = "imageIdDiv";
+		imageIdDiv.style = "background-color: rgba(0, 0, 0, 0.5); display: inline-block; text-align: left";
+		$( imageIdOuterDiv ).append( imageIdDiv );
+
+		var imageIdControl = new ol.control.Control({ element: imageIdOuterDiv });
+		layer.imageSpaceMap.addControl( imageIdControl );
+
+
+		var PlayStopControl = function() {
+			var button = document.createElement( "button" );
+			button.innerHTML = "<span class = 'glyphicon glyphicon-play'></span>";
+			button.title = "Play/Stop";
+
+			var this_ = this;
+			$( button ).on( "click", function( event ) {
+				$( this ).blur();
+				playStopTimeLapse( $( button ).children()[ 0 ] );
+			});
+
+			var element = document.createElement( "div" );
+			element.className = "play-stop-control ol-unselectable ol-control";
+			element.appendChild( button );
+
+			ol.control.Control.call( this, {
+				element: element,
+				target: undefined
+			});
+		};
+		ol.inherits( PlayStopControl, ol.control.Control );
+		layer.imageSpaceMap.addControl( new PlayStopControl() );
+
+		var RewindControl = function() {
+			var button = document.createElement( "button" );
+			button.innerHTML = "<span class = 'glyphicon glyphicon-step-backward'></span>";
+			button.title = "Rewind";
+
+			var this_ = this;
+			$( button ).on( "click", function( event ) {
+				$( this ).blur();
+				changeFrame( "rewind" );
+			});
+
+			var element = document.createElement( "div" );
+			element.className = "rewind-control ol-unselectable ol-control";
+			element.appendChild( button );
+
+			ol.control.Control.call( this, {
+				element: element,
+				target: undefined
+			});
+		};
+		ol.inherits( RewindControl, ol.control.Control );
+		layer.imageSpaceMap.addControl( new RewindControl() );
+
+
+		var RotationControl = function() {
+			var rotationInput = document.createElement( "input" );
+			rotationInput.id = "rotationSliderInput";
+			rotationInput.max = "360";
+			rotationInput.min = "0";
+			rotationInput.oninput = function( event ) {
+				var degrees = $( rotationInput ).val();
+				layer.imageSpaceMap.getView().setRotation( degrees * Math.PI / 180 );
+			};
+			rotationInput.step = "1";
+			rotationInput.style.display = "none";
+			rotationInput.style[ "vertical-algin" ] = "middle";
+			rotationInput.type = "range";
+			rotationInput.value = "0";
+
+			setTimeout( function() {
+				$( ".ol-rotate" ).on( "click", function( event ) {
+					if ( $( rotationInput ).is( ":visible" ) ) {
+						$( rotationInput ).fadeOut();
+					}
+					else {
+						$( rotationInput ).fadeIn();
+					}
+				});
+			}, 2000 );
+
+			var this_ = this;
+
+			var element = document.createElement( "div" );
+			element.appendChild( rotationInput );
+			element.className = "rotation-tilt-control ol-unselectable ol-control";
+			element.style = "background: none";
+
+
+			ol.control.Control.call( this, {
+				element: element,
+				target: undefined
+			});
+
+
+		};
+		ol.inherits( RotationControl, ol.control.Control );
+		layer.imageSpaceMap.addControl( new RotationControl() );
+
+
+		var SummaryTableControl = function() {
+			var button = document.createElement( "button" );
+			button.innerHTML = "<span id = 'tlvLayerCountSpan'>0/0</span>&nbsp;<span class = 'glyphicon glyphicon-list-alt'></span>";
+			button.style = "width: auto";
+			button.title = "Summary Table";
+
+			var this_ = this;
+			$( button ).on( "click", function( event ) {
+				buildSummaryTable();
+				$( "#summaryTableDialog" ).modal( "show" );
+			});
+
+			var element = document.createElement( "div" );
+			element.className = "summary-table-control ol-unselectable ol-control";
+			element.appendChild( button );
+
+			ol.control.Control.call( this, {
+				element: element,
+				target: undefined
+			});
+		};
+		ol.inherits( SummaryTableControl, ol.control.Control );
+		layer.imageSpaceMap.addControl( new SummaryTableControl() );
+
+		var UpIsUpControl = function() {
+			var button = document.createElement( "button" );
+			button.innerHTML = "U";
+			button.title = "Up is Up";
+
+			var this_ = this;
+			$( button ).on( 'click', function() {
+				var upAngle = layer.metadata.upAngle;
+				if ( upAngle ) {
+					layer.imageSpaceMap.getView().setRotation( upAngle );
+				}
+				else {
+					displayErrorDialog( 'Woops,the up angle for this image seems to be missing!' );
+ 				}
+			} );
+
+			var element = document.createElement( 'div' );
+			element.className = 'up-is-up-control ol-unselectable ol-control';
+			element.appendChild( button );
+
+			ol.control.Control.call( this, {
+				element: element,
+				target: undefined
+			} );
+		};
+		ol.inherits( UpIsUpControl, ol.control.Control );
+		layer.imageSpaceMap.addControl( new UpIsUpControl() );
+	} );
 }
 
 function createSwipeControls() {
@@ -88,6 +402,31 @@ function dimensionToggle() {
 	var dimensions = $( "#dimensionsSelect" ).val();
 	if ( dimensions == 2 ) { removeDimension(); }
 	else { addDimension(); }
+}
+
+function getNorthAndUpAngles() {
+	$.each( tlv.layers, function( index, layer ) {
+		var metadata = layer.metadata;
+		if ( typeof metadata.upAngle != 'number' || typeof metadata.northAngle != 'number' ) {
+			var params = {
+				entry: layer.metadata.entry_id,
+				filename: layer.metadata.filename
+			};
+			$.ajax({
+				data: $.param( params ),
+				url: tlv.libraries[ layer.library ].omsUrl + '/getAngles'
+			})
+			.done( function( data ) {
+				metadata.northAngle = data.northAngle;
+
+				var upAngle = data.upAngle;
+				metadata.upAngle = upAngle;
+				if ( upAngle ) {
+					layer.imageSpaceMap.getView().setRotation( upAngle );
+				}
+			} );
+		}
+	} );
 }
 
 function initializeSwipeSlider() {
@@ -133,38 +472,6 @@ function openGeometries() {
 	});
 }
 
-function openImageSpace() {
-	var layer = tlv.layers[ tlv.currentLayer ];
-	var library = tlv.libraries[ layer.library ];
-	var metadata = layer.metadata;
-	var styles = JSON.parse( layer.mapLayer.getSource().getParams().STYLES );
-
-	var url = library.imageSpaceUrl;
-	var params = {
-		bands: styles.bands,
-		brightness: styles.brightness,
-		contrast: styles.contrast,
-		entry_id: metadata.entry_id,
-		filename: metadata.filename,
-		height: metadata.height,
-		histCenterTile: styles.hist_center,
-		histOp: styles.hist_op,
-		imageId: metadata.id,
-		imageSpaceRequestUrl: tlv.baseUrl + "/omar-oms",
-		mensaRequestUrl: tlv.baseUrl + "/omar-mensa",
-		numOfBands: metadata.number_of_bands,
-		numResLevels: metadata.number_of_res_levels,
-		resamplerFilter: styles.resampler_filter,
-		sharpenMode: styles.sharpen_mode,
-		showModalSplash: false,
-		uiRequestUrl: tlv.baseUrl + "/omar-ui",
-		wfsRequestUrl: library.wfsUrl,
-		width: metadata.width
-	};
-
-	window.open( url + "?" + $.param( params ) );
-}
-
 function precomposeSwipeLeft( event ) {
 	// only
 	var swipeSlider = $( "#swipeSlider" );
@@ -190,7 +497,17 @@ function precomposeSwipeRight( event ) {
 
 var postcomposeSwipe = function(event) { event.context.restore(); }
 
-function removeDimension() { tlv.globe.setEnabled( false ); }
+function removeDimension() {
+	$.each( tlv.layers, function( index, layer ) {
+		var source = layer.mapLayer.getSource();
+		var styles = source.getParams().STYLES;
+		source.updateParams({
+			STYLES: decodeURIComponent( styles )
+		});
+	});
+
+	tlv.globe.setEnabled( false );
+}
 
 function removeSwipeListenerFromMap() {
 	$.each(
@@ -204,10 +521,12 @@ function removeSwipeListenerFromMap() {
 		}
 	);
 
-	for ( var index = 0; index < tlv.globe.getCesiumScene().imageryLayers.length; index++ ) {
-		var layer = tlv.globe.getCesiumScene().imageryLayers.get( index );
-		if ( layer.splitDirection ) {
-			layer.splitDirection = Cesium.ImagerySplitDirection.NONE;
+	if ( tlv.globe && tlv.globe.getEnabled() ) {
+		for ( var index = 0; index < tlv.globe.getCesiumScene().imageryLayers.length; index++ ) {
+			var layer = tlv.globe.getCesiumScene().imageryLayers.get( index );
+			if ( layer.splitDirection ) {
+				layer.splitDirection = Cesium.ImagerySplitDirection.NONE;
+			}
 		}
 	}
 
@@ -252,16 +571,76 @@ rightClick = function( event ) {
 	}
 }
 
-function swipeToggle() {
-	var state = $( "#swipeSelect" ).val();
-	if (state == "on") { turnOnSwipe(); }
-	else { turnOffSwipe(); }
+function rotateImageSpaceNorthArrow( radians, layer ) {
+	var transform = "rotate(" + radians + "rad)";
+	var arrow = $( '#' + layer.imageSpaceMap.getTarget() ).find( '.ol-compass' );
+	arrow.css( 'msTransform', transform );
+	arrow.css( 'transform', transform );
+	arrow.css( 'webkitTransform', transform );
 }
 
-var setupMapView = setupMap;
-setupMap = function() {
-	setupMapView();
+function setupImageSpaceMaps() {
+    $( '#imageSpaceMaps' ).html( '' );
+
+    $.each( tlv.layers, function( index, layer ) {
+        var div = document.createElement( 'div' );
+        div.className = 'map';
+        div.id = 'imageSpaceMap' + index;
+        div.style = 'display: none; height: 100%';
+        $( '#imageSpaceMaps' ).append( div );
+
+        var imageDatabaseId = layer.metadata.id;
+        var imageHeight = layer.metadata.height;
+        var imageWidth = layer.metadata.width;
+        var imageExtent = [ 0, 0, imageWidth, imageHeight ];
+
+		if ( layer.imageSpaceMap ) { layer.imageSpaceMap.setTarget( null ); }
+        layer.imageSpaceMap = new ol.Map({
+			controls: ol.control.defaults(),
+            target: 'imageSpaceMap' + index,
+            view: new ol.View({
+                center: [ imageWidth / 2, imageHeight / 2 ],
+                extent: imageExtent,
+                //maxResolution: Math.pow( layer.metadata.number_of_res_levels - 1, 2 ),
+                //minResolution: Math.pow( 2, -6 ),
+                projection: new ol.proj.Projection({
+                    code: 'EPSG:9999',
+                    extent: [ 0, 0, imageWidth, imageHeight ],
+                    units: 'm'
+                }),
+                zoom: 1
+            })
+        });
+
+
+		//extent: [ 0, -maxHeight, maxWidth, 0 ],
+
+		layer.imageSpaceMap.getView().on( 'change:rotation', function( event ) {
+			var rotation = event.target.get( event.key ) - ( layer.metadata.northAngle || 0 );
+			rotateImageSpaceNorthArrow( rotation, layer );
+		} );
+    } );
+}
+
+var setupTimeLapseView = setupTimeLapse;
+setupTimeLapse = function() {
+	setupImageSpaceMaps();
+
+	setupTimeLapseView();
+
 	initializeSwipeSlider();
+	if ( $( "#dimensionsSelect" ).val() == 3 ) {
+		addDimension();
+	}
+	if ( $( "#swipeSelect" ).val() == "on" ) {
+		turnOnSwipe();
+	}
+	if ( $( '#viewSpaceSelect' ).val() == 'imageSpace' ) {
+		switchToImageSpace();
+	}
+	if ( $( "#wmsTilesSelect" ).val() == "imageLayer" ) {
+		changeWmsLayerType();
+	}
 }
 
 function swipeSliderMouseDown( event ) {
@@ -280,7 +659,42 @@ function swipeSliderMove( event ) {
 	swipeSlider.css( "left", ( 100.0 * splitPosition ) + "%" );
 	tlv.map.render();
 
-	tlv.globe.getCesiumScene().imagerySplitPosition = splitPosition;
+	if ( tlv.globe && tlv.globe.getEnabled() ) {
+		tlv.globe.getCesiumScene().imagerySplitPosition = splitPosition;
+	}
+}
+
+function swipeToggle() {
+	var state = $( "#swipeSelect" ).val();
+	if (state == "on") { turnOnSwipe(); }
+	else { turnOffSwipe(); }
+}
+
+function switchToOrthoSpace() {
+    $( '#imageSpaceMaps' ).hide();
+	$( '#map' ).show();
+}
+
+function switchToImageSpace() {
+	getNorthAndUpAngles();
+
+	var layer = tlv.layers[ tlv.currentLayer ];
+
+    $( '#map' ).hide();
+    $( '#imageSpaceMaps' ).show();
+	$( '#' + layer.imageSpaceMap.getTarget() ).show();
+	layer.imageSpaceMap.updateSize();
+
+	displayLoadingDialog( "Synching the map view... " );
+	var coordinate = ol.proj.transform( tlv.map.getView().getCenter(), 'EPSG:3857', 'EPSG:4326' );
+	groundToImagePoints( [ coordinate ], layer, function( pixels, layer ) {
+		hideLoadingDialog();
+
+		var center = pixels[ 0 ];
+		center[ 1 ] = layer.metadata.height - center[ 1 ];
+		layer.imageSpaceMap.getView().setCenter( center );
+	} );
+
 }
 
 function terrainWireframeToggle() {
@@ -311,11 +725,25 @@ function turnOnSwipe() {
 	updateScreenText();
 }
 
+var updateMapSizeView = updateMapSize;
+updateMapSize = function() {
+	updateMapSizeView();
+
+	if ( tlv.map ) {
+		var mapSize = tlv.map.getSize();
+		$( '#imageSpaceMaps' ).height( mapSize[ 1 ] );
+		$.each( tlv.layers, function( index, layer ) {
+			layer.imageSpaceMap.setSize( mapSize );
+			layer.imageSpaceMap.updateSize();
+		} );
+	}
+}
+
 var updateScreenTextView = updateScreenText;
 updateScreenText = function() {
 	updateScreenTextView();
 
-	if ( $( "#swipeSelect" ).val() == "on" ) {
+	if ( $( "#swipeSelect" ).val() == "on" && tlv.sipwLayers ) {
 		$.each(
 			{ imageId: tlv.swipeLayers[ 0 ], acquisitionDate: tlv.swipeLayers[ 1 ] },
 			function( key, value ) {
@@ -326,6 +754,16 @@ updateScreenText = function() {
 				$( "#" + key + "Div" ).html( libraryLabel + imageId + acquisitionDate );
 			}
 		);
+	}
+}
+
+function viewSpaceToggle() {
+	var viewSpace = $( '#viewSpaceSelect' ).val();
+	if ( viewSpace == "imageSpace" ) {
+		switchToImageSpace();
+	}
+	else if ( viewSpace == "ortho" ) {
+		switchToOrthoSpace();
 	}
 }
 

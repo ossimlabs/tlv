@@ -1,17 +1,15 @@
 buildscript {
     ext {
         grailsVersion = project.grailsVersion
-        baseImage = "omar-base"
+        baseImage = "omar-ossim-base"
+        dockerFile ="docker/Dockerfile"
     }
     if( System.env.OMAR_COMMON_PROPERTIES ) {
         apply from: System.env.OMAR_COMMON_PROPERTIES
     }
     repositories {
+        mavenLocal()
         maven { url "${ossimMavenProxy}" }
-        if( !System.env.WWW_CONNECTED || Boolean.parseBoolean( System.env.WWW_CONNECTED ) ) {
-            mavenLocal()
-            maven { url "https://repo.grails.org/grails/core" }
-        }
     }
     dependencies {
         classpath "org.grails:grails-gradle-plugin:$grailsVersion"
@@ -44,11 +42,8 @@ ext {
 }
 
 repositories {
+    mavenLocal()
     maven { url "${ossimMavenProxy}" }
-    if( !System.env.WWW_CONNECTED || Boolean.parseBoolean( System.env.WWW_CONNECTED ) ) {
-        mavenLocal()
-        maven { url "https://repo.grails.org/grails/core" }
-    }
 }
 
 dependencyManagement {
@@ -69,6 +64,7 @@ if ( System.getenv('O2_INLINE_BUILD') ) {
 }
 
 dependencies {
+    compile "io.ossim.omar.plugins:omar-security-plugin:${latestGradleIdentifier}"
 
   if ( ! System.getenv('O2_INLINE_BUILD') ) {
     compile "io.ossim.omar.plugins:omar-core-plugin:+"
@@ -105,22 +101,24 @@ dependencies {
     runtime "com.bertramlabs.plugins:asset-pipeline-grails:${assetPipelineGrailsV}"
     testCompile "org.grails:grails-gorm-testing-support"
     testCompile "org.grails.plugins:geb"
-    testCompile "org.grails:grails-web-testing-support"
+    testCompile "org.grails:grails-web-testing-support:3.2.7"
     testRuntime "org.seleniumhq.selenium:selenium-htmlunit-driver:${seleniumHtmlUnitDriverV}"
     testRuntime "net.sourceforge.htmlunit:htmlunit:${htmlUnitV}"
 
-    compile "org.webjars:bootstrap:3.3.5"
-    compile "org.webjars:bootswatch-slate:3.3.5+4"
-    compile "org.webjars.bower:typeahead.js:0.11.1"
-    compile "org.webjars.bower:typeahead.js-bootstrap-css:1.2.1"
-    compile "org.webjars:font-awesome:4.4.0"
-    compile "org.webjars:jquery:2.2.0"
-    compile "org.webjars:momentjs:2.10.6"
-    compile "org.webjars.npm:cesium:${npmCesiumV}"
+    compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1'
+    compile 'org.grails.plugins:scaffolding'
+    compile 'org.webjars:bootstrap:3.3.5'
+    compile 'org.webjars.bower:typeahead.js:0.11.1'
+    compile 'org.webjars.bower:typeahead.js-bootstrap-css:1.2.1'
+    compile 'org.webjars:font-awesome:4.4.0'
+    compile 'org.webjars:jquery:2.2.0'
+    compile 'org.webjars:momentjs:2.11.0'
+    compile 'org.webjars.npm:cesium:1.43.0'
 
-    compile "org.springframework.cloud:spring-cloud-starter-config"
-    compile "org.springframework.cloud:spring-cloud-starter-eureka"
-    compile "org.springframework.cloud:spring-cloud-starter-zipkin"
+    compile 'org.springframework.cloud:spring-cloud-starter-config'
+    compile 'org.springframework.cloud:spring-cloud-starter-eureka'
+
+    compile 'org.postgresql:postgresql:42.2.1'
 }
 
 task wrapper(type: Wrapper) {
@@ -131,26 +129,24 @@ assets {
     minifyJs = true
     minifyCss = true
     excludes = [
-        "**/bootstrap/**",
-        "**/bootswatch-slate/**",
-        "**/webjars/cesium/**",
-        "**/jquery/**",
-        "**/momentjs/**",
-        "**/requirejs/**",
-        "**/*.css",
-        "**/*.js"
+        "**"
     ]
     includes = [
+        "**/*-bundle.*",
         "**/application.*",
-        "**/bootswatch-slate/**/glyphicons*",
+        "**/bootstrap/**/fonts/**",
+        "**/bootswatch/**/*.min.css",
+        "**/bootswatch*/**/glyphicons*",
         "**/Cesium.js",
-        "**/Cesium/Assets/**",
-        "**/Cesium/Workers/**",
-        "**/fonts/**",
+        "**/Cesium/Assets/**/*.json",
+        "**/Cesium/Workers/*.js",
+        "**/font-awesome/**/fonts/**",
         "**/geometries-bundle.*",
         "**/gif-bundle.*",
         "**/helvetiker*",
-        "**/index-bundle.*"
+        "**/logos/**",
+        "**/prototype.*",
+        "**/tlvicon.ico"
     ]
 }
 

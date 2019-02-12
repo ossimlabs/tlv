@@ -10,11 +10,14 @@
 		<link href = "${createLink( action: "openSearch", controller: "home" )}" rel = "search" title = "Time Lapse Viewer" type = "application/opensearchdescription+xml">
 		<link href = "${ request.contextPath }/assets/tlvicon.ico" rel = "shortcut icon" type = "image/x-icon">
 
+		<asset:stylesheet src = "webjars/bootswatch/3.3.5+4/${ tlvParams.preferences.pageTheme }/bootstrap.min.css"/>
 		<asset:stylesheet src = "index-bundle.css"/>
 	</head>
 	<body>
 		<div class = "container-fluid">
-			<g:render template = "/security-classification-header"/>
+			<g:if test = "${ tlvParams.hideSecurityBanner != 'true' }">
+				<g:render plugin = "omar-security-plugin" template = "/security-classification-header"/>
+			</g:if>
 			<g:render template = "/banner"/>
 			<g:render template = "/navigation-menu"/>
 			<g:render template = "/time-lapse"/>
@@ -24,7 +27,7 @@
 
 		<asset:javascript src = "index-bundle.js"/>
 		<asset:script type = "text/javascript">
-			var tlv = ${raw(tlvParams)};
+			var tlv = ${raw(tlvParams.encodeAsJSON() as String)};
 			tlv.contextPath = "${request.contextPath}";
 		</asset:script>
 		<asset:deferredScripts/>
