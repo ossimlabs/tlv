@@ -26,6 +26,7 @@ plugins {
 }
 
 
+
 apply plugin: "eclipse"
 apply plugin: "idea"
 apply plugin: "org.grails.grails-web"
@@ -58,7 +59,21 @@ dependencyManagement {
     applyMavenExclusions false
 }
 
+if ( System.getenv('O2_INLINE_BUILD') ) {
+  grails {
+    plugins {
+      compile project(":omar-core-plugin")
+      compile project(":omar-security-plugin")
+    }
+  }
+}
+
 dependencies {
+
+  if ( ! System.getenv('O2_INLINE_BUILD') ) {
+    compile "io.ossim.omar.plugins:omar-core-plugin:+"
+    compile "io.ossim.omar.plugins:omar-security-plugin:+"
+   }
 
     compile "de.codecentric:spring-boot-admin-starter-client:${springBootAdminStarterClientV}"
 

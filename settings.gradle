@@ -1,13 +1,23 @@
-pluginRepositories {
-	maven { url "${ System.getenv('ARTIFACTORY_URL') }/ossim-deps" }
-	gradlePluginPortal()
+pluginManagement {
+  repositories {
+    maven { url "${ System.getenv('REPOSITORY_MANAGER_URL') }/ossim-deps" }
+    gradlePluginPortal()
+  }
 }
 
-def final O2_DEV_HOME = System.getenv('O2_DEV_HOME')
-if ( O2_DEV_HOME ) {
-	include 'omar-core-plugin',
-		'tlv-app'
+include 'tlv-app'
 
-	project(':omar-core-plugin').projectDir = "${O2_DEV_HOME}/omar-core/plugins/omar-core-plugin" as File
-	project(':tlv-app').projectDir = "${O2_DEV_HOME}/tlv/apps/tlv-app" as File
+project(':tlv-app').projectDir = "${rootProject.projectDir}/apps/tlv-app" as File
+
+if ( System.getenv('O2_INLINE_BUILD')) {
+  def modules = [
+      "omar-core",
+      "omar-security"
+  ]
+
+  modules.each { module ->
+    include "${module}-plugin"
+
+    project(":${module}-plugin").projectDir = "${rootProject.projectDir}/../${module}/plugins/${module}-plugin" as File
+  }
 }
