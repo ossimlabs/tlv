@@ -186,7 +186,7 @@ function displayInfoDialog( message ) {
 function displayErrorDialog( message ) {
 	var messageDiv = $( '#errorDialog' ).children()[ 1 ];
 	$( messageDiv ).html( message );
-	$( '"#errorDialog' ).show();
+	$( '#errorDialog' ).show();
     setTimeout( function() { $( '#errorDialog' ).fadeOut(); }, 5000 );
 }
 
