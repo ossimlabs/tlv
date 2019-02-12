@@ -64,8 +64,6 @@ if ( System.getenv('O2_INLINE_BUILD') ) {
 }
 
 dependencies {
-    compile "io.ossim.omar.plugins:omar-security-plugin:${latestGradleIdentifier}"
-
   if ( ! System.getenv('O2_INLINE_BUILD') ) {
     compile "io.ossim.omar.plugins:omar-core-plugin:+"
     compile "io.ossim.omar.plugins:omar-security-plugin:+"
@@ -101,7 +99,7 @@ dependencies {
     runtime "com.bertramlabs.plugins:asset-pipeline-grails:${assetPipelineGrailsV}"
     testCompile "org.grails:grails-gorm-testing-support"
     testCompile "org.grails.plugins:geb"
-    testCompile "org.grails:grails-web-testing-support:3.2.7"
+    testCompile "org.grails:grails-web-testing-support"
     testRuntime "org.seleniumhq.selenium:selenium-htmlunit-driver:${seleniumHtmlUnitDriverV}"
     testRuntime "net.sourceforge.htmlunit:htmlunit:${htmlUnitV}"
 
