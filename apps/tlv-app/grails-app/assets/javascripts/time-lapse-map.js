@@ -133,9 +133,9 @@ function createLayerSources( layer ) {
 	var library = tlv.libraries[ layer.library ];
 
 	var params = {
-		FORMAT: 'image/jpeg',
+		FORMAT: 'image/png',
 		IDENTIFIER: Math.floor( Math.random() * 1000000 ),
-		TRANSPARENT: false,
+		TRANSPARENT: true,
 		VERSION: '1.1.1'
 	};
 
