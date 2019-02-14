@@ -16,8 +16,6 @@ function beSearch( be ) {
 }
 
 function beginSearch() {
-	$( "#searchDialog" ).modal( "hide" );
-
 	var location = getLocation();
 	var locationString = $( "#searchLocationInput" ).val();
 	if ( !location && locationString != "" ) {
@@ -67,16 +65,8 @@ function beginSearch() {
 								var metadata = feature.properties;
 								metadata.footprint = feature.geometry || null;
 
-								var acquisitionDate = "N/A";
-								if ( metadata.acquisition_date ) {
-									var parsedDate = Date.parse( metadata.acquisition_date.replace( "+0000", "Z" ) );
-									var date = getDate( new Date( parsedDate ) );
-									acquisitionDate = date.year +  "-" + date.month + "-" + date.day + " " +
-										date.hour + ":" + date.minute + ":" + date.second;
-								}
-
 								images.push({
-									acquisitionDate: acquisitionDate,
+									acquisitionDate: processAcquisitionDate( metadata.acquisition_date ),
 									imageId: processImageId( metadata ),
 									library: library,
 									metadata: metadata,
@@ -187,16 +177,8 @@ function beginSearch() {
 							var metadata = feature.properties;
 							metadata.footprint = feature.geometry || null;
 
-							var acquisitionDate = "N/A";
-							if ( metadata.acquisition_date ) {
-								var parsedDate = Date.parse( metadata.acquisition_date.replace( "+0000", "Z" ) );
-								var date = getDate( new Date( parsedDate ) );
-								acquisitionDate = date.year +  "-" + date.month + "-" + date.day + " " +
-									date.hour + ":" + date.minute + ":" + date.second;
-							}
-
 							images.push({
-								acquisitionDate: acquisitionDate,
+								acquisitionDate: processAcquisitionDate( metadata.acquisition_date ),
 								imageId: processImageId( metadata ),
 								library: library,
 								metadata: metadata,
@@ -215,6 +197,49 @@ function beginSearch() {
 				});
 			}
 		);
+	}
+}
+
+function demoSearch() {
+	if ( tlv.demoLocation ) {
+		$( "#searchLocationInput" ).val( tlv.demoLocation );
+		beginSearch();
+	}
+	else {
+		var library = Object.keys( tlv.libraries )[ 0 ];
+		tlv.libraries[ library ].searchComplete = false;
+
+		var data = $.param({
+			maxFeatures: 1,
+			outputFormat: "JSON",
+			request: "getFeature",
+			service: "WFS",
+			typeName: "omar:raster_entry",
+			version: "1.1.0"
+		});
+
+		$.ajax({
+			data: data,
+			dataType: "json",
+			url: tlv.libraries[ library ].wfsUrl
+		})
+		.always( function() {
+			tlv.libraries[ library ].searchComplete = true;
+		} )
+		.done( function( data ) {
+			var metadata = data.features[ 0 ].properties;
+			metadata.footprint = data.features[ 0 ].geometry || null;
+
+			tlv.libraries[ library ].searchResults = [{
+				acquisitionDate: processAcquisitionDate( metadata.acquisition_date ),
+				imageId: processImageId( metadata ),
+				library: library,
+				metadata: metadata,
+				numberOfBands: metadata.number_of_bands || 1
+			}];
+
+			processResults();
+		} );
 	}
 }
 
@@ -498,6 +523,7 @@ pageLoad = function() {
 	setupSearchMenuDialog();
 
 	if ( tlv.location || tlv.filter || tlv.preferences.tlvPreference.location ) {
+		$( '#searchDialog' ).modal( 'hide' );
 		beginSearch();
 	}
 	else {
@@ -547,6 +573,19 @@ function placenameSearch( input ) {
 			input.focus();
 		}
 	});
+}
+
+function processAcquisitionDate( acquisitionDate ) {
+	if ( acquisitionDate ) {
+		var parsedDate = Date.parse( acquisitionDate.replace( '+0000', 'Z' ) );
+		var date = getDate( new Date( parsedDate ) );
+
+
+		return date.year +  '-' + date.month + '-' + date.day + ' ' + date.hour + ':' + date.minute + ':' + date.second;
+	}
+	else {
+		return 'N/A';
+	}
 }
 
 function processImageId( metadata ) {
