@@ -4,9 +4,6 @@
 			<div class = "modal-header"><h4>Time-Lapse</h4></div>
 			<div class = "modal-body">
 				<div class = "form-group">
-					<label>Delete Frame</label>
-					<button class = "btn btn-primary form-control" onclick = "deleteFrame(); $('#timeLapseDialog').modal('hide')">Delete</button>
-
 					<label>Geo-Jump</label>
 					<div class = "input-group">
 						<%
