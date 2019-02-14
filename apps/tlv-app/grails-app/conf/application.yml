@@ -1,8 +1,8 @@
 # If there is a version to denote, set it here
 about:
     contactEmail: O2Support@digitalglobe.com
-    release: Juno
-    releaseNumber: 2.6.0
+    release: Key West
+    releaseNumber: 2.7.0
 
 # If there a page banner is needed, set it here
 #banner:
@@ -72,6 +72,9 @@ baseUrl: https://omar.ossim.io
 #    typeName: omar:facility
 #    url: ${baseUrl}/omar-wfs/wfs
 
+# Provide a demo location if desired
+#demoLocation: Paris, FR
+
 # If documentation is available, define the URL
 #docsUrl: ${baseUrl}/omar-docs
 
@@ -91,6 +94,13 @@ baseUrl: https://omar.ossim.io
 # Make sure the trailing forward slash is included
 # Optional
 #isaUrl: ${baseUrl}/isa-ui/
+
+# If any keystores are needed to proxy requests
+#keyStores:
+#    keyStore:
+#        password: <password>
+#    trustStore:
+#        password: <password>
 
 # If there any feature layers available, list them here
 #layers:
@@ -133,7 +143,6 @@ baseUrl: https://omar.ossim.io
 # You need at least one
 #libraries:
 #    o2-dev:
-#        imageSpaceUrl: ${baseUrl}/omar-ui/omar/#/mapImage
 #        kmlUrl: ${baseUrl}/omar-superoverlay/superOverlay/createKml
 #        label: O2-DEV
 #        layerType: wms
@@ -143,7 +152,6 @@ baseUrl: https://omar.ossim.io
 #        wfsUrl: ${baseUrl}/omar-wfs/wfs
 #        wmsUrl: ${baseUrl}/omar-wms/wms
 #    o2:
-#        imageSpaceUrl: https://omar.ossim.io/omar-ui/omar/#/mapImage
 #        kmlUrl: https://omar.ossim.io/omar-superoverlay/superOverlay/createKml
 #        label: O2
 #        layerType: wms
