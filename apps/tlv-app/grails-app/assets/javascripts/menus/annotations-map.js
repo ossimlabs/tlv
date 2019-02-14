@@ -572,5 +572,5 @@ setupTimeLapse = function() {
 	setupTimeLapseAnnotations();
 	//searchForAnnotations();
 
-	bindWindowUnload();
+	//bindWindowUnload();
 };
