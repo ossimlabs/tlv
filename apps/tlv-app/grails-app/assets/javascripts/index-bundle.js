@@ -24,4 +24,6 @@
 //= require menus/search
 //= require menus/view
 
+//= require webjars/jszip/3.1.0/jszip.min
+
 //= require polyfill

@@ -110,6 +110,7 @@ dependencies {
     compile 'org.webjars.bower:typeahead.js-bootstrap-css:1.2.1'
     compile 'org.webjars:font-awesome:4.4.0'
     compile 'org.webjars:jquery:2.2.0'
+    compile 'org.webjars:jszip:3.1.0'
     compile 'org.webjars:momentjs:2.11.0'
     compile 'org.webjars.npm:cesium:1.43.0'
 
