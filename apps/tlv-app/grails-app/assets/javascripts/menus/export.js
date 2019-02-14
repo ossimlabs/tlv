@@ -208,10 +208,48 @@ function exportGif() {
 }
 
 function exportKml() {
-	var layer = tlv.layers[ tlv.currentLayer ];
-	var url = tlv.libraries[ layer.library ].kmlUrl;
-	url += "/" + layer.metadata.id;
-	window.open( url );
+	var kmlData = [];
+	var kmlsDownloaded = 0;
+	var kmz = new JSZip();
+
+	$.each( tlv.layers, function( index, layer ) {
+		$.ajax({
+			dataType: 'text',
+			url: tlv.libraries[ layer.library ].kmlUrl + '/' + layer.metadata.id
+		})
+		.done( function( data ) {
+			kmlsDownloaded++;
+			var filename = 'images/' + layer.imageId + '.kml';
+			kmlData.push({
+				filename: filename,
+				xml: data
+			});
+
+			if ( kmlsDownloaded == tlv.layers.length ) {
+				var docXml = '<?xml version="1.0" encoding="UTF-8"?>' +
+					'<kml xmlns="http://www.opengis.net/kml/2.2">' +
+						'<Document>' +
+							'<NetworkLink><Link><href>' +
+								kmlData.map( function( kml ) {
+									return kml.filename;
+								} ).join( '</href></Link></NetworkLink><NetworkLink><Link><href>' ) +
+				         	'</href></Link></NetworkLink>' +
+						'</Document>' +
+					'</kml>';
+				kmz.file( 'doc.kml', docXml );
+
+				$.each( kmlData, function( index, kml ) {
+					kmz.file( kml.filename, kml.xml );
+				} );
+
+				kmz.generateAsync({ type: 'blob' })
+				.then( function ( blob ) {
+					var filename = 'tlv_kmz_' + new Date().generateFilename() + '.kmz';
+					clientFileDownload( filename, blob );
+				} );
+			}
+		} );
+	} );
 }
 
 function exportLink() {
