@@ -198,6 +198,28 @@ createMapControls = function() {
 		var acquisitionDateControl = new ol.control.Control({ element: acquisitionDateDiv });
 		layer.imageSpaceMap.addControl( acquisitionDateControl );
 
+		var DeleteControl = function() {
+			var button = document.createElement( "button" );
+			button.innerHTML = "<span class = 'glyphicon glyphicon-trash'></span>";
+			button.title = "Delete Frame";
+
+			var this_ = this;
+			$( button ).on( "click", function( event ) {
+				$( this ).blur();
+				deleteFrame( tlv.currentLayer );
+			});
+
+			var element = document.createElement( "div" );
+			element.className = "delete-control ol-unselectable ol-control";
+			element.appendChild( button );
+
+			ol.control.Control.call( this, {
+				element: element,
+				target: undefined
+			});
+		};
+		ol.inherits( DeleteControl, ol.control.Control );
+		layer.imageSpaceMap.addControl( new DeleteControl() );
 
 		var FastForwardControl = function() {
 			var button = document.createElement( "button" );
