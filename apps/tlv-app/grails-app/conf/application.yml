@@ -98,9 +98,19 @@ baseUrl: https://omar.ossim.io
 # If any keystores are needed to proxy requests
 #keyStores:
 #    keyStore:
-#        password: <password>
+#        certificate: |
+#            -----BEGIN CERTIFICATE-----
+#            ...
+#            -----END CERTIFICATE-----
+#        key: |
+#            -----BEGIN RSA PRIVATE KEY-----
+#            ...
+#            -----END RSA PRIVATE KEY-----
 #    trustStore:
-#        password: <password>
+#        certificate: |
+#            -----BEGIN CERTIFICATE-----
+#            ...
+#            -----END CERTIFICATE-----
 
 # If there any feature layers available, list them here
 #layers:
@@ -117,7 +127,7 @@ baseUrl: https://omar.ossim.io
 #        refresh: false
 #        style:
 #            text:
-#                attribute: name
+#                label: name
 #                color: white
 #    o2-wfs:
 #        label: O2 WFS
