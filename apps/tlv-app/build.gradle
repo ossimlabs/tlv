@@ -112,6 +112,7 @@ dependencies {
     compile 'org.webjars:jszip:3.1.0'
     compile 'org.webjars:momentjs:2.11.0'
     compile 'org.webjars.npm:cesium:1.43.0'
+    compile "org.webjars:bootswatch:3.3.5+4"
 
     compile 'org.springframework.cloud:spring-cloud-starter-config'
     compile 'org.springframework.cloud:spring-cloud-starter-eureka'
