@@ -17,8 +17,6 @@ plugins {
     id "org.sonarqube" version "2.6.2"
 }
 
-
-
 apply plugin: "eclipse"
 apply plugin: "idea"
 apply plugin: "org.grails.grails-web"
@@ -68,6 +66,7 @@ dependencies {
 
     compile "de.codecentric:spring-boot-admin-starter-client:${springBootAdminStarterClientV}"
     compile "io.swagger:swagger-models:1.5.15"
+    compile "org.grails.plugins:spring-security-core:3.2.3"
 
     compile "org.springframework.boot:spring-boot-starter-logging"
     compile "org.springframework.boot:spring-boot-autoconfigure"
