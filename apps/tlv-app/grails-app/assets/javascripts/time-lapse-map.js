@@ -110,8 +110,8 @@ function createContextMenuContent(coordinate) {
 }
 
 function createLayers( layer ) {
-	var footprint = layer.metadata.footprint.coordinates;
-	var extent = footprint ? new ol.geom.MultiPolygon( footprint ).getExtent() : null;
+	var footprint = layer.metadata.footprint;
+	var extent = footprint ? new ol.format.WKT().readGeometry( footprint ).getExtent() : null;
 	extent = extent ? ol.proj.transformExtent( extent, "EPSG:4326", "EPSG:3857" ) : undefined;
 
 	layer.imageLayer = new ol.layer.Image({
@@ -130,20 +130,29 @@ function createLayers( layer ) {
 }
 
 function createLayerSources( layer ) {
+	var library = tlv.libraries[ layer.library ];
+
 	var params = {
-		FILTER: "in(" + layer.metadata.id + ")",
-		FORMAT: "image/png",
+		FORMAT: 'image/png',
 		IDENTIFIER: Math.floor( Math.random() * 1000000 ),
-		LAYERS: "omar:raster_entry",
-		STYLES: JSON.stringify(
-			getDefaultImageProperties()
-		),
 		TRANSPARENT: true,
-		VERSION: "1.1.1"
+		VERSION: '1.1.1'
 	};
+
+	if ( library.wmsUrlProxy ) {
+		params.LAYERS = layer.metadata.index_id;
+	}
+	else {
+		params.FILTER = 'in(' + layer.metadata.id + ')';
+		params.LAYERS = 'omar:raster_entry';
+		params.STYLES = JSON.stringify(
+			getDefaultImageProperties()
+		);
+	}
 
 	layer.imageSource = new ol.source.ImageWMS({
 		params: params,
+		projection: library.wmsUrlProxy ? 'EPSG:4326' : 'EPSG:3857',
 		url: tlv.libraries[ layer.library ].wmsUrl
 	});
 	if ( tlv.libraries[ layer.library ].wmsUrlProxy ) {
@@ -153,6 +162,7 @@ function createLayerSources( layer ) {
 
 	layer.tileSource = new ol.source.TileWMS({
 		params: params,
+		projection: library.wmsUrlProxy ? 'EPSG:4326' : 'EPSG:3857',
 		url: tlv.libraries[ layer.library ].wmsUrl
 	});
 	if ( tlv.libraries[ layer.library ].wmsUrlProxy ) {
@@ -169,6 +179,28 @@ function createMapControls() {
 	acquisitionDateDiv.className = "custom-map-control";
 	acquisitionDateDiv.id = "acquisitionDateDiv";
 	var acquisitionDateControl = new ol.control.Control({ element: acquisitionDateDiv });
+
+	var DeleteControl = function() {
+		var button = document.createElement( "button" );
+		button.innerHTML = "<span class = 'glyphicon glyphicon-trash'></span>";
+		button.title = "Delete Frame";
+
+		var this_ = this;
+		$( button ).on( "click", function( event ) {
+			$( this ).blur();
+			deleteFrame( tlv.currentLayer );
+		});
+
+		var element = document.createElement( "div" );
+		element.className = "delete-control ol-unselectable ol-control";
+		element.appendChild( button );
+
+		ol.control.Control.call( this, {
+			element: element,
+			target: undefined
+		});
+	};
+	ol.inherits( DeleteControl, ol.control.Control );
 
 	var FastForwardControl = function() {
 		var button = document.createElement( "button" );
@@ -363,6 +395,7 @@ function createMapControls() {
 			new RewindControl(),
 			new PlayStopControl(),
 			new FastForwardControl(),
+			new DeleteControl(),
 			new SummaryTableControl()
 		);
 	}

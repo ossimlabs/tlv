@@ -18,6 +18,7 @@ plugins {
 }
 
 
+
 apply plugin: "eclipse"
 apply plugin: "idea"
 apply plugin: "org.grails.grails-web"
@@ -50,8 +51,20 @@ dependencyManagement {
     applyMavenExclusions false
 }
 
+if ( System.getenv('O2_INLINE_BUILD') ) {
+  grails {
+    plugins {
+      compile project(":omar-core-plugin")
+      compile project(":omar-security-plugin")
+    }
+  }
+}
+
 dependencies {
-    compile "io.ossim.omar.plugins:omar-security-plugin:${latestGradleIdentifier}"
+  if ( ! System.getenv('O2_INLINE_BUILD') ) {
+    compile "io.ossim.omar.plugins:omar-core-plugin:+"
+    compile "io.ossim.omar.plugins:omar-security-plugin:+"
+   }
 
     compile "de.codecentric:spring-boot-admin-starter-client:${springBootAdminStarterClientV}"
     compile "io.swagger:swagger-models:1.5.15"
@@ -84,7 +97,7 @@ dependencies {
     runtime "com.bertramlabs.plugins:asset-pipeline-grails:${assetPipelineGrailsV}"
     testCompile "org.grails:grails-gorm-testing-support"
     testCompile "org.grails.plugins:geb"
-    testCompile "org.grails:grails-web-testing-support:3.2.7"
+    testCompile "org.grails:grails-web-testing-support"
     testRuntime "org.seleniumhq.selenium:selenium-htmlunit-driver:${seleniumHtmlUnitDriverV}"
     testRuntime "net.sourceforge.htmlunit:htmlunit:${htmlUnitV}"
 
@@ -95,6 +108,7 @@ dependencies {
     compile 'org.webjars.bower:typeahead.js-bootstrap-css:1.2.1'
     compile 'org.webjars:font-awesome:4.4.0'
     compile 'org.webjars:jquery:2.2.0'
+    compile 'org.webjars:jszip:3.1.0'
     compile 'org.webjars:momentjs:2.11.0'
     compile 'org.webjars.npm:cesium:1.43.0'
 

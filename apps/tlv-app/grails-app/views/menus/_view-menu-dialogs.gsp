@@ -4,7 +4,7 @@
 			<div class = "modal-header"><h4>View</h4></div>
 			<div class = "modal-body">
 				<div class = "form-group">
-					<label>Dimensions:</label>
+					<label>Dimensions</label>
 					<select class = "form-control" id = "dimensionsSelect" onchange = "$('#viewDialog').modal('hide'); dimensionToggle();">
 						<%
 							def dimensionsOption = tlvParams.preferences.tlvPreference.dimensions.toString()
@@ -16,17 +16,17 @@
 						<option ${ dimensionsOption == "3" ? "selected" : "" } value = 3>3D</option>
 					</select>
 
-					<label>Full Resolution:</label>
+					<label>Full Resolution</label>
 					<button class = "btn btn-primary form-control" data-dismiss = "modal" onclick = zoomToFullResolution()>
 						Adjust Zoom
 					</button>
 
-					<%--<label>Geometries:</label>
+					<%--<label>Geometries</label>
 					<button class = "btn btn-primary form-control" onclick = "openGeometries(); $('#viewDialog').modal('hide');">
 						Open
 					</button>--%>
 
-					<label>Maximum Extent:</label>
+					<label>Maximum Extent</label>
 					<button class = "btn btn-primary form-control" data-dismiss = "modal" onclick = zoomToMaximumExtent()>
 						Adjust Zoom
 					</button>
@@ -55,7 +55,7 @@
 						<option ${ terrainWireframeOption ? "selected" : "" } value = "on">ON</option>
 					</select>
 
-					<label>View Space:</label>
+					<label>View Space</label>
 					<select class = "form-control" id = "viewSpaceSelect" onchange = "viewSpaceToggle(); $('#viewDialog').modal('hide');">
 						<%
 							def viewSpaceOption = tlvParams.preferences.tlvPreference.viewSpace

@@ -184,9 +184,10 @@ function displayInfoDialog( message ) {
 }
 
 function displayErrorDialog( message ) {
-	var messageDiv = $( "#errorDialog" ).children()[ 1 ];
+	var messageDiv = $( '#errorDialog' ).children()[ 1 ];
 	$( messageDiv ).html( message );
-	$( "#errorDialog" ).show();
+	$( '#errorDialog' ).show();
+    setTimeout( function() { $( '#errorDialog' ).fadeOut(); }, 5000 );
 }
 
 function displayLoadingDialog(message) {
@@ -310,6 +311,47 @@ function hideDialog(dialog) {
 function hideErrorDialog() { $("#errorDialog").hide(); }
 
 function hideLoadingDialog() { $("#loadingDialog").modal("hide"); }
+
+function imagePointsToGround( pixels, layer, callback ) {
+    return $.ajax({
+        contentType: "application/json",
+        data: JSON.stringify({
+            "entryId": 0,
+            "filename": layer.metadata.filename,
+            "pointList": pixels.map( function( pixel ) {
+                return { "x": pixel[ 0 ], "y": pixel[ 1 ] };
+            } ),
+            "pqeEllipseAngularIncrement": 10,
+            "pqeEllipsePointType" : "none",
+            "pqeIncludePositionError": true,
+            "pqeProbabilityLevel" : 0.9,
+        }),
+        success: function( data ) {
+            var coordinates = data.data.map(
+                function( point ) { return [ point.lon, point.lat ]; }
+            );
+            var info = data.data.map(
+                function( point ) {
+                    if ( point.pqe.pqeValid ) {
+                        return $.extend( point, {
+                                CE: point.pqe.CE,
+                                LE: point.pqe.LE
+                        } );
+                    }
+                    else {
+                        return $.extend( point, {
+                            CE: null,
+                            LE: null
+                        } );
+                    }
+                }
+            );
+            callback( coordinates, layer, info );
+        },
+        type: "post",
+        url: tlv.libraries[ layer.library ].mensaUrl + "/imagePointsToGround"
+    });
+}
 
 function initializeLoadingDialog() {
 	$("#loadingDialog").modal({

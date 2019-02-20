@@ -10,6 +10,12 @@
     position: absolute;
 }
 
+.delete-control {
+	left: 10.5em;
+	top: 0.5em;
+	width: auto;
+}
+
 .fast-forward-control {
 	left: 8em;
 	top: 0.5em;
@@ -24,7 +30,7 @@
 .ol-full-screen {
 	left: 0.5em;
 	right: auto;
-	top: 90px;
+	top: 60px;
 }
 
 .ol-mouse-position {
@@ -43,7 +49,7 @@
     left: 0.5em;
     opacity: 1;
     right: auto;
-    top: 60px;
+    top: 90px;
     visibility: visible;
 }
 
@@ -67,11 +73,11 @@
 	left: 0.5em;
 	transform: rotate( 90deg );
 	transform-origin: 2.5em 2.5em;
-	top: 60px;
+	top: 90px;
 }
 
 .summary-table-control {
-	left: 10.5em;
+	left: 13em;
 	top: 0.5em;
 	width: auto;
 }
@@ -102,4 +108,12 @@
 .tooltip-inner {
 	max-width: none;
 	white-space: nowrap;
+}
+
+.up-is-up-control {
+	left: 0.5em;
+    opacity: 1;
+    right: auto;
+    top: 120px;
+    visibility: visible;
 }

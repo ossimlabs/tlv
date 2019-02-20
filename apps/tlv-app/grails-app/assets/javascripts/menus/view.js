@@ -67,18 +67,39 @@ function addSwipeListenerToMap() {
 
 var changeFrameView = changeFrame;
 changeFrame = function( params ) {
+	var oldLayer = tlv.layers[ tlv.currentLayer ];
+	var oldMap = oldLayer.imageSpaceMap;
+	var center = oldMap.getView().getCenter();
+	center[ 1 ] = oldLayer.metadata.height - center[ 1 ];
+	$( '#' + oldMap.getTarget() ).hide();
 
-	$( '#' + tlv.layers[ tlv.currentLayer ].imageSpaceMap.getTarget() ).hide();
 
-	if ( $("#swipeSelect").val() == "on" ) {
+	if ( $( '#swipeSelect' ).val() == 'on' ) {
 		turnOffSwipe();
 		changeFrameView( params );
 		turnOnSwipe();
 	}
 	else { changeFrameView( params ); }
 
-	$( '#' + tlv.layers[ tlv.currentLayer ].imageSpaceMap.getTarget() ).show();
-	tlv.layers[ tlv.currentLayer ].imageSpaceMap.updateSize();
+	var newLayer = tlv.layers[ tlv.currentLayer ];
+	var newMap = newLayer.imageSpaceMap;
+	if ( $( '#imageSpaceMaps' ).is( ':visible' ) ) {
+		imagePointsToGround( [ center ], oldLayer, function( coordinates, layer, info ) {
+			// assume that the layer switched while the AJAX call is being made
+			var newLayer = tlv.layers[ tlv.currentLayer ];
+
+			groundToImagePoints( coordinates, newLayer, function( pixels, layer ) {
+				hideLoadingDialog();
+
+				var center = pixels[ 0 ];
+				center[ 1 ] = layer.metadata.height - center[ 1 ];
+				layer.imageSpaceMap.getView().setCenter( center );
+
+				$( '#' + newMap.getTarget() ).show();
+				newMap.updateSize();
+			} );
+		} );
+	}
 }
 
 function changeWmsLayerType() {
@@ -175,8 +196,60 @@ createMapControls = function() {
 		acquisitionDateDiv.className = "custom-map-control";
 		acquisitionDateDiv.id = "acquisitionDateDiv";
 		var acquisitionDateControl = new ol.control.Control({ element: acquisitionDateDiv });
-
 		layer.imageSpaceMap.addControl( acquisitionDateControl );
+
+		var DeleteControl = function() {
+			var button = document.createElement( "button" );
+			button.innerHTML = "<span class = 'glyphicon glyphicon-trash'></span>";
+			button.title = "Delete Frame";
+
+			var this_ = this;
+			$( button ).on( "click", function( event ) {
+				$( this ).blur();
+				deleteFrame( tlv.currentLayer );
+			});
+
+			var element = document.createElement( "div" );
+			element.className = "delete-control ol-unselectable ol-control";
+			element.appendChild( button );
+
+			ol.control.Control.call( this, {
+				element: element,
+				target: undefined
+			});
+		};
+		ol.inherits( DeleteControl, ol.control.Control );
+		layer.imageSpaceMap.addControl( new DeleteControl() );
+
+		var FastForwardControl = function() {
+			var button = document.createElement( "button" );
+			button.innerHTML = "<span class = 'glyphicon glyphicon-step-forward'></span>";
+			button.title = "Fast Forward";
+
+			var this_ = this;
+			$( button ).on( "click", function( event ) {
+				$( this ).blur();
+				changeFrame( "fastForward" );
+			});
+
+			var element = document.createElement( "div" );
+			element.className = "fast-forward-control ol-unselectable ol-control";
+			element.appendChild( button );
+
+			ol.control.Control.call( this, {
+				element: element,
+				target: undefined
+			});
+		};
+		ol.inherits( FastForwardControl, ol.control.Control );
+		layer.imageSpaceMap.addControl( new FastForwardControl() );
+
+
+		var fullScreenSpan = document.createElement( "span" );
+		fullScreenSpan.className = "glyphicon glyphicon-fullscreen";
+		var fullScreenControl = new ol.control.FullScreen({ label: fullScreenSpan });
+		layer.imageSpaceMap.addControl( fullScreenControl );
+
 
 		var imageIdOuterDiv = document.createElement( "div" );
 		imageIdOuterDiv.className = "custom-map-control";
@@ -189,10 +262,153 @@ createMapControls = function() {
 		$( imageIdOuterDiv ).append( imageIdDiv );
 
 		var imageIdControl = new ol.control.Control({ element: imageIdOuterDiv });
-
 		layer.imageSpaceMap.addControl( imageIdControl );
-	} );
 
+
+		var PlayStopControl = function() {
+			var button = document.createElement( "button" );
+			button.innerHTML = "<span class = 'glyphicon glyphicon-play'></span>";
+			button.title = "Play/Stop";
+
+			var this_ = this;
+			$( button ).on( "click", function( event ) {
+				$( this ).blur();
+				playStopTimeLapse( $( button ).children()[ 0 ] );
+			});
+
+			var element = document.createElement( "div" );
+			element.className = "play-stop-control ol-unselectable ol-control";
+			element.appendChild( button );
+
+			ol.control.Control.call( this, {
+				element: element,
+				target: undefined
+			});
+		};
+		ol.inherits( PlayStopControl, ol.control.Control );
+		layer.imageSpaceMap.addControl( new PlayStopControl() );
+
+		var RewindControl = function() {
+			var button = document.createElement( "button" );
+			button.innerHTML = "<span class = 'glyphicon glyphicon-step-backward'></span>";
+			button.title = "Rewind";
+
+			var this_ = this;
+			$( button ).on( "click", function( event ) {
+				$( this ).blur();
+				changeFrame( "rewind" );
+			});
+
+			var element = document.createElement( "div" );
+			element.className = "rewind-control ol-unselectable ol-control";
+			element.appendChild( button );
+
+			ol.control.Control.call( this, {
+				element: element,
+				target: undefined
+			});
+		};
+		ol.inherits( RewindControl, ol.control.Control );
+		layer.imageSpaceMap.addControl( new RewindControl() );
+
+
+		var RotationControl = function() {
+			var rotationInput = document.createElement( "input" );
+			rotationInput.id = "rotationSliderInput";
+			rotationInput.max = "360";
+			rotationInput.min = "0";
+			rotationInput.oninput = function( event ) {
+				var degrees = $( rotationInput ).val();
+				layer.imageSpaceMap.getView().setRotation( degrees * Math.PI / 180 );
+			};
+			rotationInput.step = "1";
+			rotationInput.style.display = "none";
+			rotationInput.style[ "vertical-algin" ] = "middle";
+			rotationInput.type = "range";
+			rotationInput.value = "0";
+
+			setTimeout( function() {
+				$( ".ol-rotate" ).on( "click", function( event ) {
+					if ( $( rotationInput ).is( ":visible" ) ) {
+						$( rotationInput ).fadeOut();
+					}
+					else {
+						$( rotationInput ).fadeIn();
+					}
+				});
+			}, 2000 );
+
+			var this_ = this;
+
+			var element = document.createElement( "div" );
+			element.appendChild( rotationInput );
+			element.className = "rotation-tilt-control ol-unselectable ol-control";
+			element.style = "background: none";
+
+
+			ol.control.Control.call( this, {
+				element: element,
+				target: undefined
+			});
+
+
+		};
+		ol.inherits( RotationControl, ol.control.Control );
+		layer.imageSpaceMap.addControl( new RotationControl() );
+
+
+		var SummaryTableControl = function() {
+			var button = document.createElement( "button" );
+			button.innerHTML = "<span id = 'tlvLayerCountSpan'>0/0</span>&nbsp;<span class = 'glyphicon glyphicon-list-alt'></span>";
+			button.style = "width: auto";
+			button.title = "Summary Table";
+
+			var this_ = this;
+			$( button ).on( "click", function( event ) {
+				buildSummaryTable();
+				$( "#summaryTableDialog" ).modal( "show" );
+			});
+
+			var element = document.createElement( "div" );
+			element.className = "summary-table-control ol-unselectable ol-control";
+			element.appendChild( button );
+
+			ol.control.Control.call( this, {
+				element: element,
+				target: undefined
+			});
+		};
+		ol.inherits( SummaryTableControl, ol.control.Control );
+		layer.imageSpaceMap.addControl( new SummaryTableControl() );
+
+		var UpIsUpControl = function() {
+			var button = document.createElement( "button" );
+			button.innerHTML = "U";
+			button.title = "Up is Up";
+
+			var this_ = this;
+			$( button ).on( 'click', function() {
+				var upAngle = layer.metadata.upAngle;
+				if ( upAngle ) {
+					layer.imageSpaceMap.getView().setRotation( upAngle );
+				}
+				else {
+					displayErrorDialog( 'Woops,the up angle for this image seems to be missing!' );
+ 				}
+			} );
+
+			var element = document.createElement( 'div' );
+			element.className = 'up-is-up-control ol-unselectable ol-control';
+			element.appendChild( button );
+
+			ol.control.Control.call( this, {
+				element: element,
+				target: undefined
+			} );
+		};
+		ol.inherits( UpIsUpControl, ol.control.Control );
+		layer.imageSpaceMap.addControl( new UpIsUpControl() );
+	} );
 }
 
 function createSwipeControls() {
@@ -224,7 +440,12 @@ function getNorthAndUpAngles() {
 			})
 			.done( function( data ) {
 				metadata.northAngle = data.northAngle;
-				metadata.upAngle = data.upAngle;
+
+				var upAngle = data.upAngle;
+				metadata.upAngle = upAngle;
+				if ( upAngle ) {
+					layer.imageSpaceMap.getView().setRotation( upAngle );
+				}
 			} );
 		}
 	} );
@@ -405,13 +626,16 @@ function setupImageSpaceMaps() {
                 //maxResolution: Math.pow( layer.metadata.number_of_res_levels - 1, 2 ),
                 //minResolution: Math.pow( 2, -6 ),
                 projection: new ol.proj.Projection({
-                    code: 'EPSG:99999',
-                    extent: imageExtent,
+                    code: 'EPSG:9999',
+                    extent: [ 0, 0, imageWidth, imageHeight ],
                     units: 'm'
                 }),
                 zoom: 1
             })
         });
+
+
+		//extent: [ 0, -maxHeight, maxWidth, 0 ],
 
 		layer.imageSpaceMap.getView().on( 'change:rotation', function( event ) {
 			var rotation = event.target.get( event.key ) - ( layer.metadata.northAngle || 0 );
@@ -432,6 +656,9 @@ setupTimeLapse = function() {
 	}
 	if ( $( "#swipeSelect" ).val() == "on" ) {
 		turnOnSwipe();
+	}
+	if ( $( '#viewSpaceSelect' ).val() == 'imageSpace' ) {
+		switchToImageSpace();
 	}
 	if ( $( "#wmsTilesSelect" ).val() == "imageLayer" ) {
 		changeWmsLayerType();
@@ -473,10 +700,23 @@ function switchToOrthoSpace() {
 function switchToImageSpace() {
 	getNorthAndUpAngles();
 
+	var layer = tlv.layers[ tlv.currentLayer ];
+
     $( '#map' ).hide();
     $( '#imageSpaceMaps' ).show();
-	$( '#' + tlv.layers[ tlv.currentLayer ].imageSpaceMap.getTarget() ).show();
-	tlv.layers[ tlv.currentLayer ].imageSpaceMap.updateSize();
+	$( '#' + layer.imageSpaceMap.getTarget() ).show();
+	layer.imageSpaceMap.updateSize();
+
+	displayLoadingDialog( "Synching the map view... " );
+	var coordinate = ol.proj.transform( tlv.map.getView().getCenter(), 'EPSG:3857', 'EPSG:4326' );
+	groundToImagePoints( [ coordinate ], layer, function( pixels, layer ) {
+		hideLoadingDialog();
+
+		var center = pixels[ 0 ];
+		center[ 1 ] = layer.metadata.height - center[ 1 ];
+		layer.imageSpaceMap.getView().setCenter( center );
+	} );
+
 }
 
 function terrainWireframeToggle() {
