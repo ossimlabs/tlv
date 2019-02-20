@@ -1,8 +1,7 @@
 pluginManagement {
-  repositories {
-    maven { url "${ System.getenv('REPOSITORY_MANAGER_URL') }/ossim-deps" }
-    gradlePluginPortal()
-  }
+	repositories {
+		maven { url ossimMavenProxy }
+	}
 }
 
 include 'tlv-app'

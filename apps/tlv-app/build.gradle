@@ -1,20 +1,14 @@
 buildscript {
-    ext {
-        grailsVersion = project.grailsVersion
-        baseImage = "omar-ossim-base"
-        dockerFile ="docker/Dockerfile"
-    }
-    if( System.env.OMAR_COMMON_PROPERTIES ) {
-        apply from: System.env.OMAR_COMMON_PROPERTIES
-    }
     repositories {
         mavenLocal()
-        maven { url "${ossimMavenProxy}" }
+        maven { url ossimMavenProxy }
     }
     dependencies {
         classpath "org.grails:grails-gradle-plugin:$grailsVersion"
-        classpath "com.bertramlabs.plugins:asset-pipeline-gradle:${assetPipelineGradleV}"
+        classpath "com.bertramlabs.plugins:asset-pipeline-gradle:2.14.10"
         classpath "org.grails.plugins:hibernate5:${gormVersion-".RELEASE"}"
+        classpath 'com.bmuschko:gradle-docker-plugin:3.0.12'
+        classpath 'io.ossim:gradleDefaults:1.4-SNAPSHOT'
     }
 }
 
@@ -34,17 +28,20 @@ apply plugin: "asset-pipeline"
 apply plugin: "java"
 apply plugin: "maven-publish"
 
-group "io.ossim.omar.apps"
-
-ext {
-    grailsVersion = project.grailsVersion
-    gradleWrapperVersion = project.gradleWrapperVersion
-}
-
 repositories {
     mavenLocal()
-    maven { url "${ossimMavenProxy}" }
+    maven { url ossimMavenProxy }
 }
+
+io.ossim.gradleDefaults.Variables.setAdditionalVariables(project)
+io.ossim.gradleDefaults.Variables.setVersionVariables(project)
+dockerBuildDir="${rootProject.projectDir}/docker"
+version "${buildVersion}-${buildVersionTag}"
+jarDestination = "${projectDir}/build/libs/${project.name}-${version}.jar"
+io.ossim.gradleDefaults.Publications.addPublication(project, groupName, name, "${buildVersion}-${buildVersionTag}")
+io.ossim.gradleDefaults.Publications.addRepository(project, mavenPublishUrl, mavenRepoUsername, mavenRepoPassword)
+io.ossim.gradleDefaults.Docker.addDockerTasks(project, dockerRegistryUrl, dockerRegistryUsername, dockerRegistryPassword, name, dockerImageTag, dockerBuildDir, jarDestination, ["BASE_IMAGE": dockerBaseImage])
+io.ossim.gradleDefaults.Openshift.addOpenshiftTasks(project, openshiftUrl, openshiftUsername, openshiftPassword, openshiftProjectName, openshiftServiceName,  dockerRegistryUrl, name, dockerImageTag)
 
 dependencyManagement {
     imports {
@@ -70,6 +67,7 @@ dependencies {
    }
 
     compile "de.codecentric:spring-boot-admin-starter-client:${springBootAdminStarterClientV}"
+    compile "io.swagger:swagger-models:1.5.15"
 
     compile "org.springframework.boot:spring-boot-starter-logging"
     compile "org.springframework.boot:spring-boot-autoconfigure"
@@ -147,12 +145,4 @@ assets {
         "**/prototype.*",
         "**/tlvicon.ico"
     ]
-}
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-        }
-    }
 }
