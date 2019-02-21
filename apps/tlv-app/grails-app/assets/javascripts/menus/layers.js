@@ -42,7 +42,7 @@ function displayConfigLayer( key ) {
 					url += "?" + $.param( layer.params );
 				}
 
-				var bbox = ol.proj.transformExtent( tlv.map.getView().calculateExtent(), "EPSG:3857", "EPSG:4326" );
+				var bbox = tlv.map.getView().calculateExtent();
 				url = url.replace( encodeURIComponent( "<BBOX>" ), bbox.join( "," ) );
 
 
@@ -121,7 +121,7 @@ function displayCrossHairLayer() {
 
 function displaySearchOriginLayer() {
 	if (!tlv.searchOriginLayer) {
-		var point = new ol.geom.Point(tlv.location).transform("EPSG:4326", "EPSG:3857");
+		var point = new ol.geom.Point( tlv.location );
 		var feature = new ol.Feature(point);
 
 		var fill = new ol.style.Fill({ color: "rgba(255, 255, 0, 1)"});
