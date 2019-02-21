@@ -262,9 +262,9 @@ function exportLink() {
 		return layer.metadata.id;
 	});
 	var params = {
-		bbox: ol.proj.transformExtent( tlv.map.getView().calculateExtent(), "EPSG:3857", "EPSG:4326" ).join( "," ),
+		bbox: tlv.map.getView().calculateExtent().join( "," ),
 		filter: "in(" + ids.join( ") OR in(" ) + ")",
-		location: ol.proj.transform( tlv.map.getView().getCenter(), "EPSG:3857", "EPSG:4326" ).reverse().join( "," )
+		location: tlv.map.getView().getCenter().reverse().join( "," )
 	};
 
 	copyTextToClipboard( url + "?" + $.param( params ) );
