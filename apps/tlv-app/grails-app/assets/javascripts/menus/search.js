@@ -283,6 +283,7 @@ function getDistinctSensors() {
 		if ( !library.sensors ) {
 			$.ajax({
 				data: "property=sensorId",
+				dataType: "json",
 				url: library.stagerUrl + "/dataManager/getDistinctValues"
 			})
 			.done( function( data ) {
@@ -659,7 +660,6 @@ function processResults() {
 
 				var extent = new ol.geom.GeometryCollection( geometries ).getExtent();
 				tlv.location = ol.extent.getCenter( extent );
-
 				tlv.bbox = tlv.bbox || extent.join( "," );
 			}
 
