@@ -708,7 +708,7 @@ function switchToImageSpace() {
 	layer.imageSpaceMap.updateSize();
 
 	displayLoadingDialog( "Synching the map view... " );
-	var coordinate = ol.proj.transform( tlv.map.getView().getCenter(), 'EPSG:3857', 'EPSG:4326' );
+	var coordinate = tlv.map.getView().getCenter();
 	groundToImagePoints( [ coordinate ], layer, function( pixels, layer ) {
 		hideLoadingDialog();
 
@@ -800,6 +800,6 @@ function zoomToFullResolution() {
 function zoomToMaximumExtent() {
 	var footprint = tlv.layers[ tlv.currentLayer ].metadata.footprint;
 	var polygon = new ol.geom.MultiPolygon( footprint.coordinates );
-	var extent = ol.proj.transformExtent( polygon.getExtent(), "EPSG:4326", "EPSG:3857" );
+	var extent = polygon.getExtent();
 	tlv.map.getView().fit( extent );
 }
