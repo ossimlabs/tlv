@@ -95,7 +95,6 @@ function compassRotate(event) {
 }
 
 function createContextMenuContent(coordinate) {
-	coordinate = ol.proj.transform(coordinate, "EPSG:3857", "EPSG:4326");
 	var coordConvert = new CoordinateConversion();
 	var latitude = coordinate[1];
 	var longitude = coordinate[0];
@@ -111,8 +110,7 @@ function createContextMenuContent(coordinate) {
 
 function createLayers( layer ) {
 	var footprint = layer.metadata.footprint;
-	var extent = footprint ? new ol.format.WKT().readGeometry( footprint ).getExtent() : null;
-	extent = extent ? ol.proj.transformExtent( extent, "EPSG:4326", "EPSG:3857" ) : undefined;
+	var extent = footprint ? new ol.format.WKT().readGeometry( footprint ).getExtent() : undefined;
 
 	layer.imageLayer = new ol.layer.Image({
 		extent: extent,
@@ -152,7 +150,6 @@ function createLayerSources( layer ) {
 
 	layer.imageSource = new ol.source.ImageWMS({
 		params: params,
-		projection: library.wmsUrlProxy ? 'EPSG:4326' : 'EPSG:3857',
 		url: tlv.libraries[ layer.library ].wmsUrl
 	});
 	if ( tlv.libraries[ layer.library ].wmsUrlProxy ) {
@@ -162,7 +159,6 @@ function createLayerSources( layer ) {
 
 	layer.tileSource = new ol.source.TileWMS({
 		params: params,
-		projection: library.wmsUrlProxy ? 'EPSG:4326' : 'EPSG:3857',
 		url: tlv.libraries[ layer.library ].wmsUrl
 	});
 	if ( tlv.libraries[ layer.library ].wmsUrlProxy ) {
@@ -451,8 +447,7 @@ function createMousePositionControl() {
 				case 1: return coordConvert.ddToDms( lat, "lat" ) + " " + coordConvert.ddToDms( lon, "lon" ); break;
 				case 2: return coordConvert.ddToMgrs( lat, lon ); break;
 			}
-		},
-		projection: "EPSG:4326"
+		}
 	});
 
 	switch ( tlv.preferences.coordinateFormat ) {
@@ -515,7 +510,10 @@ function setupMap() {
  			dragPan: false
 		}).extend( tlv.mapInteractions ),
 		logo: false,
-		target: "map"
+		target: "map",
+		view: new ol.View({
+			projection: 'EPSG:4326'
+		})
 	});
 
 	updateMapSize();
