@@ -141,7 +141,7 @@ function geoJump(location) {
 	var point = convertGeospatialCoordinateFormat(
 		location,
 		function(point) {
-			if (point) { tlv.map.getView().setCenter(ol.proj.transform(point, "EPSG:4326", "EPSG:3857")); }
+			if (point) { tlv.map.getView().setCenter( point ); }
 		}
 	);
 }
@@ -155,10 +155,9 @@ function getCurrentDimension() {
 
 function getMapCenterText( format ) {
     var center = tlv.map.getView().getCenter();
-    var coordinate = ol.proj.transform( center, "EPSG:3857", "EPSG:4326");
 	var convert = new CoordinateConversion();
-	var lat = coordinate[ 1 ];
-	var lon = coordinate[ 0 ];
+	var lat = center[ 1 ];
+	var lon = center[ 0 ];
 
     switch ( format ) {
         case "dms":
@@ -371,14 +370,13 @@ function setupTimeLapse() {
 	// add layers to the map
     tlv.layers.reverse();
 	$.each( tlv.layers, function( index, layer ) {
-		layer.keepVisible = layer.keepVisible || false;
+	   layer.keepVisible = layer.keepVisible || false;
 		addLayerToTheMap( layer );
 	});
     tlv.layers.reverse();
 	tlv.currentLayer = 0;
 
-	var extent = ol.proj.transformExtent(tlv.bbox, "EPSG:4326", "EPSG:3857");
-	tlv.map.getView().fit( extent );
+    tlv.map.getView().fit( tlv.bbox );
 
 	// register map listeners
 	tlv.map.on("moveend", theMapHasMoved);
@@ -386,7 +384,6 @@ function setupTimeLapse() {
 		var feature = tlv.map.forEachFeatureAtPixel(event.pixel, function(feature, layer) { return feature; });
 		if (feature) { aFeatureHasBeenSelected(feature, event); }
 	});
-
 
 	tlv.layers[0].mapLayer.setVisible(true);
 	tlv.layers[0].mapLayer.setOpacity(1);

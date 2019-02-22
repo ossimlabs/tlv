@@ -1,28 +1,3 @@
-function addAnnotations( geoJsonSource, layer ) {
-	var features = new ol.format.GeoJSON().readFeatures( geoJsonSource );
-	$.each( features, function( index, feature ) {
-		var geometry = new ol.format.WKT().readGeometry(
-			feature.getProperties().geometry_ortho, {
-			dataProjection: "EPSG:4326",
-			featureProjection: "EPSG:3857"
-		});
-		feature.setGeometry( geometry );
-	});
-	createAnnotationsLayer( layer );
-
-	var source = layer.annotationsLayer.getSource();
-	source.un( "addfeature", anAnnotationHasBeenAdded );
-	layer.annotationsLayer.getSource().addFeatures( features );
-	source.on( "addfeature", anAnnotationHasBeenAdded );
-
-	$.each( source.getFeatures(), function( index, feature ) {
-		var style = createDefaultStyle();
-		var label = feature.getProperties().type;
-		style.getText().setText( label );
-		feature.setStyle( style );
-	});
-}
-
 var anAnnotationHasBeenAddedMap = anAnnotationHasBeenAdded;
 anAnnotationHasBeenAdded = function( event ) {
 	anAnnotationHasBeenAddedMap( event );
@@ -45,13 +20,6 @@ function annotationsLayerToggle() {
 
 function applyAnnotationStyle() {
 	var feature = tlv.currentAnnotation;
-
-	feature.setProperties({
-		confidence: $( "#confidenceSelect" ).val(),
-		//ontology: $( "#typeInput" ).data( "ontology" ),
-		type: $( "#typeInput" ).val(),
-		username: $( "#usernameInput" ).val()
-	});
 
 	var fillColorHex = $("#fillColorInput").val();
 	var fillColor = hexToRgb(fillColorHex);
@@ -82,9 +50,7 @@ function applyAnnotationStyle() {
 			style.setImage( image );
 			break;
 		case "Circle":
-			var center = ol.proj.transform(
-				feature.getGeometry().getCenter(), "EPSG:3857", "EPSG:4326"
-			);
+			var center = feature.getGeometry().getCenter();
 			var geometry = calculateCircleFromRadius( center, radius );
 			feature.setGeometry(geometry);
 		default:
@@ -111,8 +77,8 @@ function calculateCircleFromRadius(center, radius) {
 		distance = sphere.haversineDistance(center, point);
 	}
 
-	var projectedPoint1 = ol.proj.transform(center, "EPSG:4326", "EPSG:3857");
-	var projectedPoint2 = ol.proj.transform(point, "EPSG:4326", "EPSG:3857");
+	var projectedPoint1 = center;
+	var projectedPoint2 = point;
 	var newRadius = Math.abs(projectedPoint2[0] - projectedPoint1[0]);
 	var geometry = new ol.geom.Circle(projectedPoint1, newRadius);
 
@@ -229,8 +195,8 @@ function drawAnnotationMap( type ) {
 
 function getCircleRadius(geometry) {
 	var sphere = new ol.Sphere(6378137);
-	var point1 = ol.proj.transform(geometry.getCenter(), "EPSG:3857", "EPSG:4326");
-	var point2 = ol.proj.transform(geometry.getLastCoordinate(), "EPSG:3857", "EPSG:4326");
+	var point1 = geometry.getCenter();
+	var point2 = geometry.getLastCoordinate();
 	var radius = sphere.haversineDistance(point1, point2);
 
 
@@ -323,51 +289,6 @@ function openAnnotationsDialog() {
 	$("#strokeColorInput").val(strokeColorHex);
 	$("#strokeTransparencyInput").val(strokeColor[3]);
 	$("#strokeWidthInput").val(strokeWidth);
-
-	var properties = feature.getProperties();
-	$( "#confidenceSelect option[value=" + properties.confidence + "]" ).prop( "selected", true );
-	$( "#typeInput" ).val( properties.type );
-	$( "#usernameInput" ).val( properties.username );
-}
-
-var pageLoadAnnotation = pageLoad
-pageLoad = function() {
-	pageLoadAnnotation();
-
-	if ( tlv.annotation ) {
-		var applyAnnotation = function( data ) {
-			if ( tlv.layers && tlv.layers.length > 0 ) {
-				var geometry = new ol.format.WKT().readGeometry(
-					data.geometryOrtho ).transform( "EPSG:4326", "EPSG:3857" );
-				var feature = new ol.Feature( geometry );
-				feature.setProperties({
-					confidence: data.confidence,
-					type: data.type,
-					username: data.username
-				});
-
-				var layer = tlv.layers[ tlv.currentLayer ];
-				createAnnotationsLayer( layer );
-				layer.annotationsLayer.getSource().addFeature( feature );
-
-				var style = feature.getStyle();
-				style.getText().setText( data.type );
-				feature.setStyle( style );
-
-				$( "#annotationsDialog" ).modal( "hide" );
-			}
-			else {
-				setTimeout( function() { applyAnnotation( data ); }, 1000 );
-			}
-		}
-
-		$.ajax({
-			url: tlv.contextPath + "/annotation/search?id=" + tlv.annotation
-		})
-		.done( function( data ) {
-			applyAnnotation( data );
-		});
-	}
 }
 
 function removeInteractions() {
@@ -382,195 +303,3 @@ function removeInteractions() {
 		}
 	);
 }
-
-function saveAnnotations() {
-	var layer = tlv.layers[ tlv.currentLayer ];
-	var features = layer.annotationsLayer.getSource().getFeatures();
-
-	var values = [].concat.apply( [], features.map( function( feature ) {
-		var properties = feature.getProperties();
-
-
-		return [
-			properties.confidence,
-			properties.type,
-			properties.username
-		];
-	} ) );
-
-	if ( values.indexOf( "" ) > -1 ) {
-		displayErrorDialog( "One or more of your annotation properties are blank." );
-		return;
-	}
-
-	if ( layer.annotationsLayer ) {
-		var displayData = [];
-
-		var geometryWriter = new ol.format.WKT();
-		$( "#dragoMetadata" ).html( "" );
-		$.each( features, function( index, feature ) {
-			if ( !feature.getProperties().saved ) {
-				var geometry = feature.getGeometry().clone();
-
-				var bbox = ol.proj.transformExtent( geometry.getExtent(), "EPSG:3857", "EPSG:4326" );
-				var center = ol.extent.getCenter( bbox );
-				var location = document.location;
-				var urlParams = {
-					bbox: bbox.join( "," ),
-					filter: "filename LIKE '" + layer.metadata.filename + "'",
-					location: center.join( "," )
-				};
-				var link = location.protocol + "//" + location.host + tlv.contextPath + "?" + $.param( urlParams )
-
-				if ( geometry.getType() == "Circle" ) {
-					geometry = new ol.geom.Polygon.fromCircle( geometry, 100 );
-				}
-				var properties = feature.getProperties();
-				//if ( properties.ontology && properties.ontology.prefLabel ) {
-				//	properties.ontology.prefLabel = JSON.stringify( properties.ontology.prefLabel );
-				//}
-				var data = {
-					confidence: properties.confidence,
-					filename: layer.metadata.filename,
-					geometryOrtho: geometryWriter.writeGeometry(
-						geometry.clone().transform( "EPSG:3857", "EPSG:4326" )
-					),
-					imageId: layer.imageId,
-					link: link,
-					//ontology: properties.ontology,
-					type: properties.type,
-					username: properties.username
-				};
-
-
-				var coordinates;
- 				switch ( geometry.getType() ) {
-					case "LineString": coordinates = geometry.getCoordinates(); break;
-					case "Point": coordinates = [ geometry.getCoordinates() ]; break;
-					case "Polygon": coordinates = geometry.getCoordinates()[ 0 ]; break;
-				}
-				groundToImagePoints( coordinates, layer, function( pixels, layer ) {
-					geometry.setCoordinates([ pixels ]);
-					data.geometryPixel = geometryWriter.writeGeometry( geometry );
-
-					var callback = function( dted ) {
-						var dtedCellPattern = /Opened cell:\s*([^\s]*)/;
-						data.dted = dted.match( dtedCellPattern ) ? RegExp.$1 : "N/A";
-
-						$.ajax({
-							contentType: "application/json",
-							data: JSON.stringify( data ),
-							dataType: "json",
-							type: "post",
-							url: tlv.contextPath + "/annotation/saveAnnotation"
-						})
-						.always( function() {
-							hideLoadingDialog();
-						})
-						.done( function( json ) {
-							var pre = document.createElement( "pre" );
-							$( pre ).css( "background", "none" );
-							$( pre ).css( "color", "#c8c8c8" );
-							$( pre ).html( JSON.stringify( data, null, 2 ) );
-							$( "#dragoMetadata" ).prepend( pre );
-
-							if ( json.response ) {
-								feature.setProperties({ saved: true });
-
-								displayData.push( data );
-								$( "#dragoMetadata" ).prepend( "Saved  " + displayData.length + " of " + features.length + "..." );
-							}
-							else {
-								$( "#dragoMetadata" ).prepend( "Not Saved ..." );
-							}
-							displayDialog( "dragoDialog" );
-						})
-						.fail( function() {});
-					}
-
-					var mapCenter = tlv.map.getView().getCenter();
-					getDtedHeight( mapCenter[ 1 ], mapCenter[ 0 ], callback );
-				});
-			}
-			else {
-				$( "#dragoMetadata" ).prepend( "Already saved " + displayData.length + " of " + features.length + "..." );
-			}
-		});
-
-		$( "#dragoDialog" ).modal( "show" );
-		tlv.map.once(
-			"postcompose",
-			function( event ) {
-				var canvas = event.context.canvas;
-				canvas.toBlob(function( blob ) {
-					var urlCreator = window.URL || window.webkitURL;
-					var imageUrl = urlCreator.createObjectURL( blob );
-					$( "#dragoImage" ).attr( "src", imageUrl );
-				});
-			}
-		);
-		tlv.map.renderSync();
-
-		displayLoadingDialog( "Saving..." );
-	}
-}
-
-function searchForAnnotations() {
-	$.each( tlv.layers, function( index, layer ) {
-		if ( !layer.annotations ) {
-			var params = {
-				filter: "image_id LIKE '" + layer.imageId + "'",
-				maxResults: 100,
-				outputFormat: "JSON",
-				request: "getFeature",
-				service: "WFS",
-				typeName: "omar:annotation",
-				version: "1.1.0"
-			};
-			$.ajax({
-				url: tlv.libraries[ layer.library ].wfsUrl + "?" + $.param( params )
-			})
-			.done(function( data ) {
-				layer.annotations = data;
-				if ( data.features.length > 0 ) {
-					addAnnotations( data, layer );
-				}
-				searchForAnnotations();
-			})
-			.fail( function() {
-				searchForAnnotations();
-			});
-
-
-			return false;
-		}
-	});
-}
-
-function bindWindowUnload() {
-	window.addEventListener( "beforeunload", function( event ) {
-		event.preventDefault();
-
-		var unsaved = tlv.layers[ tlv.currentLayer ].annotationsLayer.getSource().getFeatures().filter( function( feature ) {
-
-
-			return !feature.getProperties().saved;
-		} );
-
-		if( unsaved.length ) {
-			var message = 'Important: You have unsaved changes!';
-			event.returnValue = message;
-
-
-			return message;
-		}
-	} );
-}
-
-var setupTimeLapseAnnotations = setupTimeLapse;
-setupTimeLapse = function() {
-	setupTimeLapseAnnotations();
-	//searchForAnnotations();
-
-	//bindWindowUnload();
-};

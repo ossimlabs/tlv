@@ -38,11 +38,11 @@ function beginSearch() {
 					var data = $.param({
 						filter: "title LIKE '%" + locationString + "%'",
 						maxFeatures: 100,
-						outputFormat: "JSON",
-						request: "getFeature",
-						service: "WFS",
-						typeName: "omar:raster_entry",
-						version: "1.1.0"
+						outputFormat: 'JSON',
+						request: 'getFeature',
+						service: 'WFS',
+						typeName: 'omar:raster_entry',
+						version: '1.1.0'
 					});
 					var url = tlv.libraries[ library ].wfsUrl;
 					if ( tlv.libraries[ library ].wfsUrlProxy ) {
@@ -111,11 +111,12 @@ function beginSearch() {
 
 		var queryParams = {
 			maxFeatures: 100,
-			outputFormat: "JSON",
-			request: "getFeature",
-			service: "WFS",
-			typeName: "omar:raster_entry",
-			version: "1.1.0"
+			outputFormat: 'JSON',
+			request: 'getFeature',
+			service: 'WFS',
+			sortBy: 'acquisition_date D',
+			typeName: 'omar:raster_entry',
+			version: '1.1.0'
 		};
 
 		tlv.location = searchParams.location;
@@ -211,11 +212,12 @@ function demoSearch() {
 
 		var data = $.param({
 			maxFeatures: 1,
-			outputFormat: "JSON",
-			request: "getFeature",
-			service: "WFS",
-			typeName: "omar:raster_entry",
-			version: "1.1.0"
+			outputFormat: 'JSON',
+			request: 'getFeature',
+			service: 'WFS',
+			sortBy: 'acquisition_date D',
+			typeName: 'omar:raster_entry',
+			version: '1.1.0'
 		});
 
 		$.ajax({
@@ -283,6 +285,7 @@ function getDistinctSensors() {
 		if ( !library.sensors ) {
 			$.ajax({
 				data: "property=sensorId",
+				dataType: "json",
 				url: library.stagerUrl + "/dataManager/getDistinctValues"
 			})
 			.done( function( data ) {
@@ -629,8 +632,8 @@ function processResults() {
 		);
 		if ( searchResults.length > 0 ) {
 			tlv.layers = searchResults.sort( function( a, b ) {
-				if ( a.acquisitionDate < b.acquisitionDate ) { return -1; }
-				else if ( a.acquisitionDate > b.acquisitionDate ) { return 1; }
+				if ( a.acquisitionDate > b.acquisitionDate ) { return -1; }
+				else if ( a.acquisitionDate < b.acquisitionDate ) { return 1; }
 
 				// if the acquisiton dates are the same, sort by entry id
 				else if ( a.metadata.entry_id < b.metadata.entry_id ) { return -1; }
@@ -659,7 +662,6 @@ function processResults() {
 
 				var extent = new ol.geom.GeometryCollection( geometries ).getExtent();
 				tlv.location = ol.extent.getCenter( extent );
-
 				tlv.bbox = tlv.bbox || extent.join( "," );
 			}
 
