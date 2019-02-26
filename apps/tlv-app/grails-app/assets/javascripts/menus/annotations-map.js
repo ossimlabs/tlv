@@ -257,6 +257,7 @@ function getTextStyle( styleType ) {
 		}),
 		offsetX: styleInput.find( '#textOffsetXInput' ).val(),
 		offsetY: styleInput.find( '#textOffsetYInput' ).val(),
+		overflow: true,
 	    scale: styleInput.find( '#textScaleInput' ).val(),
 	    rotateWithView: styleInput.find( '#textRotateWithViewSelect' ).val() == 'true',
 	    rotation: styleInput.find( '#textRotationInput' ).val(),

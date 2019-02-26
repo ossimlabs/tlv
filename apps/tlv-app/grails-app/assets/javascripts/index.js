@@ -159,6 +159,7 @@ function createDefaultStyle() {
             }),
             offsetX: 0,
             offsetY: 0,
+            overflow: true,
     	    scale: 1,
     	    rotateWithView: true,
     	    rotation: 0,
