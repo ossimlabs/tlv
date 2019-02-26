@@ -127,28 +127,43 @@ function createDefaultStyle() {
             return geometry;
         },
         fill: new ol.style.Fill({
-            color: "rgba(255, 255, 0, 0)"
+            color: "rgba(255, 255, 255, 0)"
         }),
 		image: new ol.style.Circle({
 			fill: new ol.style.Fill({
                 color: "rgba(255, 255, 0, 1)"
             }),
 			radius: 5,
-			stroke: new ol.style.Stroke({
-				color: "rgba(255, 255, 0, 0)",
-	            width: 2
-	 		})
+            stroke: new ol.style.Stroke({
+                color: "rgba(255, 255, 255, 0)",
+                lineCap: 'round',
+                lineDash: [ 0, 0 ],
+                lineDashOffset: 0,
+                lineJoin: 'round',
+                miterLimit: 10,
+                width: 2
+            })
 		}),
 		stroke: new ol.style.Stroke({
 			color: "rgba(255, 255, 0, 1)",
+            lineCap: 'round',
+            lineDash: [ 0, 0 ],
+            lineDashOffset: 0,
+            lineJoin: 'round',
+            miterLimit: 10,
             width: 2
  		}),
         text: new ol.style.Text({
             fill: new ol.style.Fill({
                 color: "rgba(255, 255, 0, 1)"
             }),
-            offsetY: -13,
-            overflow: true
+            offsetX: 0,
+            offsetY: 0,
+    	    scale: 1,
+    	    rotateWithView: true,
+    	    rotation: 0,
+    		text: '',
+    		textAlign: 'center'
         })
 	});
 }

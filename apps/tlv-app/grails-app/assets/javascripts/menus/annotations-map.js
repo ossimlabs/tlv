@@ -21,46 +21,24 @@ function annotationsLayerToggle() {
 function applyAnnotationStyle() {
 	var feature = tlv.currentAnnotation;
 
-	var fillColorHex = $("#fillColorInput").val();
-	var fillColor = hexToRgb(fillColorHex);
-	var fillTransparency = $("#fillTransparencyInput").val();
-	var fillRgba = "rgba(" + fillColor.r + "," + fillColor.g + "," + fillColor.b + "," + fillTransparency + ")";
-	var fill = new ol.style.Fill({ color: fillRgba });
-
-	var radius = $("#radiusInput").val();
-
-	var strokeColorHex = $("#strokeColorInput").val();
-	var strokeColor = hexToRgb(strokeColorHex);
-	var strokeTransparency = $("#strokeTransparencyInput").val();
-	var strokeRgba = "rgba(" + strokeColor.r + "," + strokeColor.g + "," + strokeColor.b + "," + strokeTransparency + ")";
-	var strokeWidth = parseInt($("#strokeWidthInput").val(), 10);
-	var stroke = new ol.style.Stroke({
-		color: strokeRgba,
-		width: strokeWidth
-	});
-
-	var style = feature.getStyle();
 	switch ( feature.getGeometry().getType() ) {
+		case "LineString":
+			feature.setStyle( getLineStyle() );
+			break;
 		case "Point":
-			var image = new ol.style.Circle({
-					fill: fill,
-					radius: parseInt( radius, 10 ),
-					stroke: stroke
-				});
-			style.setImage( image );
+			feature.setStyle( getPointStyle() );
 			break;
 		case "Circle":
+			feature.setStyle( getPolygonStyle( 'circle' ) );
 			var center = feature.getGeometry().getCenter();
+			var radius = getRadiusStyle( 'circle' );
 			var geometry = calculateCircleFromRadius( center, radius );
-			feature.setGeometry(geometry);
-		default:
-			style.setFill( fill );
-			style.setStroke( stroke );
+			feature.setGeometry( geometry );
+			break;
+		case "Polygon":
+			feature.setStyle( getPolygonStyle( 'polygon' ) );
 			break;
 	}
-	var label = feature.getProperties().type;
-	style.getText().setText( label );
-	feature.setStyle( style );
 
 	// refresh the layer for the new style to take effect
 	tlv.layers[tlv.currentLayer].annotationsLayer.setVisible(false);
@@ -203,6 +181,90 @@ function getCircleRadius(geometry) {
 	return radius;
 }
 
+function getFillStyle( styleType ) {
+	var styleInput = $( '#' + styleType );
+	var color = styleInput.find( '#fillColorInput' ).val();
+	var rgb = hexToRgb( color );
+	var opacity = styleInput.find( '#fillOpacityInput' ).val();
+
+
+	return new ol.style.Fill({
+		color: 'rgba(' + [ rgb.r, rgb.g, rgb.b ].join( ',' ) + ',' + opacity + ')'
+	});
+}
+
+function getLineStyle() {
+	return new ol.style.Style({
+		stroke: getStrokeStyle( 'line' ),
+		text: getTextStyle( 'line' )
+	});
+}
+
+function getPointStyle() {
+	return new ol.style.Style({
+		image: new ol.style.Circle({
+			fill: getFillStyle( 'point' ),
+			radius: getRadiusStyle( 'point' ),
+			stroke: getStrokeStyle( 'point' )
+		}),
+		text: getTextStyle( 'point' )
+	});
+}
+
+function getPolygonStyle( styleType ) {
+	return new ol.style.Style({
+		fill: getFillStyle( styleType ),
+		stroke: getStrokeStyle( styleType ),
+		text: getTextStyle( styleType )
+	});
+}
+
+function getRadiusStyle( styleType ) {
+	return parseInt( $( '#' + styleType ).find( '#radiusInput' ).val(), 10 );
+}
+
+function getStrokeStyle( styleType ) {
+	var styleInput = $( '#' + styleType );
+	var color = styleInput.find( '#strokeColorInput' ).val();
+	var rgb = hexToRgb( color );
+	var opacity = styleInput.find( '#strokeOpacityInput' ).val();
+
+	var dashLength = styleInput.find( '#strokeLineDashLengthInput' ).val();
+	var dashSpacing = styleInput.find( '#strokeLineDashLengthSpacingInput' ).val();
+
+
+	return new ol.style.Stroke({
+		color: 'rgba(' + [ rgb.r, rgb.g, rgb.b ].join( ',' ) + ',' + opacity + ')',
+		lineCap: styleInput.find( '#strokeLineCapSelect' ).val(),
+		lineDash: [ dashLength, dashSpacing ],
+		lineDashOffset: styleInput.find( '#strokeLineDashOffsetInput' ).val(),
+		lineJoin: styleInput.find( '#strokeLineJoinSelect' ).val(),
+		miterLimit: styleInput.find( '#strokeMiterLimitInput' ).val(),
+		width: styleInput.find( '#strokeWidthInput' ).val()
+	});
+}
+
+function getTextStyle( styleType ) {
+	var styleInput = $( '#' + styleType );
+	var color = styleInput.find( "h3:contains('Text')" ).parent().find( '#fillColorInput' ).val();
+	var rgb = hexToRgb( color );
+	var opacity = styleInput.find( "h3:contains('Text')" ).parent().find( '#fillOpacityInput' ).val();
+
+
+	return new ol.style.Text({
+		fill: new ol.style.Fill({
+			color: 'rgba(' + [ rgb.r, rgb.g, rgb.b ].join( ',' ) + ',' + opacity + ')'
+		}),
+		offsetX: styleInput.find( '#textOffsetXInput' ).val(),
+		offsetY: styleInput.find( '#textOffsetYInput' ).val(),
+	    scale: styleInput.find( '#textScaleInput' ).val(),
+	    rotateWithView: styleInput.find( '#textRotateWithViewSelect' ).val() == 'true',
+	    rotation: styleInput.find( '#textRotationInput' ).val(),
+		text: styleInput.find( '#textTextInput' ).val(),
+		textAlign: styleInput.find( '#textTextAlignSelect' ).val()
+	});
+}
+
 function hexToRgb(hex) {
     var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 
@@ -245,50 +307,49 @@ function modifyAnnotationsMap() {
 }
 
 function openAnnotationsDialog() {
-	$("#annotationsDialog").modal("show");
-
 	var feature = tlv.currentAnnotation;
+	var type = feature.getGeometry().getType();
+
+	var styleTabs = $( '#annotationsDialog' ).find( '.nav-tabs' );
+	$.each( styleTabs.children(), function( index, node ) {
+		$( node ).removeClass( 'active' );
+
+		var a = $( node ).children()[ 0 ];
+		$( a ).prop( 'disabled', true );
+	} );
+
+	var stylePanes = $( '#annotationsDialog' ).find( '.tab-content' );
+	$.each( stylePanes.children(), function( index, node ) {
+		$( node ).removeClass( 'active' );
+	} );
+
 	var style = feature.getStyle();
-
-	var fillColor = ol.color.asArray(style.getFill().getColor());
-	var radius;
-	var radiusInput = $("#radiusInput");
-	radiusInput.prop("disabled", false);
-	radiusInput.prev().html("Radius");
-
-	var stroke = style.getStroke();
-	var strokeColor = ol.color.asArray(stroke.getColor());
-  	var strokeWidth = stroke.getWidth();
-
-	switch (feature.getGeometry().getType()) {
-		case "Circle":
-			radiusInput.prev().html("Radius (meters)");
-			radius = getCircleRadius(feature.getGeometry());
+	switch ( type ) {
+		case 'Circle':
+			var radius = getCircleRadius( feature.getGeometry() );
+			setRadiusStyle( 'circle', radius );
+			setPolygonStyle( 'circle', style );
+			styleTabs.find( 'a:contains("Circle")' ).parent().addClass( 'active' );
+			stylePanes.find( 'div#circle' ).addClass( 'active' );
 			break;
-		case "Point":
-			var image = style.getImage();
-			fillColor = ol.color.asArray(image.getFill().getColor());
-			radius = image.getRadius();
-			radiusInput.prev().html("Radius (pixels)");
-			var stroke = style.getImage().getStroke();
-			strokeColor = ol.color.asArray(stroke.getColor());
-			strokeWidth = stroke.getWidth();
+		case 'LineString':
+			setLineStyle( style );
+			styleTabs.find( 'a:contains("Line")' ).parent().addClass( 'active' );
+			stylePanes.find( 'div#line' ).addClass( 'active' );
 			break;
-		default:
-			radiusInput.prop("disabled", true);
+		case 'Point':
+			setPointStyle( style );
+			styleTabs.find( 'a:contains("Point")' ).parent().addClass( 'active' );
+			stylePanes.find( 'div#point' ).addClass( 'active' );
+			break;
+		case 'Polygon':
+			setPolygonStyle( 'polygon', style );
+			styleTabs.find( 'a:contains("Polygon")' ).parent().addClass( 'active' );
+			stylePanes.find( 'div#polygon' ).addClass( 'active' );
 			break;
 	}
 
-	var fillColorHex = rgbToHex(fillColor[0], fillColor[1], fillColor[2]);
-	$("#fillColorInput").val(fillColorHex);
-	$("#fillTransparencyInput").val(fillColor[3]);
-
-	radiusInput.val(radius || 0);
-
-	var strokeColorHex = rgbToHex(strokeColor[0], strokeColor[1], strokeColor[2]);
-	$("#strokeColorInput").val(strokeColorHex);
-	$("#strokeTransparencyInput").val(strokeColor[3]);
-	$("#strokeWidthInput").val(strokeWidth);
+	$( '#annotationsDialog' ).modal( 'show' );
 }
 
 function removeInteractions() {
@@ -302,4 +363,92 @@ function removeInteractions() {
 			}
 		}
 	);
+}
+
+function setFillStyle( styleType, fill ) {
+	var styleInput = $( '#' + styleType );
+
+	var color = ol.color.asArray( fill.getColor() );
+	var hex = rgbToHex( color[ 0 ], color[ 1 ], color[ 2 ] );
+	styleInput.find( '#fillColorInput' ).val( hex );
+	styleInput.find( '#fillOpacityInput' ).val( color[ 3 ] );
+}
+
+function setLineStyle( style ) {
+	setStrokeStyle( 'line', style.getStroke() );
+	setTextStyle( 'line', style.getText() );
+}
+
+function setPointStyle( style ) {
+	setFillStyle( 'point', style.getImage().getFill() );
+	setRadiusStyle( 'point', style.getImage().getRadius() );
+	setStrokeStyle( 'point', style.getImage().getStroke() );
+	setTextStyle( 'point', style.getText() );
+}
+
+function setPolygonStyle( styleType, style ) {
+	setFillStyle( styleType, style.getFill() );
+	setStrokeStyle( styleType, style.getStroke() );
+	setTextStyle( styleType, style.getText() );
+}
+
+function setRadiusStyle( styleType, radius ) {
+	$( '#' + styleType ).find( '#radiusInput' ).val( radius );
+}
+
+function setStrokeStyle( styleType, stroke ) {
+	var styleInput = $( '#' + styleType );
+
+	var color = ol.color.asArray( stroke.getColor() );
+	var hex = rgbToHex( color[ 0 ], color[ 1 ], color[ 2 ] );
+	styleInput.find( '#strokeColorInput' ).val( hex );
+	styleInput.find( '#strokeOpacityInput' ).val( color[ 3 ] );
+
+	var lineCap = stroke.getLineCap();
+	styleInput.find( "#strokeLineCapSelect option[value='" + lineCap + "']" ).prop( 'selected', true );
+
+	var lineDash = stroke.getLineDash();
+	styleInput.find( '#strokeLineDashLengthInput' ).val( lineDash[ 0 ] );
+	styleInput.find( '#strokeLineDashLengthSpacingInput' ).val( lineDash[ 1 ] );
+
+	var lineDashOffset = stroke.getLineDashOffset();
+	styleInput.find( '#strokeLineDashOffsetInput' ).val( lineDashOffset );
+
+	var lineJoin = stroke.getLineJoin();
+	styleInput.find( "#strokeLineJoinSelect option[value='" + lineJoin + "']" ).prop( 'selected', true );
+
+	var miterLimit = stroke.getMiterLimit();
+	styleInput.find( '#strokeMiterLimitInput' ).val( miterLimit );
+
+	var width = stroke.getWidth();
+	styleInput.find( '#strokeWidthInput' ).val( width );
+}
+
+function setTextStyle( styleType, text ) {
+	var styleInput = $( '#' + styleType );
+
+	var color = ol.color.asArray( text.getFill().getColor() );
+	var hex = rgbToHex( color[ 0 ], color[ 1 ], color[ 2 ] );
+	styleInput.find( "h3:contains('Text')" ).parent().find( '#fillColorInput' ).val( hex );
+	styleInput.find( "h3:contains('Text')" ).parent().find( '#fillOpacityInput' ).val( color[ 3 ] );
+
+	var offsetX = text.getOffsetX();
+	styleInput.find( '#textOffsetXInput' ).val( offsetX );
+
+	var offsetY = text.getOffsetY();
+	styleInput.find( '#textOffsetYInput' ).val( offsetY );
+
+	var scale = text.getScale();
+	styleInput.find( '#textScaleInput' ).val( scale );
+
+	var rotateWithView = text.getRotateWithView();
+	styleInput.find( "#textRotateWithViewSelect option[value='" + rotateWithView + "']" ).prop( 'selected', true );
+
+	var rotation = text.getRotation();
+ 	styleInput.find( '#textRotationInput' ).val( rotation );
+
+	styleInput.find( '#textTextInput' ).val( text.getText() );
+
+	var textAlign = text.getTextAlign();
+	styleInput.find( "#textTextAlignSelect option[value='" + textAlign + "']" ).prop( 'selected', true );
 }
