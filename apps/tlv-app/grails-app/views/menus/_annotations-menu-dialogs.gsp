@@ -3,19 +3,19 @@
 		<div class = "modal-content">
 			<div class = "modal-header"><h4>Annotation Style</h4></div>
 			<div class = "modal-body">
-				<ul class = "nav nav-tabs" role = "tablist">
+				<ul class = "nav nav-tabs">
     				<g:each in = "${[ 'circle', 'line', 'point', 'polygon', 'text' ]}">
 						<li>
-							<a href = "#${ it }" data-toggle = "tab">${ it.capitalize() }</a>
+							<a href = "#${ it }" data-toggle = "tab" onclick = 'javascript:displayDialog( "annotationsDialog" )'>${ it.capitalize() }</a>
 						</li>
 					</g:each>
 				</ul>
 				<div class = "tab-content">
 					<g:each in = "${[
-						[ type: 'circle', styles: [ 'fill', 'radius', 'stroke', 'text' ] ],
-						[ type: 'line', styles: [ 'stroke', 'text' ] ],
-						[ type: 'point', styles: [ 'fill', 'radius', 'stroke', 'text' ] ],
-						[ type: 'polygon', styles: [ 'fill', 'stroke', 'text' ] ],
+						[ type: 'circle', styles: [ 'fill', 'radius', 'stroke' ] ],
+						[ type: 'line', styles: [ 'stroke' ] ],
+						[ type: 'point', styles: [ 'fill', 'radius', 'stroke' ] ],
+						[ type: 'polygon', styles: [ 'fill', 'stroke' ] ],
 						[ type: 'text', styles: [ 'text' ] ]
 					]}">
 						<div class = "tab-pane" id = "${ it.type }">

@@ -87,8 +87,7 @@ function displayConfigLayer( key ) {
 				}
 
 
-
-				return [ style ];
+				return style;
 			}
 		});
 

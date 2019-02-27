@@ -45,3 +45,10 @@
         <input class = "form-control" id = "textTextInput" type = "text">
     </div>
 </div>
+
+<div class = "row">
+    <div class = "col-md-12">
+        <label>Label</label>
+        <select class = "form-control" id = "textTextSelect"></select>
+    </div>
+</div>

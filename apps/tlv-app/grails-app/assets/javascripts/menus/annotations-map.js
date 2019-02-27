@@ -19,30 +19,75 @@ function annotationsLayerToggle() {
 }
 
 function applyAnnotationStyle() {
-	var feature = tlv.currentAnnotation;
+	var circleStyle = getPolygonStyle( 'circle' );
+	var lineStyle = getLineStyle();
+	var pointStyle = getPointStyle();
+	var polygonStyle = getPolygonStyle( 'polygon' );
 
-	switch ( feature.getGeometry().getType() ) {
-		case "LineString":
-			feature.setStyle( getLineStyle() );
-			break;
-		case "Point":
-			feature.setStyle( getPointStyle() );
-			break;
-		case "Circle":
-			feature.setStyle( getPolygonStyle( 'circle' ) );
-			var center = feature.getGeometry().getCenter();
-			var radius = getRadiusStyle( 'circle' );
-			var geometry = calculateCircleFromRadius( center, radius );
-			feature.setGeometry( geometry );
-			break;
-		case "Polygon":
-			feature.setStyle( getPolygonStyle( 'polygon' ) );
-			break;
+	if ( tlv.currentAnnotation ) {
+		var feature = tlv.currentAnnotation;
+		switch ( feature.getGeometry().getType() ) {
+			case 'Circle':
+				feature.setStyle( circleStyle );
+				var center = feature.getGeometry().getCenter();
+				var radius = getRadiusStyle( 'circle' );
+				var geometry = calculateCircleFromRadius( center, radius );
+				feature.setGeometry( geometry );
+				break;
+			case 'LineString':
+				feature.setStyle( lineStyle );
+				break;
+			case 'MultiPolygon':
+			case 'Polygon':
+				feature.setStyle( polygonStyle );
+				break;
+			case 'Point':
+				feature.setStyle( pointStyle );
+				break;
+		}
+
+		tlv.layers[ tlv.currentLayer ].annotationsLayer.setVisible( false );
+		tlv.layers[ tlv.currentLayer ].annotationsLayer.setVisible( true );
+	}
+	else if ( tlv.currentAnnotationLayer ) {
+		var propertyKey = $( '#text' ).find( '#textTextSelect' ).val();
+		tlv.currentAnnotationLayer.setStyle( function( feature ) {
+			var style;
+			switch ( feature.getGeometry().getType() ) {
+				case 'Circle':
+					style = circleStyle;
+					break;
+				case 'LineString':
+					style = lineStyle;
+					break;
+				case 'MultiPolygon':
+				case 'Polygon':
+					style = polygonStyle;
+					break;
+				case 'Point':
+					style = pointStyle;
+					break;
+			}
+
+			var label = feature.getProperties()[ propertyKey ];
+			if ( label ) {
+				if ( typeof label == "object" ) { label = 'JS Object'; }
+				style.getText().setText( label );
+			}
+			else {
+				style.getText().setText( 'N/A' );
+			}
+
+
+			return style;
+		} );
+
+		tlv.currentAnnotationLayer.setVisible( false );
+		tlv.currentAnnotationLayer.setVisible( true );
 	}
 
-	// refresh the layer for the new style to take effect
-	tlv.layers[tlv.currentLayer].annotationsLayer.setVisible(false);
-	tlv.layers[tlv.currentLayer].annotationsLayer.setVisible(true);
+	tlv.currentAnnotation = null;
+	tlv.currentAnnotationLayer = null;
 }
 
 function calculateCircleFromRadius(center, radius) {
@@ -196,7 +241,7 @@ function getFillStyle( styleType ) {
 function getLineStyle() {
 	return new ol.style.Style({
 		stroke: getStrokeStyle( 'line' ),
-		text: getTextStyle( 'line' )
+		text: getTextStyle()
 	});
 }
 
@@ -207,7 +252,7 @@ function getPointStyle() {
 			radius: getRadiusStyle( 'point' ),
 			stroke: getStrokeStyle( 'point' )
 		}),
-		text: getTextStyle( 'point' )
+		text: getTextStyle()
 	});
 }
 
@@ -215,7 +260,7 @@ function getPolygonStyle( styleType ) {
 	return new ol.style.Style({
 		fill: getFillStyle( styleType ),
 		stroke: getStrokeStyle( styleType ),
-		text: getTextStyle( styleType )
+		text: getTextStyle()
 	});
 }
 
@@ -244,14 +289,14 @@ function getStrokeStyle( styleType ) {
 	});
 }
 
-function getTextStyle( styleType ) {
-	var styleInput = $( '#' + styleType );
+function getTextStyle() {
+	var styleInput = $( '#text' );
 	var color = styleInput.find( "h3:contains('Text')" ).parent().find( '#fillColorInput' ).val();
 	var rgb = hexToRgb( color );
 	var opacity = styleInput.find( "h3:contains('Text')" ).parent().find( '#fillOpacityInput' ).val();
 
 
-	return new ol.style.Text({
+	var textStyle = new ol.style.Text({
 		fill: new ol.style.Fill({
 			color: 'rgba(' + [ rgb.r, rgb.g, rgb.b ].join( ',' ) + ',' + opacity + ')'
 		}),
@@ -261,9 +306,15 @@ function getTextStyle( styleType ) {
 	    scale: styleInput.find( '#textScaleInput' ).val(),
 	    rotateWithView: styleInput.find( '#textRotateWithViewSelect' ).val() == 'true',
 	    rotation: styleInput.find( '#textRotationInput' ).val(),
-		text: styleInput.find( '#textTextInput' ).val(),
 		textAlign: styleInput.find( '#textTextAlignSelect' ).val()
 	});
+
+	if ( tlv.currentAnnotation ) {
+		textStyle.setText( styleInput.find( '#textTextInput' ).val() );
+	}
+
+
+	return textStyle;
 }
 
 function hexToRgb(hex) {
@@ -307,16 +358,10 @@ function modifyAnnotationsMap() {
 	}
 }
 
-function openAnnotationsDialog() {
-	var feature = tlv.currentAnnotation;
-	var type = feature.getGeometry().getType();
-
+function openAnnotationsDialog( vectorLayer ) {
 	var styleTabs = $( '#annotationsDialog' ).find( '.nav-tabs' );
 	$.each( styleTabs.children(), function( index, node ) {
 		$( node ).removeClass( 'active' );
-
-		var a = $( node ).children()[ 0 ];
-		$( a ).prop( 'disabled', true );
 	} );
 
 	var stylePanes = $( '#annotationsDialog' ).find( '.tab-content' );
@@ -324,31 +369,68 @@ function openAnnotationsDialog() {
 		$( node ).removeClass( 'active' );
 	} );
 
-	var style = feature.getStyle();
-	switch ( type ) {
-		case 'Circle':
-			var radius = getCircleRadius( feature.getGeometry() );
-			setRadiusStyle( 'circle', radius );
-			setPolygonStyle( 'circle', style );
-			styleTabs.find( 'a:contains("Circle")' ).parent().addClass( 'active' );
-			stylePanes.find( 'div#circle' ).addClass( 'active' );
-			break;
-		case 'LineString':
-			setLineStyle( style );
-			styleTabs.find( 'a:contains("Line")' ).parent().addClass( 'active' );
-			stylePanes.find( 'div#line' ).addClass( 'active' );
-			break;
-		case 'Point':
-			setPointStyle( style );
-			styleTabs.find( 'a:contains("Point")' ).parent().addClass( 'active' );
-			stylePanes.find( 'div#point' ).addClass( 'active' );
-			break;
-		case 'Polygon':
-			setPolygonStyle( 'polygon', style );
-			styleTabs.find( 'a:contains("Polygon")' ).parent().addClass( 'active' );
-			stylePanes.find( 'div#polygon' ).addClass( 'active' );
-			break;
+	var features = [];
+	if ( vectorLayer ) {
+		tlv.currentAnnotationLayer = vectorLayer;
+		var geometryTypes = [];
+		$.each( vectorLayer.getSource().getFeatures(), function( index, feature ) {
+			// get one feature of each geometry type
+			var geometryType = feature.getGeometry().getType();
+			if ( geometryTypes.indexOf( geometryType ) < 0 ) {
+				geometryTypes.push( geometryType );
+				features.push( feature );
+			}
+		} );
 	}
+	else if ( tlv.currentAnnotation ) {
+		features.push( tlv.currentAnnotation );
+	}
+
+	$.each( features, function( index, feature ) {
+		var type = feature.getGeometry().getType();
+		var style;
+ 		if ( tlv.currentAnnotationLayer ) {
+			var styleFunction = tlv.currentAnnotationLayer.getStyleFunction()
+			style = styleFunction( feature );
+		}
+		else {
+			style = feature.getStyle();
+		}
+
+		switch ( type ) {
+			case 'Circle':
+				var radius = getCircleRadius( feature.getGeometry() );
+				setRadiusStyle( 'circle', radius );
+				setPolygonStyle( 'circle', style );
+				if ( index == features.length - 1 ) {
+					styleTabs.find( 'a:contains("Circle")' ).parent().addClass( 'active' );
+					stylePanes.find( 'div#circle' ).addClass( 'active' );
+				}
+				break;
+			case 'LineString':
+				setLineStyle( style );
+				if ( index == features.length - 1 ) {
+					styleTabs.find( 'a:contains("Line")' ).parent().addClass( 'active' );
+					stylePanes.find( 'div#line' ).addClass( 'active' );
+				}
+				break;
+			case 'Point':
+				setPointStyle( style );
+				if ( index == features.length - 1 ) {
+					styleTabs.find( 'a:contains("Point")' ).parent().addClass( 'active' );
+					stylePanes.find( 'div#point' ).addClass( 'active' );
+				}
+				break;
+			case 'MultiPolygon':
+			case 'Polygon':
+				setPolygonStyle( 'polygon', style );
+				if ( index == features.length - 1 ) {
+					styleTabs.find( 'a:contains("Polygon")' ).parent().addClass( 'active' );
+					stylePanes.find( 'div#polygon' ).addClass( 'active' );
+				}
+				break;
+		}
+	} );
 
 	$( '#annotationsDialog' ).modal( 'show' );
 }
@@ -377,20 +459,20 @@ function setFillStyle( styleType, fill ) {
 
 function setLineStyle( style ) {
 	setStrokeStyle( 'line', style.getStroke() );
-	setTextStyle( 'line', style.getText() );
+	setTextStyle( style.getText() );
 }
 
 function setPointStyle( style ) {
 	setFillStyle( 'point', style.getImage().getFill() );
 	setRadiusStyle( 'point', style.getImage().getRadius() );
 	setStrokeStyle( 'point', style.getImage().getStroke() );
-	setTextStyle( 'point', style.getText() );
+	setTextStyle( style.getText() );
 }
 
 function setPolygonStyle( styleType, style ) {
 	setFillStyle( styleType, style.getFill() );
 	setStrokeStyle( styleType, style.getStroke() );
-	setTextStyle( styleType, style.getText() );
+	setTextStyle( style.getText() );
 }
 
 function setRadiusStyle( styleType, radius ) {
@@ -425,8 +507,8 @@ function setStrokeStyle( styleType, stroke ) {
 	styleInput.find( '#strokeWidthInput' ).val( width );
 }
 
-function setTextStyle( styleType, text ) {
-	var styleInput = $( '#' + styleType );
+function setTextStyle( text ) {
+	var styleInput = $( '#text' );
 
 	var color = ol.color.asArray( text.getFill().getColor() );
 	var hex = rgbToHex( color[ 0 ], color[ 1 ], color[ 2 ] );
@@ -448,7 +530,30 @@ function setTextStyle( styleType, text ) {
 	var rotation = text.getRotation();
  	styleInput.find( '#textRotationInput' ).val( rotation );
 
-	styleInput.find( '#textTextInput' ).val( text.getText() );
+	var textInput = styleInput.find( '#textTextInput' );
+	textInput.val( '' );
+	var textSelect = styleInput.find( '#textTextSelect' );
+	textSelect.html( '' );
+	if ( tlv.currentAnnotation ) {
+		textInput.val( text.getText() );
+
+		textInput.prop( 'disabled', false );
+		textSelect.prop( 'disabled', true );
+	}
+	else if ( tlv.currentAnnotationLayer ) {
+		var propertyKeys = [];
+		$.each( tlv.currentAnnotationLayer.getSource().getFeatures(), function( index, feature ) {
+			propertyKeys = propertyKeys.concat( Object.keys( feature.getProperties() ) );
+			propertyKeys = propertyKeys.unique();
+		} );
+
+		$.each( propertyKeys, function( index, value ) {
+			textSelect.append( '<option value = "' + value + '">' + value + '</option>' );
+		} );
+
+		textInput.prop( 'disabled', true );
+		textSelect.prop( 'disabled', false );
+	}
 
 	var textAlign = text.getTextAlign();
 	styleInput.find( "#textTextAlignSelect option[value='" + textAlign + "']" ).prop( 'selected', true );
