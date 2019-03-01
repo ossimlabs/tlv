@@ -426,6 +426,22 @@ function dimensionToggle() {
 	else { addDimension(); }
 }
 
+var getScreenshotMapView = getScreenshotMap;
+getScreenshotMap = function( callback ) {
+	if ( $( '#imageSpaceMap' ).is( ':visible' ) ) {
+		var map = tlv.layers[ tlv.currentLayer ].imageSpaceMap;
+		map.once(
+			"postcompose",
+			function( event ) {
+				var canvas = event.context.canvas;
+				callback( canvas );
+			}
+		);
+		map.renderSync();
+	}
+	getScreenshotMapView( callback )
+}
+
 function getNorthAndUpAngles() {
 	$.each( tlv.layers, function( index, layer ) {
 		var metadata = layer.metadata;
