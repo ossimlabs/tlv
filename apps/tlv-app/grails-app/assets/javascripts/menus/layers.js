@@ -118,6 +118,37 @@ function displayCrossHairLayer() {
 	refreshCrossHairLayer();
 }
 
+function displayDetectionLayer( databaseId ) {
+	if ( !tlv.detectionLayers ) {
+		tlv.detectionLayers = {};
+	}
+
+	if ( !tlv.detectionLayers[ databaseId ] ) {
+		var source = new ol.source.Vector({
+			format: new ol.format.GeoJSON(),
+			url: 'https://s3.amazonaws.com/o2-test-data/test.geojson'//tlv.baseUrl + '/omar-ml/job/query/' + databaseId
+		});
+
+		var style = createDefaultStyle();
+		tlv.detectionLayers[ databaseId ] = new ol.layer.Vector({
+			declutter: true,
+			source: source,
+			style: function( feature ) {
+				var text = feature.get( 'top_cat' );
+				style.getText().setText( text );
+
+
+				return style;
+			}
+		});
+
+		tlv.map.addLayer( tlv.detectionLayers[ databaseId ] );
+	}
+	else {
+		layer.setVisible( true );
+	}
+}
+
 function displaySearchOriginLayer() {
 	if (!tlv.searchOriginLayer) {
 		var point = new ol.geom.Point( tlv.location );
@@ -148,12 +179,91 @@ function displaySearchOriginLayer() {
 	else { tlv.searchOriginLayer.setVisible(true); }
 }
 
+function getDetectionStatus() {
+	$( '#detectionJobsDialog' ).modal( 'show' );
+	$.ajax({
+		dataType: "json",
+		url: tlv.baseUrl + '/omar-ml/job/list'// + tlv.layers[ tlv.currentLayer ].metadata.entry_id
+	})
+	.done( function( data ) {
+		var table = $( '#detectionJobsDialog' ).find( 'table' )[ 0 ];
+		$( table ).html( '' );
+		var row = table.insertRow( table.rows.length );
+		$.each(
+			[ 'Conf.', 'Filename', 'Non-Max. Suppression', 'Status' ],
+			function( index, value ) {
+			var cell = row.insertCell( row.cells.length );
+			$( cell ).append( '<b>' + value + '</b>' );
+		} );
+
+		$.each( data, function( index, value ) {
+			var row = table.insertRow( table.rows.length );
+			var cell = row.insertCell( row.cells.length );
+			$( cell ).append( value.confidence );
+
+			var cell = row.insertCell( row.cells.length );
+			$( cell ).append( value.imageFilename );
+
+			var cell = row.insertCell( row.cells.length );
+			$( cell ).append( value.nms );
+
+			var cell = row.insertCell( row.cells.length );
+			if ( value.jobStatus == 'WAITING' ) {
+				var inputGroup = document.createElement( 'span' );
+				inputGroup.className = 'input-group-btn';
+
+				var select = document.createElement( 'select' );
+				select.className = 'form-control';
+				select.onchange = function() {
+					if ( $( this ).val() == 'true' ) {
+						displayDetectionLayer( value.imageDbId );
+					}
+					else {
+						hideDetectionLayer( value.imageDbId );
+					}
+				}
+
+				var selected = false;
+				if ( tlv.detectionLayers && tlv.detectionLayers[ value.imageDbId ] ) {
+					if ( tlv.detectionLayers[ value.imageDbId ] )
+					selected = true;
+				}
+				var options = '' +
+					'<option ' + ( !selected ? 'selected' : '' ) + ' value = "false">Off</option>' +
+					'<option ' + ( selected ? 'selected' : '' ) + ' value = "true">On</option>';
+				$( select ).append( options );
+				$( inputGroup ).append( select );
+
+				var button = document.createElement( 'button' );
+				button.className = 'btn btn-primary';
+				button.onclick = function() {
+					$( '#detectionJobsDialog' ).modal( 'hide' );
+					openAnnotationsDialog( tlv.detectionLayers[ value.imageDbId ] );
+				}
+				button.title = 'Adjust style';
+				var span = '<span class = "fa fa-sliders"></span>';
+				$( button ).append( span );
+				$( inputGroup ).append( button );
+
+				$( cell ).append( inputGroup );
+			}
+			else {
+				$( cell ).append( value.jobStatus );
+			}
+		} );
+	} );
+}
+
 function hideConfigLayer( key ) {
 	tlv.configLayers[ key ].mapLayer.setVisible( false );
 }
 
 function hideCrossHairLayer() {
 	tlv.crossHairLayer.setVisible( false );
+}
+
+function hideDetectionLayer( databaseId ) {
+	tlv.detectionLayers[ databaseId ].setVisible( false );
 }
 
 function hideSearchOriginLayer() {
