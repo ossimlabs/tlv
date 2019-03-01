@@ -72,7 +72,7 @@ function applyAnnotationStyle() {
 			var label = feature.getProperties()[ propertyKey ];
 			if ( label ) {
 				if ( typeof label == "object" ) { label = 'JS Object'; }
-				style.getText().setText( label );
+				style.getText().setText( '' + label );
 			}
 			else {
 				style.getText().setText( 'N/A' );
@@ -541,14 +541,30 @@ function setTextStyle( text ) {
 		textSelect.prop( 'disabled', true );
 	}
 	else if ( tlv.currentAnnotationLayer ) {
+		var propertyKey;
 		var propertyKeys = [];
 		$.each( tlv.currentAnnotationLayer.getSource().getFeatures(), function( index, feature ) {
-			propertyKeys = propertyKeys.concat( Object.keys( feature.getProperties() ) );
+
+			var properties = feature.getProperties();
+			propertyKeys = propertyKeys.concat( Object.keys( properties ) );
 			propertyKeys = propertyKeys.unique();
+
+			// find out which key equals the text value
+			if ( !propertyKey && Object.values( properties ).indexOf( text.getText() ) > -1 ) {
+				$.each( properties, function( key, value ) {
+					if ( properties[ key ] == text.getText() ) {
+						propertyKey = key;
+
+
+						return false;
+					}
+				} );
+			}
 		} );
 
 		$.each( propertyKeys, function( index, value ) {
-			textSelect.append( '<option value = "' + value + '">' + value + '</option>' );
+			var selected = value == propertyKey ? 'selected' : '';
+			textSelect.append( '<option ' + selected + ' value = "' + value + '">' + value + '</option>' );
 		} );
 
 		textInput.prop( 'disabled', true );
