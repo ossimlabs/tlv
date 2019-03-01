@@ -428,7 +428,7 @@ function dimensionToggle() {
 
 var getScreenshotMapView = getScreenshotMap;
 getScreenshotMap = function( callback ) {
-	if ( $( '#imageSpaceMap' ).is( ':visible' ) ) {
+	if ( $( '#imageSpaceMaps' ).is( ':visible' ) ) {
 		var map = tlv.layers[ tlv.currentLayer ].imageSpaceMap;
 		map.once(
 			"postcompose",
