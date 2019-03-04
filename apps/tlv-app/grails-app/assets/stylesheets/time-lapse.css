@@ -27,6 +27,11 @@
 	width: 100%
 }
 
+.modal-xl {
+	overflow-y: auto;
+	width: 90%;
+}
+
 .ol-full-screen {
 	left: 0.5em;
 	right: auto;
