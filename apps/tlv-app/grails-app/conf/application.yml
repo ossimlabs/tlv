@@ -5,12 +5,12 @@ about:
     releaseNumber: 2.7.0
 
 # If there a page banner is needed, set it here
-#banner:
-#    backgroundColor: darkgray
-#    description: This application is subject to change without notice.
-#    enabled: true
-#    text: BETA
-#    textColor: white
+banner:
+    backgroundColor: darkgray
+    description: This application is subject to change without notice.
+    enabled: true
+    text: BETA
+    textColor: white
 
 # List any base layers that may be available
 #baseLayers:
@@ -21,7 +21,7 @@ about:
 #        projection: EPSG:4326
 #        style: default
 #        type: wmts
-#        visible: true
+#        visible: false
 #        url: ${baseUrl}/omar-wmts/wmts/getTile
 #    osmBasic:
 #        layers: o2-basemap-basic
@@ -29,19 +29,19 @@ about:
 #        styles:
 #        type: wms
 #        url: ${baseUrl}/omar-mapproxy/service
-#        visible: true
+#        visible: false
 #    osmBright:
 #        layers: o2-basemap-bright
 #        name: OSM Bright
 #        styles:
 #        type: wms
-#        visible: false
+#        visible: true
 #        url: ${baseUrl}/omar-mapproxy/service
 #    googleMaps:
 #        name: Google Maps
 #        type: xyz
 #        url: https://mt1.google.com/vt/lyrs=r&x={x}&y={y}&z={z}
-#        visible: false
+#        visibility: false
 #    googleSatellite:
 #        name: Google Satellite
 #        type: xyz
@@ -90,27 +90,14 @@ baseUrl: https://omar.ossim.io
 # If there is an available token for Cesium terrain, define it here
 #ionAccessToken: <token>
 
-# If ISA is available, define the URL
-# Make sure the trailing forward slash is included
-# Optional
-#isaUrl: ${baseUrl}/isa-ui/
-
 # If any keystores are needed to proxy requests
 #keyStores:
 #    keyStore:
-#        certificate: |
-#            -----BEGIN CERTIFICATE-----
-#            ...
-#            -----END CERTIFICATE-----
-#        key: |
-#            -----BEGIN RSA PRIVATE KEY-----
-#            ...
-#            -----END RSA PRIVATE KEY-----
+#        filename: /data/keyStore.jks
+#        password: <password>
 #    trustStore:
-#        certificate: |
-#            -----BEGIN CERTIFICATE-----
-#            ...
-#            -----END CERTIFICATE-----
+#        filename: /data/trustStore.jks
+#        password: <password>
 
 # If there any feature layers available, list them here
 #layers:
@@ -144,9 +131,9 @@ baseUrl: https://omar.ossim.io
 #        refresh: true
 #        style:
 #            stroke:
-#                color: black
+#                color: yellow
 #            text:
-#                color: black
+#                color: yellow
 #                label: image_id
 
 # List the various repository details
