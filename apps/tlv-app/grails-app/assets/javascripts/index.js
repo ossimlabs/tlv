@@ -264,19 +264,6 @@ function enableKeyboardShortcuts() {
 	});
 }
 
-function getDtedHeight( longitude, latitude, callback ) {
-	$.ajax({
-		data: "longitude=" + longitude + "&latitude=" + latitude,
-		url: tlv.contextPath + "/ossim/getHeight"
-	})
-	.done( function( data ) {
-		callback( data );
-	})
-	.fail( function( data ) {
-		callback( data );
-	});
-}
-
 function getGpsLocation(callbackFunction) {
 	if (navigator.geolocation) {
 		displayLoadingDialog("Don't worry, we'll find you... hopefully. #optimism");
@@ -298,23 +285,24 @@ function getGpsLocation(callbackFunction) {
 
 function groundToImagePoints( coordinates, layer, callback ) {
     return $.ajax({
-        contentType: "application/json",
+        contentType: 'application/json',
         data: JSON.stringify({
-            "entryId": layer.metadata.entry_id || 0,
-            "filename": layer.metadata.filename,
-            "pointList": coordinates.map( function( coordinate ) {
-				return { "lat": coordinate[ 1 ], "lon": coordinate[0] };
+            'entryId': layer.metadata.entry_id || 0,
+            'filename': layer.metadata.filename,
+            'pointList': coordinates.map( function( coordinate ) {
+				return { 'lat': coordinate[ 1 ], 'lon': coordinate[0] };
 			}),
         }),
-        success: function( data ) {
-            var pixels = data.data.map(
-                function( point ) { return [ point.x, point.y ] }
-            );
-            callback( pixels, layer );
-        },
+        dataType: 'json',
         type: "post",
         url: tlv.libraries[ layer.library ].mensaUrl + "/groundToImagePoints"
-    });
+    })
+    .done( function( data ) {
+        var pixels = data.data.map(
+            function( point ) { return [ point.x, point.y ] }
+        );
+        callback( pixels, layer );
+    } );
 }
 
 function hideDialog(dialog) {
@@ -329,43 +317,43 @@ function hideLoadingDialog() { $("#loadingDialog").modal("hide"); }
 
 function imagePointsToGround( pixels, layer, callback ) {
     return $.ajax({
-        contentType: "application/json",
+        contentType: 'application/json',
         data: JSON.stringify({
-            "entryId": 0,
-            "filename": layer.metadata.filename,
-            "pointList": pixels.map( function( pixel ) {
-                return { "x": pixel[ 0 ], "y": pixel[ 1 ] };
+            'entryId': 0,
+            'filename': layer.metadata.filename,
+            'pointList': pixels.map( function( pixel ) {
+                return { 'x': pixel[ 0 ], 'y': pixel[ 1 ] };
             } ),
-            "pqeEllipseAngularIncrement": 10,
-            "pqeEllipsePointType" : "none",
-            "pqeIncludePositionError": true,
-            "pqeProbabilityLevel" : 0.9,
+            'pqeEllipseAngularIncrement': 10,
+            'pqeEllipsePointType' : 'none',
+            'pqeIncludePositionError': true,
+            'pqeProbabilityLevel' : 0.9,
         }),
-        success: function( data ) {
-            var coordinates = data.data.map(
-                function( point ) { return [ point.lon, point.lat ]; }
-            );
-            var info = data.data.map(
-                function( point ) {
-                    if ( point.pqe.pqeValid ) {
-                        return $.extend( point, {
-                                CE: point.pqe.CE,
-                                LE: point.pqe.LE
-                        } );
-                    }
-                    else {
-                        return $.extend( point, {
-                            CE: null,
-                            LE: null
-                        } );
-                    }
+        type: 'post',
+        url: tlv.libraries[ layer.library ].mensaUrl + '/imagePointsToGround'
+    })
+    .done( function( data ) {
+        var coordinates = data.data.map(
+            function( point ) { return [ point.lon, point.lat ]; }
+        );
+        var info = data.data.map(
+            function( point ) {
+                if ( point.pqe.pqeValid ) {
+                    return $.extend( point, {
+                        CE: point.pqe.CE,
+                        LE: point.pqe.LE
+                    } );
                 }
-            );
-            callback( coordinates, layer, info );
-        },
-        type: "post",
-        url: tlv.libraries[ layer.library ].mensaUrl + "/imagePointsToGround"
-    });
+                else {
+                    return $.extend( point, {
+                        CE: null,
+                        LE: null
+                    } );
+                }
+            }
+        );
+        callback( coordinates, layer, info );
+    } );
 }
 
 function initializeLoadingDialog() {
