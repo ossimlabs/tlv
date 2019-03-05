@@ -50,58 +50,10 @@
 						</div>
 						<%--<div class = "col-md-4">
 							<button class = "btn btn-primary form-control"  data-dismiss = "modal" onclick = $("#detectionAlgorithmsDialog").modal("show");>Find Detections</button>
-						</div>--%>
+						</div>--%><%--
 						<div class = "col-md-6">
-							<button class = "btn btn-primary form-control" data-dismiss = "modal" id = "detectionStatusButton">Detection Status</button>
+							<button class = "btn btn-primary form-control" data-dismiss = "modal" onclick = getDetectionStatus()>Detection Status</button>
 						</div>
-						<asset:script type = "text/javascript">
-							$( "#detectionStatusButton" ).click( function() {
-								$( "#detectionJobsDialog" ).modal( "show" );
-								//$.ajax({
-								//	dataType: "json",
-								//	url: "https://omar-dev.ossim.io/omar-ml/job/query/3394"
-								//})
-								//.done( function( data ) {
-									var table = $( "#detectionJobsDialog" ).find( "table" )[ 0 ];
-									var row = table.insertRow( table.rows.length );
-									$.each(
-										[ "Confidence", "Filename", "Non-Max. Suppression", "Status" ],
-										function( index, value ) {
-										var cell = row.insertCell( row.cells.length );
-										$( cell ).append( "<b>" + value + "</b>" );
-									} );
-
-								//	$.each( data, function( index, value ) {
-										var value = {
-											confidence: 70,
-											imageFilename: "05JUL17WV011300017JUL05185933-P1BS_R2C1-057094680010_01_P001",
-											nms: 35
-										};
-
-										var row = table.insertRow( table.rows.length );
-										var cell = row.insertCell( row.cells.length );
-										$( cell ).append( value.confidence );
-
-										var cell = row.insertCell( row.cells.length );
-										$( cell ).append( value.imageFilename );
-
-										var cell = row.insertCell( row.cells.length );
-										$( cell ).append( value.nms );
-
-										var cell = row.insertCell( row.cells.length );
-										var button = document.createElement("button");
-										button.className = "btn btn-success";
-										button.innerHTML = "View";
-										button.onclick = function() {
-											configLayerToggle("countries");
-										}
-										$( cell ).append( button );
-										//$( cell ).append( "WAITING" );
-								//	} );
-
-								//} );
-							} );
-						</asset:script>
 					</div>
 --%>
 					<label>Search Origin</label>
