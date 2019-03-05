@@ -426,6 +426,25 @@ function dimensionToggle() {
 	else { addDimension(); }
 }
 
+var geoJumpView = geoJump;
+geoJump = function( location ) {
+	if ( $( '#viewSpaceSelect' ).val() == 'imageSpace' ) {
+		convertGeospatialCoordinateFormat( location, function( coordinate ) {
+			if ( coordinate ) {
+				var currentLayer = tlv.layers[ tlv.currentLayer ];
+				groundToImagePoints( [ coordinate ], currentLayer, function( pixels, layer ) {
+					var center = pixels[ 0 ];
+					center[ 1 ] = layer.metadata.height - center[ 1 ];
+					layer.imageSpaceMap.getView().setCenter( center );
+				} );
+			}
+		} );
+	}
+	else {
+		geoJumpView( location );
+	}
+}
+
 var getScreenshotMapView = getScreenshotMap;
 getScreenshotMap = function( callback ) {
 	if ( $( '#imageSpaceMaps' ).is( ':visible' ) ) {
