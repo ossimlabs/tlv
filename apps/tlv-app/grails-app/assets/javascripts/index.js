@@ -127,13 +127,13 @@ function createDefaultStyle() {
             return geometry;
         },
         fill: new ol.style.Fill({
-            color: "rgba(255, 255, 255, 0)"
+            color: "rgba(255, 255, 0, 0)"
         }),
 		image: new ol.style.Circle({
 			fill: new ol.style.Fill({
                 color: "rgba(255, 255, 0, 1)"
             }),
-			radius: 5,
+			radius: 20,
             stroke: new ol.style.Stroke({
                 color: "rgba(255, 255, 255, 0)",
                 lineCap: 'round',
@@ -159,12 +159,11 @@ function createDefaultStyle() {
             }),
             offsetX: 0,
             offsetY: 0,
-            overflow: true,
     	    scale: 1,
     	    rotateWithView: true,
     	    rotation: 0,
-    		text: '',
-    		textAlign: 'center'
+    		text: styleInput.find( '#textTextInput' ).val(),
+    		textAlign: styleInput.find( '#textTextAlignSelect' ).val()
         })
 	});
 }
