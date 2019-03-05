@@ -86,13 +86,11 @@ function beginSearch() {
 								$.each( searchParams.libraries, function( index, library ) {
 									numberOfImages += tlv.libraries[ library ].searchResults.length;
 								} );
-								if ( numberOfImages ) {
-									processResults();
-								}
-								else {
-									displayErrorDialog( "Sorry, we couldn't interpret that location. :(" );
-								}
+								processResults();
 							}
+						}
+						else {
+							processResults();
 						}
 					} );
 				} );
