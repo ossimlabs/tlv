@@ -133,7 +133,7 @@ function createDefaultStyle() {
 			fill: new ol.style.Fill({
                 color: "rgba(255, 255, 0, 1)"
             }),
-			radius: 20,
+			radius: 5,
             stroke: new ol.style.Stroke({
                 color: "rgba(255, 255, 255, 0)",
                 lineCap: 'round',
@@ -161,9 +161,7 @@ function createDefaultStyle() {
             offsetY: 0,
     	    scale: 1,
     	    rotateWithView: true,
-    	    rotation: 0,
-    		text: styleInput.find( '#textTextInput' ).val(),
-    		textAlign: styleInput.find( '#textTextAlignSelect' ).val()
+    	    rotation: 0
         })
 	});
 }
