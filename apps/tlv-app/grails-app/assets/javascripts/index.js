@@ -39,13 +39,13 @@ function convertGeospatialCoordinateFormat(inputString, callbackFunction) {
 		if (callbackFunction) { callbackFunction([longitude, latitude]); }
 		else { return [longitude, latitude]; }
 	}
-	else if (inputString.match(mgrsPattern)) {
+	else if ( inputString.match( mgrsPattern ) && inputString.trim().length < 16 ) {
 		var location = coordinateConversion.mgrsToDd(RegExp.$1, RegExp.$2, RegExp.$3, RegExp.$4, RegExp.$5, RegExp.$6);
 
 
 		return convertGeospatialCoordinateFormat(location, callbackFunction);
 	}
-	else if ( inputString.match( bePattern ) && tlv.beLookup.url && callbackFunction ) {
+	else if ( inputString.match( bePattern ) && inputString.trim().length == 10 && tlv.beLookup.url && callbackFunction ) {
 		displayLoadingDialog( "We're checking our maps for that location... BRB!" );
         beSearch( inputString )
         .always( function() {
