@@ -64,7 +64,7 @@ dependencies {
     compile "de.codecentric:spring-boot-admin-starter-client:${springBootAdminStarterClientV}"
     compile "io.swagger:swagger-models:1.5.15"
     compile "org.grails.plugins:actuator-ui:1.1"
-    
+
     compile "org.grails.plugins:spring-security-core:3.2.3"
 
     compile "org.springframework.boot:spring-boot-starter-logging"
@@ -109,7 +109,8 @@ dependencies {
     compile 'org.webjars:jszip:3.1.0'
     compile 'org.webjars:momentjs:2.11.0'
     compile 'org.webjars.npm:cesium:1.43.0'
-    compile "org.webjars:bootswatch:3.3.5+4"
+    compile 'org.webjars:bootswatch:3.3.5+4'
+    compile 'org.webjars:swagger-ui:3.20.5'
 
     compile 'org.springframework.cloud:spring-cloud-starter-config'
     compile 'org.springframework.cloud:spring-cloud-starter-eureka'
