@@ -1,8 +1,8 @@
 # If there is a version to denote, set it here
 about:
-    contactEmail: O2Support@digitalglobe.com
+    contactEmail: knaquin@radiantsolutions.com
     release: Key West
-    releaseNumber: 2.7.0
+    releaseNumber: 2.7.1
 
 # If there a page banner is needed, set it here
 banner:
@@ -85,7 +85,7 @@ baseUrl: https://omar.ossim.io
 #        imageIdRegExp: (_2CMV_[A-Z])
 
 # If the twofishes geocoder is available, define the URL
-#geocoderUrl: ${baseUrl}/omar-ui/twoFishesProxy
+#geocoderUrl: ${baseUrl}/twofishes
 
 # If there is an available token for Cesium terrain, define it here
 #ionAccessToken: <token>
@@ -170,6 +170,11 @@ securityClassificationBanner:
 # Set the context path of the application
 #server:
 #    contextPath: /tlv
+
+swagger:
+  schemes:
+    - HTTPS
+    - HTTP
 
 templates:
     default:

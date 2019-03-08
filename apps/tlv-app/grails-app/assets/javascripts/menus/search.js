@@ -112,7 +112,7 @@ function beginSearch() {
 			outputFormat: 'JSON',
 			request: 'getFeature',
 			service: 'WFS',
-			sortBy: 'acquisition_date D',
+			sortBy: 'acquisition_date+D',
 			typeName: 'omar:raster_entry',
 			version: '1.1.0'
 		};
@@ -213,7 +213,7 @@ function demoSearch() {
 			outputFormat: 'JSON',
 			request: 'getFeature',
 			service: 'WFS',
-			sortBy: 'acquisition_date D',
+			sortBy: 'acquisition_date+D',
 			typeName: 'omar:raster_entry',
 			version: '1.1.0'
 		});
