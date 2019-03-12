@@ -99,7 +99,7 @@ function copyTextToClipboard( text ) {
     input.type = "text";
     $( "body" ).append( input );
 
-    document.getElementById( "text" ).select();
+    input.select();
     document.execCommand( "copy" );
 
     input.remove();
