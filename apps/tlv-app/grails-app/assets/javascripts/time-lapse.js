@@ -373,7 +373,7 @@ function setupTimeLapse() {
 	   layer.keepVisible = layer.keepVisible || false;
 		addLayerToTheMap( layer );
 	});
-    tlv.layers.reverse();
+    //tlv.layers.reverse();
 	tlv.currentLayer = 0;
 
     tlv.map.getView().fit( tlv.bbox );
