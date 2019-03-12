@@ -100,7 +100,6 @@ function copyTextToClipboard( text ) {
     $( "body" ).append( input );
 
     input.select();
-    //document.getElementById( "text" ).select();
     document.execCommand( "copy" );
 
     input.remove();
