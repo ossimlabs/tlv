@@ -54,13 +54,6 @@ class HomeController {
 			value = 'Sets the initial map zoom in min_lon, min_lat, max_lon, max_lat format.'
 		),
 		@ApiImplicitParam(
-			dataType = 'boolean',
-			defaultValue = '',
-			name = 'chronological',
-			paramType = 'query',
-			value = 'Sets whether results are displayed in chronological or reverse-chronological order.'
-		),
-		@ApiImplicitParam(
 			allowableValues = '2,3',
 			dataType = 'integer',
 			defaultValue = '',
@@ -126,7 +119,7 @@ class HomeController {
 		),
 		@ApiImplicitParam(
 			dataType = 'boolean',
-			//defaultValue = '',
+			defaultValue = '',
 			name = 'hideImageId',
 			paramType = 'query',
 			value = 'Hides the image ID text on the map.'
@@ -137,6 +130,13 @@ class HomeController {
 			name = 'hideMapCoordinates',
 			paramType = 'query',
 			value = 'Hides the map coordinate display on the map.'
+		),
+		@ApiImplicitParam(
+			dataType = 'string',
+			defaultValue = '',
+			name = 'fsg',
+			paramType = 'query',
+			value = 'Comma separated list of Full Spectrum GEOINT products.'
 		),
 		@ApiImplicitParam(
 			dataType = 'string',
@@ -182,11 +182,25 @@ class HomeController {
 			value = 'Sets the visibility of the overview map.'
 		),
 		@ApiImplicitParam(
+			dataType = 'boolean',
+			defaultValue = '',
+			name = 'reverseChronological',
+			paramType = 'query',
+			value = 'Sets whether results are displayed in chronological or reverse-chronological order.'
+		),
+		@ApiImplicitParam(
 			dataType = 'string',
 			defaultValue = '',
 			name = 'searchLibraries',
 			paramType = 'query',
 			value = 'Comma separated list that select the libraries in the search dialog.'
+		),
+		@ApiImplicitParam(
+			dataType = 'string',
+			defaultValue = '',
+			name = 'sensors',
+			paramType = 'query',
+			value = 'Comma separated list of sensor IDs.'
 		),
 		@ApiImplicitParam(
 			dataType = 'integer',
