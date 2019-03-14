@@ -366,7 +366,7 @@ function setupTimeLapse() {
 	setupMap();
 	addBaseLayersToTheMap();
 
-	if ( tlv.chronological == "false" ) { tlv.layers.reverse(); }
+	if ( tlv.reverseChronological == "true" ) { tlv.layers.reverse(); }
 	// add layers to the map
     tlv.layers.reverse();
 	$.each( tlv.layers, function( index, layer ) {
