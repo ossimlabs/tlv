@@ -151,7 +151,7 @@ function beginSearch() {
 
 					if ( searchParams.sensors.length ) {
 						filter += ' AND ';
-						filter += "(sensor_id LIKE '" + searchParams.sensors.join( "' OR sensor_id LIKE'" ) + "')";
+						filter += "(sensor_id LIKE '%" + searchParams.sensors.join( "%' OR sensor_id LIKE'%" ) + "%')";
 					}
 
 					queryParams.filter = filter;
@@ -265,6 +265,45 @@ function getDate(date) {
 	return { day: day, hour: hour, minute: minute, month: month, second: second, year: year };
 }
 
+function getDistinctFsg() {
+	var updateFsgList = function() {
+		var fsgs = [];
+		$.each( tlv.libraries, function( index, library ) {
+		 	fsgs.push( library.fsg || [] );
+		});
+
+		var fsgList = $( "#searchFsgList" );
+		fsgList.html( "" );
+		$.each( [].concat.apply( [], fsgs ).unique().sort(), function( index, fsg ) {
+			fsgList.append( "<option value = '" + fsg + "'></option>" );
+		});
+	}
+
+	$.each( tlv.libraries, function( index, library ) {
+		if ( !library.fsg ) {
+			$.ajax({
+				data: "property=productId",
+				dataType: "json",
+				url: library.stagerUrl + "/dataManager/getDistinctValues"
+			})
+			.done( function( data ) {
+				library.fsg = data;
+				updateFsgList();
+				getDistinctFsg();
+			})
+			.fail( function() {
+				library.fsg = [];
+				updateFsgSelect();
+				getDistinctFsg();
+			});
+
+
+			return false;
+		}
+	});
+}
+
+
 function getDistinctSensors() {
 	var updateSensorSelect = function() {
 		var sensors = [];
@@ -272,10 +311,10 @@ function getDistinctSensors() {
 		 	sensors.push( library.sensors || [] );
 		});
 
-		var sensorSelect = $( "#searchSensorSelect" );
-		sensorSelect.html( "" );
+		var sensorList = $( "#searchSensorIdList" );
+		sensorList.html( "" );
 		$.each( [].concat.apply( [], sensors ).unique().sort(), function( index, sensor ) {
-			sensorSelect.append( "<option value = '" + sensor + "'>" + sensor.toUpperCase() + "</option>" );
+			sensorList.append( "<option value = '" + sensor + "'></option>" );
 		});
 	}
 
@@ -340,8 +379,8 @@ function getSearchParams() {
 
 	searchObject.filter = tlv.filter || null;
 
-	var fsgs = $( "#searchFsgSelect" ).val();
-	searchObject.fsgs = fsgs || [];
+	var fsgs = $( "#searchFsgInput" ).val();
+	searchObject.fsgs = fsgs ? fsgs.split( ',' ) : [];
 
 	var libraries = getSelectedLibraries();
 	if (libraries.length == 0) {
@@ -362,8 +401,8 @@ function getSearchParams() {
 	var minNiirs = $("#searchMinNiirsInput").val();
 	searchObject.minNiirs = parseFloat(minNiirs);
 
-	var sensors = $( "#searchSensorSelect" ).val();
-	searchObject.sensors = sensors || [];
+	var sensors = $( "#searchSensorIdInput" ).val();
+	searchObject.sensors = sensors ? sensors.split( ',' ) : [];
 
 	var startDate = getStartDate();
 	searchObject.startYear = startDate.year;
@@ -404,6 +443,43 @@ function getStartDate() {
 	return getDate(date);
 }
 
+function handleDataList( inputId ) {
+	var inputElement = $( '#' + inputId );
+
+	var dataList = inputElement.next();
+	var options = inputElement.attr( "data-options" );
+	// if there are no options, store them
+	if ( !options ) {
+		var optionsArray = [];
+		$.each( dataList[ 0 ].options, function( index, option ) {
+			optionsArray.push( $( option ).val() );
+		} );
+		inputElement.attr( "data-options",  optionsArray.join( ',' ) );
+	}
+	else {
+		options = options.split( ',' );
+	}
+
+
+	var prefix = '';
+	var userInput = inputElement.val().replace( /^\s+|\s+$/g, '' );
+	if ( userInput != inputElement.val() ) {
+		var lastCommaIndex = userInput.lastIndexOf( ',' );
+		if ( lastCommaIndex != -1 ) {
+			prefix = userInput.substr( 0, lastCommaIndex ) + ', ';
+		}
+
+		if ( userInput.indexOf( ',' ) > -1 ) {
+			dataList.empty();
+			$.each( options, function( index, option ) {
+				if ( userInput.indexOf( option ) < 0 ) {
+					dataList.append( '<option value="' + prefix + option +'">' );
+				}
+			} );
+		}
+	}
+}
+
 function initializeEndDateTimePicker() {
 	// default to current date or user defined
 	var endDate = new Date();
@@ -426,15 +502,12 @@ function initializeEndDateTimePicker() {
 	});
 }
 
-function initializeFsgSelect() {
-	if ( tlv.fsg ) {
-		var fsgSelect = $( "#searchFsgSelect" );
-		if ( fsgSelect ) {
-			$.each( tlv.fsg.split( "," ), function( index, fsg ) {
-				$( "#searchFsgSelect option:contains('" + fsg + "')" ).prop("selected", true);
-			});
-		}
+function initializeFsgList() {
+	if ( tlv.fsg || tlv.preferences.tlvPreference.fsg ) {
+		var fsg = tlv.fsg || tlv.preferences.tlvPreference.fsg;
+		$( '#searchFsgInput' ).val( fsg );
 	}
+	getDistinctFsg();
 }
 
 function initializeLibraryCheckboxes() {
@@ -481,16 +554,10 @@ function initializeMinNiirsInput() {
 	$( "#searchMinNiirsInput" ).val( minNiirs );
 }
 
-function initializeSensorSelect() {
+function initializeSensorList() {
 	if ( tlv.sensors || tlv.preferences.tlvPreference.sensor ) {
-		var sensors = ( tlv.sensors || tlv.preferences.tlvPreference.sensor ).split( "," );
-		var getDistinctSensorsInit = getDistinctSensors;
-		getDistinctSensors = function() {
-			getDistinctSensorsInit();
-			$.each( sensors, function( index, sensor ) {
-				$( "#searchSensorSelect option[value='" + sensor + "']" ).prop( "selected", true );
-			});
-		}
+		var sensors = tlv.sensors || tlv.preferences.tlvPreference.sensor;
+		$( '#searchSensorIdInput' ).val( sensors );
 	}
 	getDistinctSensors();
 }
@@ -595,13 +662,9 @@ function processImageId( metadata ) {
  		imageId = metadata.title || metadata.filename.replace( /^.*[\\\/]/, "" );
 	}
 
-	$.each(
-		tlv.imageIdFilters,	function( index, filter ) {
-			if ( metadata.filename.match( filter ) ) {
-				imageId += RegExp.$1;
-			}
-		}
-	);
+	if ( metadata.product_id ) {
+		imageId += ' (' +  metadata.product_id + ')';
+	}
 
 
 	return imageId;
@@ -681,12 +744,12 @@ function setupSearchMenuDialog() {
 	initializeEndDateTimePicker();
 	initializeStartDateTimePicker();
 
-	initializeFsgSelect();
+	initializeFsgList();
 	initializeLibraryCheckboxes();
 	initializeMinNiirsInput();
 	initializeMaxCloudCoverInput();
 	initializeMaxResultsSelect();
-	initializeSensorSelect();
+	initializeSensorList();
 
 	initializeLocationInput();
 }
