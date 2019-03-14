@@ -78,12 +78,6 @@ baseUrl: https://omar.ossim.io
 # If documentation is available, define the URL
 #docsUrl: ${baseUrl}/omar-docs
 
-# A list of full spectrum geoint products with regular expressions that append it to the image Id
-#fsg:
-#    2CMV:
-#        searchString: 2CMV
-#        imageIdRegExp: (_2CMV_[A-Z])
-
 # If the twofishes geocoder is available, define the URL
 #geocoderUrl: ${baseUrl}/twofishes
 
