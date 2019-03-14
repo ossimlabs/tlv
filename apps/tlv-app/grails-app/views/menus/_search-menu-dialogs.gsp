@@ -46,22 +46,28 @@
 					<div class = "row">
 						<div class = "col-md-12">
 							<label>Sensors</label>
-							<select multiple class = "form-control" id = "searchSensorSelect"></select>
+							<input class = "form-control"
+								id = "searchSensorIdInput"
+								list = "searchSensorIdList"
+								onchange = "javascript: handleDataList( 'searchSensorIdInput' )"
+								onkeyup = "javascript: handleDataList( 'searchSensorIdInput' )"
+								placeholder = "Sensor ID">
+							<datalist id = "searchSensorIdList"></datalist>
 						</div>
 					</div>
 
-					<g:if test = "${ grailsApplication.config.fsg }">
-						<div class = "row">
-							<div class = "col-md-12">
-								<label>Full Spectrum GEOINT</label>
-								<select multiple class = "form-control" id = "searchFsgSelect">
-									<g:each in = "${ grailsApplication.config.fsg }">
-										<option value = "${ it.value.searchString }">${ it.key.toUpperCase() }</option>
-									</g:each>
-								</select>
-							</div>
+					<div class = "row">
+						<div class = "col-md-12">
+							<label>Full Spectrum GEOINT</label>
+							<input class = "form-control"
+								id = "searchFsgInput"
+								list = "searchFsgList"
+								onchange = "javascript: handleDataList( 'searchFsgInput' )"
+								onkeyup = "javascript: handleDataList( 'searchFsgInput' )"
+								placeholder = "Full Spectrum GEOINT">
+							<datalist id = "searchFsgList"></datalist>
 						</div>
-					</g:if>
+					</div>
 
 					<div class = "row">
 						<div class = "col-md-4">
