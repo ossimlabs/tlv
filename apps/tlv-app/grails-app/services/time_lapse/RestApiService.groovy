@@ -24,7 +24,6 @@ class RestApiService {
 		params.demoLocation = grailsApplication.config.demoLocation ?: null
 		params.geocoderUrl = grailsApplication.config.geocoderUrl ?: null
 		params.ionAccessToken = grailsApplication.config.ionAccessToken ?: null
-		params.imageIdFilters = grailsApplication.config.fsg?.collect { it.value.imageIdRegExp } ?: []
 		params.libraries = grailsApplication.config.libraries
 
 		JSON.use( "deep" ) {
