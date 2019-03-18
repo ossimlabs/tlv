@@ -264,6 +264,21 @@ createMapControls = function() {
 		var imageIdControl = new ol.control.Control({ element: imageIdOuterDiv });
 		layer.imageSpaceMap.addControl( imageIdControl );
 
+		var northArrowControl = new ol.control.Rotate({
+			render: function(mapEvent) {
+				var frameState = mapEvent.frameState;
+			    if ( !frameState ) return;
+
+				var radians = frameState.viewState.rotation - ( layer.metadata.northAngle || 0 );
+				var transform = "rotate(" + radians + "rad)";
+				var arrow = $( '#' + layer.imageSpaceMap.getTarget() ).find( '.ol-compass' );
+				arrow.css( 'msTransform', transform );
+				arrow.css( 'transform', transform );
+				arrow.css( 'webkitTransform', transform );
+
+			}
+		});
+		layer.imageSpaceMap.addControl( northArrowControl );
 
 		var PlayStopControl = function() {
 			var button = document.createElement( "button" );
@@ -312,7 +327,7 @@ createMapControls = function() {
 		layer.imageSpaceMap.addControl( new RewindControl() );
 
 
-		var RotationControl = function() {
+		var RotationSliderControl = function() {
 			var rotationInput = document.createElement( "input" );
 			rotationInput.id = "rotationSliderInput";
 			rotationInput.max = "360";
@@ -353,8 +368,8 @@ createMapControls = function() {
 
 
 		};
-		ol.inherits( RotationControl, ol.control.Control );
-		layer.imageSpaceMap.addControl( new RotationControl() );
+		ol.inherits( RotationSliderControl, ol.control.Control );
+		layer.imageSpaceMap.addControl( new RotationSliderControl() );
 
 
 		var SummaryTableControl = function() {
@@ -628,14 +643,6 @@ rightClick = function( event ) {
 	}
 }
 
-function rotateImageSpaceNorthArrow( radians, layer ) {
-	var transform = "rotate(" + radians + "rad)";
-	var arrow = $( '#' + layer.imageSpaceMap.getTarget() ).find( '.ol-compass' );
-	arrow.css( 'msTransform', transform );
-	arrow.css( 'transform', transform );
-	arrow.css( 'webkitTransform', transform );
-}
-
 function setupImageSpaceMaps() {
     $( '#imageSpaceMaps' ).html( '' );
 
@@ -668,14 +675,6 @@ function setupImageSpaceMaps() {
                 zoom: 1
             })
         });
-
-
-		//extent: [ 0, -maxHeight, maxWidth, 0 ],
-
-		layer.imageSpaceMap.getView().on( 'change:rotation', function( event ) {
-			var rotation = event.target.get( event.key ) - ( layer.metadata.northAngle || 0 );
-			rotateImageSpaceNorthArrow( rotation, layer );
-		} );
     } );
 }
 
