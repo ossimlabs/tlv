@@ -472,6 +472,29 @@ function getLayerIdentifier(source) {
 }
 
 function measure() {
+	var addLineFeature = function( geometry ) {
+		var feature = new ol.Feature( geometry );
+		vectorSource.addFeature( feature );
+
+
+		return feature;
+	};
+
+	var addPolygonFeature = function( lineGeometry ) {
+		var coordinates = lineGeometry.getCoordinates();
+		coordinates.push( lineGeometry.getFirstCoordinate() )
+		var polygonGeometry = new ol.geom.Polygon([ coordinates ]);
+		var feature = new ol.Feature( polygonGeometry );
+		vectorSource.addFeature( feature );
+
+		var style = createDefaultStyle();
+		style.getStroke().setLineDash([ 10, 10 ]);
+		feature.setStyle( style );
+
+
+		return feature;
+	};
+
 	var formatLength = function( geometry ) {
 		var length = ol.Sphere.getLength( geometry, {
 			projection: 'EPSG:4326'
@@ -499,42 +522,26 @@ function measure() {
 		return text;
 	};
 
-	var pointerMove = function( event ) {
-		if ( event.dragging ) {
-			return;
-		}
-
-		tlv.map.getOverlayById( 'helpTooltipOverlay' ).setPosition( event.coordinate );
-	};
-
 	var vectorSource = new ol.source.Vector();
-	var vectorLayer = new ol.layer.Vector({ source: vectorSource });
+	var vectorLayer = new ol.layer.Vector({
+		source: vectorSource,
+		style: createDefaultStyle()
+	});
 	tlv.map.addLayer( vectorLayer );
 
-	// create the tooltips
-	$.each( [ 'help', 'line', 'polygon' ], function( index, value ) {
-		var div = document.createElement( 'div' );
-		div.className = 'tooltip-measure';
-		var overlay = new ol.Overlay({
-			element: div,
-			id: value + 'TooltipOverlay',
-			offset: value == 'help' ? [ 15, 0 ] : [ 0, -15 ],
-			positioning: value == 'help' ? 'center-left' : 'bottom-center'
-		});
-		tlv.map.addOverlay( overlay );
-	} );
-	$( tlv.map.getOverlayById( 'helpTooltipOverlay' ).getElement() ).html( 'Click to start drawing' );
-	tlv.map.on( 'pointermove', pointerMove );
-
+	var drawStyle = createDefaultStyle();
+	drawStyle.getImage().setRadius( 1 );
 	var drawInteraction = new ol.interaction.Draw({
 		source: vectorSource,
+		style: drawStyle,
 		type: 'LineString'
   	});
   	tlv.map.addInteraction( drawInteraction );
 
-	var listener;
+	displayInfoDialog( 'Click to start drawing' );
+
 	drawInteraction.on( 'drawstart', function( event ) {
-		$( tlv.map.getOverlayById( 'helpTooltipOverlay' ).getElement() ).html( 'Click to continue drawing or double-click to finish...' );
+		displayInfoDialog( 'Click to continue drawing or double-click to finish...' );
 
 		// create an origin point to snap to for polygons
 		var feature = event.feature;
@@ -547,69 +554,47 @@ function measure() {
 			source: vectorSource
 		});
 		tlv.map.addInteraction( snapInteraction	 );
-
-		listener = feature.getGeometry().on( 'change', function( event ) {
-			var lineGeometry = event.target;
-			var lineFeature = new ol.Feature( lineGeometry );
-
-			var lineTooltipCoordinate = lineGeometry.getLastCoordinate();
-			var lineOverlay = tlv.map.getOverlayById( 'lineTooltipOverlay' );
-			$( lineOverlay.getElement() ).html( formatLength( lineGeometry ) );
-			lineOverlay.setPosition( lineTooltipCoordinate );
-
-
-			var coordinates = lineGeometry.getCoordinates();
-			coordinates.push( lineGeometry.getFirstCoordinate() )
-			var polygonGeometry = new ol.geom.Polygon([ coordinates ]);
-			var polygonFeature = new ol.Feature( polygonGeometry );
-
-			var polygonTooltipCoordinate = polygonGeometry.getInteriorPoint().getCoordinates();
-			var polygonOverlay = tlv.map.getOverlayById( 'polygonTooltipOverlay' );
-			$( polygonOverlay.getElement() ).html( formatArea( polygonGeometry ) );
-			polygonOverlay.setPosition( polygonTooltipCoordinate );
-
-
-			vectorSource.clear( true );
-			vectorSource.addFeatures([ lineFeature, polygonFeature ]);
-		} );
 	}, this );
 
-	drawInteraction.on( 'drawend', function() {
-		// restyle the features
-		$.each( vectorSource.getFeatures(), function( index, feature ) {
-			var style = createDefaultStyle();
-			if ( feature.getGeometry() instanceof ol.geom.Polygon ) {
-				style.getStroke().setLineDash([ 10, 10 ]);
-			}
-			feature.setStyle( style );
-		} );
+	drawInteraction.on( 'drawend', function( event ) {
+		vectorSource.clear( true );
 
-		// position the final tooltips
+		var feature = event.feature;
+
+		var lineGeometry = feature.getGeometry();
+		addLineFeature( lineGeometry );
+		var polygonGeometry = addPolygonFeature( lineGeometry ).getGeometry();
+
+		// create the tooltips
 		$.each( [ 'line', 'polygon' ], function( index, value ) {
-			var overlay = tlv.map.getOverlayById( value + 'TooltipOverlay' );
-			if ( value != 'polygon' ) {
-				overlay.setOffset([ 0, -7 ]);
-			}
+			var html = value == 'line' ? formatLength( lineGeometry ) : formatArea( polygonGeometry );
+			var position = value == 'line' ? lineGeometry.getLastCoordinate() : polygonGeometry.getInteriorPoint().getCoordinates();
 
-			var element = overlay.getElement();
-			$( element ).addClass( 'tooltip-static' );
+			var div = document.createElement( 'div' );
+			div.className = 'tooltip-measure';
+			div.innerHTML = html;
+			var overlay = new ol.Overlay({
+				element: div,
+				id: value + 'TooltipOverlay',
+				//offset: [ 0, -15 ],
+				position: position,
+				positioning: 'bottom-center'
+			});
+			tlv.map.addOverlay( overlay );
 		} );
 
+		// remove draw and snap interactions
 		$.each( tlv.map.getInteractions().getArray().slice( 0 ), function( index, interaction ) {
 			if ( interaction instanceof ol.interaction.Draw || interaction instanceof ol.interaction.Snap ) {
 				tlv.map.removeInteraction( interaction );
 			}
 		} );
 
-		ol.Observable.unByKey( listener );
-
-		$( tlv.map.getOverlayById( 'helpTooltipOverlay' ).getElement() ).html( 'Click to clear...' );
+		displayInfoDialog( 'Click to clear...' );
 
 		setTimeout( function() {
 			tlv.map.once( 'click', function() {
-				tlv.map.un( 'pointermove', pointerMove );
-
-				$.each( [ 'help', 'line', 'polygon' ], function( index, value ) {
+				$.each( [ 'line', 'polygon' ], function( index, value ) {
 					var overlay = tlv.map.getOverlayById( value + 'TooltipOverlay' );
 					tlv.map.removeOverlay( overlay );
 					$( overlay.getElement() ).remove();
