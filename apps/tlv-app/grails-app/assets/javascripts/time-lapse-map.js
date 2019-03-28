@@ -392,6 +392,7 @@ function createMapControls() {
 			new PlayStopControl(),
 			new FastForwardControl(),
 			new DeleteControl(),
+
 			new SummaryTableControl()
 		);
 	}
@@ -469,6 +470,158 @@ function getLayerIdentifier(source) {
 	// assume an XYZ layer
 	else { return source.getUrls()[0]; }
 }
+
+function measure() {
+	var formatLength = function( geometry ) {
+		var length = ol.Sphere.getLength( geometry, {
+			projection: 'EPSG:4326'
+		} );
+
+		var text = ( Math.round( length * 100 ) / 100 ) + ' ' + 'm';
+		if ( length > 100 ) {
+			text = ( Math.round( length / 1000 * 100 ) / 100 ) + ' ' + 'km';
+		}
+
+
+		return text;
+	};
+
+	var formatArea = function( geometry ) {
+		var area = ol.Sphere.getArea( geometry, {
+			projection: 'EPSG:4326'
+		} );
+		var text = ( Math.round(area * 100) / 100 ) + ' ' + 'm<sup>2</sup>';
+		if ( area > 10000 ) {
+			text = ( Math.round(area / 1000000 * 100 ) / 100 ) + ' ' + 'km<sup>2</sup>';
+		}
+
+
+		return text;
+	};
+
+	var pointerMove = function( event ) {
+		if ( event.dragging ) {
+			return;
+		}
+
+		tlv.map.getOverlayById( 'helpTooltipOverlay' ).setPosition( event.coordinate );
+	};
+
+	var vectorSource = new ol.source.Vector();
+	var vectorLayer = new ol.layer.Vector({ source: vectorSource });
+	tlv.map.addLayer( vectorLayer );
+
+	// create the tooltips
+	$.each( [ 'help', 'line', 'polygon' ], function( index, value ) {
+		var div = document.createElement( 'div' );
+		div.className = 'tooltip-measure';
+		var overlay = new ol.Overlay({
+			element: div,
+			id: value + 'TooltipOverlay',
+			offset: value == 'help' ? [ 15, 0 ] : [ 0, -15 ],
+			positioning: value == 'help' ? 'center-left' : 'bottom-center'
+		});
+		tlv.map.addOverlay( overlay );
+	} );
+	$( tlv.map.getOverlayById( 'helpTooltipOverlay' ).getElement() ).html( 'Click to start drawing' );
+	tlv.map.on( 'pointermove', pointerMove );
+
+	var drawInteraction = new ol.interaction.Draw({
+		source: vectorSource,
+		type: 'LineString'
+  	});
+  	tlv.map.addInteraction( drawInteraction );
+
+	var listener;
+	drawInteraction.on( 'drawstart', function( event ) {
+		$( tlv.map.getOverlayById( 'helpTooltipOverlay' ).getElement() ).html( 'Click to continue drawing or double-click to finish...' );
+
+		// create an origin point to snap to for polygons
+		var feature = event.feature;
+		var coordinate = feature.getGeometry().getCoordinates()[ 0 ];
+		var point = new ol.geom.Point( coordinate );
+		var origin = new ol.Feature( point );
+		vectorSource.addFeature( origin );
+
+		var snapInteraction = new ol.interaction.Snap({
+			source: vectorSource
+		});
+		tlv.map.addInteraction( snapInteraction	 );
+
+		listener = feature.getGeometry().on( 'change', function( event ) {
+			var lineGeometry = event.target;
+			var lineFeature = new ol.Feature( lineGeometry );
+
+			var lineTooltipCoordinate = lineGeometry.getLastCoordinate();
+			var lineOverlay = tlv.map.getOverlayById( 'lineTooltipOverlay' );
+			$( lineOverlay.getElement() ).html( formatLength( lineGeometry ) );
+			lineOverlay.setPosition( lineTooltipCoordinate );
+
+
+			var coordinates = lineGeometry.getCoordinates();
+			coordinates.push( lineGeometry.getFirstCoordinate() )
+			var polygonGeometry = new ol.geom.Polygon([ coordinates ]);
+			var polygonFeature = new ol.Feature( polygonGeometry );
+
+			var polygonTooltipCoordinate = polygonGeometry.getInteriorPoint().getCoordinates();
+			var polygonOverlay = tlv.map.getOverlayById( 'polygonTooltipOverlay' );
+			$( polygonOverlay.getElement() ).html( formatArea( polygonGeometry ) );
+			polygonOverlay.setPosition( polygonTooltipCoordinate );
+
+
+			vectorSource.clear( true );
+			vectorSource.addFeatures([ lineFeature, polygonFeature ]);
+		} );
+	}, this );
+
+	drawInteraction.on( 'drawend', function() {
+		// restyle the features
+		$.each( vectorSource.getFeatures(), function( index, feature ) {
+			var style = createDefaultStyle();
+			if ( feature.getGeometry() instanceof ol.geom.Polygon ) {
+				style.getStroke().setLineDash([ 10, 10 ]);
+			}
+			feature.setStyle( style );
+		} );
+
+		// position the final tooltips
+		$.each( [ 'line', 'polygon' ], function( index, value ) {
+			var overlay = tlv.map.getOverlayById( value + 'TooltipOverlay' );
+			if ( value != 'polygon' ) {
+				overlay.setOffset([ 0, -7 ]);
+			}
+
+			var element = overlay.getElement();
+			$( element ).addClass( 'tooltip-static' );
+		} );
+
+		$.each( tlv.map.getInteractions().getArray().slice( 0 ), function( index, interaction ) {
+			if ( interaction instanceof ol.interaction.Draw || interaction instanceof ol.interaction.Snap ) {
+				tlv.map.removeInteraction( interaction );
+			}
+		} );
+
+		ol.Observable.unByKey( listener );
+
+		$( tlv.map.getOverlayById( 'helpTooltipOverlay' ).getElement() ).html( 'Click to clear...' );
+
+		setTimeout( function() {
+			tlv.map.once( 'click', function() {
+				tlv.map.un( 'pointermove', pointerMove );
+
+				$.each( [ 'help', 'line', 'polygon' ], function( index, value ) {
+					var overlay = tlv.map.getOverlayById( value + 'TooltipOverlay' );
+					tlv.map.removeOverlay( overlay );
+					$( overlay.getElement() ).remove();
+				} );
+
+				vectorSource.clear( true );
+				tlv.map.removeLayer( vectorLayer );
+			} );
+		}, 500 );
+	}, this );
+}
+
 
 function preloadAnotherLayer(index) {
 	var layer = tlv.layers[index];

@@ -1,0 +1,13 @@
+.tooltip-measure {
+    background: black;
+    border-radius: 4px;
+    color: white;
+    font-weight: bold;
+    padding: 4px 8px;
+    position: relative;
+    white-space: nowrap;
+}
+
+.tooltip-static {
+    border: 1px solid white;
+}

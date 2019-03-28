@@ -11,6 +11,7 @@
 *= require menus/export
 *= require menus/layers
 *= require image-properties
+*= require menus/tools
 *= require menus/view
 *=
 *= require security
