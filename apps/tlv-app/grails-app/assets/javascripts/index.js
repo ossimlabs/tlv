@@ -191,9 +191,14 @@ function displayDialog( dialog ) {
 }
 
 function displayInfoDialog( message ) {
-    $( "#infoDialog" ).html( message );
-	$( "#infoDialog" ).fadeIn();
-    setTimeout( function() { $( "#infoDialog" ).fadeOut(); }, 5000 );
+    var infoDialog = $( "#infoDialog" );
+    infoDialog.html( message );
+	infoDialog.fadeIn();
+    setTimeout( function() {
+        if ( infoDialog.html() == message ) {
+            $( "#infoDialog" ).fadeOut();
+        }
+    }, 5000 );
 }
 
 function displayErrorDialog( message ) {
