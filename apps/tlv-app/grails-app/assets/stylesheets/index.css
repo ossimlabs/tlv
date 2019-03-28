@@ -10,8 +10,10 @@
 
 #infoDialog {
     background-color: rgba(0, 0, 0, 0.5);
-    display: none;
     bottom: 0;
+    color: white;
+    display: none;
+    font-weight: bold;
     left: 0;
 	position: fixed;
     text-align: center;

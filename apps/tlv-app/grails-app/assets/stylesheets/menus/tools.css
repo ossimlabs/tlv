@@ -1,13 +1,9 @@
 .tooltip-measure {
-    background: black;
-    border-radius: 4px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border: 1px solid white;
     color: white;
     font-weight: bold;
     padding: 4px 8px;
     position: relative;
     white-space: nowrap;
-}
-
-.tooltip-static {
-    border: 1px solid white;
 }
