@@ -218,6 +218,7 @@ function demoSearch() {
 			version: '1.1.0'
 		});
 
+		displayLoadingDialog( "We are searching the libraries for imagery... fingers crossed!" );
 		$.ajax({
 			data: data,
 			dataType: "json",
@@ -293,7 +294,7 @@ function getDistinctFsg() {
 			})
 			.fail( function() {
 				library.fsg = [];
-				updateFsgSelect();
+				updateFsgList();
 				getDistinctFsg();
 			});
 
