@@ -204,6 +204,9 @@ function drawAnnotationMap( type ) {
 	var layer = tlv.layers[ tlv.currentLayer ];
 	createAnnotationsLayer( layer );
 
+	// in case any are still active by chance
+	removeInteractions();
+
 	// create the right draw interaction
 	switch (type) {
 		case "circle": drawCircle(); break;
