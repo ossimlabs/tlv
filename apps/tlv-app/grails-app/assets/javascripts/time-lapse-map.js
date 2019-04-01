@@ -495,6 +495,29 @@ function measure() {
 		return feature;
 	};
 
+	var createOverlays = function( lineGeometry, polygonGeometry ) {
+		$.each( [ 'line', 'polygon' ], function( index, value ) {
+			var position = value == 'line' ? lineGeometry.getLastCoordinate() : polygonGeometry.getInteriorPoint().getCoordinates();
+
+			var div = document.createElement( 'div' );
+			div.className = 'tooltip-measure';
+			div.innerHTML = "Calculating...";
+			var overlay = new ol.Overlay({
+				element: div,
+				id: value + 'TooltipOverlay',
+				position: position,
+				positioning: 'bottom-center'
+			});
+
+			if ( $( '#imageSpaceMaps' ).is( ':visible' ) ) {
+				tlv.layers[ tlv.currentLayer ].imageSpaceMap.addOverlay( overlay );
+			}
+			else {
+				tlv.map.addOverlay( overlay );
+			}
+		} );
+	}
+
 	var formatLength = function( geometry ) {
 		var length = ol.Sphere.getLength( geometry, {
 			projection: 'EPSG:4326'
@@ -528,83 +551,112 @@ function measure() {
 		style: createDefaultStyle()
 	});
 	tlv.map.addLayer( vectorLayer );
-
-	var drawStyle = createDefaultStyle();
-	drawStyle.getImage().setRadius( 1 );
-	var drawInteraction = new ol.interaction.Draw({
-		source: vectorSource,
-		style: drawStyle,
-		type: 'LineString'
-  	});
-  	tlv.map.addInteraction( drawInteraction );
+	$.each( tlv.layers, function( index, layer ) {
+		layer.imageSpaceMap.addLayer( vectorLayer );
+	} );
 
 	displayInfoDialog( 'Click to start drawing' );
 
-	drawInteraction.on( 'drawstart', function( event ) {
-		displayInfoDialog( 'Click to continue drawing or double-click to finish...' );
+	var drawStyle = createDefaultStyle();
+	drawStyle.getImage().setRadius( 1 );
+	$.each(
+		[ tlv.map ].concat( tlv.layers.map( function( layer ) { return layer.imageSpaceMap; } ) ),
+		function( index, map ) {
+			var drawInteraction = new ol.interaction.Draw({
+				source: vectorSource,
+				style: drawStyle,
+				type: 'LineString'
+		  	});
+		  	map.addInteraction( drawInteraction );
 
-		// create an origin point to snap to for polygons
-		var feature = event.feature;
-		var coordinate = feature.getGeometry().getCoordinates()[ 0 ];
-		var point = new ol.geom.Point( coordinate );
-		var origin = new ol.Feature( point );
-		vectorSource.addFeature( origin );
+			drawInteraction.on( 'drawstart', function( event ) {
+				displayInfoDialog( 'Click to continue drawing or double-click to finish...' );
 
-		var snapInteraction = new ol.interaction.Snap({
-			source: vectorSource
-		});
-		tlv.map.addInteraction( snapInteraction	 );
-	}, this );
+				// create an origin point to snap to for polygons
+				var feature = event.feature;
+				var coordinate = feature.getGeometry().getCoordinates()[ 0 ];
+				var point = new ol.geom.Point( coordinate );
+				var origin = new ol.Feature( point );
+				vectorSource.addFeature( origin );
 
-	drawInteraction.on( 'drawend', function( event ) {
-		vectorSource.clear( true );
+				var snapInteraction = new ol.interaction.Snap({
+					source: vectorSource
+				});
+				map.addInteraction( snapInteraction	 );
+			} );
 
-		var feature = event.feature;
+			drawInteraction.on( 'drawend', function( event ) {
+				vectorSource.clear( true );
 
-		var lineGeometry = feature.getGeometry();
-		addLineFeature( lineGeometry );
-		var polygonGeometry = addPolygonFeature( lineGeometry ).getGeometry();
+				var feature = event.feature;
 
-		// create the tooltips
-		$.each( [ 'line', 'polygon' ], function( index, value ) {
-			var html = value == 'line' ? formatLength( lineGeometry ) : formatArea( polygonGeometry );
-			var position = value == 'line' ? lineGeometry.getLastCoordinate() : polygonGeometry.getInteriorPoint().getCoordinates();
+				var lineGeometry = feature.getGeometry();
+				addLineFeature( lineGeometry );
+				var polygonGeometry = addPolygonFeature( lineGeometry ).getGeometry();
 
-			var div = document.createElement( 'div' );
-			div.className = 'tooltip-measure';
-			div.innerHTML = html;
-			var overlay = new ol.Overlay({
-				element: div,
-				id: value + 'TooltipOverlay',
-				//offset: [ 0, -15 ],
-				position: position,
-				positioning: 'bottom-center'
-			});
-			tlv.map.addOverlay( overlay );
-		} );
+				createOverlays( lineGeometry, polygonGeometry );
+				if ( $( '#imageSpaceMaps' ).is( ':visible' ) ) {
+					var layer = tlv.layers[ tlv.currentLayer ];
 
-		// remove draw and snap interactions
-		$.each( tlv.map.getInteractions().getArray().slice( 0 ), function( index, interaction ) {
-			if ( interaction instanceof ol.interaction.Draw || interaction instanceof ol.interaction.Snap ) {
-				tlv.map.removeInteraction( interaction );
-			}
-		} );
+					var linePixels = lineGeometry.getCoordinates();
+					var callback = function( coordinates, layer ) {
+						var geometry = new ol.geom.LineString( coordinates );
 
-		displayInfoDialog( 'Click to clear...' );
+						var overlay = layer.imageSpaceMap.getOverlayById( 'lineTooltipOverlay' );
+						overlay.getElement().innerHTML = formatLength( geometry );
+					};
+					imagePointsToGround( linePixels, layer, callback );
 
-		setTimeout( function() {
-			tlv.map.once( 'click', function() {
-				$.each( [ 'line', 'polygon' ], function( index, value ) {
-					var overlay = tlv.map.getOverlayById( value + 'TooltipOverlay' );
-					tlv.map.removeOverlay( overlay );
-					$( overlay.getElement() ).remove();
+					var polygonPixels = polygonGeometry.getCoordinates()[ 0 ];
+					var callback = function( coordinates, layer ) {
+						var geometry = new ol.geom.Polygon([ coordinates ]);
+
+						var overlay = layer.imageSpaceMap.getOverlayById( 'polygonTooltipOverlay' );
+						overlay.getElement().innerHTML = formatArea( geometry );
+					};
+					imagePointsToGround( polygonPixels, layer, callback );
+				}
+				else {
+					$.each( [ 'line', 'polygon' ], function( index, value ) {
+						var overlay = tlv.map.getOverlayById( value + 'TooltipOverlay' );
+						overlay.getElement().innerHTML = value == 'line' ? formatLength( lineGeometry ) : formatArea( polygonGeometry );
+					} );
+				}
+
+				// remove draw and snap interactions
+				$.each( tlv.map.getInteractions().getArray().slice( 0 ), function( index, interaction ) {
+					if ( interaction instanceof ol.interaction.Draw || interaction instanceof ol.interaction.Snap ) {
+						tlv.map.removeInteraction( interaction );
+					}
+				} );
+				$.each( tlv.layers, function( index, layer ) {
+					$.each( layer.imageSpaceMap.getInteractions().getArray().slice( 0 ), function( index, interaction ) {
+						if ( interaction instanceof ol.interaction.Draw || interaction instanceof ol.interaction.Snap ) {
+							layer.imageSpaceMap.removeInteraction( interaction );
+						}
+					} );
 				} );
 
-				vectorSource.clear( true );
-				tlv.map.removeLayer( vectorLayer );
+				displayInfoDialog( 'Click to clear...' );
+
+				setTimeout( function() {
+					map.once( 'click', function() {
+						$.each( [ 'line', 'polygon' ], function( index, value ) {
+							var overlay = map.getOverlayById( value + 'TooltipOverlay' );
+							$( overlay.getElement() ).remove();
+							map.removeOverlay( overlay );
+						} );
+
+						vectorSource.clear( true );
+						map.removeLayer( vectorLayer );
+						$.each( tlv.layers, function( index, layer ) {
+							layer.imageSpaceMap.removeLayer( vectorLayer );
+						} );
+					} );
+				}, 500 );
 			} );
-		}, 500 );
-	}, this );
+		}
+	);
 }
 
 
