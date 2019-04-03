@@ -140,7 +140,7 @@ function beginSearch() {
 
 					if ( searchParams.fsgs.length ) {
 						filter += ' AND ';
-						filter += "(filename LIKE '%" + searchParams.fsgs.join( "%' OR filename LIKE'%" ) + "%')";
+						filter += "(product_id LIKE '%" + searchParams.fsgs.join( "%' OR product_id LIKE'%" ) + "%')";
 					}
 
 					filter += ' AND ';
