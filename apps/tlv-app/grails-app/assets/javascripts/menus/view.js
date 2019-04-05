@@ -167,6 +167,7 @@ createLayerSources = function( layer ) {
 	layer.imageSpaceImageSource = new ol.source.ImageWMS({
 		imageLoadFunction: fixY,
 		params: {
+			FORMAT: 'image/jpeg',
 			LAYERS: "omar:raster_entry." + imageDatabaseId,
 			STYLES: layer.imageSource.getParams().STYLES,
 			VERSION: "1.3.0"
@@ -176,6 +177,7 @@ createLayerSources = function( layer ) {
 
 	layer.imageSpaceTileSource = new ol.source.TileWMS({
 		params: {
+			FORMAT: 'image/jpeg',
 			LAYERS: "omar:raster_entry." + imageDatabaseId,
 			STYLES: layer.tileSource.getParams().STYLES,
 			VERSION: "1.3.0"
