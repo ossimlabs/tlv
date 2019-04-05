@@ -8,7 +8,7 @@ function addBaseLayersToTheMap() {
 				case "wms":
 					source = new ol.source.TileWMS({
 						params: {
-							FORMAT: x.format || "image/png",
+							FORMAT: x.format || "image/jpeg",
 							LAYERS: x.layers,
 							STYLES: x.styles || "",
 							TRANSPARENT: true,
@@ -33,7 +33,7 @@ function addBaseLayersToTheMap() {
 					}
 
 					source = new ol.source.WMTS({
-						format: "image/png",
+						format: "image/jpeg",
 						layer: x.layer,
 						matrixSet: x.matrixSet,
 						projection: projection,
