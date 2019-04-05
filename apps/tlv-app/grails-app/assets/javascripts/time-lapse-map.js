@@ -131,7 +131,6 @@ function createLayerSources( layer ) {
 	var library = tlv.libraries[ layer.library ];
 
 	var params = {
-		FORMAT: 'image/png',
 		IDENTIFIER: Math.floor( Math.random() * 1000000 ),
 		TRANSPARENT: true,
 		VERSION: '1.1.1'
@@ -139,9 +138,11 @@ function createLayerSources( layer ) {
 
 	if ( library.wmsUrlProxy ) {
 		params.LAYERS = layer.metadata.index_id;
+		params.FORMAT = 'image/png';
 	}
 	else {
 		params.FILTER = 'in(' + layer.metadata.id + ')';
+		params.FORMAT = 'image/vnd.jpeg-png';
 		params.LAYERS = 'omar:raster_entry';
 		params.STYLES = JSON.stringify(
 			getDefaultImageProperties()
