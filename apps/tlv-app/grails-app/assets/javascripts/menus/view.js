@@ -835,7 +835,7 @@ function zoomToFullResolution() {
 
 function zoomToMaximumExtent() {
 	var footprint = tlv.layers[ tlv.currentLayer ].metadata.footprint;
-	var polygon = new ol.geom.MultiPolygon( footprint.coordinates );
+	var polygon = new ol.format.WKT().readGeometry( footprint );
 	var extent = polygon.getExtent();
 	tlv.map.getView().fit( extent );
 }
