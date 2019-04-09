@@ -829,7 +829,8 @@ function zoomToFullResolution() {
 	var metadata = tlv.layers[ tlv.currentLayer ].metadata;
 	var gsdX = metadata.gsdx;
 	var gsdY = metadata.gsdy;
-	var resolution = Math.sqrt( Math.pow( gsdX, 2 ) + Math.pow( gsdY, 2 ) );
+	var gsd = Math.sqrt( Math.pow( gsdX, 2 ) + Math.pow( gsdY, 2 ) );
+	var resolution = gsd / 6371008.8 * 180 / Math.PI;
 	tlv.map.getView().setResolution( resolution );
 }
 
