@@ -40,23 +40,24 @@
             <tr>
                 <td>Brightness: <span id = "brightnessValueSpan"></span></td>
                 <td>
-                    <input data-slider-id = "brightnessSlider" id = "brightnessSliderInput" type = "text"/>
+                    <input id = "brightnessSliderInput" type = "text"/>
                 </td>
             </tr>
             <tr>
                 <td>Contrast: <span id = "contrastValueSpan"></span></td>
                 <td>
-                    <input data-slider-id = "contrastSlider" id = "contrastSliderInput" type = "text"/>
+                    <input id = "contrastSliderInput" type = "text"/>
                 </td>
             </tr>
             <tr>
-                <td>DRA:</td>
+                <td>DRA: <span id = "dynamicRangeValueSpan"></span></td>
                 <td>
                     <select class = "form-control" id = "dynamicRangeSelect" onchange = "updateImageProperties( true )">
                         <g:each in = "${[
                             [ name: "None", value: "none" ],
                             [ name: "Auto Min Max", value: "auto-minmax" ],
                             [ name: "Auto Percentile", value: "auto-percentile" ],
+                            [ name: "Linear", value: "linear" ],
                             [ name: "STD 1", value: "std-stretch-1" ],
                             [ name: "STD 2", value: "std-stretch-2" ],
                             [ name: "STD 3", value: "std-stretch-3" ]
@@ -64,6 +65,7 @@
                             <option value = ${ it.value }>${ it.name }</option>
                         </g:each>
                     </select>
+                    <input id = "dynamicRangeSliderInput" type = "text"/>
                 </td>
             </tr>
             <tr>
