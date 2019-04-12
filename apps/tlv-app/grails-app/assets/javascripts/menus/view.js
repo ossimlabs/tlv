@@ -677,6 +677,8 @@ function setupImageSpaceMaps() {
                 zoom: 1
             })
         });
+
+		layer.imageSpaceMap.getViewport().addEventListener( "contextmenu", rightClick );
     } );
 }
 

@@ -94,16 +94,52 @@ function compassRotate(event) {
 	else{ displayErrorDialog("Sorry, we couldn't get a good reading. :("); }
 }
 
-function createContextMenuContent(coordinate) {
-	var coordConvert = new CoordinateConversion();
-	var latitude = coordinate[1];
-	var longitude = coordinate[0];
-	var dd = latitude.toFixed(6) + ", " + longitude.toFixed(6);
-	var dms = coordConvert.ddToDms(latitude, "lat") + " " + coordConvert.ddToDms(longitude, "lon");
-	var mgrs = coordConvert.ddToMgrs(latitude, longitude);
+function createContextMenuContent( point ) { console.dir(point);
+	var layer = tlv.layers[ tlv.currentLayer ];
 
-	$("#mouseClickDiv").html("<div align = 'center' class = 'row'>" + dd + " // " + dms + " // " + mgrs + "</div>");
+	var addGroundPoint = function( coordinate ) {
+		var div = createDiv();
+		var coordConvert = new CoordinateConversion();
+		var latitude = coordinate[ 1 ];
+		var longitude = coordinate[ 0 ];
+		var dd = latitude.toFixed( 6 ) + ', ' + longitude.toFixed( 6 );
+		var dms = coordConvert.ddToDms( latitude, 'lat' ) + ' ' + coordConvert.ddToDms( longitude, 'lon' );
+		var mgrs = coordConvert.ddToMgrs( latitude, longitude );
 
+		$( div ).html( dd + ' // ' + dms + ' // ' + mgrs );
+		$( '#mouseClickDiv' ).append( div );
+	};
+
+	var addImagePoint = function( pixel ) {
+		var div = createDiv();
+		$( div ).html( 'X: ' + pixel[ 0 ].toFixed( 4 ) + ', Y: ' + pixel[ 1 ].toFixed( 4 ) );
+		$( '#mouseClickDiv' ).append( div );
+	};
+
+	var createDiv = function() {
+		var div = document.createElement( 'div' );
+		$( div ).addClass( 'row' );
+		$( div ).css( 'text-align', 'center' );
+
+
+		return div;
+	};
+
+	$( '#mouseClickDiv' ).html( '' );
+	if ( !$( '#imageSpaceMaps' ).is( ':visible' ) ) {
+		addGroundPoint( point );
+
+		groundToImagePoints( [ point ], layer, function( pixels, layer ) {
+			addImagePoint( pixels[ 0 ] );
+		} );
+	}
+	else {
+		addImagePoint( point );
+
+		imagePointsToGround( [ point ], layer, function( coordinates, layer ) {
+			addGroundPoint( coordinates[ 0 ] );
+		} );
+	}
 
 	$("#imageMetadataPre").html( JSON.stringify( tlv.layers[tlv.currentLayer].metadata, null, 2 ) );
 }
