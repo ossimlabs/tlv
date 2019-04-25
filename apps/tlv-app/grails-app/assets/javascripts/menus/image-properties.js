@@ -11,7 +11,7 @@ function getDefaultImageProperties() {
 		brightness: tlv.preferences.brightness || 0,
 		contrast: tlv.preferences.contrast || 1,
 		hist_center: false,
-		hist_linear_norm_cap: '0,100',
+		histLinearNormClip: '0,100',
 		hist_op: tlv.preferences.dynamicRangeAdjustment || 'auto-minmax',
 		nullPixelFlip: tlv.preferences.nullPixelFlip || true,
 		resampler_filter: tlv.preferences.interpolation || 'bilinear',
@@ -165,10 +165,10 @@ function syncImageProperties() {
 
 	$( '#dynamicRangeSelect option[value="' + styles.hist_op + '"]' ).prop( 'selected', true );
 
-	$( '#dynamicRangeSliderInput' ).slider( "setValue", styles.hist_linear_norm_cap.split( ',' ).map( function( value ) {
+	$( '#dynamicRangeSliderInput' ).slider( "setValue", styles.histLinearNormClip.split( ',' ).map( function( value ) {
 		return parseInt( value );
 	} ) );
-	$( '#dynamicRangeValueSpan' ).html( styles.hist_linear_norm_cap.replace( ',', ':' ) );
+	$( '#dynamicRangeValueSpan' ).html( styles.histLinearNormClip.replace( ',', ':' ) );
 
 	$( '#dynamicRangeRegionSelect option[value="' + styles['hist_center'] + '"]' ).prop( 'selected', true );
 	$( '#interpolationSelect option[value="' + styles.resampler_filter + '"]' ).prop( 'selected', true );
@@ -197,7 +197,7 @@ function updateImageProperties( refreshMap ) {
 			brightness: $( '#brightnessSliderInput' ).slider( 'getValue' ) / 100,
 			contrast: $( '#contrastSliderInput' ).slider( 'getValue' ) / 100,
 			hist_center: $( '#dynamicRangeRegionSelect' ).val(),
-			hist_linear_norm_cap: $( '#dynamicRangeSliderInput' ).slider( 'getValue' ).map( function( value ) {
+			histLinearNormClip: $( '#dynamicRangeSliderInput' ).slider( 'getValue' ).map( function( value ) {
 				return value / 100;
 			} ).join( ',' ),
 			hist_op: $( '#dynamicRangeSelect' ).val(),
