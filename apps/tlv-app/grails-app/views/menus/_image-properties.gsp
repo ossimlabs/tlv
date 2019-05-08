@@ -140,7 +140,7 @@
                 </td>
             </tr>
             <tr>
-                <td>Sharpen Mode: <span id = "sharpenValueSpan"></span></td>
+                <td>Sharpen: <span id = "sharpenValueSpan"></span></td>
                 <td>
                     <input id = "sharpenSliderInput" type = "text"/>
                 </td>
