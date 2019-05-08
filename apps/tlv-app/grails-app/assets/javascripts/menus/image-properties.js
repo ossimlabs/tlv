@@ -15,7 +15,7 @@ function getDefaultImageProperties() {
 		hist_op: tlv.preferences.dynamicRangeAdjustment || 'auto-minmax',
 		nullPixelFlip: tlv.preferences.nullPixelFlip || true,
 		resampler_filter: tlv.preferences.interpolation || 'bilinear',
-		sharpen_mode: tlv.preferences.sharpenMode || 'none'
+		sharpen_percent: tlv.preferences.sharpenPercent || 0
 	};
 }
 
@@ -83,6 +83,18 @@ pageLoad = function() {
 		tlv.layers[ tlv.currentLayer ].imageSpaceMapLayer.setOpacity( opacity );
 	});
 	opacitySlider.on( 'slideStop', function( event ) { updateImageProperties( false ); });
+
+	var sharpenSlider = $( '#sharpenSliderInput' );
+	sharpenSlider.slider({
+		max: 100,
+		min: 0,
+		tooltip: 'hide',
+		value: 0
+	});
+	sharpenSlider.on( 'change', function( event ) {
+		$( '#sharpenValueSpan' ).html( ( event.value.newValue / 100 ).toFixed( 1 ) );
+	});
+	sharpenSlider.on( 'slideStop', function( event ) { updateImageProperties( true ); });
 }
 
 function resetImageProperties() {
@@ -174,7 +186,9 @@ function syncImageProperties() {
 	$( '#interpolationSelect option[value="' + styles.resampler_filter + '"]' ).prop( 'selected', true );
 	$( '#keepVisibleSelect option[value="' + layer.keepVisible + '"]' ).prop( 'selected', true );
 	$( '#nullPixelFlipSelect option[value="' + styles.nullPixelFlip + '"]' ).prop( 'selected', true );
-	$( '#sharpenModeSelect option[value="' + styles.sharpen_mode + '"]' ).prop( 'selected', true );
+
+	$( '#sharpenSliderInput' ).slider( 'setValue', styles.sharpen_percent * 100 );
+	$( '#sharpenValueSpan' ).html( styles.sharpen_percent );
 }
 
 function updateImageProperties( refreshMap ) {
@@ -203,7 +217,7 @@ function updateImageProperties( refreshMap ) {
 			hist_op: $( '#dynamicRangeSelect' ).val(),
 			nullPixelFlip: $( '#nullPixelFlipSelect' ).val(),
 			resampler_filter: $( '#interpolationSelect' ).val(),
-			sharpen_mode: $( '#sharpenModeSelect' ).val()
+			sharpen_percent: $( '#sharpenSliderInput' ).slider( 'getValue' ) / 100
 		});
 
 		layer.mapLayer.getSource().updateParams({ STYLES: styles });

@@ -140,13 +140,9 @@
                 </td>
             </tr>
             <tr>
-                <td>Sharpen Mode:</td>
+                <td>Sharpen Mode: <span id = "sharpenValueSpan"></span></td>
                 <td>
-                    <select class = "form-control" id = "sharpenModeSelect" onchange = "updateImageProperties( true )">
-                        <g:each in = "${[ "none", "light", "heavy" ]}">
-                            <option value = ${ it }>${ it.capitalize() }</option>
-                        </g:each>
-                    </select>
+                    <input id = "sharpenSliderInput" type = "text"/>
                 </td>
             </tr>
         </table>
