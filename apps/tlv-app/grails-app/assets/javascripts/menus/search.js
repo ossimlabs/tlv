@@ -358,15 +358,6 @@ function getLocation() {
 	return location;
 }
 
-function getLocationGps() {
-	var callback = function(position) {
-		var coordinates = [position.coords.longitude, position.coords.latitude];
-		$("#searchLocationInput").val(coordinates.reverse().join(","));
-	}
-
-	getGpsLocation(callback);
-}
-
 function getSearchParams() {
 	var searchObject = {};
 

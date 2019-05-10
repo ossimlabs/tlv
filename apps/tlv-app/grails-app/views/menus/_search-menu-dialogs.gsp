@@ -15,9 +15,6 @@
 									if ( params.geocoderUrl ) { placeholder.push( "Placename" ) }
 								%>
   								<input class = "typeahead form-control" id = "searchLocationInput" placeholder = "${ placeholder.join( ", " ) }" type = "text">
-								<span class = "input-group-btn">
-									<button class = "btn btn-primary"  onclick = getLocationGps() title = "Use your GPS location" type = "button"><span class = "glyphicon glyphicon-screenshot"></span></button>
-								</span>
 							</div>
 						</div>
 					</div>
