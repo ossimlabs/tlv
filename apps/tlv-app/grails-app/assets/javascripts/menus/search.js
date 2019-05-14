@@ -140,7 +140,18 @@ function beginSearch() {
 
 					if ( searchParams.fsgs.length ) {
 						filter += ' AND ';
-						filter += "(product_id LIKE '%" + searchParams.fsgs.join( "%' OR product_id LIKE'%" ) + "%')";
+						if ( searchParams.fsgNot ) {
+							filter += "(product_id NOT LIKE '%" +
+								searchParams.fsgs.map( function( fsg ) {
+									return fsg.trim();
+								} ).join( "%' AND product_id NOT LIKE'%" ) + "%')";
+						}
+						else {
+							filter += "(product_id LIKE '%" +
+								searchParams.fsgs.map( function( fsg ) {
+									return fsg.trim();
+								} ).join( "%' OR product_id LIKE'%" ) + "%')";
+						}
 					}
 
 					filter += ' AND ';
@@ -151,7 +162,18 @@ function beginSearch() {
 
 					if ( searchParams.sensors.length ) {
 						filter += ' AND ';
-						filter += "(sensor_id LIKE '%" + searchParams.sensors.join( "%' OR sensor_id LIKE'%" ) + "%')";
+						if ( searchParams.sensorsNot ) {
+							filter += "(sensor_id NOT LIKE '%" +
+								searchParams.sensors.map( function( sensor ) {
+									return sensor.trim();
+								} ).join( "%' AND sensor_id NOT LIKE'%" ) + "%')";
+						}
+						else {
+							filter += "(sensor_id LIKE '%" +
+								searchParams.sensors.map( function( sensor ) {
+									return sensor.trim();
+								} ).join( "%' OR sensor_id LIKE'%" ) + "%')";
+						}
 					}
 
 					queryParams.filter = filter;
@@ -373,6 +395,7 @@ function getSearchParams() {
 
 	var fsgs = $( "#searchFsgInput" ).val();
 	searchObject.fsgs = fsgs ? fsgs.split( ',' ) : [];
+	searchObject.fsgNot = $( "#searchFsgNotCheckbox" ).hasClass( 'active' ) ? true : false;
 
 	var libraries = getSelectedLibraries();
 	if (libraries.length == 0) {
@@ -395,6 +418,7 @@ function getSearchParams() {
 
 	var sensors = $( "#searchSensorIdInput" ).val();
 	searchObject.sensors = sensors ? sensors.split( ',' ) : [];
+	searchObject.sensorsNot = $( "#searchSensorsNotCheckbox" ).hasClass( 'active' ) ? true : false;
 
 	var startDate = getStartDate();
 	searchObject.startYear = startDate.year;
@@ -502,6 +526,12 @@ function initializeFsgList() {
 	getDistinctFsg();
 }
 
+function initializeFsgNot() {
+	if ( tlv.fsgNot == "true" ) {
+		$( "#searchFsgNotCheckbox" ).trigger( "click" );
+	}
+}
+
 function initializeLibraryCheckboxes() {
 	if ( tlv.searchLibraries ) {
 		$.each(
@@ -552,6 +582,12 @@ function initializeSensorList() {
 		$( '#searchSensorIdInput' ).val( sensors );
 	}
 	getDistinctSensors();
+}
+
+function initializeSensorsNot() {
+	if ( tlv.sensorsNot == "true" ) {
+		$( "#searchSensorsNotCheckbox" ).trigger( "click" );
+	}
 }
 
 function initializeStartDateTimePicker() {
@@ -737,11 +773,13 @@ function setupSearchMenuDialog() {
 	initializeStartDateTimePicker();
 
 	initializeFsgList();
+ 	initializeFsgNot();
 	initializeLibraryCheckboxes();
 	initializeMinNiirsInput();
 	initializeMaxCloudCoverInput();
 	initializeMaxResultsSelect();
 	initializeSensorList();
+	initializeSensorsNot();
 
 	initializeLocationInput();
 }

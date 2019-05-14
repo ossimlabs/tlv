@@ -111,6 +111,20 @@ class HomeController {
 			value = 'When present, all other search parameters are ignored and the value is used to search.'
 		),
 		@ApiImplicitParam(
+			dataType = 'string',
+			defaultValue = '',
+			name = 'fsg',
+			paramType = 'query',
+			value = 'Comma separated list of Full Spectrum GEOINT products.'
+		),
+		@ApiImplicitParam(
+			dataType = 'boolean',
+			defaultValue = '',
+			name = 'fsgNot',
+			paramType = 'query',
+			value = 'Whether or not the FSG list should be excluded from the results.'
+		),
+		@ApiImplicitParam(
 			dataType = 'boolean',
 			defaultValue = '',
 			name = 'hideAcquisitionDate',
@@ -130,13 +144,6 @@ class HomeController {
 			name = 'hideMapCoordinates',
 			paramType = 'query',
 			value = 'Hides the map coordinate display on the map.'
-		),
-		@ApiImplicitParam(
-			dataType = 'string',
-			defaultValue = '',
-			name = 'fsg',
-			paramType = 'query',
-			value = 'Comma separated list of Full Spectrum GEOINT products.'
 		),
 		@ApiImplicitParam(
 			dataType = 'string',
@@ -201,6 +208,13 @@ class HomeController {
 			name = 'sensors',
 			paramType = 'query',
 			value = 'Comma separated list of sensor IDs.'
+		),
+		@ApiImplicitParam(
+			dataType = 'boolean',
+			defaultValue = '',
+			name = 'sensorsNot',
+			paramType = 'query',
+			value = 'Whether or not to exclude the sensor list from the results.'
 		),
 		@ApiImplicitParam(
 			dataType = 'integer',

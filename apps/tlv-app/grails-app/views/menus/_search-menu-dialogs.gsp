@@ -39,28 +39,36 @@
 					</div>
 
 					<div class = "row">
-						<div class = "col-md-12">
+						<div class = "col-md-6">
 							<label>Sensors</label>
-							<input class = "form-control"
-								id = "searchSensorIdInput"
-								list = "searchSensorIdList"
-								onchange = "javascript: handleDataList( 'searchSensorIdInput' )"
-								onkeyup = "javascript: handleDataList( 'searchSensorIdInput' )"
-								placeholder = "Sensor ID">
-							<datalist id = "searchSensorIdList"></datalist>
+							<div class = "form-inline">
+								<input class = "form-control"
+									id = "searchSensorIdInput"
+									list = "searchSensorIdList"
+									onchange = "javascript: handleDataList( 'searchSensorIdInput' )"
+									onkeyup = "javascript: handleDataList( 'searchSensorIdInput' )"
+									placeholder = "Sensor ID">
+								<datalist id = "searchSensorIdList"></datalist>
+								<button class = "btn btn-primary" data-toggle = "button" id = "searchSensorsNotCheckbox"  title = "Everything but these..." type = "button">
+  									<span class = "glyphicon glyphicon-ban-circle"></span>
+								</button>
+							</div>
 						</div>
-					</div>
 
-					<div class = "row">
-						<div class = "col-md-12">
+						<div class = "col-md-6">
 							<label>Full Spectrum GEOINT</label>
-							<input class = "form-control"
-								id = "searchFsgInput"
-								list = "searchFsgList"
-								onchange = "javascript: handleDataList( 'searchFsgInput' )"
-								onkeyup = "javascript: handleDataList( 'searchFsgInput' )"
-								placeholder = "Full Spectrum GEOINT">
-							<datalist id = "searchFsgList"></datalist>
+							<div class = "form-inline">
+								<input class = "form-control"
+									id = "searchFsgInput"
+									list = "searchFsgList"
+									onchange = "javascript: handleDataList( 'searchFsgInput' )"
+									onkeyup = "javascript: handleDataList( 'searchFsgInput' )"
+									placeholder = "Full Spectrum GEOINT">
+								<datalist id = "searchFsgList"></datalist>
+								<button class = "btn btn-primary" data-toggle = "button" id = "searchFsgNotCheckbox" title = "Eveyrhting but these..." type = "button">
+									<span class = "glyphicon glyphicon-ban-circle"></span>
+								</button>
+							</div>
 						</div>
 					</div>
 
