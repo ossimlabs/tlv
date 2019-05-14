@@ -18,7 +18,7 @@
 					</div>
 
 					<div class = "row">
-						<div class = "col-md-6">
+						<div class = "col-md-5">
 							<label>Start Date</label>
 							<div class = "input-group date" id = "searchStartDateTimePicker">
 								<input class = "form-control" type = "text">
@@ -27,7 +27,7 @@
 								</span>
 							</div>
 						</div>
-						<div class = "col-md-6">
+						<div class = "col-md-5">
 							<label>End Date</label>
 							<div class = "input-group date" id = "searchEndDateTimePicker">
 								<input class = "form-control" type = "text">
@@ -35,6 +35,10 @@
 									<span class = "glyphicon glyphicon-calendar"></span>
 								</span>
 							</div>
+						</div>
+						<div class = "col-md-2">
+							<label>Last Days</label>
+							<input class = "form-control" id = "searchLastDaysInput" onchange = adjustLastDaysDate() type = "number">
 						</div>
 					</div>
 
@@ -54,7 +58,6 @@
 								</button>
 							</div>
 						</div>
-
 						<div class = "col-md-6">
 							<label>Full Spectrum GEOINT</label>
 							<div class = "form-inline">

@@ -146,6 +146,13 @@ class HomeController {
 			value = 'Hides the map coordinate display on the map.'
 		),
 		@ApiImplicitParam(
+			dataType = 'integer',
+			defaultValue = '',
+			name = 'lastDays',
+			paramType = 'query',
+			value = 'Sets the start date a certain number of days from the current date.'
+		),
+		@ApiImplicitParam(
 			dataType = 'string',
 			defaultValue = '',
 			name = 'location',

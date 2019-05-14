@@ -1,3 +1,25 @@
+function adjustLastDaysDate() {
+
+	var endDate = new Date();
+	var endDateTimePicker = $( '#searchEndDateTimePicker' );
+	endDateTimePicker.data( 'DateTimePicker' ).destroy();
+	endDateTimePicker.datetimepicker({
+		date: endDate,
+		format: 'MM/DD/YYYY HH:mm:ss',
+		keyBinds: null
+	});
+
+	var days = $( '#searchLastDaysInput' ).val();
+	var startDate = new Date( endDate.setDate( endDate.getDate() - days ) );
+	var startDateTimePicker = $( '#searchStartDateTimePicker' );
+	startDateTimePicker.data( 'DateTimePicker' ).destroy();
+	startDateTimePicker.datetimepicker({
+		date: startDate,
+		format: 'MM/DD/YYYY HH:mm:ss',
+		keyBinds: null
+	});
+}
+
 function beSearch( be ) {
 	var queryParams = {
 		filter: tlv.beLookup.columnName + " = '" + be + "'",
@@ -532,6 +554,13 @@ function initializeFsgNot() {
 	}
 }
 
+function initializeLastDaysInput() {
+	if ( tlv.lastDays ) {
+		$( '#searchLastDaysInput' ).val( tlv.lastDays );
+		adjustLastDaysDate();
+	}
+}
+
 function initializeLibraryCheckboxes() {
 	if ( tlv.searchLibraries ) {
 		$.each(
@@ -771,6 +800,7 @@ function setupSearchMenuDialog() {
 	// start with the end date since the start date's default is based on the end date
 	initializeEndDateTimePicker();
 	initializeStartDateTimePicker();
+	initializeLastDaysInput();
 
 	initializeFsgList();
  	initializeFsgNot();
