@@ -8,14 +8,12 @@
 					<div class = "row">
 						<div class = "col-md-12">
 							<label>Location</label>
-							<div class = "input-group">
-								<%
-									def placeholder = [ "Coordinate", "Image ID" ]
-									if ( params.beLookup?.url ) { placeholder = placeholder.plus( 0, "BE" ) }
-									if ( params.geocoderUrl ) { placeholder.push( "Placename" ) }
-								%>
-  								<input class = "typeahead form-control" id = "searchLocationInput" placeholder = "${ placeholder.join( ", " ) }" type = "text">
-							</div>
+							<%
+								def placeholder = [ "Coordinate", "Image ID" ]
+								if ( params.beLookup?.url ) { placeholder = placeholder.plus( 0, "BE" ) }
+								if ( params.geocoderUrl ) { placeholder.push( "Placename" ) }
+							%>
+  							<input class = "typeahead form-control" id = "searchLocationInput" placeholder = "${ placeholder.join( ", " ) }" type = "text">
 						</div>
 					</div>
 
