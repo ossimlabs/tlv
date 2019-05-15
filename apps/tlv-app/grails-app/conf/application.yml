@@ -178,7 +178,7 @@ templates:
             northArrow: north-arrow.png
             text:
                 securityClassification:
-                    defaultValue: Security Classification
+                    defaultValue: tlv.layers[ tlv.currentLayer ].metadata.security_classification
                     style:
                         color: "#add8e6"
                         height: 25%
