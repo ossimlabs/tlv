@@ -458,7 +458,7 @@ function createMapInteractions() {
 			style: styleFunction
         })
         tlv.map.addLayer( layer );
-        tlv.map.getView().fit( source.getExtent() );
+        tlv.map.getView().fit( source.getExtent(), { nearest: true } );
 	});
 
 	var dragPanInteraction = new ol.interaction.DragPan({

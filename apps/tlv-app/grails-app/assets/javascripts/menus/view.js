@@ -70,7 +70,13 @@ changeFrame = function( params ) {
 	var oldLayer = tlv.layers[ tlv.currentLayer ];
 	var oldMap = oldLayer.imageSpaceMap;
 	var center = oldMap.getView().getCenter();
-	center[ 1 ] = oldLayer.metadata.height - center[ 1 ];
+	var resolution = oldMap.getView().getResolution();
+	var size = oldMap.getSize();
+	var pixels = [
+		[ center[ 0 ] - resolution * size[ 0 ] / 2, oldLayer.metadata.height - center[ 1 ] - resolution * size[ 1 ] / 2 ],
+		[ center[ 0 ] + resolution * size[ 0 ] / 2,	oldLayer.metadata.height - center[ 1 ] + resolution * size[ 1 ] / 2  ]
+	];
+
 	$( '#' + oldMap.getTarget() ).hide();
 
 
@@ -81,22 +87,32 @@ changeFrame = function( params ) {
 	}
 	else { changeFrameView( params ); }
 
-	var newLayer = tlv.layers[ tlv.currentLayer ];
-	var newMap = newLayer.imageSpaceMap;
+
 	if ( $( '#imageSpaceMaps' ).is( ':visible' ) ) {
-		imagePointsToGround( [ center ], oldLayer, function( coordinates, layer, info ) {
+
+		imagePointsToGround( pixels, oldLayer, function( coordinates, layer, info ) {
 			// assume that the layer switched while the AJAX call is being made
 			var newLayer = tlv.layers[ tlv.currentLayer ];
 
 			groundToImagePoints( coordinates, newLayer, function( pixels, layer ) {
 				hideLoadingDialog();
 
-				var center = pixels[ 0 ];
-				center[ 1 ] = layer.metadata.height - center[ 1 ];
-				layer.imageSpaceMap.getView().setCenter( center );
+				$( '#' + layer.imageSpaceMap.getTarget() ).show();
+				layer.imageSpaceMap.updateSize();
 
-				$( '#' + newMap.getTarget() ).show();
-				newMap.updateSize();
+				var xs = [ pixels[ 0 ][ 0 ], pixels[ 1 ][ 0 ] ];
+				var ys = [
+					layer.metadata.height - pixels[ 0 ][ 1 ],
+					layer.metadata.height - pixels[ 1 ][ 1 ]
+				];
+				var extent = [
+					Math.min( xs[ 0 ], xs[ 1 ] ),
+					Math.min( ys[ 0 ], ys[ 1 ] ),
+					Math.max( xs[ 0 ], xs[ 1 ] ),
+					Math.max( ys[ 0 ], ys[ 1 ] )
+				];
+
+				layer.imageSpaceMap.getView().fit( extent, { nearest: true } );
 			} );
 		} );
 	}
@@ -733,6 +749,23 @@ function swipeToggle() {
 function switchToOrthoSpace() {
     $( '#imageSpaceMaps' ).hide();
 	$( '#map' ).show();
+
+	displayLoadingDialog( "Synching the map view... " );
+	var layer = tlv.layers[ tlv.currentLayer ];
+	var center = layer.imageSpaceMap.getView().getCenter();
+	var resolution = layer.imageSpaceMap.getView().getResolution();
+	var size = layer.imageSpaceMap.getSize();
+	var pixels = [
+		[ center[ 0 ] - resolution * size[ 0 ] / 2, layer.metadata.height - center[ 1 ] - resolution * size[ 1 ] / 2 ],
+		[ center[ 0 ] + resolution * size[ 0 ] / 2,	layer.metadata.height - center[ 1 ] + resolution * size[ 1 ] / 2 ]
+	];
+
+	imagePointsToGround( pixels, layer, function( coordinates, layer, info ) {
+		hideLoadingDialog();
+
+		var extent = coordinates[ 0 ].join( ',' ) + ',' + coordinates[ 1 ].join( ',' ).split( ',' );
+		tlv.map.getView().fit( extent, { nearest: true } );
+	} );
 }
 
 function switchToImageSpace() {
@@ -746,15 +779,29 @@ function switchToImageSpace() {
 	layer.imageSpaceMap.updateSize();
 
 	displayLoadingDialog( "Synching the map view... " );
-	var coordinate = tlv.map.getView().getCenter();
-	groundToImagePoints( [ coordinate ], layer, function( pixels, layer ) {
+	var center = tlv.map.getView().getCenter();
+	var resolution = tlv.map.getView().getResolution();
+	var size = tlv.map.getSize();
+	var coordinates = [
+		[ center[ 0 ] - resolution * size[ 0 ] / 2, center[ 1 ] - resolution * size[ 1 ] / 2 ],
+		[ center[ 0 ] + resolution * size[ 0 ] / 2,	center[ 1 ] + resolution * size[ 1 ] / 2 ]
+	];
+	groundToImagePoints( coordinates, layer, function( pixels, layer ) {
 		hideLoadingDialog();
 
-		var center = pixels[ 0 ];
-		center[ 1 ] = layer.metadata.height - center[ 1 ];
-		layer.imageSpaceMap.getView().setCenter( center );
+		var xs = [ pixels[ 0 ][ 0 ], pixels[ 1 ][ 0 ] ];
+		var ys = [
+			layer.metadata.height - pixels[ 0 ][ 1 ],
+			layer.metadata.height - pixels[ 1 ][ 1 ]
+		];
+		var extent = [
+			Math.min( xs[ 0 ], xs[ 1 ] ),
+			Math.min( ys[ 0 ], ys[ 1 ] ),
+			Math.max( xs[ 0 ], xs[ 1 ] ),
+			Math.max( ys[ 0 ], ys[ 1 ] )
+		];
+		layer.imageSpaceMap.getView().fit( extent, { nearest: true } );
 	} );
-
 }
 
 function terrainWireframeToggle() {
@@ -840,5 +887,5 @@ function zoomToMaximumExtent() {
 	var footprint = tlv.layers[ tlv.currentLayer ].metadata.footprint;
 	var polygon = new ol.format.WKT().readGeometry( footprint );
 	var extent = polygon.getExtent();
-	tlv.map.getView().fit( extent );
+	tlv.map.getView().fit( extent, { nearest: true } );
 }

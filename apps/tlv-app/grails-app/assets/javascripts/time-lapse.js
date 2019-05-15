@@ -376,7 +376,7 @@ function setupTimeLapse() {
     //tlv.layers.reverse();
 	tlv.currentLayer = 0;
 
-    tlv.map.getView().fit( tlv.bbox );
+    tlv.map.getView().fit( tlv.bbox, { nearest: true } );
 
 	// register map listeners
 	tlv.map.on("moveend", theMapHasMoved);
