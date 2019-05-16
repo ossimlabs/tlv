@@ -731,7 +731,9 @@ function setupMap() {
 	createMapControls();
 	createMapInteractions();
 	tlv.map = new ol.Map({
-		controls: ol.control.defaults().extend( tlv.mapControls ),
+		controls: ol.control.defaults({
+			attribution: false
+		}).extend( tlv.mapControls ),
 		interactions: ol.interaction.defaults({
 			doubleClickZoom: false,
  			dragPan: false
