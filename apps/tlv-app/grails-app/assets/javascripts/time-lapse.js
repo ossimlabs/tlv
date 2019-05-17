@@ -353,6 +353,9 @@ function playStopTimeLapse(button) {
 
 function playTimeLapse() {
 	changeFrame("fastForward");
+    if ( tlv.timeLapseAdvance ) {
+        clearTimeout( tlv.timeLapseAdvance );
+    }
 	tlv.timeLapseAdvance = setTimeout("playTimeLapse()", 1000);
 }
 
@@ -393,7 +396,7 @@ function setupTimeLapse() {
 	updateScreenText();
 }
 
-function stopTimeLapse() { clearTimeout(tlv.timeLapseAdvance); }
+function stopTimeLapse() { clearTimeout( tlv.timeLapseAdvance ); }
 
 function updateAcquisitionDate() {
 	var acquisitionDate = tlv.layers[ tlv.currentLayer ].acquisitionDate;
