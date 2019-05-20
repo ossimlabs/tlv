@@ -22,11 +22,26 @@
 		<div class = "modal-content">
 			<div class = "modal-header"><h4>Context Menu</h4></div>
 			<div class = "modal-body">
-				<div class = "row" style = "text-align: center"><b><i>You clicked here:</i></b></div>
-				<div class = "row" id = "mouseClickDiv"></div>
-				<hr>
-				<div class = "row" style = "text-align: center"><b><i>Image Metadata:</i></b></div>
-				<pre id = "imageMetadataPre" style = "background: none; color: #c8c8c8"></pre>
+				<ul class = "nav nav-tabs">
+					<li class = "active">
+						<a href = "#clickPoint" data-toggle = "tab">Point</a>
+					</li>
+					<li>
+						<a href = "#imageMetadata" data-toggle = "tab">Image Metadata</a>
+					</li>
+				</ul>
+
+				<div class = "tab-content">
+					<div class = "tab-pane active" id = "clickPoint">
+						<div class = "row" style = "text-align: center"><b><i>You clicked here</i></b></div>
+						<div class = "row" id = "mouseClickDiv"></div>
+						<hr>
+						<div class = "row" id = "pqeDiv" style = "text-align: center"></div>
+					</div>
+					<div class = "tab-pane" id = "imageMetadata">
+						<pre id = "imageMetadataPre" style = "background: none; color: #c8c8c8"></pre>
+					</div>
+				</div>
 			</div>
 			<div class = "modal-footer">
 				<button type = "button" class = "btn btn-default" data-dismiss = "modal">Close</button>

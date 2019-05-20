@@ -433,6 +433,64 @@ function updateMapSize() {
 	}
 }
 
+function updatePqe( pixel ) {
+    var options = { pqeProbabilityLevel: $( '#pqeProbabilityInput' ).val() };
+    imagePointsToGround( [ pixel ], tlv.layers[ tlv.currentLayer ], options,  function( coordinates, layer, info ) {
+        var pqe = info[ 0 ].pqe;
+
+        var table = document.createElement( 'table' );
+        table.className = 'table table-condensed';
+
+        for ( var i = 0; i < 2; i++ ) {
+            var row = table.insertRow( table.rows.length );
+            $.each( [
+                { label: 'HAE: ', value: info[ 0 ].hgt.toFixed( 2 ), units: 'm' },
+                { label: 'Linear Err.', value: pqe.LE.toFixed( 2 ), units: 'm' },
+                { label: 'Semi-Maj. Axis', value: pqe.SMA.toFixed( 2 ), units: 'm' },
+                { label: 'Semi-Min. Axis', value: pqe.SMI.toFixed( 2 ), units: 'm' },
+                { label: 'SMA Azimuth', value: pqe.AZ.toFixed( 2 ), units: 'deg' }
+            ], function( index, value ) {
+                var cell = row.insertCell( row.cells.length );
+                var html = i == 0 ? '<b>' + value.label + '</b>' : value.value + ' ' + value.units;
+                cell.innerHTML = html;
+            } );
+        }
+
+        for ( var i = 0; i < 2; i++ ) {
+            var row = table.insertRow( table.rows.length );
+            $.each( [
+                { label: 'MSL: ', value: info[ 0 ].hgtMsl.toFixed( 2 ), units: 'm' },
+                { label: 'Circular Err.', value: pqe.CE.toFixed( 2 ), units: 'm<sup>2</sup>' },
+                { label: 'Projection Type', value: pqe.projType, units: '' },
+                { label: 'Surface Name', value: pqe.surfaceName, units: '' },
+                { label: 'Probability', value: '', units: '' }
+            ], function( index, value ) {
+                var cell = row.insertCell( row.cells.length );
+                var html = i == 0 ? '<b>' + value.label + '</b>' : value.value + ' ' + value.units;
+                cell.innerHTML = html;
+            } );
+            if ( i == 1 ) {
+                var input = document.createElement( 'input' );
+                input.className = 'form-control input-sm';
+                input.id = 'pqeProbabilityInput';
+                input.onchange = function() {
+                    updatePqe( pixel );
+                };
+                input.step = 0.1;
+                input.type = 'number';
+                input.value = pqe.probabilityLevel;
+                var cell = row.cells[ row.cells.length - 1 ];
+                cell.appendChild( input );
+            }
+        }
+
+        $( '#pqeDiv' ).html( table );
+        var row = table.rows[ table.rows.length - 1 ];
+        var cell = row.cells[ row.cells.length - 1 ];
+        $( cell ).find( 'input' ).focus();
+    } );
+}
+
 function updateScreenText() {
 	updateImageId();
 	updateAcquisitionDate();

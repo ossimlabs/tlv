@@ -94,7 +94,7 @@ function compassRotate(event) {
 	else{ displayErrorDialog("Sorry, we couldn't get a good reading. :("); }
 }
 
-function createContextMenuContent( point ) { console.dir(point);
+function createContextMenuContent( point ) {
 	var layer = tlv.layers[ tlv.currentLayer ];
 
 	var addGroundPoint = function( coordinate ) {
@@ -131,10 +131,12 @@ function createContextMenuContent( point ) { console.dir(point);
 
 		groundToImagePoints( [ point ], layer, function( pixels, layer ) {
 			addImagePoint( pixels[ 0 ] );
+			updatePqe( pixels[ 0 ] );
 		} );
 	}
 	else {
 		addImagePoint( point );
+		updatePqe( point );
 
 		imagePointsToGround( [ point ], layer, function( coordinates, layer ) {
 			addGroundPoint( coordinates[ 0 ] );
