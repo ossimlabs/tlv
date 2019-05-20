@@ -449,18 +449,31 @@ function createMapInteractions() {
 	});
 
 	dragAndDropInteraction.on( "addfeatures", function( event ) {
+		var features = event.features;
+		$.each( features, function( index, feature ) {
+			var style = createDefaultStyle();
+			var properties = feature.getProperties();
+			var keys = Object.keys( properties );
+			if ( keys.length > 1 ) {
+				var text = '';
+				if ( keys[ 0 ] != 'geometry' ) {
+					text = properties[ keys[ 0 ] ];
+				}
+				else {
+					text = properties[ keys[ 1 ] ];
+				}
+				style.getText().setText( text );
+			}
+			feature.setStyle( style );
+		} );
         var source = new ol.source.Vector({
-			features: event.features
+			features: features
 		});
-		var styleFunction = function() {
-			createDefaultStyle();
-		}
+		tlv.map.getView().fit( source.getExtent(), { nearest: true } );
 		var layer = new ol.layer.Vector({
-			source: source,
-			style: styleFunction
-        })
+			source: source
+        });
         tlv.map.addLayer( layer );
-        tlv.map.getView().fit( source.getExtent(), { nearest: true } );
 	});
 
 	var dragPanInteraction = new ol.interaction.DragPan({
