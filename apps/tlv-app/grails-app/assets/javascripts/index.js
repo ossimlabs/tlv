@@ -285,7 +285,7 @@ function groundToImagePoints( coordinates, layer, callback ) {
         var pixels = data.data.map(
             function( point ) { return [ point.x, point.y ] }
         );
-        callback( pixels, layer );
+        callback( pixels, layer, data.data );
     } );
 }
 
@@ -299,7 +299,11 @@ function hideErrorDialog() { $("#errorDialog").hide(); }
 
 function hideLoadingDialog() { $("#loadingDialog").modal("hide"); }
 
-function imagePointsToGround( pixels, layer, callback ) {
+function imagePointsToGround( pixels, layer, options, callback ) {
+    if ( typeof options == 'function' ) {
+        callback = options;
+    }
+
     return $.ajax({
         contentType: 'application/json',
         data: JSON.stringify({
@@ -309,9 +313,9 @@ function imagePointsToGround( pixels, layer, callback ) {
                 return { 'x': pixel[ 0 ], 'y': pixel[ 1 ] };
             } ),
             'pqeEllipseAngularIncrement': 10,
-            'pqeEllipsePointType' : 'none',
+            'pqeEllipsePointType' : 'array',
             'pqeIncludePositionError': true,
-            'pqeProbabilityLevel' : 0.9,
+            'pqeProbabilityLevel' : options.pqeProbabilityLevel || 0.9,
         }),
         type: 'post',
         url: tlv.libraries[ layer.library ].mensaUrl + '/imagePointsToGround'
@@ -320,23 +324,7 @@ function imagePointsToGround( pixels, layer, callback ) {
         var coordinates = data.data.map(
             function( point ) { return [ point.lon, point.lat ]; }
         );
-        var info = data.data.map(
-            function( point ) {
-                if ( point.pqe.pqeValid ) {
-                    return $.extend( point, {
-                        CE: point.pqe.CE,
-                        LE: point.pqe.LE
-                    } );
-                }
-                else {
-                    return $.extend( point, {
-                        CE: null,
-                        LE: null
-                    } );
-                }
-            }
-        );
-        callback( coordinates, layer, info );
+        callback( coordinates, layer, data.data );
     } );
 }
 
