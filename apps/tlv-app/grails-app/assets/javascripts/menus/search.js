@@ -606,6 +606,19 @@ function initializeLastDaysInput() {
 }
 
 function initializeLibraryCheckboxes() {
+	$.each( Object.keys( tlv.libraries ), function( index, library ) {
+		var label = $( "#searchLibrary" + library.capitalize() + "Label" );
+		label.click( function() {
+
+			if ( !label.hasClass( 'active' ) ) {
+				label.addClass( 'btn-success' );
+			}
+			else {
+				label.removeClass( 'btn-success' );
+			}
+		} );
+	} );
+
 	if ( tlv.searchLibraries ) {
 		$.each(
 			tlv.searchLibraries.split( "," ),
