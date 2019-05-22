@@ -445,10 +445,10 @@ function updatePqe( pixel ) {
             var row = table.insertRow( table.rows.length );
             $.each( [
                 { label: 'HAE: ', value: info[ 0 ].hgt.toFixed( 2 ), units: 'm' },
-                { label: 'Linear Err.', value: pqe.LE.toFixed( 2 ), units: 'm' },
-                { label: 'Semi-Maj. Axis', value: pqe.SMA.toFixed( 2 ), units: 'm' },
-                { label: 'Semi-Min. Axis', value: pqe.SMI.toFixed( 2 ), units: 'm' },
-                { label: 'SMA Azimuth', value: pqe.AZ.toFixed( 2 ), units: 'deg' }
+                { label: 'Linear Err.', value: pqe.pqeValid ? pqe.LE.toFixed( 2 ) : 'N/A', units: 'm' },
+                { label: 'Semi-Maj. Axis', value: pqe.pqeValid ? pqe.SMA.toFixed( 2 ): 'N/A', units: 'm' },
+                { label: 'Semi-Min. Axis', value: pqe.pqeValid ? pqe.SMI.toFixed( 2 ) : 'N/A', units: 'm' },
+                { label: 'SMA Azimuth', value: pqe.pqeValid ? pqe.AZ.toFixed( 2 ) : 'N/A', units: 'deg' }
             ], function( index, value ) {
                 var cell = row.insertCell( row.cells.length );
                 var html = i == 0 ? '<b>' + value.label + '</b>' : value.value + ' ' + value.units;
@@ -460,9 +460,9 @@ function updatePqe( pixel ) {
             var row = table.insertRow( table.rows.length );
             $.each( [
                 { label: 'MSL: ', value: info[ 0 ].hgtMsl.toFixed( 2 ), units: 'm' },
-                { label: 'Circular Err.', value: pqe.CE.toFixed( 2 ), units: 'm<sup>2</sup>' },
-                { label: 'Projection Type', value: pqe.projType, units: '' },
-                { label: 'Surface Name', value: pqe.surfaceName, units: '' },
+                { label: 'Circular Err.', value: pqe.pqeValid ? pqe.CE.toFixed( 2 ) : 'N/A', units: 'm<sup>2</sup>' },
+                { label: 'Projection Type', value: pqe.pqeValid ? pqe.projType : 'N/A', units: '' },
+                { label: 'Surface Name', value: pqe.pqeValid ? pqe.surfaceName : 'N/A', units: '' },
                 { label: 'Probability', value: '', units: '' }
             ], function( index, value ) {
                 var cell = row.insertCell( row.cells.length );
