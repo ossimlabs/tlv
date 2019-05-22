@@ -788,6 +788,25 @@ function theMapHasMoved(event) {
 			x.tilesLoading = 0;
 		}
 	);
+
+	// if the map extent is contained within the combined extent of all visible layers, turn off the basemap
+	var geometries = tlv.layers.map( function( layer ) {
+		if ( layer.mapLayer.getVisible() ) {
+			return new ol.format.WKT().readGeometry( layer.metadata.footprint );
+		}
+	} )
+	.filter( function( geometry ) {
+		return geometry != null;
+	} );
+	var extent = new ol.geom.GeometryCollection( geometries ).getExtent();
+	if ( ol.extent.containsExtent( extent, tlv.map.getView().calculateExtent() ) ) {
+		$.each( tlv.baseLayers, function( index, layer ) {
+			layer.setVisible( false );
+		} );
+	}
+	else {
+		changeBaseLayer( $( '#baseLayersSelect' ).val() );
+	}
 }
 
 function theMapHasRotated( event ) {
