@@ -45,11 +45,8 @@
 					<div class = "row">
 						<div class = "col-md-12">
 							<label>Sensors</label>
-							<div class = "form-inline">
+							<div class = "input-group">
 								<div class = "btn-group" data-toggle = "buttons" id = "searchSensorDiv"></div>
-								<button class = "btn btn-danger" data-toggle = "button" id = "searchSensorsNotCheckbox"  title = "Everything but these..." type = "button">
-									<span class = "glyphicon glyphicon-ban-circle"></span>
-								</button>
 							</div>
 						</div>
 					</div>

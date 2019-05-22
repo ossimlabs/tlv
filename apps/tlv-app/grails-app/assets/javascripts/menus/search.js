@@ -184,18 +184,10 @@ function beginSearch() {
 
 					if ( searchParams.sensors.length ) {
 						filter += ' AND ';
-						if ( searchParams.sensorsNot ) {
-							filter += "(sensor_id NOT LIKE '%" +
-								searchParams.sensors.map( function( sensor ) {
-									return sensor.trim();
-								} ).join( "%' AND sensor_id NOT LIKE'%" ) + "%')";
-						}
-						else {
-							filter += "(sensor_id LIKE '%" +
-								searchParams.sensors.map( function( sensor ) {
-									return sensor.trim();
-								} ).join( "%' OR sensor_id LIKE'%" ) + "%')";
-						}
+						filter += "(sensor_id LIKE '%" +
+							searchParams.sensors.map( function( sensor ) {
+								return sensor.trim();
+							} ).join( "%' OR sensor_id LIKE'%" ) + "%')";
 					}
 
 					queryParams.filter = filter;
@@ -369,7 +361,7 @@ function getDistinctSensors() {
 		$.each( [].concat.apply( [], sensors ).unique().sort(), function( index, sensor ) {
 			var label = $( document.createElement( 'label' ) );
 			label.addClass( 'btn btn-primary' );
-			if ( selectedSensors.contains( sensor ) ) {
+			if ( selectedSensors.contains( sensor ) || selectedSensors.length == 0 ) {
 				label.addClass( 'active btn-success' );
 			}
 			$( label ).click( function() {
@@ -666,12 +658,6 @@ function initializeSensorList() {
 	getDistinctSensors();
 }
 
-function initializeSensorsNot() {
-	if ( tlv.sensorsNot == "true" ) {
-		$( "#searchSensorsNotCheckbox" ).trigger( "click" );
-	}
-}
-
 function initializeStartDateTimePicker() {
 	// default to the beginning of the day 30 days prior to the end date
 	var endDate = $( "#searchEndDateTimePicker" ).data( "DateTimePicker" ).date().toDate();
@@ -862,7 +848,6 @@ function setupSearchMenuDialog() {
 	initializeMaxCloudCoverInput();
 	initializeMaxResultsSelect();
 	initializeSensorList();
-	initializeSensorsNot();
 
 	initializeLocationInput();
 }

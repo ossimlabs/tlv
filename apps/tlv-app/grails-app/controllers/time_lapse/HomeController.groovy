@@ -217,13 +217,6 @@ class HomeController {
 			value = 'Comma separated list of sensor IDs.'
 		),
 		@ApiImplicitParam(
-			dataType = 'boolean',
-			defaultValue = '',
-			name = 'sensorsNot',
-			paramType = 'query',
-			value = 'Whether or not to exclude the sensor list from the results.'
-		),
-		@ApiImplicitParam(
 			dataType = 'integer',
 			defaultValue = '',
 			name = 'startDay',
