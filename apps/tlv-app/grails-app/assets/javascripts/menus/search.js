@@ -356,11 +356,40 @@ function getDistinctSensors() {
 		 	sensors.push( library.sensors || [] );
 		});
 
-		var sensorList = $( "#searchSensorIdList" );
-		sensorList.html( "" );
+		var selectedSensors = [];
+		if ( tlv.sensors || tlv.preferences.tlvPreference.sensor ) {
+			selectedSensors = ( tlv.sensors || tlv.preferences.tlvPreference.sensor )
+				.split( ',' ).map( function( sensor ) {
+					return  sensor.trim();
+				} ) ;
+		}
+
+		var buttonGroup = $( '#searchSensorDiv' );
+		buttonGroup.html( '' );
 		$.each( [].concat.apply( [], sensors ).unique().sort(), function( index, sensor ) {
-			sensorList.append( "<option value = '" + sensor + "'></option>" );
-		});
+			var label = $( document.createElement( 'label' ) );
+			label.addClass( 'btn btn-primary' );
+			if ( selectedSensors.contains( sensor ) ) {
+				label.addClass( 'active btn-success' );
+			}
+			$( label ).click( function() {
+				// this after the click has been nadled
+				if ( label.hasClass( 'active' ) ) {
+					label.removeClass( 'btn-success' );
+				}
+				else {
+					label.addClass( 'btn-success' );
+				}
+			} );
+
+			var input = document.createElement( 'input' );
+			input.type = 'checkbox';
+
+			$( label ).append( input );
+			$( label ).append( sensor );
+
+			$( buttonGroup ).append( label );
+		} );
 	}
 
 	$.each( tlv.libraries, function( index, library ) {
@@ -438,8 +467,8 @@ function getSearchParams() {
 	var minNiirs = $("#searchMinNiirsInput").val();
 	searchObject.minNiirs = parseFloat(minNiirs);
 
-	var sensors = $( "#searchSensorIdInput" ).val();
-	searchObject.sensors = sensors ? sensors.split( ',' ) : [];
+	var sensors = getSelectedSensors();
+	searchObject.sensors = sensors;
 	searchObject.sensorsNot = $( "#searchSensorsNotCheckbox" ).hasClass( 'active' ) ? true : false;
 
 	var startDate = getStartDate();
@@ -472,6 +501,21 @@ function getSelectedLibraries() {
 
 
 	return libraries;
+}
+
+function getSelectedSensors() {
+	var sensors = [];
+
+	$.each( $( '#searchSensorDiv' ).children(), function( index, sensor ) {
+		console.dir(sensor);
+		if ( $( sensor ).hasClass( 'active' ) ) {
+			sensors.push( $( sensor ).text() );
+		}
+	} );
+
+
+
+	return sensors;
 }
 
 function getStartDate() {
@@ -606,10 +650,6 @@ function initializeMinNiirsInput() {
 }
 
 function initializeSensorList() {
-	if ( tlv.sensors || tlv.preferences.tlvPreference.sensor ) {
-		var sensors = tlv.sensors || tlv.preferences.tlvPreference.sensor;
-		$( '#searchSensorIdInput' ).val( sensors );
-	}
 	getDistinctSensors();
 }
 

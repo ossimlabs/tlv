@@ -43,22 +43,19 @@
 					</div>
 
 					<div class = "row">
-						<div class = "col-md-6">
+						<div class = "col-md-12">
 							<label>Sensors</label>
 							<div class = "form-inline">
-								<input class = "form-control"
-									id = "searchSensorIdInput"
-									list = "searchSensorIdList"
-									onchange = "javascript: handleDataList( 'searchSensorIdInput' )"
-									onkeyup = "javascript: handleDataList( 'searchSensorIdInput' )"
-									placeholder = "Sensor ID">
-								<datalist id = "searchSensorIdList"></datalist>
-								<button class = "btn btn-primary" data-toggle = "button" id = "searchSensorsNotCheckbox"  title = "Everything but these..." type = "button">
-  									<span class = "glyphicon glyphicon-ban-circle"></span>
+								<div class = "btn-group" data-toggle = "buttons" id = "searchSensorDiv"></div>
+								<button class = "btn btn-danger" data-toggle = "button" id = "searchSensorsNotCheckbox"  title = "Everything but these..." type = "button">
+									<span class = "glyphicon glyphicon-ban-circle"></span>
 								</button>
 							</div>
 						</div>
-						<div class = "col-md-6">
+					</div>
+
+					<div class = "row">
+						<div class = "col-md-12">
 							<label>Full Spectrum GEOINT</label>
 							<div class = "form-inline">
 								<input class = "form-control"
@@ -68,7 +65,7 @@
 									onkeyup = "javascript: handleDataList( 'searchFsgInput' )"
 									placeholder = "Full Spectrum GEOINT">
 								<datalist id = "searchFsgList"></datalist>
-								<button class = "btn btn-primary" data-toggle = "button" id = "searchFsgNotCheckbox" title = "Eveyrhting but these..." type = "button">
+								<button class = "btn btn-danger" data-toggle = "button" id = "searchFsgNotCheckbox" title = "Eveyrhting but these..." type = "button">
 									<span class = "glyphicon glyphicon-ban-circle"></span>
 								</button>
 							</div>
