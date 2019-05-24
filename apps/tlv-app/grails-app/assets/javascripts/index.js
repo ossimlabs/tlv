@@ -235,9 +235,12 @@ function enableKeyboardShortcuts() {
 			var keyCode = event.keyCode;
 			switch( keyCode ) {
 				// space bar
-				case 32: $( "button[title='Play/Stop']" ).trigger( "click" ); break;
-				// left arrow key
+				case 32:
+                    $( "button[title='Play/Stop']" ).trigger( "click" );
+                    break;
+				// left arrow key and a
 				case 37:
+                case 65:
                     if ( event.shiftKey ) {
                         var degrees = tlv.map.getView().getRotation() * 180 / Math.PI - 1;
                         tlv.map.getView().setRotation( degrees * Math.PI / 180 );
@@ -246,10 +249,14 @@ function enableKeyboardShortcuts() {
                         changeFrame( "rewind" );
                     }
                     break;
-                // up arrow key
-                case 38: tlv.map.getView().setZoom( tlv.map.getView().getZoom() + 1 );
-				// right arrow key
+                // up arrow key and w
+                case 38:
+                case 87:
+                    tlv.map.getView().setZoom( tlv.map.getView().getZoom() + 1 );
+                    break;
+				// right arrow key and d
 				case 39:
+                case 68:
                     if ( event.shiftKey ) {
                         var degrees = tlv.map.getView().getRotation() * 180 / Math.PI + 1;
                         tlv.map.getView().setRotation( degrees * Math.PI / 180 );
@@ -258,10 +265,16 @@ function enableKeyboardShortcuts() {
                         changeFrame( "fastForward" );
                     }
                     break;
-                // down arrow key
-                case 40: tlv.map.getView().setZoom( tlv.map.getView().getZoom() - 1 );
-				// delete key
-				case 46: deleteFrame(  tlv.currentLayer ); break;
+                // down arrow key and s
+                case 40:
+                case 83:
+                    tlv.map.getView().setZoom( tlv.map.getView().getZoom() - 1 );
+                    break;
+				// delete key and x
+				case 46:
+                case 88:
+                    deleteFrame(  tlv.currentLayer );
+                    break;
 			}
 		}
 	});
