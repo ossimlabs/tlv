@@ -91,20 +91,6 @@ function convertRadiusToBbox(x, y, radius) {
 	return { maxLat: y + deltaLatitude, maxLon: x + deltaLongitude, minLat: y - deltaLatitude, minLon: x - deltaLongitude };
 }
 
-function copyTextToClipboard( text ) {
-    // note this function must be called from a real button click
-    var input = document.createElement( "input" );
-    input.id = "text";
-    input.value = text;
-    input.type = "text";
-    $( "body" ).append( input );
-
-    input.select();
-    document.execCommand( "copy" );
-
-    input.remove();
-}
-
 function createDefaultStyle() {
 	return new ol.style.Style({
         geometry: function( feature ) {
