@@ -1,3 +1,29 @@
+<div class = "modal" id = "exportLinkDialog" role = "dialog" tabindex = "-1">
+	<div class = "modal-dialog">
+		<div class = "modal-content">
+			<div class = "modal-header"><h4>Export Link</h4></div>
+			<div class = "modal-body">
+				<div class = "row" >
+					<div class = "col-md-12">
+						<input class = "form-control" id = "exportLinkInput">
+					</div>
+				</div>
+				<div class = "row template" id = "templateFooter"></div>
+			</div>
+			<div class = "modal-footer">
+				<button type = "button" class = "btn btn-primary" data-dismiss = "modal" onclick = downloadTemplate() >Download</button>
+                <button type = "button" class = "btn btn-default" data-dismiss = "modal">Close</button>
+            </div>
+		</div>
+	</div>
+</div>
+
+<asset:script type = "text/javascript">
+	$( "#exportLinkDialog" ).on( "hidden.bs.modal", function ( event ) { hideDialog( "exportLinkDialog" ); } );
+	$( "#exportLinkDialog" ).on( "shown.bs.modal", function ( event ) { displayDialog( "exportLinkDialog" ); } );
+</asset:script>
+
+
 <div class = "modal" id = "templateDialog" role = "dialog" tabindex = "-1">
 	<div class = "modal-dialog" style = "width: 75%">
 		<div class = "modal-content" style = "background: none">
@@ -15,7 +41,6 @@
 		</div>
 	</div>
 </div>
-
 
 <asset:script type = "text/javascript">
 	$( "#templateDialog" ).on( "hidden.bs.modal", function ( event ) {
