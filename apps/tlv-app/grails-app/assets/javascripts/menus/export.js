@@ -267,8 +267,8 @@ function exportLink() {
 		location: tlv.map.getView().getCenter().reverse().join( "," )
 	};
 
-	copyTextToClipboard( url + "?" + $.param( params ) );
-	displayInfoDialog( "The TLV link has been copied to your clipboard..." );
+	$( '#exportLinkInput' ).val( url + "?" + $.param( params ) );
+	$( '#exportLinkDialog' ).modal( 'show' );
 }
 
 function exportMetadata() {
@@ -465,14 +465,14 @@ function exportWmsGetCapabilities() {
 	var layer = tlv.layers[ tlv.currentLayer ];
 	var url = tlv.libraries[ layer.library ].wfsUrl;
  	var params = {
-		filter: "in(" + layer.metadata.id + ")",
-		outputFormat: "WMS130",
-		request: "GetFeature",
-		service: "WFS",
-		typeName: "omar:raster_entry",
-		version: "1.1.0"
+		filter: 'in(' + layer.metadata.id + ')',
+		outputFormat: 'WMS130',
+		request: 'GetFeature',
+		service: 'WFS',
+		typeName: 'omar:raster_entry',
+		version: '1.1.0'
 	};
 
-	copyTextToClipboard( url + "?" + $.param( params ) );
-	displayInfoDialog( "The WMS GetCapabilities link has been copied to your clipboard..." );
+	$( '#exportLinkInput' ).val( url + '?' + $.param( params ) );
+	$( '#exportLinkDialog' ).modal( 'show' );
 }
