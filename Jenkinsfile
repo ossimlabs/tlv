@@ -6,8 +6,9 @@ properties([
     pipelineTriggers([
             [$class: "GitHubPushTrigger"]
     ]),
-    [[$class: 'GithubProjectProperty', displayName: '', projectUrlStr: 'https://github.com/ossimlabs/tlv'],[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', numToKeepStr: '5']]],
-    disableConcurrentBuilds()
+    [$class: 'GithubProjectProperty', displayName: '', projectUrlStr: 'https://github.com/ossimlabs/tlv'],
+    disableConcurrentBuilds(),
+    buildDiscarder(logRotator(artifactNumToKeepStr: '5'))
 ])
 
 node("${BUILD_NODE}"){
