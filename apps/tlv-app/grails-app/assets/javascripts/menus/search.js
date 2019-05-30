@@ -461,7 +461,6 @@ function getSearchParams() {
 
 	var sensors = getSelectedSensors();
 	searchObject.sensors = sensors;
-	searchObject.sensorsNot = $( "#searchSensorsNotCheckbox" ).hasClass( 'active' ) ? true : false;
 
 	var startDate = getStartDate();
 	searchObject.startYear = startDate.year;
@@ -499,7 +498,6 @@ function getSelectedSensors() {
 	var sensors = [];
 
 	$.each( $( '#searchSensorDiv' ).children(), function( index, sensor ) {
-		console.dir(sensor);
 		if ( $( sensor ).hasClass( 'active' ) ) {
 			sensors.push( $( sensor ).text() );
 		}
