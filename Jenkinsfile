@@ -8,7 +8,7 @@ properties([
     ]),
     [$class: 'GithubProjectProperty', displayName: '', projectUrlStr: 'https://github.com/ossimlabs/tlv'],
     disableConcurrentBuilds(),
-    buildDiscarder(logRotator(artifactNumToKeepStr: '5'))
+    buildDiscarder(logRotator(numToKeepStr: '5', artifactNumToKeepStr: '3'))
 ])
 
 node("${BUILD_NODE}"){
