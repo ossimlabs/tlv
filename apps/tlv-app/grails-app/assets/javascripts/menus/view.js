@@ -254,12 +254,12 @@ createMapControls = function() {
 		var imageIdOuterDiv = document.createElement( "div" );
 		imageIdOuterDiv.className = "custom-map-control";
 		imageIdOuterDiv.id = "imageIdOuterDiv";
-		imageIdOuterDiv.style = "background-color: rgba(0, 0, 0, 0); pointer-events: none;"
+		imageIdOuterDiv.style.cssText = "background-color: rgba(0, 0, 0, 0); pointer-events: none;"
 
 		var imageIdDiv = document.createElement( "div" );
 		imageIdDiv.id = "imageIdDiv";
-		imageIdDiv.style = "background-color: rgba(0, 0, 0, 0.5); display: inline-block; text-align: left";
-		$( imageIdOuterDiv ).append( imageIdDiv );
+		imageIdDiv.style.cssText = "background-color: rgba(0, 0, 0, 0.5); display: inline-block; text-align: left";
+		imageIdOuterDiv.appendChild( imageIdDiv );
 
 		var imageIdControl = new ol.control.Control({ element: imageIdOuterDiv });
 		layer.imageSpaceMap.addControl( imageIdControl );
@@ -358,7 +358,7 @@ createMapControls = function() {
 			var element = document.createElement( "div" );
 			element.appendChild( rotationInput );
 			element.className = "rotation-tilt-control ol-unselectable ol-control";
-			element.style = "background: none";
+			element.style.cssText = "background: none";
 
 
 			ol.control.Control.call( this, {
@@ -374,8 +374,8 @@ createMapControls = function() {
 
 		var SummaryTableControl = function() {
 			var button = document.createElement( "button" );
-			button.innerHTML = "<span id = 'tlvLayerCountSpan'>0/0</span>&nbsp;<span class = 'glyphicon glyphicon-list-alt'></span>";
-			button.style = "width: auto";
+			button.innerHTML = "<span class = 'tlvLayerCountSpan'>0/0</span>&nbsp;<span class = 'glyphicon glyphicon-list-alt'></span>";
+			button.style.cssText = "width: auto";
 			button.title = "Summary Table";
 
 			var this_ = this;
@@ -650,7 +650,7 @@ function setupImageSpaceMaps() {
         var div = document.createElement( 'div' );
         div.className = 'map';
         div.id = 'imageSpaceMap' + index;
-        div.style = 'display: none; height: 100%';
+        div.style.cssText = 'display: none; height: 100%';
         $( '#imageSpaceMaps' ).append( div );
 
         var imageDatabaseId = layer.metadata.id;
@@ -754,9 +754,9 @@ function switchToImageSpace() {
 	getNorthAndUpAngles();
 
 	var layer = tlv.layers[ tlv.currentLayer ];
+$( '#imageSpaceMaps' ).show();
+	$( '#map' ).hide();
 
-    $( '#map' ).hide();
-    $( '#imageSpaceMaps' ).show();
 
 	displayLoadingDialog( "Synching the map view... " );
 	var center = tlv.map.getView().getCenter();
