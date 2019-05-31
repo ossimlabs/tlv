@@ -499,7 +499,5 @@ function updateScreenText() {
 
 function updateTlvLayerCount() {
 	var currentCount = tlv.currentLayer + 1;
-    $.each( $( '#tlvLayerCountSpan' ), function( index, element ) {
-        $( element ).html( currentCount + '/' + tlv.layers.length );
-    } );
+    $( '.tlvLayerCountSpan' ).html( currentCount + '/' + tlv.layers.length );
 }
