@@ -266,12 +266,12 @@ function createMapControls() {
 	var imageIdOuterDiv = document.createElement( "div" );
 	imageIdOuterDiv.className = "custom-map-control";
 	imageIdOuterDiv.id = "imageIdOuterDiv";
-	imageIdOuterDiv.style = "background-color: rgba(0, 0, 0, 0); pointer-events: none;"
+	imageIdOuterDiv.style.cssText = "background-color: rgba(0, 0, 0, 0); pointer-events: none;"
 
 	var imageIdDiv = document.createElement( "div" );
 	imageIdDiv.id = "imageIdDiv";
-	imageIdDiv.style = "background-color: rgba(0, 0, 0, 0.5); display: inline-block; text-align: left";
-	$( imageIdOuterDiv ).append( imageIdDiv );
+	imageIdDiv.style.cssText = "background-color: rgba(0, 0, 0, 0.5); display: inline-block; text-align: left";
+	imageIdOuterDiv.appendChild( imageIdDiv );
 
 	var imageIdControl = new ol.control.Control({ element: imageIdOuterDiv });
 
@@ -388,8 +388,8 @@ function createMapControls() {
 
 	var SummaryTableControl = function() {
 		var button = document.createElement( "button" );
-		button.innerHTML = "<span id = 'tlvLayerCountSpan'>0/0</span>&nbsp;<span class = 'glyphicon glyphicon-list-alt'></span>";
-		button.style = "width: auto";
+		button.innerHTML = "<span class = 'tlvLayerCountSpan'>0/0</span>&nbsp;<span class = 'glyphicon glyphicon-list-alt'></span>";
+		button.style.cssText = "width: auto";
 		button.title = "Summary Table";
 
 		var this_ = this;
