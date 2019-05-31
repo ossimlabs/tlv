@@ -316,6 +316,7 @@ function imagePointsToGround( pixels, layer, options, callback ) {
             'pqeIncludePositionError': true,
             'pqeProbabilityLevel' : options.pqeProbabilityLevel || 0.9,
         }),
+        dataType: 'json',
         type: 'post',
         url: tlv.libraries[ layer.library ].mensaUrl + '/imagePointsToGround'
     })
