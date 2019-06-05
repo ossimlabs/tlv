@@ -491,10 +491,33 @@ function updatePqe( pixel ) {
     } );
 }
 
+// Updates the security banner to match the current image security-classification
+function updateSecurityBanner() {
+	$('#securityBanner').removeClass("unclassified");
+	$('#securityBanner').removeClass("secret");
+	$('#securityBanner').removeClass("top-secret");
+	switch(tlv.layers[ tlv.currentLayer ].metadata.security_classification) {
+		case "UNCLASSIFIED":
+			$('#securityBanner').text("UNCLASSIFIED");
+			$('#securityBanner').addClass("unclassified");
+			break;
+		case "SECRET":
+		  	$('#securityBanner').text("SECRET");
+		  	$('#securityBanner').addClass("secret");
+		  	break;
+		case "TOP-SECRET":
+			$('#securityBanner').text("TOP-SECRET");
+			$('#securityBanner').addClass("top-secret");
+			break;
+		default:
+	}
+}
+
 function updateScreenText() {
 	updateImageId();
 	updateAcquisitionDate();
 	updateTlvLayerCount();
+	updateSecurityBanner();
 }
 
 function updateTlvLayerCount() {
