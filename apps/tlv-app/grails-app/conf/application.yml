@@ -359,7 +359,7 @@ requestHeaderUsername: username
 
 securityClassification:
     backgroundColor: green
-    classification: Unclassified
+    classification: UNCLASSIFIED
     textColor: white
 
 ---
