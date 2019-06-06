@@ -47,23 +47,3 @@
     transition: all 1s;
     -webkit-transition: all 1s;
 }
-
-.unknown {
-    background-color: lightgray !important;
-    color: black !important;
-}
-
-.unclassified {
-    background-color: green !important;
-    color: white !important;
-}
-
-.secret {
-    background-color: red !important;
-    color: white !important;
-}
-
-.top-secret {
-    background-color: yellow !important;
-    color: black !important;
-}

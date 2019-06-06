@@ -514,7 +514,7 @@ function updateSecurityBanner() {
 			break;
 		default:
 			$('#securityBanner').text("UNKOWN CLASSIFICATION");
-			$('#securityBanner').addClass("top-secret");
+			$('#securityBanner').addClass("unkown");
 	}
 }
 
