@@ -48,6 +48,11 @@
     -webkit-transition: all 1s;
 }
 
+.unknown {
+    background-color: lightgray !important;
+    color: black !important;
+}
+
 .unclassified {
     background-color: green !important;
     color: white !important;

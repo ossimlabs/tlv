@@ -497,19 +497,24 @@ function updateSecurityBanner() {
 	$('#securityBanner').removeClass("secret");
 	$('#securityBanner').removeClass("top-secret");
 	switch(tlv.layers[ tlv.currentLayer ].metadata.security_classification) {
+		case "U":
 		case "UNCLASSIFIED":
 			$('#securityBanner').text("UNCLASSIFIED");
 			$('#securityBanner').addClass("unclassified");
 			break;
+		case "S":
 		case "SECRET":
 		  	$('#securityBanner').text("SECRET");
 		  	$('#securityBanner').addClass("secret");
-		  	break;
+			  break;
+		case "TS":
 		case "TOP-SECRET":
 			$('#securityBanner').text("TOP-SECRET");
 			$('#securityBanner').addClass("top-secret");
 			break;
 		default:
+			$('#securityBanner').text("UNKOWN CLASSIFICATION");
+			$('#securityBanner').addClass("top-secret");
 	}
 }
 
