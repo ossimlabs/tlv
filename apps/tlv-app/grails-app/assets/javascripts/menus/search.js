@@ -179,8 +179,10 @@ function beginSearch() {
 					filter += ' AND ';
 					filter += 'INTERSECTS(ground_geom,POINT(' + searchParams.location.join(' ') + '))';
 
-					filter += ' AND ';
-					filter += '(niirs >= ' + searchParams.minNiirs + ' OR niirs IS NULL)';
+					if (  searchParams.minNiirs != 0 ) {
+						filter += ' AND ';
+						filter += 'niirs >= ' + searchParams.minNiirs;
+					}
 
 					if ( searchParams.sensors.length ) {
 						filter += ' AND ';
