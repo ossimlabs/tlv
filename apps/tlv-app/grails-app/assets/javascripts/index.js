@@ -45,7 +45,7 @@ function convertGeospatialCoordinateFormat(inputString, callbackFunction) {
 
 		return convertGeospatialCoordinateFormat(location, callbackFunction);
 	}
-	else if ( inputString.match( bePattern ) && inputString.trim().length == 10 && tlv.beLookup.url && callbackFunction ) {
+	else if ( inputString.match( bePattern ) && inputString.trim().length == 10 && tlv.beLookup && tlv.beLookup.url && callbackFunction ) {
 		displayLoadingDialog( "We're checking our maps for that location... BRB!" );
         beSearch( inputString )
         .always( function() {
