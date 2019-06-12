@@ -491,10 +491,67 @@ function updatePqe( pixel ) {
     } );
 }
 
+function getReleasability() {
+
+	var releasability = null;
+	var javascript_string = [];
+
+	$.each( tlv.releasability, function( index, releasability ) {
+		javascript_string.push( releasability.string );
+	});
+
+	try {
+		$.each( javascript_string, function( index, string ) {
+			releasability = eval( string );
+		});
+	} catch ( exception ) { /* do nothing */ }
+	return releasability;
+}
+
+// Updates the security banner to match the current image security-classification
+function updateSecurityBanner() {
+
+	var current_banner = "#currentClassification";
+	var default_banner = "#defaultClassification";
+	
+	var releasability = getReleasability();
+
+	$( default_banner ).hide();
+	$( current_banner ).show();
+
+	$( '.col-md-12' ).removeClass( "unclassified");
+	$( '.col-md-12' ).removeClass( "secret");
+	$( '.col-md-12' ).removeClass( "top-secret");
+
+	switch(tlv.layers[ tlv.currentLayer ].metadata.security_classification) {
+		case "U":
+		case "UNCLASSIFIED":
+			addStyleAndClassification( current_banner, "unclassified", releasability );
+			break;
+		case "S":
+		case "SECRET":
+			addStyleAndClassification( current_banner, "secret", releasability );
+			break;
+		case "TS":
+		case "TOP-SECRET":
+			addStyleAndClassification( current_banner, "top-secret", releasability );
+			break;
+		default:
+			$( default_banner ).show();
+			$( current_banner ).hide();
+	}
+}
+
+function addStyleAndClassification( banner, classification, releasability ) {
+	$( '.col-md-12' ).addClass( classification );
+	$( banner ).text( classification.toUpperCase() + releasability );
+}
+
 function updateScreenText() {
 	updateImageId();
 	updateAcquisitionDate();
 	updateTlvLayerCount();
+	updateSecurityBanner();
 }
 
 function updateTlvLayerCount() {
