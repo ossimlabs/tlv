@@ -26,8 +26,15 @@ requestHeaderUsername: username
 
 securityClassification:
     backgroundColor: green
-    classification: Unclassified
+    classification: UNCLASSIFIED
     textColor: white
+    
+# Uncomment this to add your own releasabilty condition statements.
+# releasability:
+#   - id:
+#     string: 'tlv.layers[ tlv.currentLayer ].metadata.height < 5000 ? " // h < 5000" : " // h >= 5000"'
+#   - id:
+#     string: 'tlv.layers[ tlv.currentLayer ].metadata.index_id.contains("a0") ? " // has a0" : releasability'
 
 ---
 grails:
