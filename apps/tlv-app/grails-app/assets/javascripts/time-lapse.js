@@ -493,7 +493,7 @@ function updatePqe( pixel ) {
 
 function getReleasability() {
 
-	var releasability = null;
+	var releasability = "";
 	var javascript_string = [];
 
 	$.each( tlv.releasability, function( index, releasability ) {
