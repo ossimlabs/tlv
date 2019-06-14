@@ -29,11 +29,7 @@ node("${BUILD_NODE}"){
     }
 
     stage ( "Assemble" ) {
-        sh """
-        gradle assemble \
-            -PossimMavenProxy=${OSSIM_MAVEN_PROXY}
-        """
-        archiveArtifacts "apps/*/build/libs/*.jar"
+        sh "gradle assemble -PossimMavenProxy=${ OSSIM_MAVEN_PROXY }"
     }
 
     stage ("Publish Nexus") {
@@ -47,41 +43,30 @@ node("${BUILD_NODE}"){
 
     stage ( "Publish Docker App" ) {
         withCredentials([[$class: 'UsernamePasswordMultiBinding',
-                        credentialsId: 'dockerCredentials',
-                        usernameVariable: 'DOCKER_REGISTRY_USERNAME',
-                        passwordVariable: 'DOCKER_REGISTRY_PASSWORD']])
-        {
+            credentialsId: 'dockerCredentials',
+            usernameVariable: 'DOCKER_REGISTRY_USERNAME',
+            passwordVariable: 'DOCKER_REGISTRY_PASSWORD']]) {
             // Run all tasks on the app. This includes pushing to OpenShift and S3.
-            sh """
-            gradle pushDockerImage \
-                -PossimMavenProxy=${OSSIM_MAVEN_PROXY}
-            """
+            sh "gradle pushDockerImage -PossimMavenProxy=${ OSSIM_MAVEN_PROXY }"
         }
     }
 
     try {
-        stage ("OpenShift Tag Image")
-        {
+        stage ( "OpenShift Tag Image" ) {
             withCredentials([[$class: 'UsernamePasswordMultiBinding',
-                            credentialsId: 'openshiftCredentials',
-                            usernameVariable: 'OPENSHIFT_USERNAME',
-                            passwordVariable: 'OPENSHIFT_PASSWORD']])
-            {
+                credentialsId: 'openshiftCredentials',
+                usernameVariable: 'OPENSHIFT_USERNAME',
+                passwordVariable: 'OPENSHIFT_PASSWORD']]) {
                 // Run all tasks on the app. This includes pushing to OpenShift and S3.
-                sh """
-                    gradle openshiftTagImage \
-                        -PossimMavenProxy=${OSSIM_MAVEN_PROXY}
-
-                """
+                sh "gradle openshiftTagImage -PossimMavenProxy=${ OSSIM_MAVEN_PROXY }"
             }
         }
-    } catch (e) {
+    } catch ( e ) {
         echo e.toString()
     }
 
-    stage("Clean Workspace")
-    {
-        if ("${CLEAN_WORKSPACE}" == "true")
-            step([$class: 'WsCleanup'])
+    stage( "Clean Workspace" ) {
+        if ( "${ CLEAN_WORKSPACE }" == "true" )
+            step([ $class: 'WsCleanup' ])
     }
 }

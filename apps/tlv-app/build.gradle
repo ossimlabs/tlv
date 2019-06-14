@@ -24,6 +24,7 @@ apply plugin: "org.grails.grails-gsp"
 apply plugin: "asset-pipeline"
 
 apply plugin: "java"
+apply plugin: "maven-publish"
 
 repositories {
     mavenLocal()
