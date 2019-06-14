@@ -13,13 +13,11 @@ properties([
 
 node("${BUILD_NODE}"){
 
-    stage("Checkout branch $BRANCH_NAME")
-    {
-        checkout(scm)
+    stage( "Checkout branch $BRANCH_NAME" ) {
+        checkout( scm )
     }
 
-    stage("Load Variables")
-    {
+    stage( "Load Variables" ) {
         withCredentials([string(credentialsId: 'o2-artifact-project', variable: 'o2ArtifactProject')]) {
             step ([$class: "CopyArtifact",
                 projectName: o2ArtifactProject,
@@ -30,7 +28,7 @@ node("${BUILD_NODE}"){
         load "common-variables.groovy"
     }
 
-    stage ("Assemble") {
+    stage ( "Assemble" ) {
         sh """
         gradle assemble \
             -PossimMavenProxy=${OSSIM_MAVEN_PROXY}
@@ -38,8 +36,16 @@ node("${BUILD_NODE}"){
         archiveArtifacts "apps/*/build/libs/*.jar"
     }
 
-    stage ("Publish Docker App")
-    {
+    stage ("Publish Nexus") {
+        withCredentials([[$class: 'UsernamePasswordMultiBinding',
+            credentialsId: 'nexusCredentials',
+            usernameVariable: 'MAVEN_REPO_USERNAME',
+            passwordVariable: 'MAVEN_REPO_PASSWORD']]) {
+            sh "gradle publish -PossimMavenProxy=${ OSSIM_MAVEN_PROXY }"
+        }
+    }
+
+    stage ( "Publish Docker App" ) {
         withCredentials([[$class: 'UsernamePasswordMultiBinding',
                         credentialsId: 'dockerCredentials',
                         usernameVariable: 'DOCKER_REGISTRY_USERNAME',
