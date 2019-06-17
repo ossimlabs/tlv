@@ -1,3 +1,25 @@
+function adjustLastDaysDate() {
+
+	var endDate = new Date();
+	var endDateTimePicker = $( '#searchEndDateTimePicker' );
+	endDateTimePicker.data( 'DateTimePicker' ).destroy();
+	endDateTimePicker.datetimepicker({
+		date: endDate,
+		format: 'MM/DD/YYYY HH:mm:ss',
+		keyBinds: null
+	});
+
+	var days = $( '#searchLastDaysInput' ).val();
+	var startDate = new Date( endDate.setDate( endDate.getDate() - days ) );
+	var startDateTimePicker = $( '#searchStartDateTimePicker' );
+	startDateTimePicker.data( 'DateTimePicker' ).destroy();
+	startDateTimePicker.datetimepicker({
+		date: startDate,
+		format: 'MM/DD/YYYY HH:mm:ss',
+		keyBinds: null
+	});
+}
+
 function beSearch( be ) {
 	var queryParams = {
 		filter: tlv.beLookup.columnName + " = '" + be + "'",
@@ -16,8 +38,6 @@ function beSearch( be ) {
 }
 
 function beginSearch() {
-	$( "#searchDialog" ).modal( "hide" );
-
 	var location = getLocation();
 	var locationString = $( "#searchLocationInput" ).val();
 	if ( !location && locationString != "" ) {
@@ -40,11 +60,11 @@ function beginSearch() {
 					var data = $.param({
 						filter: "title LIKE '%" + locationString + "%'",
 						maxFeatures: 100,
-						outputFormat: "JSON",
-						request: "getFeature",
-						service: "WFS",
-						typeName: "omar:raster_entry",
-						version: "1.1.0"
+						outputFormat: 'JSON',
+						request: 'getFeature',
+						service: 'WFS',
+						typeName: 'omar:raster_entry',
+						version: '1.1.0'
 					});
 					var url = tlv.libraries[ library ].wfsUrl;
 					if ( tlv.libraries[ library ].wfsUrlProxy ) {
@@ -67,16 +87,8 @@ function beginSearch() {
 								var metadata = feature.properties;
 								metadata.footprint = feature.geometry || null;
 
-								var acquisitionDate = "N/A";
-								if ( metadata.acquisition_date ) {
-									var parsedDate = Date.parse( metadata.acquisition_date.replace( "+0000", "Z" ) );
-									var date = getDate( new Date( parsedDate ) );
-									acquisitionDate = date.year +  "-" + date.month + "-" + date.day + " " +
-										date.hour + ":" + date.minute + ":" + date.second;
-								}
-
 								images.push({
-									acquisitionDate: acquisitionDate,
+									acquisitionDate: processAcquisitionDate( metadata.acquisition_date ),
 									imageId: processImageId( metadata ),
 									library: library,
 									metadata: metadata,
@@ -96,13 +108,11 @@ function beginSearch() {
 								$.each( searchParams.libraries, function( index, library ) {
 									numberOfImages += tlv.libraries[ library ].searchResults.length;
 								} );
-								if ( numberOfImages ) {
-									processResults();
-								}
-								else {
-									displayErrorDialog( "Sorry, we couldn't interpret that location. :(" );
-								}
+								processResults();
 							}
+						}
+						else {
+							processResults();
 						}
 					} );
 				} );
@@ -121,11 +131,12 @@ function beginSearch() {
 
 		var queryParams = {
 			maxFeatures: 100,
-			outputFormat: "JSON",
-			request: "getFeature",
-			service: "WFS",
-			typeName: "omar:raster_entry",
-			version: "1.1.0"
+			outputFormat: 'JSON',
+			request: 'getFeature',
+			service: 'WFS',
+			sortBy: 'acquisition_date+D',
+			typeName: 'omar:raster_entry',
+			version: '1.1.0'
 		};
 
 		tlv.location = searchParams.location;
@@ -151,18 +162,34 @@ function beginSearch() {
 
 					if ( searchParams.fsgs.length ) {
 						filter += ' AND ';
-						filter += "(filename LIKE '%" + searchParams.fsgs.join( "%' OR filename LIKE'%" ) + "%')";
+						if ( searchParams.fsgNot ) {
+							filter += "(product_id NOT LIKE '%" +
+								searchParams.fsgs.map( function( fsg ) {
+									return fsg.trim();
+								} ).join( "%' AND product_id NOT LIKE'%" ) + "%')";
+						}
+						else {
+							filter += "(product_id LIKE '%" +
+								searchParams.fsgs.map( function( fsg ) {
+									return fsg.trim();
+								} ).join( "%' OR product_id LIKE'%" ) + "%')";
+						}
 					}
 
 					filter += ' AND ';
 					filter += 'INTERSECTS(ground_geom,POINT(' + searchParams.location.join(' ') + '))';
 
-					filter += ' AND ';
-					filter += '(niirs >= ' + searchParams.minNiirs + ' OR niirs IS NULL)';
+					if (  searchParams.minNiirs != 0 ) {
+						filter += ' AND ';
+						filter += 'niirs >= ' + searchParams.minNiirs;
+					}
 
 					if ( searchParams.sensors.length ) {
 						filter += ' AND ';
-						filter += "(sensor_id LIKE '" + searchParams.sensors.join( "' OR sensor_id LIKE'" ) + "')";
+						filter += "(sensor_id LIKE '%" +
+							searchParams.sensors.map( function( sensor ) {
+								return sensor.trim();
+							} ).join( "%' OR sensor_id LIKE'%" ) + "%')";
 					}
 
 					queryParams.filter = filter;
@@ -187,16 +214,8 @@ function beginSearch() {
 							var metadata = feature.properties;
 							metadata.footprint = feature.geometry || null;
 
-							var acquisitionDate = "N/A";
-							if ( metadata.acquisition_date ) {
-								var parsedDate = Date.parse( metadata.acquisition_date.replace( "+0000", "Z" ) );
-								var date = getDate( new Date( parsedDate ) );
-								acquisitionDate = date.year +  "-" + date.month + "-" + date.day + " " +
-									date.hour + ":" + date.minute + ":" + date.second;
-							}
-
 							images.push({
-								acquisitionDate: acquisitionDate,
+								acquisitionDate: processAcquisitionDate( metadata.acquisition_date ),
 								imageId: processImageId( metadata ),
 								library: library,
 								metadata: metadata,
@@ -215,6 +234,51 @@ function beginSearch() {
 				});
 			}
 		);
+	}
+}
+
+function demoSearch() {
+	if ( tlv.demoLocation ) {
+		$( "#searchLocationInput" ).val( tlv.demoLocation );
+		beginSearch();
+	}
+	else {
+		var library = Object.keys( tlv.libraries )[ 0 ];
+		tlv.libraries[ library ].searchComplete = false;
+
+		var data = $.param({
+			maxFeatures: 1,
+			outputFormat: 'JSON',
+			request: 'getFeature',
+			service: 'WFS',
+			sortBy: 'acquisition_date+D',
+			typeName: 'omar:raster_entry',
+			version: '1.1.0'
+		});
+
+		displayLoadingDialog( "We are searching the libraries for imagery... fingers crossed!" );
+		$.ajax({
+			data: data,
+			dataType: "json",
+			url: tlv.libraries[ library ].wfsUrl
+		})
+		.always( function() {
+			tlv.libraries[ library ].searchComplete = true;
+		} )
+		.done( function( data ) {
+			var metadata = data.features[ 0 ].properties;
+			metadata.footprint = data.features[ 0 ].geometry || null;
+
+			tlv.libraries[ library ].searchResults = [{
+				acquisitionDate: processAcquisitionDate( metadata.acquisition_date ),
+				imageId: processImageId( metadata ),
+				library: library,
+				metadata: metadata,
+				numberOfBands: metadata.number_of_bands || 1
+			}];
+
+			processResults();
+		} );
 	}
 }
 
@@ -240,6 +304,45 @@ function getDate(date) {
 	return { day: day, hour: hour, minute: minute, month: month, second: second, year: year };
 }
 
+function getDistinctFsg() {
+	var updateFsgList = function() {
+		var fsgs = [];
+		$.each( tlv.libraries, function( index, library ) {
+		 	fsgs.push( library.fsg || [] );
+		});
+
+		var fsgList = $( "#searchFsgList" );
+		fsgList.html( "" );
+		$.each( [].concat.apply( [], fsgs ).unique().sort(), function( index, fsg ) {
+			fsgList.append( "<option value = '" + fsg + "'></option>" );
+		});
+	}
+
+	$.each( tlv.libraries, function( index, library ) {
+		if ( !library.fsg ) {
+			$.ajax({
+				data: "property=productId",
+				dataType: "json",
+				url: library.stagerUrl + "/dataManager/getDistinctValues"
+			})
+			.done( function( data ) {
+				library.fsg = data;
+				updateFsgList();
+				getDistinctFsg();
+			})
+			.fail( function() {
+				library.fsg = [];
+				updateFsgList();
+				getDistinctFsg();
+			});
+
+
+			return false;
+		}
+	});
+}
+
+
 function getDistinctSensors() {
 	var updateSensorSelect = function() {
 		var sensors = [];
@@ -247,17 +350,47 @@ function getDistinctSensors() {
 		 	sensors.push( library.sensors || [] );
 		});
 
-		var sensorSelect = $( "#searchSensorSelect" );
-		sensorSelect.html( "" );
+		var selectedSensors = [];
+		if ( tlv.sensors || tlv.preferences.tlvPreference.sensor ) {
+			selectedSensors = ( tlv.sensors || tlv.preferences.tlvPreference.sensor )
+				.split( ',' ).map( function( sensor ) {
+					return  sensor.trim();
+				} ) ;
+		}
+
+		var buttonGroup = $( '#searchSensorDiv' );
+		buttonGroup.html( '' );
 		$.each( [].concat.apply( [], sensors ).unique().sort(), function( index, sensor ) {
-			sensorSelect.append( "<option value = '" + sensor + "'>" + sensor.toUpperCase() + "</option>" );
-		});
+			var label = $( document.createElement( 'label' ) );
+			label.addClass( 'btn btn-primary' );
+			if ( selectedSensors.contains( sensor ) || selectedSensors.length == 0 ) {
+				label.addClass( 'active btn-success' );
+			}
+			$( label ).click( function() {
+				// this after the click has been nadled
+				if ( label.hasClass( 'active' ) ) {
+					label.removeClass( 'btn-success' );
+				}
+				else {
+					label.addClass( 'btn-success' );
+				}
+			} );
+
+			var input = document.createElement( 'input' );
+			input.type = 'checkbox';
+
+			$( label ).append( input );
+			$( label ).append( sensor );
+
+			$( buttonGroup ).append( label );
+		} );
 	}
 
 	$.each( tlv.libraries, function( index, library ) {
 		if ( !library.sensors ) {
 			$.ajax({
 				data: "property=sensorId",
+				dataType: "json",
 				url: library.stagerUrl + "/dataManager/getDistinctValues"
 			})
 			.done( function( data ) {
@@ -292,15 +425,6 @@ function getLocation() {
 	return location;
 }
 
-function getLocationGps() {
-	var callback = function(position) {
-		var coordinates = [position.coords.longitude, position.coords.latitude];
-		$("#searchLocationInput").val(coordinates.reverse().join(","));
-	}
-
-	getGpsLocation(callback);
-}
-
 function getSearchParams() {
 	var searchObject = {};
 
@@ -314,8 +438,9 @@ function getSearchParams() {
 
 	searchObject.filter = tlv.filter || null;
 
-	var fsgs = $( "#searchFsgSelect" ).val();
-	searchObject.fsgs = fsgs || [];
+	var fsgs = $( "#searchFsgInput" ).val();
+	searchObject.fsgs = fsgs ? fsgs.split( ',' ) : [];
+	searchObject.fsgNot = $( "#searchFsgNotCheckbox" ).hasClass( 'active' ) ? true : false;
 
 	var libraries = getSelectedLibraries();
 	if (libraries.length == 0) {
@@ -336,8 +461,8 @@ function getSearchParams() {
 	var minNiirs = $("#searchMinNiirsInput").val();
 	searchObject.minNiirs = parseFloat(minNiirs);
 
-	var sensors = $( "#searchSensorSelect" ).val();
-	searchObject.sensors = sensors || [];
+	var sensors = getSelectedSensors();
+	searchObject.sensors = sensors;
 
 	var startDate = getStartDate();
 	searchObject.startYear = startDate.year;
@@ -371,11 +496,62 @@ function getSelectedLibraries() {
 	return libraries;
 }
 
+function getSelectedSensors() {
+	var sensors = [];
+
+	$.each( $( '#searchSensorDiv' ).children(), function( index, sensor ) {
+		if ( $( sensor ).hasClass( 'active' ) ) {
+			sensors.push( $( sensor ).text() );
+		}
+	} );
+
+
+
+	return sensors;
+}
+
 function getStartDate() {
 	var date = $("#searchStartDateTimePicker").data("DateTimePicker").date().toDate();
 
 
 	return getDate(date);
+}
+
+function handleDataList( inputId ) {
+	var inputElement = $( '#' + inputId );
+
+	var dataList = inputElement.next();
+	var options = inputElement.attr( "data-options" );
+	// if there are no options, store them
+	if ( !options ) {
+		var optionsArray = [];
+		$.each( dataList[ 0 ].options, function( index, option ) {
+			optionsArray.push( $( option ).val() );
+		} );
+		inputElement.attr( "data-options",  optionsArray.join( ',' ) );
+	}
+	else {
+		options = options.split( ',' );
+	}
+
+
+	var prefix = '';
+	var userInput = inputElement.val().replace( /^\s+|\s+$/g, '' );
+	if ( userInput != inputElement.val() ) {
+		var lastCommaIndex = userInput.lastIndexOf( ',' );
+		if ( lastCommaIndex != -1 ) {
+			prefix = userInput.substr( 0, lastCommaIndex ) + ', ';
+		}
+
+		if ( userInput.indexOf( ',' ) > -1 ) {
+			dataList.empty();
+			$.each( options, function( index, option ) {
+				if ( userInput.indexOf( option ) < 0 ) {
+					dataList.append( '<option value="' + prefix + option +'">' );
+				}
+			} );
+		}
+	}
 }
 
 function initializeEndDateTimePicker() {
@@ -400,18 +576,41 @@ function initializeEndDateTimePicker() {
 	});
 }
 
-function initializeFsgSelect() {
-	if ( tlv.fsg ) {
-		var fsgSelect = $( "#searchFsgSelect" );
-		if ( fsgSelect ) {
-			$.each( tlv.fsg.split( "," ), function( index, fsg ) {
-				$( "#searchFsgSelect option:contains('" + fsg + "')" ).prop("selected", true);
-			});
-		}
+function initializeFsgList() {
+	if ( tlv.fsg || tlv.preferences.tlvPreference.fsg ) {
+		var fsg = tlv.fsg || tlv.preferences.tlvPreference.fsg;
+		$( '#searchFsgInput' ).val( fsg );
+	}
+	getDistinctFsg();
+}
+
+function initializeFsgNot() {
+	if ( tlv.fsgNot == "true" ) {
+		$( "#searchFsgNotCheckbox" ).trigger( "click" );
+	}
+}
+
+function initializeLastDaysInput() {
+	if ( tlv.lastDays ) {
+		$( '#searchLastDaysInput' ).val( tlv.lastDays );
+		adjustLastDaysDate();
 	}
 }
 
 function initializeLibraryCheckboxes() {
+	$.each( Object.keys( tlv.libraries ), function( index, library ) {
+		var label = $( "#searchLibrary" + library.capitalize() + "Label" );
+		label.click( function() {
+
+			if ( !label.hasClass( 'active' ) ) {
+				label.addClass( 'btn-success' );
+			}
+			else {
+				label.removeClass( 'btn-success' );
+			}
+		} );
+	} );
+
 	if ( tlv.searchLibraries ) {
 		$.each(
 			tlv.searchLibraries.split( "," ),
@@ -455,17 +654,7 @@ function initializeMinNiirsInput() {
 	$( "#searchMinNiirsInput" ).val( minNiirs );
 }
 
-function initializeSensorSelect() {
-	if ( tlv.sensors || tlv.preferences.tlvPreference.sensor ) {
-		var sensors = ( tlv.sensors || tlv.preferences.tlvPreference.sensor ).split( "," );
-		var getDistinctSensorsInit = getDistinctSensors;
-		getDistinctSensors = function() {
-			getDistinctSensorsInit();
-			$.each( sensors, function( index, sensor ) {
-				$( "#searchSensorSelect option[value='" + sensor + "']" ).prop( "selected", true );
-			});
-		}
-	}
+function initializeSensorList() {
 	getDistinctSensors();
 }
 
@@ -498,6 +687,7 @@ pageLoad = function() {
 	setupSearchMenuDialog();
 
 	if ( tlv.location || tlv.filter || tlv.preferences.tlvPreference.location ) {
+		$( '#searchDialog' ).modal( 'hide' );
 		beginSearch();
 	}
 	else {
@@ -549,19 +739,28 @@ function placenameSearch( input ) {
 	});
 }
 
+function processAcquisitionDate( acquisitionDate ) {
+	if ( acquisitionDate ) {
+		var parsedDate = Date.parse( acquisitionDate.replace( '+0000', 'Z' ) );
+		var date = getDate( new Date( parsedDate ) );
+
+
+		return date.year +  '-' + date.month + '-' + date.day + ' ' + date.hour + ':' + date.minute + ':' + date.second;
+	}
+	else {
+		return 'N/A';
+	}
+}
+
 function processImageId( metadata ) {
 	var imageId = metadata.image_id;
 	if ( !imageId ) {
  		imageId = metadata.title || metadata.filename.replace( /^.*[\\\/]/, "" );
 	}
 
-	$.each(
-		tlv.imageIdFilters,	function( index, filter ) {
-			if ( metadata.filename.match( filter ) ) {
-				imageId += RegExp.$1;
-			}
-		}
-	);
+	if ( metadata.product_id ) {
+		imageId += ' (' +  metadata.product_id + ')';
+	}
 
 
 	return imageId;
@@ -590,8 +789,8 @@ function processResults() {
 		);
 		if ( searchResults.length > 0 ) {
 			tlv.layers = searchResults.sort( function( a, b ) {
-				if ( a.acquisitionDate < b.acquisitionDate ) { return -1; }
-				else if ( a.acquisitionDate > b.acquisitionDate ) { return 1; }
+				if ( a.acquisitionDate > b.acquisitionDate ) { return -1; }
+				else if ( a.acquisitionDate < b.acquisitionDate ) { return 1; }
 
 				// if the acquisiton dates are the same, sort by entry id
 				else if ( a.metadata.entry_id < b.metadata.entry_id ) { return -1; }
@@ -620,7 +819,6 @@ function processResults() {
 
 				var extent = new ol.geom.GeometryCollection( geometries ).getExtent();
 				tlv.location = ol.extent.getCenter( extent );
-
 				tlv.bbox = tlv.bbox || extent.join( "," );
 			}
 
@@ -641,13 +839,15 @@ function setupSearchMenuDialog() {
 	// start with the end date since the start date's default is based on the end date
 	initializeEndDateTimePicker();
 	initializeStartDateTimePicker();
+	initializeLastDaysInput();
 
-	initializeFsgSelect();
+	initializeFsgList();
+ 	initializeFsgNot();
 	initializeLibraryCheckboxes();
 	initializeMinNiirsInput();
 	initializeMaxCloudCoverInput();
 	initializeMaxResultsSelect();
-	initializeSensorSelect();
+	initializeSensorList();
 
 	initializeLocationInput();
 }

@@ -1,28 +1,3 @@
-function addAnnotations( geoJsonSource, layer ) {
-	var features = new ol.format.GeoJSON().readFeatures( geoJsonSource );
-	$.each( features, function( index, feature ) {
-		var geometry = new ol.format.WKT().readGeometry(
-			feature.getProperties().geometry_ortho, {
-			dataProjection: "EPSG:4326",
-			featureProjection: "EPSG:3857"
-		});
-		feature.setGeometry( geometry );
-	});
-	createAnnotationsLayer( layer );
-
-	var source = layer.annotationsLayer.getSource();
-	source.un( "addfeature", anAnnotationHasBeenAdded );
-	layer.annotationsLayer.getSource().addFeatures( features );
-	source.on( "addfeature", anAnnotationHasBeenAdded );
-
-	$.each( source.getFeatures(), function( index, feature ) {
-		var style = createDefaultStyle();
-		var label = feature.getProperties().type;
-		style.getText().setText( label );
-		feature.setStyle( style );
-	});
-}
-
 var anAnnotationHasBeenAddedMap = anAnnotationHasBeenAdded;
 anAnnotationHasBeenAdded = function( event ) {
 	anAnnotationHasBeenAddedMap( event );
@@ -44,61 +19,75 @@ function annotationsLayerToggle() {
 }
 
 function applyAnnotationStyle() {
-	var feature = tlv.currentAnnotation;
+	var circleStyle = getPolygonStyle( 'circle' );
+	var lineStyle = getLineStyle();
+	var pointStyle = getPointStyle();
+	var polygonStyle = getPolygonStyle( 'polygon' );
 
-	feature.setProperties({
-		confidence: $( "#confidenceSelect" ).val(),
-		//ontology: $( "#typeInput" ).data( "ontology" ),
-		type: $( "#typeInput" ).val(),
-		username: $( "#usernameInput" ).val()
-	});
+	if ( tlv.currentAnnotation ) {
+		var feature = tlv.currentAnnotation;
+		switch ( feature.getGeometry().getType() ) {
+			case 'Circle':
+				feature.setStyle( circleStyle );
+				var center = feature.getGeometry().getCenter();
+				var radius = getRadiusStyle( 'circle' );
+				var geometry = calculateCircleFromRadius( center, radius );
+				feature.setGeometry( geometry );
+				break;
+			case 'LineString':
+				feature.setStyle( lineStyle );
+				break;
+			case 'MultiPolygon':
+			case 'Polygon':
+				feature.setStyle( polygonStyle );
+				break;
+			case 'Point':
+				feature.setStyle( pointStyle );
+				break;
+		}
 
-	var fillColorHex = $("#fillColorInput").val();
-	var fillColor = hexToRgb(fillColorHex);
-	var fillTransparency = $("#fillTransparencyInput").val();
-	var fillRgba = "rgba(" + fillColor.r + "," + fillColor.g + "," + fillColor.b + "," + fillTransparency + ")";
-	var fill = new ol.style.Fill({ color: fillRgba });
-
-	var radius = $("#radiusInput").val();
-
-	var strokeColorHex = $("#strokeColorInput").val();
-	var strokeColor = hexToRgb(strokeColorHex);
-	var strokeTransparency = $("#strokeTransparencyInput").val();
-	var strokeRgba = "rgba(" + strokeColor.r + "," + strokeColor.g + "," + strokeColor.b + "," + strokeTransparency + ")";
-	var strokeWidth = parseInt($("#strokeWidthInput").val(), 10);
-	var stroke = new ol.style.Stroke({
-		color: strokeRgba,
-		width: strokeWidth
-	});
-
-	var style = feature.getStyle();
-	switch ( feature.getGeometry().getType() ) {
-		case "Point":
-			var image = new ol.style.Circle({
-					fill: fill,
-					radius: parseInt( radius, 10 ),
-					stroke: stroke
-				});
-			style.setImage( image );
-			break;
-		case "Circle":
-			var center = ol.proj.transform(
-				feature.getGeometry().getCenter(), "EPSG:3857", "EPSG:4326"
-			);
-			var geometry = calculateCircleFromRadius( center, radius );
-			feature.setGeometry(geometry);
-		default:
-			style.setFill( fill );
-			style.setStroke( stroke );
-			break;
+		tlv.layers[ tlv.currentLayer ].annotationsLayer.setVisible( false );
+		tlv.layers[ tlv.currentLayer ].annotationsLayer.setVisible( true );
 	}
-	var label = feature.getProperties().type;
-	style.getText().setText( label );
-	feature.setStyle( style );
+	else if ( tlv.currentAnnotationLayer ) {
+		var propertyKey = $( '#text' ).find( '#textTextSelect' ).val();
+		tlv.currentAnnotationLayer.setStyle( function( feature ) {
+			var style;
+			switch ( feature.getGeometry().getType() ) {
+				case 'Circle':
+					style = circleStyle;
+					break;
+				case 'LineString':
+					style = lineStyle;
+					break;
+				case 'MultiPolygon':
+				case 'Polygon':
+					style = polygonStyle;
+					break;
+				case 'Point':
+					style = pointStyle;
+					break;
+			}
 
-	// refresh the layer for the new style to take effect
-	tlv.layers[tlv.currentLayer].annotationsLayer.setVisible(false);
-	tlv.layers[tlv.currentLayer].annotationsLayer.setVisible(true);
+			var label = feature.getProperties()[ propertyKey ];
+			if ( label ) {
+				if ( typeof label == "object" ) { label = 'JS Object'; }
+				style.getText().setText( '' + label );
+			}
+			else {
+				style.getText().setText( 'N/A' );
+			}
+
+
+			return style;
+		} );
+
+		tlv.currentAnnotationLayer.setVisible( false );
+		tlv.currentAnnotationLayer.setVisible( true );
+	}
+
+	tlv.currentAnnotation = null;
+	tlv.currentAnnotationLayer = null;
 }
 
 function calculateCircleFromRadius(center, radius) {
@@ -111,8 +100,8 @@ function calculateCircleFromRadius(center, radius) {
 		distance = sphere.haversineDistance(center, point);
 	}
 
-	var projectedPoint1 = ol.proj.transform(center, "EPSG:4326", "EPSG:3857");
-	var projectedPoint2 = ol.proj.transform(point, "EPSG:4326", "EPSG:3857");
+	var projectedPoint1 = center;
+	var projectedPoint2 = point;
 	var newRadius = Math.abs(projectedPoint2[0] - projectedPoint1[0]);
 	var geometry = new ol.geom.Circle(projectedPoint1, newRadius);
 
@@ -215,6 +204,9 @@ function drawAnnotationMap( type ) {
 	var layer = tlv.layers[ tlv.currentLayer ];
 	createAnnotationsLayer( layer );
 
+	// in case any are still active by chance
+	removeInteractions();
+
 	// create the right draw interaction
 	switch (type) {
 		case "circle": drawCircle(); break;
@@ -229,12 +221,103 @@ function drawAnnotationMap( type ) {
 
 function getCircleRadius(geometry) {
 	var sphere = new ol.Sphere(6378137);
-	var point1 = ol.proj.transform(geometry.getCenter(), "EPSG:3857", "EPSG:4326");
-	var point2 = ol.proj.transform(geometry.getLastCoordinate(), "EPSG:3857", "EPSG:4326");
+	var point1 = geometry.getCenter();
+	var point2 = geometry.getLastCoordinate();
 	var radius = sphere.haversineDistance(point1, point2);
 
 
 	return radius;
+}
+
+function getFillStyle( styleType ) {
+	var styleInput = $( '#' + styleType );
+	var color = styleInput.find( '#fillColorInput' ).val();
+	var rgb = hexToRgb( color );
+	var opacity = styleInput.find( '#fillOpacityInput' ).val();
+
+
+	return new ol.style.Fill({
+		color: 'rgba(' + [ rgb.r, rgb.g, rgb.b ].join( ',' ) + ',' + opacity + ')'
+	});
+}
+
+function getLineStyle() {
+	return new ol.style.Style({
+		stroke: getStrokeStyle( 'line' ),
+		text: getTextStyle()
+	});
+}
+
+function getPointStyle() {
+	return new ol.style.Style({
+		image: new ol.style.Circle({
+			fill: getFillStyle( 'point' ),
+			radius: getRadiusStyle( 'point' ),
+			stroke: getStrokeStyle( 'point' )
+		}),
+		text: getTextStyle()
+	});
+}
+
+function getPolygonStyle( styleType ) {
+	return new ol.style.Style({
+		fill: getFillStyle( styleType ),
+		stroke: getStrokeStyle( styleType ),
+		text: getTextStyle()
+	});
+}
+
+function getRadiusStyle( styleType ) {
+	return parseInt( $( '#' + styleType ).find( '#radiusInput' ).val(), 10 );
+}
+
+function getStrokeStyle( styleType ) {
+	var styleInput = $( '#' + styleType );
+	var color = styleInput.find( '#strokeColorInput' ).val();
+	var rgb = hexToRgb( color );
+	var opacity = styleInput.find( '#strokeOpacityInput' ).val();
+
+	var dashLength = styleInput.find( '#strokeLineDashLengthInput' ).val();
+	var dashSpacing = styleInput.find( '#strokeLineDashLengthSpacingInput' ).val();
+
+
+	return new ol.style.Stroke({
+		color: 'rgba(' + [ rgb.r, rgb.g, rgb.b ].join( ',' ) + ',' + opacity + ')',
+		lineCap: styleInput.find( '#strokeLineCapSelect' ).val(),
+		lineDash: [ dashLength, dashSpacing ],
+		lineDashOffset: styleInput.find( '#strokeLineDashOffsetInput' ).val(),
+		lineJoin: styleInput.find( '#strokeLineJoinSelect' ).val(),
+		miterLimit: styleInput.find( '#strokeMiterLimitInput' ).val(),
+		width: styleInput.find( '#strokeWidthInput' ).val()
+	});
+}
+
+function getTextStyle() {
+	var styleInput = $( '#text' );
+	var color = styleInput.find( "h3:contains('Text')" ).parent().find( '#fillColorInput' ).val();
+	var rgb = hexToRgb( color );
+	var opacity = styleInput.find( "h3:contains('Text')" ).parent().find( '#fillOpacityInput' ).val();
+
+
+	var textStyle = new ol.style.Text({
+		fill: new ol.style.Fill({
+			color: 'rgba(' + [ rgb.r, rgb.g, rgb.b ].join( ',' ) + ',' + opacity + ')'
+		}),
+		offsetX: styleInput.find( '#textOffsetXInput' ).val(),
+		offsetY: styleInput.find( '#textOffsetYInput' ).val(),
+		overflow: true,
+	    scale: styleInput.find( '#textScaleInput' ).val(),
+	    rotateWithView: styleInput.find( '#textRotateWithViewSelect' ).val() == 'true',
+	    rotation: styleInput.find( '#textRotationInput' ).val(),
+		textAlign: styleInput.find( '#textTextAlignSelect' ).val()
+	});
+
+	if ( tlv.currentAnnotation ) {
+		textStyle.setText( styleInput.find( '#textTextInput' ).val() );
+	}
+
+
+	return textStyle;
 }
 
 function hexToRgb(hex) {
@@ -278,96 +361,81 @@ function modifyAnnotationsMap() {
 	}
 }
 
-function openAnnotationsDialog() {
-	$("#annotationsDialog").modal("show");
+function openAnnotationsDialog( vectorLayer ) {
+	var styleTabs = $( '#annotationsDialog' ).find( '.nav-tabs' );
+	$.each( styleTabs.children(), function( index, node ) {
+		$( node ).removeClass( 'active' );
+	} );
 
-	var feature = tlv.currentAnnotation;
-	var style = feature.getStyle();
+	var stylePanes = $( '#annotationsDialog' ).find( '.tab-content' );
+	$.each( stylePanes.children(), function( index, node ) {
+		$( node ).removeClass( 'active' );
+	} );
 
-	var fillColor = ol.color.asArray(style.getFill().getColor());
-	var radius;
-	var radiusInput = $("#radiusInput");
-	radiusInput.prop("disabled", false);
-	radiusInput.prev().html("Radius");
-
-	var stroke = style.getStroke();
-	var strokeColor = ol.color.asArray(stroke.getColor());
-  	var strokeWidth = stroke.getWidth();
-
-	switch (feature.getGeometry().getType()) {
-		case "Circle":
-			radiusInput.prev().html("Radius (meters)");
-			radius = getCircleRadius(feature.getGeometry());
-			break;
-		case "Point":
-			var image = style.getImage();
-			fillColor = ol.color.asArray(image.getFill().getColor());
-			radius = image.getRadius();
-			radiusInput.prev().html("Radius (pixels)");
-			var stroke = style.getImage().getStroke();
-			strokeColor = ol.color.asArray(stroke.getColor());
-			strokeWidth = stroke.getWidth();
-			break;
-		default:
-			radiusInput.prop("disabled", true);
-			break;
+	var features = [];
+	if ( vectorLayer ) {
+		tlv.currentAnnotationLayer = vectorLayer;
+		var geometryTypes = [];
+		$.each( vectorLayer.getSource().getFeatures(), function( index, feature ) {
+			// get one feature of each geometry type
+			var geometryType = feature.getGeometry().getType();
+			if ( geometryTypes.indexOf( geometryType ) < 0 ) {
+				geometryTypes.push( geometryType );
+				features.push( feature );
+			}
+		} );
+	}
+	else if ( tlv.currentAnnotation ) {
+		features.push( tlv.currentAnnotation );
 	}
 
-	var fillColorHex = rgbToHex(fillColor[0], fillColor[1], fillColor[2]);
-	$("#fillColorInput").val(fillColorHex);
-	$("#fillTransparencyInput").val(fillColor[3]);
-
-	radiusInput.val(radius || 0);
-
-	var strokeColorHex = rgbToHex(strokeColor[0], strokeColor[1], strokeColor[2]);
-	$("#strokeColorInput").val(strokeColorHex);
-	$("#strokeTransparencyInput").val(strokeColor[3]);
-	$("#strokeWidthInput").val(strokeWidth);
-
-	var properties = feature.getProperties();
-	$( "#confidenceSelect option[value=" + properties.confidence + "]" ).prop( "selected", true );
-	$( "#typeInput" ).val( properties.type );
-	$( "#usernameInput" ).val( properties.username );
-}
-
-var pageLoadAnnotation = pageLoad
-pageLoad = function() {
-	pageLoadAnnotation();
-
-	if ( tlv.annotation ) {
-		var applyAnnotation = function( data ) {
-			if ( tlv.layers && tlv.layers.length > 0 ) {
-				var geometry = new ol.format.WKT().readGeometry(
-					data.geometryOrtho ).transform( "EPSG:4326", "EPSG:3857" );
-				var feature = new ol.Feature( geometry );
-				feature.setProperties({
-					confidence: data.confidence,
-					type: data.type,
-					username: data.username
-				});
-
-				var layer = tlv.layers[ tlv.currentLayer ];
-				createAnnotationsLayer( layer );
-				layer.annotationsLayer.getSource().addFeature( feature );
-
-				var style = feature.getStyle();
-				style.getText().setText( data.type );
-				feature.setStyle( style );
-
-				$( "#annotationsDialog" ).modal( "hide" );
-			}
-			else {
-				setTimeout( function() { applyAnnotation( data ); }, 1000 );
-			}
+	$.each( features, function( index, feature ) {
+		var type = feature.getGeometry().getType();
+		var style;
+ 		if ( tlv.currentAnnotationLayer ) {
+			var styleFunction = tlv.currentAnnotationLayer.getStyleFunction()
+			style = styleFunction( feature );
+		}
+		else {
+			style = feature.getStyle();
 		}
 
-		$.ajax({
-			url: tlv.contextPath + "/annotation/search?id=" + tlv.annotation
-		})
-		.done( function( data ) {
-			applyAnnotation( data );
-		});
-	}
+		switch ( type ) {
+			case 'Circle':
+				var radius = getCircleRadius( feature.getGeometry() );
+				setRadiusStyle( 'circle', radius );
+				setPolygonStyle( 'circle', style );
+				if ( index == features.length - 1 ) {
+					styleTabs.find( 'a:contains("Circle")' ).parent().addClass( 'active' );
+					stylePanes.find( 'div#circle' ).addClass( 'active' );
+				}
+				break;
+			case 'LineString':
+				setLineStyle( style );
+				if ( index == features.length - 1 ) {
+					styleTabs.find( 'a:contains("Line")' ).parent().addClass( 'active' );
+					stylePanes.find( 'div#line' ).addClass( 'active' );
+				}
+				break;
+			case 'Point':
+				setPointStyle( style );
+				if ( index == features.length - 1 ) {
+					styleTabs.find( 'a:contains("Point")' ).parent().addClass( 'active' );
+					stylePanes.find( 'div#point' ).addClass( 'active' );
+				}
+				break;
+			case 'MultiPolygon':
+			case 'Polygon':
+				setPolygonStyle( 'polygon', style );
+				if ( index == features.length - 1 ) {
+					styleTabs.find( 'a:contains("Polygon")' ).parent().addClass( 'active' );
+					stylePanes.find( 'div#polygon' ).addClass( 'active' );
+				}
+				break;
+		}
+	} );
+
+	$( '#annotationsDialog' ).modal( 'show' );
 }
 
 function removeInteractions() {
@@ -383,194 +451,129 @@ function removeInteractions() {
 	);
 }
 
-function saveAnnotations() {
-	var layer = tlv.layers[ tlv.currentLayer ];
-	var features = layer.annotationsLayer.getSource().getFeatures();
+function setFillStyle( styleType, fill ) {
+	var styleInput = $( '#' + styleType );
 
-	var values = [].concat.apply( [], features.map( function( feature ) {
-		var properties = feature.getProperties();
+	var color = ol.color.asArray( fill.getColor() );
+	var hex = rgbToHex( color[ 0 ], color[ 1 ], color[ 2 ] );
+	styleInput.find( '#fillColorInput' ).val( hex );
+	styleInput.find( '#fillOpacityInput' ).val( color[ 3 ] );
+}
 
+function setLineStyle( style ) {
+	setStrokeStyle( 'line', style.getStroke() );
+	setTextStyle( style.getText() );
+}
 
-		return [
-			properties.confidence,
-			properties.type,
-			properties.username
-		];
-	} ) );
+function setPointStyle( style ) {
+	setFillStyle( 'point', style.getImage().getFill() );
+	setRadiusStyle( 'point', style.getImage().getRadius() );
+	setStrokeStyle( 'point', style.getImage().getStroke() );
+	setTextStyle( style.getText() );
+}
 
-	if ( values.indexOf( "" ) > -1 ) {
-		displayErrorDialog( "One or more of your annotation properties are blank." );
-		return;
+function setPolygonStyle( styleType, style ) {
+	setFillStyle( styleType, style.getFill() );
+	setStrokeStyle( styleType, style.getStroke() );
+	setTextStyle( style.getText() );
+}
+
+function setRadiusStyle( styleType, radius ) {
+	$( '#' + styleType ).find( '#radiusInput' ).val( radius );
+}
+
+function setStrokeStyle( styleType, stroke ) {
+	var styleInput = $( '#' + styleType );
+
+	var color = ol.color.asArray( stroke.getColor() );
+	var hex = rgbToHex( color[ 0 ], color[ 1 ], color[ 2 ] );
+	styleInput.find( '#strokeColorInput' ).val( hex );
+	styleInput.find( '#strokeOpacityInput' ).val( color[ 3 ] );
+
+	var lineCap = stroke.getLineCap();
+	styleInput.find( "#strokeLineCapSelect option[value='" + lineCap + "']" ).prop( 'selected', true );
+
+	var lineDash = stroke.getLineDash();
+	styleInput.find( '#strokeLineDashLengthInput' ).val( lineDash[ 0 ] );
+	styleInput.find( '#strokeLineDashLengthSpacingInput' ).val( lineDash[ 1 ] );
+
+	var lineDashOffset = stroke.getLineDashOffset();
+	styleInput.find( '#strokeLineDashOffsetInput' ).val( lineDashOffset );
+
+	var lineJoin = stroke.getLineJoin();
+	styleInput.find( "#strokeLineJoinSelect option[value='" + lineJoin + "']" ).prop( 'selected', true );
+
+	var miterLimit = stroke.getMiterLimit();
+	styleInput.find( '#strokeMiterLimitInput' ).val( miterLimit );
+
+	var width = stroke.getWidth();
+	styleInput.find( '#strokeWidthInput' ).val( width );
+}
+
+function setTextStyle( text ) {
+	var styleInput = $( '#text' );
+
+	var color = ol.color.asArray( text.getFill().getColor() );
+	var hex = rgbToHex( color[ 0 ], color[ 1 ], color[ 2 ] );
+	styleInput.find( "h3:contains('Text')" ).parent().find( '#fillColorInput' ).val( hex );
+	styleInput.find( "h3:contains('Text')" ).parent().find( '#fillOpacityInput' ).val( color[ 3 ] );
+
+	var offsetX = text.getOffsetX();
+	styleInput.find( '#textOffsetXInput' ).val( offsetX );
+
+	var offsetY = text.getOffsetY();
+	styleInput.find( '#textOffsetYInput' ).val( offsetY );
+
+	var scale = text.getScale();
+	styleInput.find( '#textScaleInput' ).val( scale );
+
+	var rotateWithView = text.getRotateWithView();
+	styleInput.find( "#textRotateWithViewSelect option[value='" + rotateWithView + "']" ).prop( 'selected', true );
+
+	var rotation = text.getRotation();
+ 	styleInput.find( '#textRotationInput' ).val( rotation );
+
+	var textInput = styleInput.find( '#textTextInput' );
+	textInput.val( '' );
+	var textSelect = styleInput.find( '#textTextSelect' );
+	textSelect.html( '' );
+	if ( tlv.currentAnnotation ) {
+		textInput.val( text.getText() );
+
+		textInput.prop( 'disabled', false );
+		textSelect.prop( 'disabled', true );
 	}
+	else if ( tlv.currentAnnotationLayer ) {
+		var propertyKey;
+		var propertyKeys = [];
+		$.each( tlv.currentAnnotationLayer.getSource().getFeatures(), function( index, feature ) {
 
-	if ( layer.annotationsLayer ) {
-		var displayData = [];
+			var properties = feature.getProperties();
+			propertyKeys = propertyKeys.concat( Object.keys( properties ) );
+			propertyKeys = propertyKeys.unique();
 
-		var geometryWriter = new ol.format.WKT();
-		$( "#dragoMetadata" ).html( "" );
-		$.each( features, function( index, feature ) {
-			if ( !feature.getProperties().saved ) {
-				var geometry = feature.getGeometry().clone();
-
-				var bbox = ol.proj.transformExtent( geometry.getExtent(), "EPSG:3857", "EPSG:4326" );
-				var center = ol.extent.getCenter( bbox );
-				var location = document.location;
-				var urlParams = {
-					bbox: bbox.join( "," ),
-					filter: "filename LIKE '" + layer.metadata.filename + "'",
-					location: center.join( "," )
-				};
-				var link = location.protocol + "//" + location.host + tlv.contextPath + "?" + $.param( urlParams )
-
-				if ( geometry.getType() == "Circle" ) {
-					geometry = new ol.geom.Polygon.fromCircle( geometry, 100 );
-				}
-				var properties = feature.getProperties();
-				//if ( properties.ontology && properties.ontology.prefLabel ) {
-				//	properties.ontology.prefLabel = JSON.stringify( properties.ontology.prefLabel );
-				//}
-				var data = {
-					confidence: properties.confidence,
-					filename: layer.metadata.filename,
-					geometryOrtho: geometryWriter.writeGeometry(
-						geometry.clone().transform( "EPSG:3857", "EPSG:4326" )
-					),
-					imageId: layer.imageId,
-					link: link,
-					//ontology: properties.ontology,
-					type: properties.type,
-					username: properties.username
-				};
+			// find out which key equals the text value
+			if ( !propertyKey && Object.values( properties ).indexOf( text.getText() ) > -1 ) {
+				$.each( properties, function( key, value ) {
+					if ( properties[ key ] == text.getText() ) {
+						propertyKey = key;
 
 
-				var coordinates;
- 				switch ( geometry.getType() ) {
-					case "LineString": coordinates = geometry.getCoordinates(); break;
-					case "Point": coordinates = [ geometry.getCoordinates() ]; break;
-					case "Polygon": coordinates = geometry.getCoordinates()[ 0 ]; break;
-				}
-				groundToImagePoints( coordinates, layer, function( pixels, layer ) {
-					geometry.setCoordinates([ pixels ]);
-					data.geometryPixel = geometryWriter.writeGeometry( geometry );
-
-					var callback = function( dted ) {
-						var dtedCellPattern = /Opened cell:\s*([^\s]*)/;
-						data.dted = dted.match( dtedCellPattern ) ? RegExp.$1 : "N/A";
-
-						$.ajax({
-							contentType: "application/json",
-							data: JSON.stringify( data ),
-							dataType: "json",
-							type: "post",
-							url: tlv.contextPath + "/annotation/saveAnnotation"
-						})
-						.always( function() {
-							hideLoadingDialog();
-						})
-						.done( function( json ) {
-							var pre = document.createElement( "pre" );
-							$( pre ).css( "background", "none" );
-							$( pre ).css( "color", "#c8c8c8" );
-							$( pre ).html( JSON.stringify( data, null, 2 ) );
-							$( "#dragoMetadata" ).prepend( pre );
-
-							if ( json.response ) {
-								feature.setProperties({ saved: true });
-
-								displayData.push( data );
-								$( "#dragoMetadata" ).prepend( "Saved  " + displayData.length + " of " + features.length + "..." );
-							}
-							else {
-								$( "#dragoMetadata" ).prepend( "Not Saved ..." );
-							}
-							displayDialog( "dragoDialog" );
-						})
-						.fail( function() {});
+						return false;
 					}
-
-					var mapCenter = tlv.map.getView().getCenter();
-					getDtedHeight( mapCenter[ 1 ], mapCenter[ 0 ], callback );
-				});
+				} );
 			}
-			else {
-				$( "#dragoMetadata" ).prepend( "Already saved " + displayData.length + " of " + features.length + "..." );
-			}
-		});
-
-		$( "#dragoDialog" ).modal( "show" );
-		tlv.map.once(
-			"postcompose",
-			function( event ) {
-				var canvas = event.context.canvas;
-				canvas.toBlob(function( blob ) {
-					var urlCreator = window.URL || window.webkitURL;
-					var imageUrl = urlCreator.createObjectURL( blob );
-					$( "#dragoImage" ).attr( "src", imageUrl );
-				});
-			}
-		);
-		tlv.map.renderSync();
-
-		displayLoadingDialog( "Saving..." );
-	}
-}
-
-function searchForAnnotations() {
-	$.each( tlv.layers, function( index, layer ) {
-		if ( !layer.annotations ) {
-			var params = {
-				filter: "image_id LIKE '" + layer.imageId + "'",
-				maxResults: 100,
-				outputFormat: "JSON",
-				request: "getFeature",
-				service: "WFS",
-				typeName: "omar:annotation",
-				version: "1.1.0"
-			};
-			$.ajax({
-				url: tlv.libraries[ layer.library ].wfsUrl + "?" + $.param( params )
-			})
-			.done(function( data ) {
-				layer.annotations = data;
-				if ( data.features.length > 0 ) {
-					addAnnotations( data, layer );
-				}
-				searchForAnnotations();
-			})
-			.fail( function() {
-				searchForAnnotations();
-			});
-
-
-			return false;
-		}
-	});
-}
-
-function bindWindowUnload() {
-	window.addEventListener( "beforeunload", function( event ) {
-		event.preventDefault();
-
-		var unsaved = tlv.layers[ tlv.currentLayer ].annotationsLayer.getSource().getFeatures().filter( function( feature ) {
-
-
-			return !feature.getProperties().saved;
 		} );
 
-		if( unsaved.length ) {
-			var message = 'Important: You have unsaved changes!';
-			event.returnValue = message;
+		$.each( propertyKeys, function( index, value ) {
+			var selected = value == propertyKey ? 'selected' : '';
+			textSelect.append( '<option ' + selected + ' value = "' + value + '">' + value + '</option>' );
+		} );
 
+		textInput.prop( 'disabled', true );
+		textSelect.prop( 'disabled', false );
+	}
 
-			return message;
-		}
-	} );
+	var textAlign = text.getTextAlign();
+	styleInput.find( "#textTextAlignSelect option[value='" + textAlign + "']" ).prop( 'selected', true );
 }
-
-var setupTimeLapseAnnotations = setupTimeLapse;
-setupTimeLapse = function() {
-	setupTimeLapseAnnotations();
-	//searchForAnnotations();
-
-	bindWindowUnload();
-};

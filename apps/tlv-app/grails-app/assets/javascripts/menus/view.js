@@ -70,7 +70,7 @@ changeFrame = function( params ) {
 	var oldLayer = tlv.layers[ tlv.currentLayer ];
 	var oldMap = oldLayer.imageSpaceMap;
 	var center = oldMap.getView().getCenter();
-	center[ 1 ] = oldLayer.metadata.height - center[ 1 ];
+
 	$( '#' + oldMap.getTarget() ).hide();
 
 
@@ -81,9 +81,9 @@ changeFrame = function( params ) {
 	}
 	else { changeFrameView( params ); }
 
-	var newLayer = tlv.layers[ tlv.currentLayer ];
-	var newMap = newLayer.imageSpaceMap;
+
 	if ( $( '#imageSpaceMaps' ).is( ':visible' ) ) {
+
 		imagePointsToGround( [ center ], oldLayer, function( coordinates, layer, info ) {
 			// assume that the layer switched while the AJAX call is being made
 			var newLayer = tlv.layers[ tlv.currentLayer ];
@@ -91,12 +91,10 @@ changeFrame = function( params ) {
 			groundToImagePoints( coordinates, newLayer, function( pixels, layer ) {
 				hideLoadingDialog();
 
-				var center = pixels[ 0 ];
-				center[ 1 ] = layer.metadata.height - center[ 1 ];
-				layer.imageSpaceMap.getView().setCenter( center );
+				$( '#' + layer.imageSpaceMap.getTarget() ).show();
+				layer.imageSpaceMap.updateSize();
 
-				$( '#' + newMap.getTarget() ).show();
-				newMap.updateSize();
+				layer.imageSpaceMap.getView().setCenter( pixels[ 0 ] );
 			} );
 		} );
 	}
@@ -167,6 +165,7 @@ createLayerSources = function( layer ) {
 	layer.imageSpaceImageSource = new ol.source.ImageWMS({
 		imageLoadFunction: fixY,
 		params: {
+			FORMAT: 'image/jpeg',
 			LAYERS: "omar:raster_entry." + imageDatabaseId,
 			STYLES: layer.imageSource.getParams().STYLES,
 			VERSION: "1.3.0"
@@ -176,6 +175,7 @@ createLayerSources = function( layer ) {
 
 	layer.imageSpaceTileSource = new ol.source.TileWMS({
 		params: {
+			FORMAT: 'image/jpeg',
 			LAYERS: "omar:raster_entry." + imageDatabaseId,
 			STYLES: layer.tileSource.getParams().STYLES,
 			VERSION: "1.3.0"
@@ -198,6 +198,28 @@ createMapControls = function() {
 		var acquisitionDateControl = new ol.control.Control({ element: acquisitionDateDiv });
 		layer.imageSpaceMap.addControl( acquisitionDateControl );
 
+		var DeleteControl = function() {
+			var button = document.createElement( "button" );
+			button.innerHTML = "<span class = 'glyphicon glyphicon-trash'></span>";
+			button.title = "Delete Frame";
+
+			var this_ = this;
+			$( button ).on( "click", function( event ) {
+				$( this ).blur();
+				deleteFrame( tlv.currentLayer );
+			});
+
+			var element = document.createElement( "div" );
+			element.className = "delete-control ol-unselectable ol-control";
+			element.appendChild( button );
+
+			ol.control.Control.call( this, {
+				element: element,
+				target: undefined
+			});
+		};
+		ol.inherits( DeleteControl, ol.control.Control );
+		layer.imageSpaceMap.addControl( new DeleteControl() );
 
 		var FastForwardControl = function() {
 			var button = document.createElement( "button" );
@@ -232,16 +254,31 @@ createMapControls = function() {
 		var imageIdOuterDiv = document.createElement( "div" );
 		imageIdOuterDiv.className = "custom-map-control";
 		imageIdOuterDiv.id = "imageIdOuterDiv";
-		imageIdOuterDiv.style = "background-color: rgba(0, 0, 0, 0); pointer-events: none;"
+		imageIdOuterDiv.style.cssText = "background-color: rgba(0, 0, 0, 0); pointer-events: none;"
 
 		var imageIdDiv = document.createElement( "div" );
 		imageIdDiv.id = "imageIdDiv";
-		imageIdDiv.style = "background-color: rgba(0, 0, 0, 0.5); display: inline-block; text-align: left";
-		$( imageIdOuterDiv ).append( imageIdDiv );
+		imageIdDiv.style.cssText = "background-color: rgba(0, 0, 0, 0.5); display: inline-block; text-align: left";
+		imageIdOuterDiv.appendChild( imageIdDiv );
 
 		var imageIdControl = new ol.control.Control({ element: imageIdOuterDiv });
 		layer.imageSpaceMap.addControl( imageIdControl );
 
+		var northArrowControl = new ol.control.Rotate({
+			render: function(mapEvent) {
+				var frameState = mapEvent.frameState;
+			    if ( !frameState ) return;
+
+				var radians = frameState.viewState.rotation - ( layer.metadata.northAngle || 0 );
+				var transform = "rotate(" + radians + "rad)";
+				var arrow = $( '#' + layer.imageSpaceMap.getTarget() ).find( '.ol-compass' );
+				arrow.css( 'msTransform', transform );
+				arrow.css( 'transform', transform );
+				arrow.css( 'webkitTransform', transform );
+
+			}
+		});
+		layer.imageSpaceMap.addControl( northArrowControl );
 
 		var PlayStopControl = function() {
 			var button = document.createElement( "button" );
@@ -290,7 +327,7 @@ createMapControls = function() {
 		layer.imageSpaceMap.addControl( new RewindControl() );
 
 
-		var RotationControl = function() {
+		var RotationSliderControl = function() {
 			var rotationInput = document.createElement( "input" );
 			rotationInput.id = "rotationSliderInput";
 			rotationInput.max = "360";
@@ -321,7 +358,7 @@ createMapControls = function() {
 			var element = document.createElement( "div" );
 			element.appendChild( rotationInput );
 			element.className = "rotation-tilt-control ol-unselectable ol-control";
-			element.style = "background: none";
+			element.style.cssText = "background: none";
 
 
 			ol.control.Control.call( this, {
@@ -331,14 +368,14 @@ createMapControls = function() {
 
 
 		};
-		ol.inherits( RotationControl, ol.control.Control );
-		layer.imageSpaceMap.addControl( new RotationControl() );
+		ol.inherits( RotationSliderControl, ol.control.Control );
+		layer.imageSpaceMap.addControl( new RotationSliderControl() );
 
 
 		var SummaryTableControl = function() {
 			var button = document.createElement( "button" );
-			button.innerHTML = "<span id = 'tlvLayerCountSpan'>0/0</span>&nbsp;<span class = 'glyphicon glyphicon-list-alt'></span>";
-			button.style = "width: auto";
+			button.innerHTML = "<span class = 'tlvLayerCountSpan'>0/0</span>&nbsp;<span class = 'glyphicon glyphicon-list-alt'></span>";
+			button.style.cssText = "width: auto";
 			button.title = "Summary Table";
 
 			var this_ = this;
@@ -402,6 +439,41 @@ function dimensionToggle() {
 	var dimensions = $( "#dimensionsSelect" ).val();
 	if ( dimensions == 2 ) { removeDimension(); }
 	else { addDimension(); }
+}
+
+var geoJumpView = geoJump;
+geoJump = function( location ) {
+	if ( $( '#viewSpaceSelect' ).val() == 'imageSpace' ) {
+		convertGeospatialCoordinateFormat( location, function( coordinate ) {
+			if ( coordinate ) {
+				var currentLayer = tlv.layers[ tlv.currentLayer ];
+				groundToImagePoints( [ coordinate ], currentLayer, function( pixels, layer ) {
+					var center = pixels[ 0 ];
+					center[ 1 ] = layer.metadata.height - center[ 1 ];
+					layer.imageSpaceMap.getView().setCenter( center );
+				} );
+			}
+		} );
+	}
+	else {
+		geoJumpView( location );
+	}
+}
+
+var getScreenshotMapView = getScreenshotMap;
+getScreenshotMap = function( callback ) {
+	if ( $( '#imageSpaceMaps' ).is( ':visible' ) ) {
+		var map = tlv.layers[ tlv.currentLayer ].imageSpaceMap;
+		map.once(
+			"postcompose",
+			function( event ) {
+				var canvas = event.context.canvas;
+				callback( canvas );
+			}
+		);
+		map.renderSync();
+	}
+	getScreenshotMapView( callback )
 }
 
 function getNorthAndUpAngles() {
@@ -571,14 +643,6 @@ rightClick = function( event ) {
 	}
 }
 
-function rotateImageSpaceNorthArrow( radians, layer ) {
-	var transform = "rotate(" + radians + "rad)";
-	var arrow = $( '#' + layer.imageSpaceMap.getTarget() ).find( '.ol-compass' );
-	arrow.css( 'msTransform', transform );
-	arrow.css( 'transform', transform );
-	arrow.css( 'webkitTransform', transform );
-}
-
 function setupImageSpaceMaps() {
     $( '#imageSpaceMaps' ).html( '' );
 
@@ -586,7 +650,7 @@ function setupImageSpaceMaps() {
         var div = document.createElement( 'div' );
         div.className = 'map';
         div.id = 'imageSpaceMap' + index;
-        div.style = 'display: none; height: 100%';
+        div.style.cssText = 'display: none; height: 100%';
         $( '#imageSpaceMaps' ).append( div );
 
         var imageDatabaseId = layer.metadata.id;
@@ -612,13 +676,7 @@ function setupImageSpaceMaps() {
             })
         });
 
-
-		//extent: [ 0, -maxHeight, maxWidth, 0 ],
-
-		layer.imageSpaceMap.getView().on( 'change:rotation', function( event ) {
-			var rotation = event.target.get( event.key ) - ( layer.metadata.northAngle || 0 );
-			rotateImageSpaceNorthArrow( rotation, layer );
-		} );
+		layer.imageSpaceMap.getViewport().addEventListener( "contextmenu", rightClick );
     } );
 }
 
@@ -673,28 +731,64 @@ function swipeToggle() {
 function switchToOrthoSpace() {
     $( '#imageSpaceMaps' ).hide();
 	$( '#map' ).show();
+
+	displayLoadingDialog( "Synching the map view... " );
+	var layer = tlv.layers[ tlv.currentLayer ];
+	var center = layer.imageSpaceMap.getView().getCenter();
+	var resolution = layer.imageSpaceMap.getView().getResolution();
+	var size = layer.imageSpaceMap.getSize();
+	var pixels = [
+		[ center[ 0 ] - resolution * size[ 0 ] / 2, layer.metadata.height - center[ 1 ] - resolution * size[ 1 ] / 2 ],
+		[ center[ 0 ] + resolution * size[ 0 ] / 2,	layer.metadata.height - center[ 1 ] + resolution * size[ 1 ] / 2 ]
+	];
+
+	imagePointsToGround( pixels, layer, function( coordinates, layer, info ) {
+		hideLoadingDialog();
+
+		var extent = coordinates[ 0 ].join( ',' ) + ',' + coordinates[ 1 ].join( ',' ).split( ',' );
+		tlv.map.getView().fit( extent, { nearest: true } );
+	} );
 }
 
 function switchToImageSpace() {
 	getNorthAndUpAngles();
 
 	var layer = tlv.layers[ tlv.currentLayer ];
+$( '#imageSpaceMaps' ).show();
+	$( '#map' ).hide();
 
-    $( '#map' ).hide();
-    $( '#imageSpaceMaps' ).show();
-	$( '#' + layer.imageSpaceMap.getTarget() ).show();
-	layer.imageSpaceMap.updateSize();
 
 	displayLoadingDialog( "Synching the map view... " );
-	var coordinate = ol.proj.transform( tlv.map.getView().getCenter(), 'EPSG:3857', 'EPSG:4326' );
-	groundToImagePoints( [ coordinate ], layer, function( pixels, layer ) {
-		hideLoadingDialog();
+	var center = tlv.map.getView().getCenter();
+	var resolution = tlv.map.getView().getResolution();
+	var size = tlv.map.getSize();
+	var coordinates = [
+		[ center[ 0 ] - resolution * size[ 0 ] / 2, center[ 1 ] - resolution * size[ 1 ] / 2 ],
+		[ center[ 0 ] + resolution * size[ 0 ] / 2,	center[ 1 ] + resolution * size[ 1 ] / 2 ]
+	];
+	$.each( tlv.layers, function( index, layer ) {
+		groundToImagePoints( coordinates, layer, function( pixels, layer ) {
+			hideLoadingDialog();
 
-		var center = pixels[ 0 ];
-		center[ 1 ] = layer.metadata.height - center[ 1 ];
-		layer.imageSpaceMap.getView().setCenter( center );
+			var xs = [ pixels[ 0 ][ 0 ], pixels[ 1 ][ 0 ] ];
+			var ys = [
+				layer.metadata.height - pixels[ 0 ][ 1 ],
+				layer.metadata.height - pixels[ 1 ][ 1 ]
+			];
+			var extent = [
+				Math.min( xs[ 0 ], xs[ 1 ] ),
+				Math.min( ys[ 0 ], ys[ 1 ] ),
+				Math.max( xs[ 0 ], xs[ 1 ] ),
+				Math.max( ys[ 0 ], ys[ 1 ] )
+			];
+			$( '#' + layer.imageSpaceMap.getTarget() ).show();
+			layer.imageSpaceMap.updateSize();
+			layer.imageSpaceMap.getView().fit( extent, { nearest: true } );
+			if ( index != tlv.currentLayer ) {
+				$( '#' + layer.imageSpaceMap.getTarget() ).hide();
+			}
+		} );
 	} );
-
 }
 
 function terrainWireframeToggle() {
@@ -771,13 +865,14 @@ function zoomToFullResolution() {
 	var metadata = tlv.layers[ tlv.currentLayer ].metadata;
 	var gsdX = metadata.gsdx;
 	var gsdY = metadata.gsdy;
-	var resolution = Math.sqrt( Math.pow( gsdX, 2 ) + Math.pow( gsdY, 2 ) );
+	var gsd = Math.sqrt( Math.pow( gsdX, 2 ) + Math.pow( gsdY, 2 ) );
+	var resolution = gsd / 6371008.8 * 180 / Math.PI;
 	tlv.map.getView().setResolution( resolution );
 }
 
 function zoomToMaximumExtent() {
 	var footprint = tlv.layers[ tlv.currentLayer ].metadata.footprint;
-	var polygon = new ol.geom.MultiPolygon( footprint.coordinates );
-	var extent = ol.proj.transformExtent( polygon.getExtent(), "EPSG:4326", "EPSG:3857" );
-	tlv.map.getView().fit( extent );
+	var polygon = new ol.format.WKT().readGeometry( footprint );
+	var extent = polygon.getExtent();
+	tlv.map.getView().fit( extent, { nearest: true } );
 }

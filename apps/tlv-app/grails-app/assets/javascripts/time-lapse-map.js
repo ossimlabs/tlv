@@ -8,7 +8,7 @@ function addBaseLayersToTheMap() {
 				case "wms":
 					source = new ol.source.TileWMS({
 						params: {
-							FORMAT: x.format || "image/png",
+							FORMAT: x.format || "image/jpeg",
 							LAYERS: x.layers,
 							STYLES: x.styles || "",
 							TRANSPARENT: true,
@@ -33,7 +33,7 @@ function addBaseLayersToTheMap() {
 					}
 
 					source = new ol.source.WMTS({
-						format: "image/png",
+						format: "image/jpeg",
 						layer: x.layer,
 						matrixSet: x.matrixSet,
 						projection: projection,
@@ -94,25 +94,61 @@ function compassRotate(event) {
 	else{ displayErrorDialog("Sorry, we couldn't get a good reading. :("); }
 }
 
-function createContextMenuContent(coordinate) {
-	coordinate = ol.proj.transform(coordinate, "EPSG:3857", "EPSG:4326");
-	var coordConvert = new CoordinateConversion();
-	var latitude = coordinate[1];
-	var longitude = coordinate[0];
-	var dd = latitude.toFixed(6) + ", " + longitude.toFixed(6);
-	var dms = coordConvert.ddToDms(latitude, "lat") + " " + coordConvert.ddToDms(longitude, "lon");
-	var mgrs = coordConvert.ddToMgrs(latitude, longitude);
+function createContextMenuContent( point ) {
+	var layer = tlv.layers[ tlv.currentLayer ];
 
-	$("#mouseClickDiv").html("<div align = 'center' class = 'row'>" + dd + " // " + dms + " // " + mgrs + "</div>");
+	var addGroundPoint = function( coordinate ) {
+		var div = createDiv();
+		var coordConvert = new CoordinateConversion();
+		var latitude = coordinate[ 1 ];
+		var longitude = coordinate[ 0 ];
+		var dd = latitude.toFixed( 6 ) + ', ' + longitude.toFixed( 6 );
+		var dms = coordConvert.ddToDms( latitude, 'lat' ) + ' ' + coordConvert.ddToDms( longitude, 'lon' );
+		var mgrs = coordConvert.ddToMgrs( latitude, longitude );
 
+		$( div ).html( dd + ' // ' + dms + ' // ' + mgrs );
+		$( '#mouseClickDiv' ).append( div );
+	};
+
+	var addImagePoint = function( pixel ) {
+		var div = createDiv();
+		$( div ).html( 'X: ' + pixel[ 0 ].toFixed( 4 ) + ', Y: ' + pixel[ 1 ].toFixed( 4 ) );
+		$( '#mouseClickDiv' ).append( div );
+	};
+
+	var createDiv = function() {
+		var div = document.createElement( 'div' );
+		$( div ).addClass( 'row' );
+		$( div ).css( 'text-align', 'center' );
+
+
+		return div;
+	};
+
+	$( '#mouseClickDiv' ).html( '' );
+	if ( !$( '#imageSpaceMaps' ).is( ':visible' ) ) {
+		addGroundPoint( point );
+
+		groundToImagePoints( [ point ], layer, function( pixels, layer ) {
+			addImagePoint( pixels[ 0 ] );
+			updatePqe( pixels[ 0 ] );
+		} );
+	}
+	else {
+		addImagePoint( point );
+		updatePqe( point );
+
+		imagePointsToGround( [ point ], layer, function( coordinates, layer ) {
+			addGroundPoint( coordinates[ 0 ] );
+		} );
+	}
 
 	$("#imageMetadataPre").html( JSON.stringify( tlv.layers[tlv.currentLayer].metadata, null, 2 ) );
 }
 
 function createLayers( layer ) {
 	var footprint = layer.metadata.footprint;
-	var extent = footprint ? new ol.format.WKT().readGeometry( footprint ).getExtent() : null;
-	extent = extent ? ol.proj.transformExtent( extent, "EPSG:4326", "EPSG:3857" ) : undefined;
+	var extent = footprint ? new ol.format.WKT().readGeometry( footprint ).getExtent() : undefined;
 
 	layer.imageLayer = new ol.layer.Image({
 		extent: extent,
@@ -133,7 +169,6 @@ function createLayerSources( layer ) {
 	var library = tlv.libraries[ layer.library ];
 
 	var params = {
-		FORMAT: 'image/png',
 		IDENTIFIER: Math.floor( Math.random() * 1000000 ),
 		TRANSPARENT: true,
 		VERSION: '1.1.1'
@@ -141,9 +176,11 @@ function createLayerSources( layer ) {
 
 	if ( library.wmsUrlProxy ) {
 		params.LAYERS = layer.metadata.index_id;
+		params.FORMAT = 'image/png';
 	}
 	else {
 		params.FILTER = 'in(' + layer.metadata.id + ')';
+		params.FORMAT = 'image/vnd.jpeg-png';
 		params.LAYERS = 'omar:raster_entry';
 		params.STYLES = JSON.stringify(
 			getDefaultImageProperties()
@@ -152,7 +189,6 @@ function createLayerSources( layer ) {
 
 	layer.imageSource = new ol.source.ImageWMS({
 		params: params,
-		projection: library.wmsUrlProxy ? 'EPSG:4326' : 'EPSG:3857',
 		url: tlv.libraries[ layer.library ].wmsUrl
 	});
 	if ( tlv.libraries[ layer.library ].wmsUrlProxy ) {
@@ -162,7 +198,6 @@ function createLayerSources( layer ) {
 
 	layer.tileSource = new ol.source.TileWMS({
 		params: params,
-		projection: library.wmsUrlProxy ? 'EPSG:4326' : 'EPSG:3857',
 		url: tlv.libraries[ layer.library ].wmsUrl
 	});
 	if ( tlv.libraries[ layer.library ].wmsUrlProxy ) {
@@ -179,6 +214,28 @@ function createMapControls() {
 	acquisitionDateDiv.className = "custom-map-control";
 	acquisitionDateDiv.id = "acquisitionDateDiv";
 	var acquisitionDateControl = new ol.control.Control({ element: acquisitionDateDiv });
+
+	var DeleteControl = function() {
+		var button = document.createElement( "button" );
+		button.innerHTML = "<span class = 'glyphicon glyphicon-trash'></span>";
+		button.title = "Delete Frame";
+
+		var this_ = this;
+		$( button ).on( "click", function( event ) {
+			$( this ).blur();
+			deleteFrame( tlv.currentLayer );
+		});
+
+		var element = document.createElement( "div" );
+		element.className = "delete-control ol-unselectable ol-control";
+		element.appendChild( button );
+
+		ol.control.Control.call( this, {
+			element: element,
+			target: undefined
+		});
+	};
+	ol.inherits( DeleteControl, ol.control.Control );
 
 	var FastForwardControl = function() {
 		var button = document.createElement( "button" );
@@ -209,12 +266,12 @@ function createMapControls() {
 	var imageIdOuterDiv = document.createElement( "div" );
 	imageIdOuterDiv.className = "custom-map-control";
 	imageIdOuterDiv.id = "imageIdOuterDiv";
-	imageIdOuterDiv.style = "background-color: rgba(0, 0, 0, 0); pointer-events: none;"
+	imageIdOuterDiv.style.cssText = "background-color: rgba(0, 0, 0, 0); pointer-events: none;"
 
 	var imageIdDiv = document.createElement( "div" );
 	imageIdDiv.id = "imageIdDiv";
-	imageIdDiv.style = "background-color: rgba(0, 0, 0, 0.5); display: inline-block; text-align: left";
-	$( imageIdOuterDiv ).append( imageIdDiv );
+	imageIdDiv.style.cssText = "background-color: rgba(0, 0, 0, 0.5); display: inline-block; text-align: left";
+	imageIdOuterDiv.appendChild( imageIdDiv );
 
 	var imageIdControl = new ol.control.Control({ element: imageIdOuterDiv });
 
@@ -331,8 +388,8 @@ function createMapControls() {
 
 	var SummaryTableControl = function() {
 		var button = document.createElement( "button" );
-		button.innerHTML = "<span id = 'tlvLayerCountSpan'>0/0</span>&nbsp;<span class = 'glyphicon glyphicon-list-alt'></span>";
-		button.style = "width: auto";
+		button.innerHTML = "<span class = 'tlvLayerCountSpan'>0/0</span>&nbsp;<span class = 'glyphicon glyphicon-list-alt'></span>";
+		button.style.cssText = "width: auto";
 		button.title = "Summary Table";
 
 		var this_ = this;
@@ -373,6 +430,8 @@ function createMapControls() {
 			new RewindControl(),
 			new PlayStopControl(),
 			new FastForwardControl(),
+			new DeleteControl(),
+
 			new SummaryTableControl()
 		);
 	}
@@ -390,18 +449,31 @@ function createMapInteractions() {
 	});
 
 	dragAndDropInteraction.on( "addfeatures", function( event ) {
+		var features = event.features;
+		$.each( features, function( index, feature ) {
+			var style = createDefaultStyle();
+			var properties = feature.getProperties();
+			var keys = Object.keys( properties );
+			if ( keys.length > 1 ) {
+				var text = '';
+				if ( keys[ 0 ] != 'geometry' ) {
+					text = properties[ keys[ 0 ] ];
+				}
+				else {
+					text = properties[ keys[ 1 ] ];
+				}
+				style.getText().setText( text );
+			}
+			feature.setStyle( style );
+		} );
         var source = new ol.source.Vector({
-			features: event.features
+			features: features
 		});
-		var styleFunction = function() {
-			createDefaultStyle();
-		}
+		tlv.map.getView().fit( source.getExtent(), { nearest: true } );
 		var layer = new ol.layer.Vector({
-			source: source,
-			style: styleFunction
-        })
+			source: source
+        });
         tlv.map.addLayer( layer );
-        tlv.map.getView().fit( source.getExtent() );
 	});
 
 	var dragPanInteraction = new ol.interaction.DragPan({
@@ -428,8 +500,7 @@ function createMousePositionControl() {
 				case 1: return coordConvert.ddToDms( lat, "lat" ) + " " + coordConvert.ddToDms( lon, "lon" ); break;
 				case 2: return coordConvert.ddToMgrs( lat, lon ); break;
 			}
-		},
-		projection: "EPSG:4326"
+		}
 	});
 
 	switch ( tlv.preferences.coordinateFormat ) {
@@ -451,6 +522,195 @@ function getLayerIdentifier(source) {
 	// assume an XYZ layer
 	else { return source.getUrls()[0]; }
 }
+
+function measure() {
+	var addLineFeature = function( geometry ) {
+		var feature = new ol.Feature( geometry );
+		vectorSource.addFeature( feature );
+
+
+		return feature;
+	};
+
+	var addPolygonFeature = function( lineGeometry ) {
+		var coordinates = lineGeometry.getCoordinates();
+		coordinates.push( lineGeometry.getFirstCoordinate() )
+		var polygonGeometry = new ol.geom.Polygon([ coordinates ]);
+		var feature = new ol.Feature( polygonGeometry );
+		vectorSource.addFeature( feature );
+
+		var style = createDefaultStyle();
+		style.getStroke().setLineDash([ 10, 10 ]);
+		feature.setStyle( style );
+
+
+		return feature;
+	};
+
+	var createOverlays = function( lineGeometry, polygonGeometry ) {
+		$.each( [ 'line', 'polygon' ], function( index, value ) {
+			var position = value == 'line' ? lineGeometry.getLastCoordinate() : polygonGeometry.getInteriorPoint().getCoordinates();
+
+			var div = document.createElement( 'div' );
+			div.className = 'tooltip-measure';
+			div.innerHTML = "Calculating...";
+			var overlay = new ol.Overlay({
+				element: div,
+				id: value + 'TooltipOverlay',
+				position: position,
+				positioning: 'bottom-center'
+			});
+
+			if ( $( '#imageSpaceMaps' ).is( ':visible' ) ) {
+				tlv.layers[ tlv.currentLayer ].imageSpaceMap.addOverlay( overlay );
+			}
+			else {
+				tlv.map.addOverlay( overlay );
+			}
+		} );
+	}
+
+	var formatLength = function( geometry ) {
+		var length = ol.Sphere.getLength( geometry, {
+			projection: 'EPSG:4326'
+		} );
+
+		var text = ( Math.round( length * 100 ) / 100 ) + ' ' + 'm';
+		if ( length > 100 ) {
+			text = ( Math.round( length / 1000 * 100 ) / 100 ) + ' ' + 'km';
+		}
+
+
+		return text;
+	};
+
+	var formatArea = function( geometry ) {
+		var area = ol.Sphere.getArea( geometry, {
+			projection: 'EPSG:4326'
+		} );
+		var text = ( Math.round(area * 100) / 100 ) + ' ' + 'm<sup>2</sup>';
+		if ( area > 10000 ) {
+			text = ( Math.round(area / 1000000 * 100 ) / 100 ) + ' ' + 'km<sup>2</sup>';
+		}
+
+
+		return text;
+	};
+
+	var vectorSource = new ol.source.Vector();
+	var vectorLayer = new ol.layer.Vector({
+		source: vectorSource,
+		style: createDefaultStyle()
+	});
+	tlv.map.addLayer( vectorLayer );
+	$.each( tlv.layers, function( index, layer ) {
+		layer.imageSpaceMap.addLayer( vectorLayer );
+	} );
+
+	displayInfoDialog( 'Click to start drawing' );
+
+	var drawStyle = createDefaultStyle();
+	drawStyle.getImage().setRadius( 1 );
+	$.each(
+		[ tlv.map ].concat( tlv.layers.map( function( layer ) { return layer.imageSpaceMap; } ) ),
+		function( index, map ) {
+			var drawInteraction = new ol.interaction.Draw({
+				source: vectorSource,
+				style: drawStyle,
+				type: 'LineString'
+		  	});
+		  	map.addInteraction( drawInteraction );
+
+			drawInteraction.on( 'drawstart', function( event ) {
+				displayInfoDialog( 'Click to continue drawing or double-click to finish...' );
+
+				// create an origin point to snap to for polygons
+				var feature = event.feature;
+				var coordinate = feature.getGeometry().getCoordinates()[ 0 ];
+				var point = new ol.geom.Point( coordinate );
+				var origin = new ol.Feature( point );
+				vectorSource.addFeature( origin );
+
+				var snapInteraction = new ol.interaction.Snap({
+					source: vectorSource
+				});
+				map.addInteraction( snapInteraction	 );
+			} );
+
+			drawInteraction.on( 'drawend', function( event ) {
+				vectorSource.clear( true );
+
+				var feature = event.feature;
+
+				var lineGeometry = feature.getGeometry();
+				addLineFeature( lineGeometry );
+				var polygonGeometry = addPolygonFeature( lineGeometry ).getGeometry();
+
+				createOverlays( lineGeometry, polygonGeometry );
+				if ( $( '#imageSpaceMaps' ).is( ':visible' ) ) {
+					var layer = tlv.layers[ tlv.currentLayer ];
+
+					var linePixels = lineGeometry.getCoordinates();
+					var callback = function( coordinates, layer ) {
+						var geometry = new ol.geom.LineString( coordinates );
+
+						var overlay = layer.imageSpaceMap.getOverlayById( 'lineTooltipOverlay' );
+						overlay.getElement().innerHTML = formatLength( geometry );
+					};
+					imagePointsToGround( linePixels, layer, callback );
+
+					var polygonPixels = polygonGeometry.getCoordinates()[ 0 ];
+					var callback = function( coordinates, layer ) {
+						var geometry = new ol.geom.Polygon([ coordinates ]);
+
+						var overlay = layer.imageSpaceMap.getOverlayById( 'polygonTooltipOverlay' );
+						overlay.getElement().innerHTML = formatArea( geometry );
+					};
+					imagePointsToGround( polygonPixels, layer, callback );
+				}
+				else {
+					$.each( [ 'line', 'polygon' ], function( index, value ) {
+						var overlay = tlv.map.getOverlayById( value + 'TooltipOverlay' );
+						overlay.getElement().innerHTML = value == 'line' ? formatLength( lineGeometry ) : formatArea( polygonGeometry );
+					} );
+				}
+
+				// remove draw and snap interactions
+				$.each( tlv.map.getInteractions().getArray().slice( 0 ), function( index, interaction ) {
+					if ( interaction instanceof ol.interaction.Draw || interaction instanceof ol.interaction.Snap ) {
+						tlv.map.removeInteraction( interaction );
+					}
+				} );
+				$.each( tlv.layers, function( index, layer ) {
+					$.each( layer.imageSpaceMap.getInteractions().getArray().slice( 0 ), function( index, interaction ) {
+						if ( interaction instanceof ol.interaction.Draw || interaction instanceof ol.interaction.Snap ) {
+							layer.imageSpaceMap.removeInteraction( interaction );
+						}
+					} );
+				} );
+
+				displayInfoDialog( 'Click to clear...' );
+
+				setTimeout( function() {
+					map.once( 'click', function() {
+						$.each( [ 'line', 'polygon' ], function( index, value ) {
+							var overlay = map.getOverlayById( value + 'TooltipOverlay' );
+							$( overlay.getElement() ).remove();
+							map.removeOverlay( overlay );
+						} );
+
+						vectorSource.clear( true );
+						map.removeLayer( vectorLayer );
+						$.each( tlv.layers, function( index, layer ) {
+							layer.imageSpaceMap.removeLayer( vectorLayer );
+						} );
+					} );
+				}, 500 );
+			} );
+		}
+	);
+}
+
 
 function preloadAnotherLayer(index) {
 	var layer = tlv.layers[index];
@@ -486,13 +746,18 @@ function setupMap() {
 	createMapControls();
 	createMapInteractions();
 	tlv.map = new ol.Map({
-		controls: ol.control.defaults().extend( tlv.mapControls ),
+		controls: ol.control.defaults({
+			attribution: false
+		}).extend( tlv.mapControls ),
 		interactions: ol.interaction.defaults({
 			doubleClickZoom: false,
  			dragPan: false
 		}).extend( tlv.mapInteractions ),
 		logo: false,
-		target: "map"
+		target: "map",
+		view: new ol.View({
+			projection: 'EPSG:4326'
+		})
 	});
 
 	updateMapSize();
@@ -523,6 +788,25 @@ function theMapHasMoved(event) {
 			x.tilesLoading = 0;
 		}
 	);
+
+	// if the map extent is contained within the combined extent of all visible layers, turn off the basemap
+	var geometries = tlv.layers.map( function( layer ) {
+		if ( layer.mapLayer.getVisible() ) {
+			return new ol.format.WKT().readGeometry( layer.metadata.footprint );
+		}
+	} )
+	.filter( function( geometry ) {
+		return geometry != null;
+	} );
+	var extent = new ol.geom.GeometryCollection( geometries ).getExtent();
+	if ( ol.extent.containsExtent( extent, tlv.map.getView().calculateExtent() ) ) {
+		$.each( tlv.baseLayers, function( index, layer ) {
+			layer.setVisible( false );
+		} );
+	}
+	else {
+		changeBaseLayer( $( '#baseLayersSelect' ).val() );
+	}
 }
 
 function theMapHasRotated( event ) {

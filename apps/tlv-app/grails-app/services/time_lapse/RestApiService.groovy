@@ -17,14 +17,13 @@ class RestApiService {
 		params.remove("action")
 		params.remove("controller")
 
-		params.annotation = params.annotation
 		params.availableBaseLayers = grailsApplication.config.baseLayers
 		params.baseUrl = grailsApplication.config.baseUrl
 		params.beLookup = grailsApplication.config.beLookup ?: null
 		params.configLayers = grailsApplication.config.layers ?: [:]
+		params.demoLocation = grailsApplication.config.demoLocation ?: null
 		params.geocoderUrl = grailsApplication.config.geocoderUrl ?: null
 		params.ionAccessToken = grailsApplication.config.ionAccessToken ?: null
-		params.imageIdFilters = grailsApplication.config.fsg?.collect { it.value.imageIdRegExp } ?: []
 		params.libraries = grailsApplication.config.libraries
 
 		JSON.use( "deep" ) {
@@ -33,6 +32,7 @@ class RestApiService {
 		}
 		params.templates = grailsApplication.config.templates ?: [:]
 		params.terrainProvider = params.terrainProvider ?: ( grailsApplication.config.terrainProvider ?: null )
+		params.releasability = grailsApplication.config.releasability
 
 
 		return params

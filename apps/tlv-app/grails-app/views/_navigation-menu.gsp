@@ -22,9 +22,8 @@
 					<g:render template = "/menus/export-menu"/>
 					<g:render template = "/menus/image-properties-menu"/>
 					<g:render template = "/menus/layers-menu"/>
-					<g:render template = "/menus/time-lapse-menu"/>
+					<g:render template = "/menus/tools-menu"/>
 					<g:render template = "/menus/view-menu"/>
-					<g:render template = "/isa-menu"/>
 					<g:render template = "/user"/>
 					<g:render template = "/menus/help-menu"/>
 				</ul>

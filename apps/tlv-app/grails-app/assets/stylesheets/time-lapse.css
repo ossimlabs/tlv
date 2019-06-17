@@ -10,6 +10,12 @@
     position: absolute;
 }
 
+.delete-control {
+	left: 10.5em;
+	top: 0.5em;
+	width: auto;
+}
+
 .fast-forward-control {
 	left: 8em;
 	top: 0.5em;
@@ -19,6 +25,11 @@
     text-align: center;
 	top: 0.5em;
 	width: 100%
+}
+
+.modal-xl {
+	overflow-y: auto;
+	width: 90%;
 }
 
 .ol-full-screen {
@@ -71,7 +82,7 @@
 }
 
 .summary-table-control {
-	left: 10.5em;
+	left: 13em;
 	top: 0.5em;
 	width: auto;
 }

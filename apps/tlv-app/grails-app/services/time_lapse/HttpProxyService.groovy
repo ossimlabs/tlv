@@ -18,23 +18,24 @@ class HttpProxyService {
 	def serviceMethod( url ) {
 		def http = new HTTPBuilder( url )
 
-        def keyStoreFile = getClass().getResource( '/keyStore.jks' )
-        def keyStorePassword = grailsApplication.config.keyStores.keyStore.password
-        def trustStoreFile = getClass().getResource( '/trustStore.jks' )
-        def trustStorePassword = grailsApplication.config.keyStores.trustStore.password
+        def keyStoreConfig = grailsApplication.config.keyStores.keyStore
+        def trustStoreConfig = grailsApplication.config.keyStores.trustStore
+
+        def keyStoreFile = new File( "${ keyStoreConfig.filename }" )
+        def trustStoreFile = new File( "${ trustStoreConfig.filename }" )
 
 		if ( keyStoreFile && trustStoreFile ) {
             def keyStore = KeyStore.getInstance( KeyStore.defaultType )
-            keyStoreFile.withInputStream {
-                keyStore.load( it, keyStorePassword.toCharArray() )
+            keyStoreFile.withInputStream { stream ->
+                keyStore.load( stream, "${ keyStoreConfig.password }".toCharArray() )
             }
 
             def trustStore = KeyStore.getInstance( KeyStore.defaultType )
-			trustStoreFile.withInputStream {
-                trustStore.load( it, trustStorePassword.toCharArray() )
+			trustStoreFile.withInputStream { stream ->
+                trustStore.load( stream, "${ trustStoreConfig.password }".toCharArray() )
             }
 
-			def ssl = new SSLSocketFactory( keyStore, keyStorePassword, trustStore )
+			def ssl = new SSLSocketFactory( keyStore, "${ keyStoreConfig.password }", trustStore )
 			http.client.connectionManager.schemeRegistry.register( new Scheme( 'https', ssl, 443 ) )
 		}
 

@@ -70,7 +70,6 @@ function clientFileDownload(filename, blob) {
 
 function downloadTemplate( templateStyle ) {
 	templateStyle = "default";
-
 	var callback = function( mapCanvas ) {
 		var template = tlv.templates[ templateStyle ];
 
@@ -86,7 +85,7 @@ function downloadTemplate( templateStyle ) {
 
 
 		var header = template.header;
-		var headerHeight = parseFloat( header.height ) / 100 * mapCanvas.height;
+		var headerHeight = Math.floor( parseFloat( header.height ) / 100 * mapCanvas.height );
 		var headerWidth = canvas.width;
 		var headerGradient = context.createLinearGradient( 0, 0, 0, headerHeight);
 		headerGradient.addColorStop( 0, "#595454" );
@@ -123,7 +122,7 @@ function downloadTemplate( templateStyle ) {
 
 		// footer
 		var footer = template.footer;
-		var footerHeight = parseFloat( footer.height ) / 100 * mapCanvas.height;
+		var footerHeight = Math.floor( parseFloat( footer.height ) / 100 * mapCanvas.height );
 
 		var footerGradientHeightMin = headerHeight + mapCanvas.height;
 		var footerGradientHeightMax = footerGradientHeightMin + footerHeight;
@@ -162,18 +161,18 @@ function downloadTemplate( templateStyle ) {
 
 		var templateLogo = $( "#templateLogo" );
 		var logo = new Image();
-		$( logo ).attr( "src", templateLogo.attr( "src" ) );
 		$( logo ).load( function() {
-			var paddingSize = parseFloat( templateLogo.css( "padding" ) ) / 100 * headerHeight;
+			var paddingSize = parseFloat( templateLogo.css( "padding-left" ) ) / 100 * headerHeight;
 			var logoHeight = headerHeight -  2 * paddingSize;
 			var logoWidth = headerHeight - 2 * paddingSize;
+
 			context.drawImage( logo, paddingSize, paddingSize, logoWidth, logoHeight );
 
 			var templateNorthArrow = $( "#templateNorthArrow" );
 			var northArrow = new Image();
 			$( northArrow ).attr( "src", templateNorthArrow.attr( "src" ) );
 			$( northArrow ).load( function() {
-				var paddingSize = parseFloat( templateNorthArrow.css( "padding" ) ) / 100 * headerHeight;
+				var paddingSize = parseFloat( templateNorthArrow.css( "padding-left" ) ) / 100 * headerHeight;
 				var northArrowSize = headerHeight -  2 * paddingSize;
 
 				var translateX = headerWidth - paddingSize - northArrowSize / 2;
@@ -188,6 +187,7 @@ function downloadTemplate( templateStyle ) {
 				});
 			});
 		});
+		$( logo ).attr( "src", templateLogo.attr( "src" ) );
 	}
 
 	if ( getCurrentDimension() == 2 ) {
@@ -208,10 +208,48 @@ function exportGif() {
 }
 
 function exportKml() {
-	var layer = tlv.layers[ tlv.currentLayer ];
-	var url = tlv.libraries[ layer.library ].kmlUrl;
-	url += "/" + layer.metadata.id;
-	window.open( url );
+	var kmlData = [];
+	var kmlsDownloaded = 0;
+	var kmz = new JSZip();
+
+	$.each( tlv.layers, function( index, layer ) {
+		$.ajax({
+			dataType: 'text',
+			url: tlv.libraries[ layer.library ].kmlUrl + '/' + layer.metadata.id
+		})
+		.done( function( data ) {
+			kmlsDownloaded++;
+			var filename = 'images/' + layer.imageId + '.kml';
+			kmlData.push({
+				filename: filename,
+				xml: data
+			});
+
+			if ( kmlsDownloaded == tlv.layers.length ) {
+				var docXml = '<?xml version="1.0" encoding="UTF-8"?>' +
+					'<kml xmlns="http://www.opengis.net/kml/2.2">' +
+						'<Document>' +
+							'<NetworkLink><Link><href>' +
+								kmlData.map( function( kml ) {
+									return kml.filename;
+								} ).join( '</href></Link></NetworkLink><NetworkLink><Link><href>' ) +
+				         	'</href></Link></NetworkLink>' +
+						'</Document>' +
+					'</kml>';
+				kmz.file( 'doc.kml', docXml );
+
+				$.each( kmlData, function( index, kml ) {
+					kmz.file( kml.filename, kml.xml );
+				} );
+
+				kmz.generateAsync({ type: 'blob' })
+				.then( function ( blob ) {
+					var filename = 'tlv_kmz_' + new Date().generateFilename() + '.kmz';
+					clientFileDownload( filename, blob );
+				} );
+			}
+		} );
+	} );
 }
 
 function exportLink() {
@@ -224,13 +262,13 @@ function exportLink() {
 		return layer.metadata.id;
 	});
 	var params = {
-		bbox: ol.proj.transformExtent( tlv.map.getView().calculateExtent(), "EPSG:3857", "EPSG:4326" ).join( "," ),
+		bbox: tlv.map.getView().calculateExtent().join( "," ),
 		filter: "in(" + ids.join( ") OR in(" ) + ")",
-		location: ol.proj.transform( tlv.map.getView().getCenter(), "EPSG:3857", "EPSG:4326" ).reverse().join( "," )
+		location: tlv.map.getView().getCenter().reverse().join( "," )
 	};
 
-	copyTextToClipboard( url + "?" + $.param( params ) );
-	displayInfoDialog( "The TLV link has been copied to your clipboard..." );
+	$( '#exportLinkInput' ).val( url + "?" + $.param( params ) );
+	$( '#exportLinkDialog' ).modal( 'show' );
 }
 
 function exportMetadata() {
@@ -301,7 +339,7 @@ function exportTemplate( templateStyle ) {
 				$( "#templateHeader" ).html( " " );
 				$( "#templateHeader" ).width( imageWidth );
 				var header  = template.header;
-				var headerHeight = parseFloat( header.height ) / 100 * imageHeight;
+				var headerHeight = Math.floor( parseFloat( header.height ) / 100 * imageHeight );
 				$( "#templateHeader" ).css( "height", headerHeight );
 				$( "#templateHeader" ).css( "background", "linear-gradient(#595454, #000000)" );
 
@@ -350,7 +388,7 @@ function exportTemplate( templateStyle ) {
 				$( northArrowContainer ).addClass( "row" );
 				$( northArrowContainer ).addClass( "template" );
 				$( northArrowContainer ).css( "text-align", "right" );
-				var width = $( "#templateHeader" ).width() - $( "#templateHeader" ).height() - $( headerTextDiv ).width();
+				var width = $( "#templateHeader" ).width() - $( "#templateHeader" ).height() - Math.floor( $( headerTextDiv ).width() );
 				$( northArrowContainer ).css( "width", width );
 				$( "#templateHeader" ).append( northArrowContainer );
 
@@ -363,15 +401,18 @@ function exportTemplate( templateStyle ) {
 				$( templateNorthArrow ).addClass( "template-logo" );
 				$( templateNorthArrow ).attr( "id", "templateNorthArrow" );
 				$( templateNorthArrow ).attr( "src", tlv.contextPath + "/assets/logos/" + header.northArrow );
-				var rotation = tlv.map.getView().getRotation() * 180 / Math.PI;
-				$( templateNorthArrow ).css( "transform", "rotate(" + rotation + "deg)" );
+				$.each( $( '.ol-compass' ), function( index, element ) {
+					if ( $( element ).is( ':visible' ) ) {
+						$( templateNorthArrow ).css( "transform", $( element ).css( 'transform' ) );
+					}
+				} );
 				$( northArrowDiv ).append( templateNorthArrow );
 
 				// footer
 				$( "#templateFooter" ).html( "" );
 				$( "#templateFooter" ).width( imageWidth );
 				var footer = template.footer;
-				var footerHeight = parseFloat( footer.height ) / 100 * imageHeight;
+				var footerHeight = Math.floor( parseFloat( footer.height ) / 100 * imageHeight );
 				var templateFooter = $( "#templateFooter" );
 				templateFooter.css( "background", "linear-gradient(#595454, #000000)" );
 				templateFooter.css( "height", footerHeight );
@@ -424,14 +465,14 @@ function exportWmsGetCapabilities() {
 	var layer = tlv.layers[ tlv.currentLayer ];
 	var url = tlv.libraries[ layer.library ].wfsUrl;
  	var params = {
-		filter: "in(" + layer.metadata.id + ")",
-		outputFormat: "WMS130",
-		request: "GetFeature",
-		service: "WFS",
-		typeName: "omar:raster_entry",
-		version: "1.1.0"
+		filter: 'in(' + layer.metadata.id + ')',
+		outputFormat: 'WMS130',
+		request: 'GetFeature',
+		service: 'WFS',
+		typeName: 'omar:raster_entry',
+		version: '1.1.0'
 	};
 
-	copyTextToClipboard( url + "?" + $.param( params ) );
-	displayInfoDialog( "The WMS GetCapabilities link has been copied to your clipboard..." );
+	$( '#exportLinkInput' ).val( url + '?' + $.param( params ) );
+	$( '#exportLinkDialog' ).modal( 'show' );
 }

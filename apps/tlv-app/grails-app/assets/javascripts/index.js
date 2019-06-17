@@ -39,13 +39,13 @@ function convertGeospatialCoordinateFormat(inputString, callbackFunction) {
 		if (callbackFunction) { callbackFunction([longitude, latitude]); }
 		else { return [longitude, latitude]; }
 	}
-	else if (inputString.match(mgrsPattern)) {
+	else if ( inputString.match( mgrsPattern ) && inputString.trim().length < 16 ) {
 		var location = coordinateConversion.mgrsToDd(RegExp.$1, RegExp.$2, RegExp.$3, RegExp.$4, RegExp.$5, RegExp.$6);
 
 
 		return convertGeospatialCoordinateFormat(location, callbackFunction);
 	}
-	else if ( inputString.match( bePattern ) && tlv.beLookup.url && callbackFunction ) {
+	else if ( inputString.match( bePattern ) && inputString.trim().length == 10 && tlv.beLookup && tlv.beLookup.url && callbackFunction ) {
 		displayLoadingDialog( "We're checking our maps for that location... BRB!" );
         beSearch( inputString )
         .always( function() {
@@ -91,20 +91,6 @@ function convertRadiusToBbox(x, y, radius) {
 	return { maxLat: y + deltaLatitude, maxLon: x + deltaLongitude, minLat: y - deltaLatitude, minLon: x - deltaLongitude };
 }
 
-function copyTextToClipboard( text ) {
-    // note this function must be called from a real button click
-    var input = document.createElement( "input" );
-    input.id = "text";
-    input.value = text;
-    input.type = "text";
-    $( "body" ).append( input );
-
-    document.getElementById( "text" ).select();
-    document.execCommand( "copy" );
-
-    input.remove();
-}
-
 function createDefaultStyle() {
 	return new ol.style.Style({
         geometry: function( feature ) {
@@ -134,21 +120,34 @@ function createDefaultStyle() {
                 color: "rgba(255, 255, 0, 1)"
             }),
 			radius: 5,
-			stroke: new ol.style.Stroke({
-				color: "rgba(255, 255, 0, 0)",
-	            width: 2
-	 		})
+            stroke: new ol.style.Stroke({
+                color: "rgba(255, 255, 255, 0)",
+                lineCap: 'round',
+                lineDash: [ 0, 0 ],
+                lineDashOffset: 0,
+                lineJoin: 'round',
+                miterLimit: 10,
+                width: 2
+            })
 		}),
 		stroke: new ol.style.Stroke({
 			color: "rgba(255, 255, 0, 1)",
+            lineCap: 'round',
+            lineDash: [ 0, 0 ],
+            lineDashOffset: 0,
+            lineJoin: 'round',
+            miterLimit: 10,
             width: 2
  		}),
         text: new ol.style.Text({
             fill: new ol.style.Fill({
                 color: "rgba(255, 255, 0, 1)"
             }),
-            offsetY: -13,
-            overflow: true
+            offsetX: 0,
+            offsetY: 0,
+    	    scale: 1,
+    	    rotateWithView: true,
+    	    rotation: 0
         })
 	});
 }
@@ -178,9 +177,14 @@ function displayDialog( dialog ) {
 }
 
 function displayInfoDialog( message ) {
-    $( "#infoDialog" ).html( message );
-	$( "#infoDialog" ).fadeIn();
-    setTimeout( function() { $( "#infoDialog" ).fadeOut(); }, 5000 );
+    var infoDialog = $( "#infoDialog" );
+    infoDialog.html( message );
+	infoDialog.fadeIn();
+    setTimeout( function() {
+        if ( infoDialog.html() == message ) {
+            $( "#infoDialog" ).fadeOut();
+        }
+    }, 5000 );
 }
 
 function displayErrorDialog( message ) {
@@ -217,9 +221,12 @@ function enableKeyboardShortcuts() {
 			var keyCode = event.keyCode;
 			switch( keyCode ) {
 				// space bar
-				case 32: $( "button[title='Play/Stop']" ).trigger( "click" ); break;
-				// left arrow key
+				case 32:
+                    $( "button[title='Play/Stop']" ).trigger( "click" );
+                    break;
+				// left arrow key and a
 				case 37:
+                case 65:
                     if ( event.shiftKey ) {
                         var degrees = tlv.map.getView().getRotation() * 180 / Math.PI - 1;
                         tlv.map.getView().setRotation( degrees * Math.PI / 180 );
@@ -228,10 +235,14 @@ function enableKeyboardShortcuts() {
                         changeFrame( "rewind" );
                     }
                     break;
-                // up arrow key
-                case 38: tlv.map.getView().setZoom( tlv.map.getView().getZoom() + 1 );
-				// right arrow key
+                // up arrow key and w
+                case 38:
+                case 87:
+                    tlv.map.getView().setZoom( tlv.map.getView().getZoom() + 1 );
+                    break;
+				// right arrow key and d
 				case 39:
+                case 68:
                     if ( event.shiftKey ) {
                         var degrees = tlv.map.getView().getRotation() * 180 / Math.PI + 1;
                         tlv.map.getView().setRotation( degrees * Math.PI / 180 );
@@ -240,66 +251,41 @@ function enableKeyboardShortcuts() {
                         changeFrame( "fastForward" );
                     }
                     break;
-                // down arrow key
-                case 40: tlv.map.getView().setZoom( tlv.map.getView().getZoom() - 1 );
-				// delete key
-				case 46: deleteFrame(  tlv.currentLayer ); break;
+                // down arrow key and s
+                case 40:
+                case 83:
+                    tlv.map.getView().setZoom( tlv.map.getView().getZoom() - 1 );
+                    break;
+				// delete key and x
+				case 46:
+                case 88:
+                    deleteFrame(  tlv.currentLayer );
+                    break;
 			}
 		}
 	});
 }
 
-function getDtedHeight( longitude, latitude, callback ) {
-	$.ajax({
-		data: "longitude=" + longitude + "&latitude=" + latitude,
-		url: tlv.contextPath + "/ossim/getHeight"
-	})
-	.done( function( data ) {
-		callback( data );
-	})
-	.fail( function( data ) {
-		callback( data );
-	});
-}
-
-function getGpsLocation(callbackFunction) {
-	if (navigator.geolocation) {
-		displayLoadingDialog("Don't worry, we'll find you... hopefully. #optimism");
-		navigator.geolocation.getCurrentPosition(
-			// success
-			function(position) {
-				hideLoadingDialog();
-				callbackFunction(position);
-			},
-			// error
-			function(error) {
-				displayErrorDialog("Well, we tried to determine your location... and failed: " + error.message);
-				hideLoadingDialog();
-			}
-		);
-	}
-	else { displayErrorDialog("Sorry, you're device doesn't support geolocation. :("); }
-}
-
 function groundToImagePoints( coordinates, layer, callback ) {
     return $.ajax({
-        contentType: "application/json",
+        contentType: 'application/json',
         data: JSON.stringify({
-            "entryId": layer.metadata.entry_id || 0,
-            "filename": layer.metadata.filename,
-            "pointList": coordinates.map( function( coordinate ) {
-				return { "lat": coordinate[ 1 ], "lon": coordinate[0] };
+            'entryId': layer.metadata.entry_id || 0,
+            'filename': layer.metadata.filename,
+            'pointList': coordinates.map( function( coordinate ) {
+				return { 'lat': coordinate[ 1 ], 'lon': coordinate[0] };
 			}),
         }),
-        success: function( data ) {
-            var pixels = data.data.map(
-                function( point ) { return [ point.x, point.y ] }
-            );
-            callback( pixels, layer );
-        },
+        dataType: 'json',
         type: "post",
         url: tlv.libraries[ layer.library ].mensaUrl + "/groundToImagePoints"
-    });
+    })
+    .done( function( data ) {
+        var pixels = data.data.map(
+            function( point ) { return [ point.x, point.y ] }
+        );
+        callback( pixels, layer, data.data );
+    } );
 }
 
 function hideDialog(dialog) {
@@ -312,45 +298,34 @@ function hideErrorDialog() { $("#errorDialog").hide(); }
 
 function hideLoadingDialog() { $("#loadingDialog").modal("hide"); }
 
-function imagePointsToGround( pixels, layer, callback ) {
+function imagePointsToGround( pixels, layer, options, callback ) {
+    if ( typeof options == 'function' ) {
+        callback = options;
+    }
+
     return $.ajax({
-        contentType: "application/json",
+        contentType: 'application/json',
         data: JSON.stringify({
-            "entryId": 0,
-            "filename": layer.metadata.filename,
-            "pointList": pixels.map( function( pixel ) {
-                return { "x": pixel[ 0 ], "y": pixel[ 1 ] };
+            'entryId': 0,
+            'filename': layer.metadata.filename,
+            'pointList': pixels.map( function( pixel ) {
+                return { 'x': pixel[ 0 ], 'y': pixel[ 1 ] };
             } ),
-            "pqeEllipseAngularIncrement": 10,
-            "pqeEllipsePointType" : "none",
-            "pqeIncludePositionError": true,
-            "pqeProbabilityLevel" : 0.9,
+            'pqeEllipseAngularIncrement': 10,
+            'pqeEllipsePointType' : 'array',
+            'pqeIncludePositionError': true,
+            'pqeProbabilityLevel' : options.pqeProbabilityLevel || 0.9,
         }),
-        success: function( data ) {
-            var coordinates = data.data.map(
-                function( point ) { return [ point.lon, point.lat ]; }
-            );
-            var info = data.data.map(
-                function( point ) {
-                    if ( point.pqe.pqeValid ) {
-                        return $.extend( point, {
-                                CE: point.pqe.CE,
-                                LE: point.pqe.LE
-                        } );
-                    }
-                    else {
-                        return $.extend( point, {
-                            CE: null,
-                            LE: null
-                        } );
-                    }
-                }
-            );
-            callback( coordinates, layer, info );
-        },
-        type: "post",
-        url: tlv.libraries[ layer.library ].mensaUrl + "/imagePointsToGround"
-    });
+        dataType: 'json',
+        type: 'post',
+        url: tlv.libraries[ layer.library ].mensaUrl + '/imagePointsToGround'
+    })
+    .done( function( data ) {
+        var coordinates = data.data.map(
+            function( point ) { return [ point.lon, point.lat ]; }
+        );
+        callback( coordinates, layer, data.data );
+    } );
 }
 
 function initializeLoadingDialog() {

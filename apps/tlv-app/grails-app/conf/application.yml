@@ -1,8 +1,8 @@
 # If there is a version to denote, set it here
 about:
-    contactEmail: O2Support@digitalglobe.com
-    release: Juno
-    releaseNumber: 2.6.0
+    contactEmail: knaquin@radiantsolutions.com
+    release: Laguna
+    releaseNumber: 2.8.2
 
 # If there a page banner is needed, set it here
 #banner:
@@ -21,7 +21,7 @@ about:
 #        projection: EPSG:4326
 #        style: default
 #        type: wmts
-#        visible: true
+#        visible: false
 #        url: ${baseUrl}/omar-wmts/wmts/getTile
 #    osmBasic:
 #        layers: o2-basemap-basic
@@ -29,19 +29,19 @@ about:
 #        styles:
 #        type: wms
 #        url: ${baseUrl}/omar-mapproxy/service
-#        visible: true
+#        visible: false
 #    osmBright:
 #        layers: o2-basemap-bright
 #        name: OSM Bright
 #        styles:
 #        type: wms
-#        visible: false
+#        visible: true
 #        url: ${baseUrl}/omar-mapproxy/service
 #    googleMaps:
 #        name: Google Maps
 #        type: xyz
 #        url: https://mt1.google.com/vt/lyrs=r&x={x}&y={y}&z={z}
-#        visible: false
+#        visibility: false
 #    googleSatellite:
 #        name: Google Satellite
 #        type: xyz
@@ -72,25 +72,26 @@ baseUrl: https://omar.ossim.io
 #    typeName: omar:facility
 #    url: ${baseUrl}/omar-wfs/wfs
 
-# If documentation is available, define the URL
-#docsUrl: ${baseUrl}/omar-docs
+# Provide a demo location if desired
+#demoLocation: Paris, FR
 
-# A list of full spectrum geoint products with regular expressions that append it to the image Id
-#fsg:
-#    2CMV:
-#        searchString: 2CMV
-#        imageIdRegExp: (_2CMV_[A-Z])
+# If documentation is available, define the URL
+docsUrl: ${baseUrl}/omar-docs
 
 # If the twofishes geocoder is available, define the URL
-#geocoderUrl: ${baseUrl}/omar-ui/twoFishesProxy
+geocoderUrl: ${baseUrl}/twofishes
 
 # If there is an available token for Cesium terrain, define it here
 #ionAccessToken: <token>
 
-# If ISA is available, define the URL
-# Make sure the trailing forward slash is included
-# Optional
-#isaUrl: ${baseUrl}/isa-ui/
+# If any keystores are needed to proxy requests
+#keyStores:
+#    keyStore:
+#        filename: /data/keyStore.jks
+#        password: <password>
+#    trustStore:
+#        filename: /data/trustStore.jks
+#        password: <password>
 
 # If there any feature layers available, list them here
 #layers:
@@ -107,7 +108,7 @@ baseUrl: https://omar.ossim.io
 #        refresh: false
 #        style:
 #            text:
-#                attribute: name
+#                label: name
 #                color: white
 #    o2-wfs:
 #        label: O2 WFS
@@ -124,47 +125,52 @@ baseUrl: https://omar.ossim.io
 #        refresh: true
 #        style:
 #            stroke:
-#                color: black
+#                color: yellow
 #            text:
-#                color: black
+#                color: yellow
 #                label: image_id
 
 # List the various repository details
 # You need at least one
-#libraries:
-#    o2-dev:
-#        imageSpaceUrl: ${baseUrl}/omar-ui/omar/#/mapImage
-#        kmlUrl: ${baseUrl}/omar-superoverlay/superOverlay/createKml
-#        label: O2-DEV
-#        layerType: wms
-#        mensaUrl: ${baseUrl}/omar-mensa/mensa
-#        omsUrl: ${baseUrl}/omar-oms/imageSpace
-#        stagerUrl: ${baseUrl}/omar-stager/
-#        wfsUrl: ${baseUrl}/omar-wfs/wfs
-#        wmsUrl: ${baseUrl}/omar-wms/wms
-#    o2:
-#        imageSpaceUrl: https://omar.ossim.io/omar-ui/omar/#/mapImage
+libraries:
+    o2:
+        kmlUrl: ${baseUrl}/omar-superoverlay/superOverlay/createKml
+        label: O2
+        mensaUrl: ${baseUrl}/omar-mensa/mensa
+        omsUrl: ${baseUrl}/omar-oms/imageSpace
+        stagerUrl: ${baseUrl}/omar-stager/
+        wfsUrl: ${baseUrl}/omar-wfs/wfs
+        wmsUrl: ${baseUrl}/omar-wms/wms
+#    o2-prod:
 #        kmlUrl: https://omar.ossim.io/omar-superoverlay/superOverlay/createKml
 #        label: O2
-#        layerType: wms
 #        mensaUrl: https://omar.ossim.io/omar-mensa/mensa
 #        omsUrl: https://omar.ossim.io/omar-oms/imageSpace
 #        stagerUrl: https://omar.ossim.io/omar-stager/
 #        wfsUrl: https://omar.ossim.io/omar-wfs/wfs
 #        wmsUrl: https://omar.ossim.io/omar-wms/wms
 
-# If an ontology service exists, set it here
-#ontologyUrl: <protocol>://<host>>:<port>/<contextPath>
+# Uncomment this to add your own releasabilty condition statements
+# releasability:
+#   - id:
+#     string: 'tlv.layers[ tlv.currentLayer ].metadata.height < 5000 ? " // h < 5000" : " // h >= 5000"'
+#   - id:
+#     string: 'tlv.layers[ tlv.currentLayer ].metadata.index_id.contains("a0") ? " // has a0" : releasability'
 
 # Set the security classification banner here
-securityClassificationBanner:
-    backgroundColor: green
-    classification: UNCLASSIFIED
-    textColor: white
+#securityClassification:
+#    backgroundColor: green
+#    classification: UNCLASSIFIED
+#    textColor: white
 
 # Set the context path of the application
-#server:
-#    contextPath: /tlv
+server:
+    contextPath: /tlv
+
+swagger:
+  schemes:
+    - HTTPS
+    - HTTP
 
 templates:
     default:
@@ -174,7 +180,7 @@ templates:
             northArrow: north-arrow.png
             text:
                 securityClassification:
-                    defaultValue: Security Classification
+                    defaultValue: tlv.layers[ tlv.currentLayer ].metadata.security_classification
                     style:
                         color: "#add8e6"
                         height: 25%
@@ -347,59 +353,3 @@ environments:
                 testOnReturn: false
                 jdbcInterceptors: ConnectionState
                 defaultTransactionIsolation: 2 # TRANSACTION_READ_COMMITTED
-
----
-defaultUsername: Anonymous
-
-requestHeaderUsername: username
-
-securityClassification:
-    backgroundColor: green
-    classification: Unclassified
-    textColor: white
-
----
-grails:
-    plugin:
-        springsecurity:
-            userLookup:
-                userDomainClassName: 'omar.security.SecUser'
-                authorityJoinClassName: 'omar.security.SecUserSecRole'
-            authority:
-                className: 'omar.security.SecRole'
-            controllerAnnotations:
-                staticRules:
-                    - pattern: '/**'
-                      access: [ 'permitAll' ]
-                    - pattern: '/error'
-                      access: [ 'permitAll' ]
-                    - pattern: '/index'
-                      access: [ 'permitAll' ]
-                    - pattern: '/index.gsp'
-                      access: [ 'permitAll' ]
-                    - pattern: '/shutdown'
-                      access: [ 'permitAll' ]
-                    - pattern: '/assets/**'
-                      access: [ 'permitAll' ]
-                    - pattern: '/**/js/**'
-                      access: [ 'permitAll' ]
-                    - pattern: '/**/css/**'
-                      access: [ 'permitAll' ]
-                    - pattern: '/**/images/**'
-                      access: [ 'permitAll' ]
-                    - pattern: '/**/favicon.ico'
-                      access: [ 'permitAll' ]
-            filterChain:
-                chainMap:
-                    - pattern: '/assets/**'
-                      filters: 'none'
-                    - pattern: '/**/js/**'
-                      filters: 'none'
-                    - pattern: '/**/css/**'
-                      filters: 'none'
-                    - pattern: '/**/images/**'
-                      filters: 'none'
-                    - pattern: '/**/favicon.ico'
-                      filters: 'none'
-                    - pattern: '/**'
-                      filters: 'JOINED_FILTERS'

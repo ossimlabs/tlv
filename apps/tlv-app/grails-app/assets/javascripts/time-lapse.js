@@ -141,7 +141,7 @@ function geoJump(location) {
 	var point = convertGeospatialCoordinateFormat(
 		location,
 		function(point) {
-			if (point) { tlv.map.getView().setCenter(ol.proj.transform(point, "EPSG:4326", "EPSG:3857")); }
+			if (point) { tlv.map.getView().setCenter( point ); }
 		}
 	);
 }
@@ -155,10 +155,9 @@ function getCurrentDimension() {
 
 function getMapCenterText( format ) {
     var center = tlv.map.getView().getCenter();
-    var coordinate = ol.proj.transform( center, "EPSG:3857", "EPSG:4326");
 	var convert = new CoordinateConversion();
-	var lat = coordinate[ 1 ];
-	var lon = coordinate[ 0 ];
+	var lat = center[ 1 ];
+	var lon = center[ 0 ];
 
     switch ( format ) {
         case "dms":
@@ -354,6 +353,9 @@ function playStopTimeLapse(button) {
 
 function playTimeLapse() {
 	changeFrame("fastForward");
+    if ( tlv.timeLapseAdvance ) {
+        clearTimeout( tlv.timeLapseAdvance );
+    }
 	tlv.timeLapseAdvance = setTimeout("playTimeLapse()", 1000);
 }
 
@@ -367,18 +369,17 @@ function setupTimeLapse() {
 	setupMap();
 	addBaseLayersToTheMap();
 
-	if ( tlv.chronological == "false" ) { tlv.layers.reverse(); }
+	if ( tlv.reverseChronological == "true" ) { tlv.layers.reverse(); }
 	// add layers to the map
     tlv.layers.reverse();
 	$.each( tlv.layers, function( index, layer ) {
-		layer.keepVisible = layer.keepVisible || false;
+	   layer.keepVisible = layer.keepVisible || false;
 		addLayerToTheMap( layer );
 	});
-    tlv.layers.reverse();
+    //tlv.layers.reverse();
 	tlv.currentLayer = 0;
 
-	var extent = ol.proj.transformExtent(tlv.bbox, "EPSG:4326", "EPSG:3857");
-	tlv.map.getView().fit( extent );
+    tlv.map.getView().fit( tlv.bbox, { nearest: true } );
 
 	// register map listeners
 	tlv.map.on("moveend", theMapHasMoved);
@@ -386,7 +387,6 @@ function setupTimeLapse() {
 		var feature = tlv.map.forEachFeatureAtPixel(event.pixel, function(feature, layer) { return feature; });
 		if (feature) { aFeatureHasBeenSelected(feature, event); }
 	});
-
 
 	tlv.layers[0].mapLayer.setVisible(true);
 	tlv.layers[0].mapLayer.setOpacity(1);
@@ -396,7 +396,7 @@ function setupTimeLapse() {
 	updateScreenText();
 }
 
-function stopTimeLapse() { clearTimeout(tlv.timeLapseAdvance); }
+function stopTimeLapse() { clearTimeout( tlv.timeLapseAdvance ); }
 
 function updateAcquisitionDate() {
 	var acquisitionDate = tlv.layers[ tlv.currentLayer ].acquisitionDate;
@@ -433,13 +433,128 @@ function updateMapSize() {
 	}
 }
 
+function updatePqe( pixel ) {
+    var options = { pqeProbabilityLevel: $( '#pqeProbabilityInput' ).val() };
+    imagePointsToGround( [ pixel ], tlv.layers[ tlv.currentLayer ], options,  function( coordinates, layer, info ) {
+        var pqe = info[ 0 ].pqe;
+
+        var table = document.createElement( 'table' );
+        table.className = 'table table-condensed';
+
+        for ( var i = 0; i < 2; i++ ) {
+            var row = table.insertRow( table.rows.length );
+            $.each( [
+                { label: 'HAE: ', value: info[ 0 ].hgt.toFixed( 2 ), units: 'm' },
+                { label: 'Linear Err.', value: pqe.pqeValid ? pqe.LE.toFixed( 2 ) : 'N/A', units: 'm' },
+                { label: 'Semi-Maj. Axis', value: pqe.pqeValid ? pqe.SMA.toFixed( 2 ): 'N/A', units: 'm' },
+                { label: 'Semi-Min. Axis', value: pqe.pqeValid ? pqe.SMI.toFixed( 2 ) : 'N/A', units: 'm' },
+                { label: 'SMA Azimuth', value: pqe.pqeValid ? pqe.AZ.toFixed( 2 ) : 'N/A', units: 'deg' }
+            ], function( index, value ) {
+                var cell = row.insertCell( row.cells.length );
+                var html = i == 0 ? '<b>' + value.label + '</b>' : value.value + ' ' + value.units;
+                cell.innerHTML = html;
+            } );
+        }
+
+        for ( var i = 0; i < 2; i++ ) {
+            var row = table.insertRow( table.rows.length );
+            $.each( [
+                { label: 'MSL: ', value: info[ 0 ].hgtMsl.toFixed( 2 ), units: 'm' },
+                { label: 'Circular Err.', value: pqe.pqeValid ? pqe.CE.toFixed( 2 ) : 'N/A', units: 'm<sup>2</sup>' },
+                { label: 'Projection Type', value: pqe.pqeValid ? pqe.projType : 'N/A', units: '' },
+                { label: 'Surface Name', value: pqe.pqeValid ? pqe.surfaceName : 'N/A', units: '' },
+                { label: 'Probability', value: '', units: '' }
+            ], function( index, value ) {
+                var cell = row.insertCell( row.cells.length );
+                var html = i == 0 ? '<b>' + value.label + '</b>' : value.value + ' ' + value.units;
+                cell.innerHTML = html;
+            } );
+            if ( i == 1 ) {
+                var input = document.createElement( 'input' );
+                input.className = 'form-control input-sm';
+                input.id = 'pqeProbabilityInput';
+                input.onchange = function() {
+                    updatePqe( pixel );
+                };
+                input.step = 0.1;
+                input.type = 'number';
+                input.value = pqe.probabilityLevel;
+                var cell = row.cells[ row.cells.length - 1 ];
+                cell.appendChild( input );
+            }
+        }
+
+        $( '#pqeDiv' ).html( table );
+        var row = table.rows[ table.rows.length - 1 ];
+        var cell = row.cells[ row.cells.length - 1 ];
+        $( cell ).find( 'input' ).focus();
+    } );
+}
+
+function getReleasability() {
+
+	var releasability = null;
+	var javascript_string = [];
+
+	$.each( tlv.releasability, function( index, releasability ) {
+		javascript_string.push( releasability.string );
+	});
+
+	try {
+		$.each( javascript_string, function( index, string ) {
+			releasability = eval( string );
+		});
+	} catch ( exception ) { /* do nothing */ }
+	return releasability;
+}
+
+// Updates the security banner to match the current image security-classification
+function updateSecurityBanner() {
+
+	var current_banner = "#currentClassification";
+	var default_banner = "#defaultClassification";
+	
+	var releasability = getReleasability();
+
+	$( default_banner ).hide();
+	$( current_banner ).show();
+
+	$( '.col-md-12' ).removeClass( "unclassified");
+	$( '.col-md-12' ).removeClass( "secret");
+	$( '.col-md-12' ).removeClass( "top-secret");
+
+	switch(tlv.layers[ tlv.currentLayer ].metadata.security_classification) {
+		case "U":
+		case "UNCLASSIFIED":
+			addStyleAndClassification( current_banner, "unclassified", releasability );
+			break;
+		case "S":
+		case "SECRET":
+			addStyleAndClassification( current_banner, "secret", releasability );
+			break;
+		case "TS":
+		case "TOP-SECRET":
+			addStyleAndClassification( current_banner, "top-secret", releasability );
+			break;
+		default:
+			$( default_banner ).show();
+			$( current_banner ).hide();
+	}
+}
+
+function addStyleAndClassification( banner, classification, releasability ) {
+	$( '.col-md-12' ).addClass( classification );
+	$( banner ).text( classification.toUpperCase() + releasability );
+}
+
 function updateScreenText() {
 	updateImageId();
 	updateAcquisitionDate();
 	updateTlvLayerCount();
+	updateSecurityBanner();
 }
 
 function updateTlvLayerCount() {
 	var currentCount = tlv.currentLayer + 1;
-	$( '[id=tlvLayerCountSpan' ).html( currentCount + '/' + tlv.layers.length );
+    $( '.tlvLayerCountSpan' ).html( currentCount + '/' + tlv.layers.length );
 }

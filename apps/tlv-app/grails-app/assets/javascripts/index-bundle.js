@@ -24,4 +24,35 @@
 //= require menus/search
 //= require menus/view
 
+//= require webjars/jszip/3.1.0/jszip.min
+
 //= require polyfill
+
+
+// ol3 overrides
+/**
+ * @param {ol.MapBrowserEvent} mapBrowserEvent The event to handle.
+ */
+ol.PluggableMap.prototype.handleMapBrowserEvent = function(mapBrowserEvent) {
+  if (!this.frameState_) {
+    // With no view defined, we cannot translate pixels into geographical
+    // coordinates so interactions cannot be used.
+    return;
+  }
+  this.focus_ = mapBrowserEvent.map.getView().getCenter(); //mapBrowserEvent.coordinate;
+  mapBrowserEvent.frameState = this.frameState_;
+  var interactionsArray = this.getInteractions().getArray();
+  var i;
+  if (this.dispatchEvent(mapBrowserEvent) !== false) {
+    for (i = interactionsArray.length - 1; i >= 0; i--) {
+      var interaction = interactionsArray[i];
+      if (!interaction.getActive()) {
+        continue;
+      }
+      var cont = interaction.handleEvent(mapBrowserEvent);
+      if (!cont) {
+        break;
+      }
+    }
+  }
+};

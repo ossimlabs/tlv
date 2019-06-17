@@ -30,11 +30,6 @@ git clone https://github.com/ossimlabs/omar-security-plugin.git
 	3a. Set application config yaml
 	- `export SPRING_CONFIG_LOCATION=../tlv/apps/tlv-app/config.yml`
 
-	3b. Set path to common properties:
-	- `export OMAR_COMMON_PROPERTIES=../omar-common/omar-common-properties.gradle`
-
-	3c. Set repository manager:
-	- `export REPOSITORY_MANAGER_URL=https://nexus.ossim.io/nexus/content/repositories`
 
 4. Navigate in and build:
 ```
@@ -53,3 +48,5 @@ docker-compose up tlv
 ```
 
 6. Navigate to [`http://localhost:8080`](http://localhost:8080)
+
+#

@@ -55,7 +55,7 @@
 						<option ${ terrainWireframeOption ? "selected" : "" } value = "on">ON</option>
 					</select>
 
-					<label>View Space:</label>
+					<label>View Space</label>
 					<select class = "form-control" id = "viewSpaceSelect" onchange = "viewSpaceToggle(); $('#viewDialog').modal('hide');">
 						<%
 							def viewSpaceOption = tlvParams.preferences.tlvPreference.viewSpace

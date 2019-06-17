@@ -8,22 +8,17 @@
 					<div class = "row">
 						<div class = "col-md-12">
 							<label>Location</label>
-							<div class = "input-group">
-								<%
-									def placeholder = [ "Coordinate", "Image ID" ]
-									if ( params.beLookup?.url ) { placeholder = placeholder.plus( 0, "BE" ) }
-									if ( params.geocoderUrl ) { placeholder.push( "Placename" ) }
-								%>
-  								<input class = "typeahead form-control" id = "searchLocationInput" placeholder = "${ placeholder.join( ", " ) }" type = "text">
-								<span class = "input-group-btn">
-									<button class = "btn btn-primary"  onclick = getLocationGps() title = "Use your GPS location" type = "button"><span class = "glyphicon glyphicon-screenshot"></span></button>
-								</span>
-							</div>
+							<%
+								def placeholder = [ "Coordinate", "Image ID" ]
+								if ( params.beLookup?.url ) { placeholder = placeholder.plus( 0, "BE" ) }
+								if ( params.geocoderUrl ) { placeholder.push( "Placename" ) }
+							%>
+  							<input class = "typeahead form-control" id = "searchLocationInput" placeholder = "${ placeholder.join( ", " ) }" type = "text">
 						</div>
 					</div>
 
 					<div class = "row">
-						<div class = "col-md-6">
+						<div class = "col-md-5">
 							<label>Start Date</label>
 							<div class = "input-group date" id = "searchStartDateTimePicker">
 								<input class = "form-control" type = "text">
@@ -32,7 +27,7 @@
 								</span>
 							</div>
 						</div>
-						<div class = "col-md-6">
+						<div class = "col-md-5">
 							<label>End Date</label>
 							<div class = "input-group date" id = "searchEndDateTimePicker">
 								<input class = "form-control" type = "text">
@@ -41,27 +36,38 @@
 								</span>
 							</div>
 						</div>
+						<div class = "col-md-2">
+							<label>Last Days</label>
+							<input class = "form-control" id = "searchLastDaysInput" onchange = adjustLastDaysDate() type = "number">
+						</div>
 					</div>
 
 					<div class = "row">
 						<div class = "col-md-12">
 							<label>Sensors</label>
-							<select multiple class = "form-control" id = "searchSensorSelect"></select>
+							<div class = "input-group">
+								<div class = "btn-group" data-toggle = "buttons" id = "searchSensorDiv"></div>
+							</div>
 						</div>
 					</div>
 
-					<g:if test = "${ grailsApplication.config.fsg }">
-						<div class = "row">
-							<div class = "col-md-12">
-								<label>Full Spectrum GEOINT</label>
-								<select multiple class = "form-control" id = "searchFsgSelect">
-									<g:each in = "${ grailsApplication.config.fsg }">
-										<option value = "${ it.value.searchString }">${ it.key.toUpperCase() }</option>
-									</g:each>
-								</select>
+					<div class = "row">
+						<div class = "col-md-12">
+							<label>Full Spectrum GEOINT</label>
+							<div class = "form-inline">
+								<input class = "form-control"
+									id = "searchFsgInput"
+									list = "searchFsgList"
+									onchange = "javascript: handleDataList( 'searchFsgInput' )"
+									onkeyup = "javascript: handleDataList( 'searchFsgInput' )"
+									placeholder = "Full Spectrum GEOINT">
+								<datalist id = "searchFsgList"></datalist>
+								<button class = "btn btn-danger" data-toggle = "button" id = "searchFsgNotCheckbox" title = "Eveyrhting but these..." type = "button">
+									<span class = "glyphicon glyphicon-ban-circle"></span>
+								</button>
 							</div>
 						</div>
-					</g:if>
+					</div>
 
 					<div class = "row">
 						<div class = "col-md-4">
@@ -102,7 +108,8 @@
 				</div>
 			</div>
 			<div class = "modal-footer">
-				<button type = "button" class = "btn btn-primary" onclick = beginSearch()>Search</button>
+				<button type = "button" class = "btn btn-primary pull-left" data-dismiss = "modal" onclick = demoSearch()>Demo</button>
+				<button type = "button" class = "btn btn-primary" data-dismiss = "modal" onclick = beginSearch()>Search</button>
 				<button type = "button" class = "btn btn-default" data-dismiss = "modal">Close</button>
 			</div>
 		</div>
