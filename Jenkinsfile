@@ -30,6 +30,7 @@ node("${BUILD_NODE}"){
 
     stage ( "Assemble" ) {
         sh "gradle assemble -PossimMavenProxy=${ OSSIM_MAVEN_PROXY }"
+        archiveArtifacts "apps/*/build/libs/*.jar"
     }
 
     stage ("Publish Nexus") {
