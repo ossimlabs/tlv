@@ -76,10 +76,10 @@ baseUrl: https://omar.ossim.io
 #demoLocation: Paris, FR
 
 # If documentation is available, define the URL
-docsUrl: ${baseUrl}/omar-docs
+docsUrl: ${baseUrl}/omar-docs/
 
 # If the twofishes geocoder is available, define the URL
-geocoderUrl: ${baseUrl}/twofishes
+geocoderUrl: ${baseUrl}/twofishes/
 
 # If there is an available token for Cesium terrain, define it here
 #ionAccessToken: <token>
