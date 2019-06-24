@@ -46,6 +46,12 @@
 						<div class = "col-md-12">
 							<label>Sensors</label>
 							<div class = "input-group">
+								<div class = "btn-group" data-toggle = "buttons">
+									<label class = "btn btn-primary" checkAllSensors()>
+										<input type = "checkbox">
+										ALL
+									</label>
+								</div>
 								<div class = "btn-group" data-toggle = "buttons" id = "searchSensorDiv"></div>
 							</div>
 						</div>

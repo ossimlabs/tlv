@@ -237,6 +237,34 @@ function beginSearch() {
 	}
 }
 
+function checkAllSensors() {
+	var labelElement = $( '#searchSensorDiv' ).prev().children()[ 0 ];
+	var checkbox = $( labelElement ).children()[ 0 ];
+	var checked = !$( checkbox ).is( ':checked' );console.dir(checked);
+	if ( checked ) {
+		$( labelElement ).addClass( 'btn-success' );
+
+		$.each( $( '#searchSensorDiv' ).children(), function( index, label ) {console.dir(label);
+			$( label ).removeClass( 'active btn-success' );
+			$( label ).attr( 'disabled', true );
+			$( label ).children().removeClass( 'active btn-success' );
+			$( label ).children().attr( 'disabled', true );
+		} );
+	}
+	else {
+		$( labelElement ).removeClass( 'btn-success' );
+
+		$.each( $( '#searchSensorDiv' ).children(), function( index, label ) {
+			$( label ).removeAttr( 'disabled' );
+			$( label ).removeClass( 'active' );
+			$( label ).children().removeAttr( 'disabled' );
+			$( label ).children().removeClass( 'active' );
+		} );
+
+	}
+
+}
+
 function demoSearch() {
 	if ( tlv.demoLocation ) {
 		$( "#searchLocationInput" ).val( tlv.demoLocation );
@@ -350,29 +378,21 @@ function getDistinctSensors() {
 		 	sensors.push( library.sensors || [] );
 		});
 
-		var selectedSensors = [];
-		if ( tlv.sensors || tlv.preferences.tlvPreference.sensor ) {
-			selectedSensors = ( tlv.sensors || tlv.preferences.tlvPreference.sensor )
-				.split( ',' ).map( function( sensor ) {
-					return  sensor.trim();
-				} ) ;
-		}
-
 		var buttonGroup = $( '#searchSensorDiv' );
 		buttonGroup.html( '' );
 		$.each( [].concat.apply( [], sensors ).unique().sort(), function( index, sensor ) {
 			var label = $( document.createElement( 'label' ) );
 			label.addClass( 'btn btn-primary' );
-			if ( selectedSensors.contains( sensor ) || selectedSensors.length == 0 ) {
-				label.addClass( 'active btn-success' );
-			}
+
 			$( label ).click( function() {
-				// this after the click has been nadled
-				if ( label.hasClass( 'active' ) ) {
-					label.removeClass( 'btn-success' );
-				}
-				else {
-					label.addClass( 'btn-success' );
+				if ( !$( label ).attr( 'disabled' ) ) {
+					// this after the click has been hnadled
+					if ( label.hasClass( 'active' ) ) {
+						label.removeClass( 'btn-success' );
+					}
+					else {
+						label.addClass( 'btn-success' );
+					}
 				}
 			} );
 
@@ -384,6 +404,30 @@ function getDistinctSensors() {
 
 			$( buttonGroup ).append( label );
 		} );
+
+		var selectedSensors = [];
+		if ( tlv.sensors || tlv.preferences.tlvPreference.sensor ) {
+			selectedSensors = ( tlv.sensors || tlv.preferences.tlvPreference.sensor )
+				.split( ',' ).map( function( sensor ) {
+					return  sensor.trim();
+				} );
+
+			$.each( selectedSensors, function( index, sensor ) {
+				var label = buttonGroup.find( 'label:contains(' + sensor + ')' );
+				label.addClass( 'active btn-success' );
+			} );
+		}
+		else {
+			var allSensorsLabel = buttonGroup.prev().children()[0];
+
+			if ( buttonGroup.prev().children().hasClass( 'active' ) ) {
+				checkAllSensors();
+			}
+			else{
+				checkAllSensors();
+				checkAllSensors();
+			}
+		}
 	}
 
 	$.each( tlv.libraries, function( index, library ) {
