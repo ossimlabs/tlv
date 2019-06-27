@@ -237,14 +237,13 @@ function beginSearch() {
 	}
 }
 
-function checkAllSensors() {
-	var labelElement = $( '#searchSensorDiv' ).prev().children()[ 0 ];
+function checkAllSensors( labelElement ) {
 	var checkbox = $( labelElement ).children()[ 0 ];
-	var checked = !$( checkbox ).is( ':checked' );console.dir(checked);
+	var checked = !$( checkbox ).is( ':checked' );
 	if ( checked ) {
 		$( labelElement ).addClass( 'btn-success' );
 
-		$.each( $( '#searchSensorDiv' ).children(), function( index, label ) {console.dir(label);
+		$.each( $( '#searchSensorDiv' ).children(), function( index, label ) {
 			$( label ).removeClass( 'active btn-success' );
 			$( label ).attr( 'disabled', true );
 			$( label ).children().removeClass( 'active btn-success' );
@@ -311,21 +310,21 @@ function demoSearch() {
 }
 
 function getDate(date) {
-	var year = date.getFullYear();
+	var year = date.getUTCFullYear();
 
-	var month = date.getMonth() + 1;
+	var month = date.getUTCMonth() + 1;
 	month = month < 10 ? "0" + month : month;
 
-	var day = date.getDate();
+	var day = date.getUTCDate();
 	day = day < 10 ? "0" + day : day;
 
-	var hour = date.getHours();
+	var hour = date.getUTCHours();
 	hour = hour < 10 ? "0" + hour : hour;
 
-	var minute = date.getMinutes();
+	var minute = date.getUTCMinutes();
 	minute = minute < 10 ? "0" + minute : minute;
 
-	var second = date.getSeconds();
+	var second = date.getUTCSeconds();
 	second = second < 10 ? "0" + second : second;
 
 
@@ -421,11 +420,11 @@ function getDistinctSensors() {
 			var allSensorsLabel = buttonGroup.prev().children()[0];
 
 			if ( buttonGroup.prev().children().hasClass( 'active' ) ) {
-				checkAllSensors();
+				$( allSensorsLabel ).trigger( 'click' );
+				$( allSensorsLabel ).trigger( 'click' );
 			}
-			else{
-				checkAllSensors();
-				checkAllSensors();
+			else {
+				$( allSensorsLabel ).trigger( 'click' );
 			}
 		}
 	}

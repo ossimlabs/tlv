@@ -47,7 +47,7 @@
 							<label>Sensors</label>
 							<div class = "input-group">
 								<div class = "btn-group" data-toggle = "buttons">
-									<label class = "btn btn-primary" checkAllSensors()>
+									<label class = "btn btn-primary" onclick = "javascript:checkAllSensors( this )">
 										<input type = "checkbox">
 										ALL
 									</label>
