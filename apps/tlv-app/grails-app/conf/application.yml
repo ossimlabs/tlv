@@ -64,7 +64,7 @@ about:
 #        visible: false
 
 # Define the base URL to be used throughout the configuration
-baseUrl: https://omar.ossim.io
+baseUrl: https://omar-dev.ossim.io
 
 # If BEs are available, define the WFS query schema
 #beLookup:
@@ -217,9 +217,9 @@ templates:
 #terrainProvider: //assets.agi.com/stk-terrain/world
 
 # If access requires a PKI, define how to get the username here
-#userInfo:
-#    requestHeaderUserName: username
-#    requestHeaderUserNameDefault: Anonymous
+userInfo:
+    requestHeaderUserName: username
+    requestHeaderUserNameDefault: Anonymous
 
 ---
 grails:
