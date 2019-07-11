@@ -5,21 +5,6 @@ TLV serves two main purposes...
 1. It is a viewer that shows orthorectified imagery from the O2 database.
 2. It is able to show several images in a flip-book fashion, allowing users to quickly look through stacks of imagery.
 
-**<span class="glyphicon glyphicon-step-backward"></span>&nbsp;:**
-The rewind button will cycle back to the previous image in the stack.
-
-**<span class="glyphicon glyphicon-play"></span>&nbsp;:**
-This play button cycles through all images at 1 second intervals.
-
-**<span class="glyphicon glyphicon-step-forward"></span>&nbsp;:**
-The fast forward button will advance to the next image in the stack.
-
-_Note: Use the left and right arrow keys on the keyboard to cycle through the image stack and avoid carpal tunnel._
-
-**<span class="glyphicon glyphicon-list-alt"></span>&nbsp;:**
-The summary button will give a list of all images in the stack along with an abbreviated composition of metadata. It's better than cliff notes!
-
-
 ## Map
 * **Mouse Coordinates:**
 The coordinate of the mouse is displayed in the lower-left corner of the map. Click the box to cycle through DD, DMS and MGRS formats. Right-click anywhere on the map to get a dialog box of that coordinate in all three formats.
@@ -44,7 +29,7 @@ Go forward to the next image on the stack.
 * **<span class="glyphicon glyphicon-trash"></span>&nbsp;:**
 Delete the current image from the stack.
 * **<span class="glyphicon glyphicon-list-alt"></span>&nbsp;:**
-Open the Stack Summary Table to easily view the whole stack and move/delete images from it.
+Open the Stack Summary Table to easily view the whole stack and move/delete images from it along with an abbreviated composition of metadata..
 
 
 ## **<span class="glyphicon glyphicon-home"></span>&nbsp;** : Home
