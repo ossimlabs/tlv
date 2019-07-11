@@ -27,8 +27,28 @@ The coordinate of the mouse is displayed in the lower-left corner of the map. Cl
 * **Rotation:**
 In 2D mode you can rotate the map by holding Shift + Alt while clicking and dragging. In 3D mode, you can hold Alt while clicking and dragging to pitch the globe.
 
+## TLV Controls
+These can be found in the top-left corner of the ViewPort and are used when navigating between two or more images in TLV.
+
+![](./TLV_controls.png)
+
+### Control Descriptions
+* **<span class="glyphicon glyphicon-step-backward"></span>&nbsp;:**
+Go back to the previous image on the stack.
+* **<span class="glyphicon glyphicon-play"></span>&nbsp;:**
+Start automatically flipping through images on the stack.
+* **<span class="glyphicon glyphicon-stop"></span>&nbsp;:**
+Stop automatically flipping through images on the stack.
+* **<span class="glyphicon glyphicon-step-forward"></span>&nbsp;:**
+Go forward to the next image on the stack.
+* **<span class="glyphicon glyphicon-trash"></span>&nbsp;:**
+Delete the current image from the stack.
+* **<span class="glyphicon glyphicon-list-alt"></span>&nbsp;:**
+Open the Stack Summary Table to easily view the whole stack and move/delete images from it.
+
 
 ## **<span class="glyphicon glyphicon-home"></span>&nbsp;** : Home
+Click this to go back to the main O2 home page.
 
 
 ## **<span class="glyphicon glyphicon-search"></span>&nbsp;** : Search
@@ -51,6 +71,8 @@ The start date of the search. The default is 30 days prior to today.
 
 
 ## **<span class="glyphicon glyphicon-pencil"></span>&nbsp;** : Annotations
+* **Toggle Visibility:**
+Click to make all annotation disappear or reappear.
 * **Circle:**
 Click to begin a circle center and then click again to end it.
 * **Line:**
@@ -68,10 +90,20 @@ Click on any annotation to modify its style.
 
 
 ## **<span class="glyphicon glyphicon-export"></span>&nbsp;** : Export
+* **GIF:**
+Create a GIF using all images currently in the image stack.
 * **Metadata:**
 This will take all the metdata from all the layers, convert it to a CSV file and allow you to download it. TLV harvests as much metadata as it can from its libraries and does not make any attempt to change or normalize the data. What TLV sees is what you get.
+* **KML:**
+Export a KML file to the desried image(s).
+* **Link:**
+Get a sharable link to the current image in TLV.
 * **Screenshot:**
 Think of it like the map taking a selfie. #nofilter
+* **Template:**
+Creates a template of the image stack which you can then download as a png.
+* **WMS GetCapabilities:**
+Returns the WMS GetCapabilities for the current image.
 
 
 ## **<span class="glyphicon glyphicon-picture"></span>&nbsp;** : Image Properties
@@ -90,6 +122,8 @@ If true pixels with a null value will display black instead of transparent.
 * **Sharpen Mode:**
 Select the kernel size used for sharpening. You can also try squinting really hard to bring things into focus.
 
+![](./image_properties.png)
+
 
 ## **<span class="glyphicon glyphicon-menu-hamburger"></span>&nbsp;** : Layers
 * **Base Layer:**
@@ -102,11 +136,11 @@ This will place a marker on the map that indicates the exact location used for t
 As the name implies, this shows an overview map that will follow you around as you pan and zoom in and out. In a friendly way though, we promise.
 
 
-## **<span class="fa fa-history"></span>&nbsp;** : Time Lapse
-* **Delete Frame:**
-Kick that image to the curb and remove it from the stack. Get rid of things even faster by using the delete button on the keyboard.
+## **<span class="glyphicon glyphicon-wrench"></span>&nbsp;** : Tools
 * **Geo-Jump:**
 Go to any place on the map that your heart desires.
+* **Measure:**
+Use this tool for getting accurate distances and areas on an image by drawing directly on it.
 * **Orientation:**
 * * **Manual:**
 You are responsible for your own rotation (and pitch, tilt, etc. if you’re in 3D).
@@ -119,12 +153,12 @@ The default order of the image stack is chronological. But, if you prefer the ot
 ## **<span class="glyphicon glyphicon-eye-open"></span>&nbsp;** : View
 * **Dimensions:**
 If your browser supports it, TLV will give you a 3D view of your images!
-* **Image Space:**
-Feeling like your image is a little squished? Try looking at it in "un-orthorectified"/"as-the-sensor-took-the-image" kind of view.
 * **Swipe:**
 Swipe an image over another. This is TLV's version of "wax on, wax off"... only instead of wax, it's imagery. At no extra charge we put in a "right-click-hold" short-cut to this feature.
 * **Terrain Wireframe:**
 Overlay a raw wireframe representation of your terrain.
+* **Image Space:**
+Feeling like your image is a little squished? Try looking at it in "un-orthorectified"/"as-the-sensor-took-the-image" kind of view.
 * **WMS Tiles:**
 Instead of your map being composed of multiple tiles that fill in as they are ready, switch to a single tile (to rule them all), if you're in to that kind of thing.
 
