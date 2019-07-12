@@ -110,7 +110,7 @@ Select the kernel size used for sharpening. You can also try squinting really ha
 ![](./image_properties.png)
 
 
-## **<span class="glyphicon glyphicon-menu-hamburger"></span>&nbsp;** : Layers
+## **<span class="fa fa-bars"></span>&nbsp;** : Layers
 * **Base Layer:**
 Select from an assortment of base layers to bring context to the imagery.
 * **Cross-Hair:**
