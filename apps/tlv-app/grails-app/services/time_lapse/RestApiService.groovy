@@ -32,6 +32,7 @@ class RestApiService {
 		}
 		params.templates = grailsApplication.config.templates ?: [:]
 		params.terrainProvider = params.terrainProvider ?: ( grailsApplication.config.terrainProvider ?: null )
+		params.reachbackUrl = grailsApplication.config.reachbackUrl ?: null
 		params.releasability = grailsApplication.config.releasability
 
 
