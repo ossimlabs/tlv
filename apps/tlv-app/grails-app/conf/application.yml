@@ -13,7 +13,7 @@ about:
 #    textColor: white
 
 # List any base layers that may be available
-#baseLayers:
+baseLayers:
 #    o2Mosaic:
 #        layer: WorldGeographic
 #        matrixSet: WorldGeographic
@@ -23,20 +23,20 @@ about:
 #        type: wmts
 #        visible: false
 #        url: ${baseUrl}/omar-wmts/wmts/getTile
-#    osmBasic:
-#        layers: o2-basemap-basic
-#        name: OSM Basic
-#        styles:
-#        type: wms
-#        url: ${baseUrl}/omar-mapproxy/service
-#        visible: false
-#    osmBright:
-#        layers: o2-basemap-bright
-#        name: OSM Bright
-#        styles:
-#        type: wms
-#        visible: true
-#        url: ${baseUrl}/omar-mapproxy/service
+    osmBasic:
+        layers: o2-basemap-basic
+        name: OSM Basic
+        styles:
+        type: wms
+        url: ${baseUrl}/omar-mapproxy/service
+        visible: false
+    osmBright:
+        layers: o2-basemap-bright
+        name: OSM Bright
+        styles:
+        type: wms
+        visible: true
+        url: ${baseUrl}/omar-mapproxy/service
 #    googleMaps:
 #        name: Google Maps
 #        type: xyz
@@ -149,6 +149,8 @@ libraries:
 #        stagerUrl: https://omar.ossim.io/omar-stager/
 #        wfsUrl: https://omar.ossim.io/omar-wfs/wfs
 #        wmsUrl: https://omar.ossim.io/omar-wms/wms
+
+reachbackUrl: ${baseUrl}/omar-reachback/index
 
 # Uncomment this to add your own releasabilty condition statements
 # releasability:
