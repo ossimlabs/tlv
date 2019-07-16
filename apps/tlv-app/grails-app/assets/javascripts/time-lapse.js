@@ -87,14 +87,14 @@ function buildSummaryTable() {
 
 function calculateInitialViewBbox() {
         var bbox;
-        if (typeof tlv.bbox == "string") {
-                var array = tlv.bbox.split(",").map(Number);
-                bbox = { minLon: array[0], minLat: array[1], maxLon: array[2], maxLat: array[3] };
+        if ( typeof tlv.bbox == "string" ) {
+                var array = tlv.bbox.split( "," ).map( Number );
+                bbox = { minLon: array[ 0 ], minLat: array[ 1 ], maxLon: array[ 2 ], maxLat: array[ 3 ] };
         }
-        else { bbox = convertRadiusToBbox(tlv.location[0], tlv.location[1], 1000); }
+        else { bbox = convertRadiusToBbox( tlv.location[ 0 ], tlv.location[ 1 ], 1000 ); }
 
 
-        return [bbox.minLon, bbox.minLat, bbox.maxLon, bbox.maxLat];
+        return [ bbox.minLon, bbox.minLat, bbox.maxLon, bbox.maxLat ];
 }
 
 function changeFrame( param ) {
@@ -505,25 +505,28 @@ function getReleasability() {
 			releasability = eval( string );
 		});
 	} catch ( exception ) { /* do nothing */ }
-	return releasability;
+
+
+	return releasability || '' ;
 }
 
 // Updates the security banner to match the current image security-classification
 function updateSecurityBanner() {
 
-	var current_banner = "#currentClassification";
-	var default_banner = "#defaultClassification";
-	
+	var current_banner = '#currentClassification';
+	var default_banner = '#defaultClassification';
+    var securityClassificationBanner = $( '.security-classification' );
+
 	var releasability = getReleasability();
 
 	$( default_banner ).hide();
 	$( current_banner ).show();
 
-	$( '.col-md-12' ).removeClass( "unclassified");
-	$( '.col-md-12' ).removeClass( "secret");
-	$( '.col-md-12' ).removeClass( "top-secret");
+	securityClassificationBanner.removeClass( 'unclassified' );
+	securityClassificationBanner.removeClass( 'secret' );
+	securityClassificationBanner.removeClass( 'top-secret' );
 
-	switch(tlv.layers[ tlv.currentLayer ].metadata.security_classification) {
+	switch( tlv.layers[ tlv.currentLayer ].metadata.security_classification ) {
 		case "U":
 		case "UNCLASSIFIED":
 			addStyleAndClassification( current_banner, "unclassified", releasability );
@@ -543,7 +546,7 @@ function updateSecurityBanner() {
 }
 
 function addStyleAndClassification( banner, classification, releasability ) {
-	$( '.col-md-12' ).addClass( classification );
+	$( '.security-classification' ).addClass( classification );
 	$( banner ).text( classification.toUpperCase() + releasability );
 }
 
