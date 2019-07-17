@@ -168,7 +168,7 @@
 </div>
 
 <asset:script type = "text/javascript">
-	$( 'a:contains("Coverage")' ).on( 'shown.bs.tab', function( event ) { console.dir("cheese");
+	$( 'a:contains("Coverage")' ).on( 'shown.bs.tab', function( event ) {
 		displayDialog( 'searchDialog' );
 	} );
 
