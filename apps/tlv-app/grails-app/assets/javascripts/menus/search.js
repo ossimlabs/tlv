@@ -118,9 +118,13 @@ function beginSearch() {
 				} );
 			}
 		}
-		var location = convertGeospatialCoordinateFormat( locationString, callbackFunction );
+		convertGeospatialCoordinateFormat( locationString, callbackFunction );
 
 		// if an ajax call is needed to find the location, we don't want an erroneous error messge while we wait
+		return;
+	}
+	else if ( locationString == '' ) {
+		displayErrorDialog( 'Ummm, you need to enter a location first.' );
 		return;
 	}
 
@@ -154,8 +158,10 @@ function beginSearch() {
 						"T" + searchParams.endHour + ":" + searchParams.endMinute + ":" + searchParams.endSecond + ".999'";
 					filter += "((acquisition_date >= " + startDate + " AND acquisition_date <= " + endDate + ") OR acquisition_date IS NULL)";
 
-					filter += ' AND ';
-					filter += '(cloud_cover <= ' + searchParams.maxCloudCover + ' OR cloud_cover IS NULL)';
+					if ( searchParams.maxCloudCover != 100 ) {
+						filter += ' AND ';
+						filter += '(cloud_cover <= ' + searchParams.maxCloudCover + ' OR cloud_cover IS NULL)';
+					}
 
 					//filter += ' AND ';
 					//filter += '(entry_id = 0)';
@@ -261,6 +267,115 @@ function checkAllSensors( labelElement ) {
 		} );
 
 	}
+
+}
+
+function coverageSearch() {
+	$( '#coverageTable' ).html( '' );
+
+	if ( !tlv.reachbackUrl ) {
+		return;
+	}
+
+	var params = getSearchParams();
+	if ( !params.location ) {
+		var callbackFunction = function( point ) {
+			if ( point ) {
+				var getLocationCallback = getLocation;
+				getLocation = function() { return point; }
+				coverageSearch();
+				getLocation = getLocationCallback;
+			}
+		};
+		convertGeospatialCoordinateFormat( $( '#searchLocationInput' ).val(), callbackFunction );
+		return;
+	}
+
+	var data = {
+		endDate: params.endYear + '-' + params.endMonth + '-' + params.endDay + 'T' + params.endHour + ':' + params.endMinute + ':' + params.endSecond,
+		maxFeatures: 100,
+		niirs: params.minNiirs,
+		sensors: params.sensors.join( ',' ),
+		startDate: params.startYear + '-' + params.startMonth + '-' + params.startDay + 'T' + params.startHour + ':' + params.startMinute + ':' + params.startSecond
+	};
+	if ( tlv.map ) {
+		data.bbox = tlv.map.getView().calculateExtent().join( ',' );
+	}
+	else {
+		var bbox = convertRadiusToBbox( params.location[ 0 ], params.location[ 1 ], 1000 );
+		data.bbox = [ bbox.minLon, bbox.minLat, bbox.maxLon, bbox.maxLat ].join( ',' );
+	}
+
+	$.ajax({
+		data: data,
+		url: tlv.reachbackUrl + '/search'
+	})
+	.done( function( data ) {
+		if ( data.length ) {
+			var table = document.createElement( 'table' );
+			table.className = 'table table-condensed';
+
+			var row = table.insertRow( table.rows.length );
+			var cell = row.insertCell( row.cells.length );
+			cell.innerHTML = '<b>Image ID</b>';
+
+			$.each( data, function( index, feature ) {
+				var row = table.insertRow( table.rows.length );
+				row.className = 'warning';
+				var cell = row.insertCell( row.cells.length );
+				cell.innerHTML = feature.imageId || 'N/A';
+			} );
+
+			$( '#coverageTable' ).html( table );
+			coverageStatusCheck();
+		}
+		else {
+			$( '#coverageTable' ).html( "We couldn't find any additional coverage. :(" );
+		}
+	} );
+}
+
+function coverageStatusCheck() {
+	$( '#coverageTable' ).find( 'tr' ).each( function( index, row ) {
+		if ( row.className == 'warning' ) {
+			var imageId = $( row ).find( 'td' ).get( 0 ).innerHTML;
+			var data = $.param({
+				filter: "image_id LIKE '%" + imageId + "%'",
+				maxFeatures: 1,
+				outputFormat: 'JSON',
+				request: 'getFeature',
+				service: 'WFS',
+				typeName: 'omar:raster_entry',
+				version: '1.1.0'
+			});
+			$.ajax({
+				data: data,
+				dataType: "json",
+				url: tlv.libraries[ Object.keys( tlv.libraries )[ 0 ] ].wfsUrl
+			})
+			.done( function( data ) {
+				if ( data.totalFeatures ) {
+					var imageIds = tlv.layers.map( function( layer ) {
+						return layer.imageId
+					} );
+					if ( imageIds.contains( imageId ) ) {
+						row.className = 'info';
+					}
+					else {
+						row.className = 'success';
+					}
+				}
+				else {
+					row.className = 'danger';
+				}
+			} );
+
+			setTimeout( function() { coverageStatusCheck(); }, 1000 );
+
+
+			return false;
+		}
+	} );
 
 }
 
@@ -869,10 +984,13 @@ function processResults() {
 			setupTimeLapse();
 		}
 		else {
-			$( "#searchDialog" ).modal( "show" );
+			$( '#searchDialog' ).modal( 'show' );
+			$( 'a:contains("Coverage")' ).trigger( 'click' );
 
-			displayErrorDialog("Sorry, we couldn't find anything that matched your search criteria. Maybe ease up on those search constraints a bit?");
+			displayErrorDialog( "Sorry, we couldn't find anything that matched your search criteria. Maybe ease up on those search constraints a bit?" );
 		}
+
+		coverageSearch();
 	}
 }
 
