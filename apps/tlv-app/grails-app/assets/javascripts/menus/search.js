@@ -118,9 +118,13 @@ function beginSearch() {
 				} );
 			}
 		}
-		var location = convertGeospatialCoordinateFormat( locationString, callbackFunction );
+		convertGeospatialCoordinateFormat( locationString, callbackFunction );
 
 		// if an ajax call is needed to find the location, we don't want an erroneous error messge while we wait
+		return;
+	}
+	else if ( locationString == '' ) {
+		displayErrorDialog( 'Ummm, you need to enter a location first.' );
 		return;
 	}
 
@@ -267,6 +271,8 @@ function checkAllSensors( labelElement ) {
 }
 
 function coverageSearch() {
+	$( '#coverageTable' ).html( '' );
+
 	if ( !tlv.reachbackUrl ) {
 		return;
 	}
@@ -281,7 +287,7 @@ function coverageSearch() {
 				getLocation = getLocationCallback;
 			}
 		};
-		convertGeospatialCoordinateFormat( $( "#searchLocationInput" ).val(), callbackFunction );
+		convertGeospatialCoordinateFormat( $( '#searchLocationInput' ).val(), callbackFunction );
 		return;
 	}
 
