@@ -4,6 +4,13 @@
     text-align: right;
 }
 
+.banner {
+	font-weight: bold;
+	position: sticky;
+	text-align: center;
+	z-index: 9999;
+}
+
 .custom-map-control {
 	background-color: rgba(0, 0, 0, 0.5);
 	color: white;
