@@ -123,7 +123,7 @@ function beginSearch() {
 		// if an ajax call is needed to find the location, we don't want an erroneous error messge while we wait
 		return;
 	}
-	else if ( locationString == '' ) {
+	else if ( locationString == '' && !tlv.filter ) {
 		displayErrorDialog( 'Ummm, you need to enter a location first.' );
 		return;
 	}
