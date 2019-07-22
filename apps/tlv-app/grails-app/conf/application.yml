@@ -200,7 +200,7 @@ templates:
             height: 3%
             text:
                 securityClassification:
-                    defaultValue: Security Classification
+                    defaultValue: tlv.layers[ tlv.currentLayer ].metadata.security_classification
                     style:
                         align: left
                         color: add8e6
