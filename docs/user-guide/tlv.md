@@ -83,10 +83,10 @@ This will take all the metdata from all the layers, convert it to a CSV file and
 Export a KML file to the desried image(s).
 * **Link:**
 Get a sharable link to the current image in TLV.
+* **Powerpoint:**
+Creates a powerpoint slide of the current image in the stack.
 * **Screenshot:**
 Think of it like the map taking a selfie. #nofilter
-* **Template:**
-Creates a template of the image stack which you can then download as a png.
 * **WMS GetCapabilities:**
 Returns the WMS GetCapabilities for the current image.
 
