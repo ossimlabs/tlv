@@ -184,17 +184,17 @@ templates:
                 securityClassification:
                     defaultValue: tlv.layers[ tlv.currentLayer ].metadata.security_classification
                     style:
-                        color: "#add8e6"
+                        color: add8e6
                         height: 25%
                 title:
                     defaultValue: tlv.layers[ tlv.currentLayer ].imageId
                     style:
-                        color: "#ffff00"
+                        color: ffff00
                         height: 43%
                 description:
                     defaultValue: '"CC: " + tlv.layers[ tlv.currentLayer ].metadata.country_code'
                     style:
-                        color: "#ffffff"
+                        color: ffffff
                         height: 32%
         footer:
             height: 3%
@@ -202,18 +202,19 @@ templates:
                 securityClassification:
                     defaultValue: Security Classification
                     style:
-                        color: "#add8e6"
-                        text-align: left
+                        align: left
+                        color: add8e6
                 location:
                     defaultValue: 'getMapCenterText( "dms" )'
                     style:
-                        color: "#add8e6"
-                        text-align: center
+                        align: center
+                        color: add8e6
                 acquisitionDate:
                     defaultValue: tlv.layers[ tlv.currentLayer ].acquisitionDate
                     style:
-                        color: "#add8e6"
-                        text-align: right
+                        align: right
+                        color: add8e6
+
 
 # If a terrain server is available, define the URL
 #terrainProvider: //assets.agi.com/stk-terrain/world
