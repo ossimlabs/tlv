@@ -317,8 +317,7 @@ function orientationToggle() {
 
 var pageLoadTimeLapse = pageLoad;
 pageLoad = function() {
-    var banners = $( ".security-classification" ).length;
-    var bannersHeight = banners * $( ".security-classification" ).height();
+    var bannersHeight = $( ".banner" ).height() + $( ".security-classification" ).height();
     $( "#navigationMenu" ).css( "padding-top", bannersHeight );
 
 	pageLoadTimeLapse();
@@ -422,8 +421,7 @@ function updateImageId() {
 function updateMapSize() {
 	if ( tlv.map ) {
 		var windowHeight = $( window ).height();
-		var banners = $( ".security-classification" ).length;
-		var bannersHeight = banners * $( ".security-classification" ).height();
+		var bannersHeight = $( ".banner" ).height() + $( ".security-classification" ).height();
 		var tileLoadProgressBarHeight = $( "#tileLoadProgressBar" ).height();
 		var mapHeight = windowHeight
 			- bannersHeight
