@@ -7,6 +7,7 @@ function addBaseLayersToTheMap() {
 			switch(x.type) {
 				case "wms":
 					source = new ol.source.TileWMS({
+						crossOrigin: connectedToLocalhost() ? 'anonymous' : undefined,
 						params: {
 							FORMAT: x.format || "image/jpeg",
 							LAYERS: x.layers,
@@ -33,6 +34,7 @@ function addBaseLayersToTheMap() {
 					}
 
 					source = new ol.source.WMTS({
+						crossOrigin: connectedToLocalhost() ? 'anonymous' : undefined,
 						format: "image/jpeg",
 						layer: x.layer,
 						matrixSet: x.matrixSet,
@@ -49,6 +51,7 @@ function addBaseLayersToTheMap() {
 
 				case "xyz":
 					source = new ol.source.XYZ({
+						crossOrigin: connectedToLocalhost() ? 'anonymous' : undefined,
 						url: x.url
 					});
 					break;
@@ -188,6 +191,7 @@ function createLayerSources( layer ) {
 	}
 
 	layer.imageSource = new ol.source.ImageWMS({
+		crossOrigin: connectedToLocalhost() ? 'anonymous' : undefined,
 		params: params,
 		url: tlv.libraries[ layer.library ].wmsUrl
 	});
@@ -197,6 +201,7 @@ function createLayerSources( layer ) {
 	}
 
 	layer.tileSource = new ol.source.TileWMS({
+		crossOrigin: connectedToLocalhost() ? 'anonymous' : undefined,
 		params: params,
 		url: tlv.libraries[ layer.library ].wmsUrl
 	});
