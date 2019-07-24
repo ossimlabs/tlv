@@ -5,6 +5,10 @@ function componentToHex( component ) {
     return hex.length == 1 ? "0" + hex : hex;
 }
 
+function connectedToLocalhost() {
+    return location.hostname == 'localhost' || location.hostname == '127.0.0.1';
+}
+
 function convertGeospatialCoordinateFormat(inputString, callbackFunction) {
 	var bePattern = /\d{4}[a-z|\-{1}][a-z|0-9]\d{4}/i;
 	var ddPattern = /(\-?\d{1,2}[.]?\d*)[\s+|,?]\s*(\-?\d{1,3}[.]?\d*)/;
