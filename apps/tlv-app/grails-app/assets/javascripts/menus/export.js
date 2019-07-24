@@ -7,7 +7,7 @@ function clientFileDownload(filename, blob) {
 		link.click();
 	}
 	else { displayErrorDialog("This browser doesn't support client-side downloading, :("); }
-	link.remove();
+	//link.remove();
 }
 
 function exportGif() {
@@ -130,10 +130,14 @@ function exportMetadata() {
 }
 
 function exportPowerpoint() {
+	changeFrame( 0 );
+
+	var slideCounter = 1;
+	var pptx = new PptxGenJS();
+
 	var callback = function( canvas ) {
 		var template = tlv.templates.default;
 
-		var pptx = new PptxGenJS();
 		var slide = pptx.addNewSlide();
 
 		var slideSize = {
@@ -141,13 +145,19 @@ function exportPowerpoint() {
 			width: { in: 10, px: 720 }
 		};
 
-		var footerHeight = slideSize.height.in * parseFloat( template.footer.height ) / 100;
-		var headerHeight = slideSize.height.in * parseFloat( template.header.height ) / 100;
+		var footerHeight = {
+			in: slideSize.height.in * parseFloat( template.footer.height ) / 100,
+			px: slideSize.height.px * parseFloat( template.footer.height ) / 100
+		};
+		var headerHeight = {
+			in: slideSize.height.in * parseFloat( template.header.height ) / 100,
+			px: slideSize.height.px * parseFloat( template.header.height ) / 100
+		};
 		var padding = 0.02; // percent
 
 		slide.addShape( pptx.shapes.RECTANGLE, {
 			fill: '595454',
-			h: headerHeight,
+			h: headerHeight.in,
 			w: slideSize.width.in,
 			x: 0,
 			y: 0
@@ -155,10 +165,10 @@ function exportPowerpoint() {
 
 		slide.addImage({
 			path: tlv.contextPath + "/assets/logos/" + template.header.logo,
-			h: headerHeight - 2 * headerHeight * padding,
-			w: headerHeight - 2 * headerHeight * padding,
-			x: headerHeight * padding,
-			y: headerHeight * padding
+			h: headerHeight.in - 2 * headerHeight.in * padding,
+			w: headerHeight.in - 2 * headerHeight.in * padding,
+			x: headerHeight.in * padding,
+			y: headerHeight.in * padding
 		});
 
 		var textY = 0;
@@ -167,13 +177,13 @@ function exportPowerpoint() {
 			try { text = eval( attributes.defaultValue ); }
 			catch ( exception ) { /* do nothing */ }
 
-			var textHeight = parseFloat( attributes.style.height ) / 100 * headerHeight;
+			var textHeight = parseFloat( attributes.style.height ) / 100 * headerHeight.in;
 			slide.addText( text, $.extend( attributes.style, {
 				fontSize: textHeight / slideSize.height.in * slideSize.height.px - 2 * textHeight / slideSize.height.in * slideSize.height.px * padding,
-				h: parseFloat( attributes.style.height ) / 100 * headerHeight,
+				h: parseFloat( attributes.style.height ) / 100 * headerHeight.in,
 				valign: 'middle',
-				w: slideSize.width.in - headerHeight * 2,
-				x: headerHeight,
+				w: slideSize.width.in - headerHeight.in * 2,
+				x: headerHeight.in,
 				y: textY
 			} ) );
 			textY += textHeight;
@@ -185,50 +195,66 @@ function exportPowerpoint() {
 			var canvas = document.createElement( 'canvas' );
 			var context = canvas.getContext( '2d' );
 
-			var size = headerHeight / slideSize.height.in * slideSize.height.px * ( 1 - padding );
+			var size = headerHeight.px * ( 1 - padding );
 			canvas.height = size;
 			canvas.width = size;
 			context.translate( size / 2, size / 2 );
-			context.rotate( tlv.map.getView().getRotation() );
+			context.rotate( ( $( '#imageSpaceMaps' ).is( ':visible' ) ? tlv.layers[ tlv.currentLayer ].imageSpaceMap : tlv.map ).getView().getRotation() );
 			context.drawImage( northArrow, -size / 2, -size / 2, size, size );
 
 			slide.addImage({
 				data: canvas.toDataURL(),
-				h: headerHeight - 2 * headerHeight * padding,
-				w: headerHeight - 2 * headerHeight * padding,
-				x: slideSize.width.in - headerHeight + headerHeight * padding,
-				y: headerHeight * padding
+				h: headerHeight.in - 2 * headerHeight.in * padding,
+				w: headerHeight.in - 2 * headerHeight.in * padding,
+				x: slideSize.width.in - headerHeight.in + headerHeight.in * padding,
+				y: headerHeight.in * padding
 			});
 
-			pptx.save( 'tlv_pptx_' + new Date().generateFilename() + '.pptx');
+			if ( slideCounter == tlv.layers.length ) {
+				pptx.save( 'tlv_pptx_' + new Date().generateFilename() + '.pptx');
+			}
+			else {
+				slideCounter++;
+				changeFrame( 'fastForward' );
+				if ( getCurrentDimension() == 2 ) {
+					getScreenshotMap( callback );
+				}
+				else {
+					getScreenshotGlobe( callback );
+				}
+			}
 		};
 
-		var imageSizeRatio = tlv.map.getSize()[ 0 ] / tlv.map.getSize()[ 1 ];
-		var slideSizeRatio = slideSize.width.px / slideSize.height.px;
+		var mapHeight = ( $( '#imageSpaceMaps' ).is( ':visible' ) ? tlv.layers[ tlv.currentLayer ].imageSpaceMap : tlv.map ).getSize()[ 1 ];
+		var mapWidth = ( $( '#imageSpaceMaps' ).is( ':visible' ) ? tlv.layers[ tlv.currentLayer ].imageSpaceMap : tlv.map ).getSize()[ 0 ];
+		var imageSizeRatio = mapWidth / mapHeight;
+		var slideSizeRatio = slideSize.width.px / ( slideSize.height.px - headerHeight.px - footerHeight.px );
 		var imageHeight, imageWidth;
-		if ( imageSizeRatio <= slideSizeRatio ) {
-			imageHeight = slideSize.height.in - headerHeight - footerHeight;
-			imageWidth = slideSize.height.px / tlv.map.getSize()[ 1 ] * tlv.map.getSize()[ 0 ] / slideSize.width.px * slideSize.width.in ;
+		if ( imageSizeRatio >= slideSizeRatio ) {
+			// constrain the width
+			imageHeight = slideSize.width.px / mapWidth * mapHeight / ( slideSize.height.px - headerHeight.px - footerHeight.px ) * ( slideSize.height.in - headerHeight.in - footerHeight.in );
+			imageWidth = slideSize.width.in;
 		}
 		else {
-			imageHeight = slideSize.width.px / tlv.map.getSize()[ 0 ] * tlv.map.getSize()[ 1 ] / slideSize.height.px * slideSize.height.in ;
-			imageWidth = slideSize.width.in;
+			// constrain the height
+			imageHeight = slideSize.height.in - headerHeight.in - footerHeight.in;
+			imageWidth = ( slideSize.height.px - headerHeight.px - footerHeight.px ) / mapHeight * mapWidth / slideSize.width.px * slideSize.width.in;
 		}
 
 		slide.addImage({
 			data: canvas.toDataURL(),
 			h: imageHeight,
 			w: imageWidth,
-			x: imageSizeRatio <= slideSizeRatio ? ( slideSize.width.in - imageWidth ) / 2 : 0,
-			y: imageSizeRatio <= slideSizeRatio ? headerHeight : headerHeight + ( slideSize.height.in - headerHeight - footerHeight - imageHeight ) / 2
+			x: imageSizeRatio >= slideSizeRatio ? 0 : ( slideSize.width.in - imageWidth ) / 2,
+			y: imageSizeRatio >= slideSizeRatio ? headerHeight.in + ( slideSize.height.in - headerHeight.in - footerHeight.in - imageHeight ) / 2 : headerHeight.in
 		});
 
 		slide.addShape( pptx.shapes.RECTANGLE, {
 			fill: '595454',
-			h: footerHeight,
+			h: footerHeight.in,
 			w: slideSize.width.in,
 			x: 0,
-			y: slideSize.height.in - footerHeight
+			y: slideSize.height.in - footerHeight.in
 		} );
 
 		var columnCount = 0;
@@ -239,12 +265,12 @@ function exportPowerpoint() {
 			catch ( exception ) { /* do nothing */ }
 
 			slide.addText( text, $.extend( attributes.style, {
-				fontSize: footerHeight / slideSize.height.in * slideSize.height.px - 2 * footerHeight / slideSize.height.in * slideSize.height.px * padding,
-				h: footerHeight - 2 * footerHeight * padding,
+				fontSize: footerHeight.in / slideSize.height.in * slideSize.height.px - 2 * footerHeight.in / slideSize.height.in * slideSize.height.px * padding,
+				h: footerHeight.in - 2 * footerHeight.in * padding,
 				valign: 'middle',
 				w: columnSize - 2 * columnSize * padding,
 				x: columnSize * columnCount + columnSize * padding,
-				y: slideSize.height.in - footerHeight + footerHeight * padding
+				y: slideSize.height.in - footerHeight.in + footerHeight.in * padding
 			} ) );
 			columnCount++;
 		} );
@@ -259,8 +285,12 @@ function exportPowerpoint() {
 }
 
 function exportScreenshot() {
-	if (getCurrentDimension() == 2) { exportScreenshotMap(); }
-	else { exportScreenshotGlobe(); }
+	if ( getCurrentDimension() == 2 ) {
+		exportScreenshotMap();
+	}
+	else {
+		exportScreenshotGlobe();
+	}
 }
 
 function exportWmsGetCapabilities() {
