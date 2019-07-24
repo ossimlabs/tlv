@@ -90,11 +90,10 @@ changeFrame = function( params ) {
 
 			groundToImagePoints( coordinates, newLayer, function( pixels, layer ) {
 				hideLoadingDialog();
-
-				$( '#' + layer.imageSpaceMap.getTarget() ).show();
-				layer.imageSpaceMap.updateSize();
-
 				layer.imageSpaceMap.getView().setCenter( pixels[ 0 ] );
+
+				$( '#' + tlv.layers[ tlv.currentLayer ].imageSpaceMap.getTarget() ).show();
+				tlv.layers[ tlv.currentLayer ].imageSpaceMap.updateSize();
 			} );
 		} );
 	}
@@ -163,6 +162,7 @@ createLayerSources = function( layer ) {
 
 	var imageDatabaseId = layer.metadata.id;
 	layer.imageSpaceImageSource = new ol.source.ImageWMS({
+		crossOrigin: connectedToLocalhost() ? 'anonymous' : undefined,
 		imageLoadFunction: fixY,
 		params: {
 			FORMAT: 'image/jpeg',
@@ -174,6 +174,7 @@ createLayerSources = function( layer ) {
 	});
 
 	layer.imageSpaceTileSource = new ol.source.TileWMS({
+		crossOrigin: connectedToLocalhost() ? 'anonymous' : undefined,
 		params: {
 			FORMAT: 'image/jpeg',
 			LAYERS: "omar:raster_entry." + imageDatabaseId,
@@ -473,7 +474,9 @@ getScreenshotMap = function( callback ) {
 		);
 		map.renderSync();
 	}
-	getScreenshotMapView( callback )
+	else {
+		getScreenshotMapView( callback );
+	}
 }
 
 function getNorthAndUpAngles() {
@@ -731,6 +734,7 @@ function swipeToggle() {
 function switchToOrthoSpace() {
     $( '#imageSpaceMaps' ).hide();
 	$( '#map' ).show();
+	updateMapSize();
 
 	displayLoadingDialog( "Synching the map view... " );
 	var layer = tlv.layers[ tlv.currentLayer ];
@@ -754,8 +758,9 @@ function switchToImageSpace() {
 	getNorthAndUpAngles();
 
 	var layer = tlv.layers[ tlv.currentLayer ];
-$( '#imageSpaceMaps' ).show();
+	$( '#imageSpaceMaps' ).show();
 	$( '#map' ).hide();
+	updateMapSize();
 
 
 	displayLoadingDialog( "Synching the map view... " );
@@ -821,15 +826,19 @@ function turnOnSwipe() {
 
 var updateMapSizeView = updateMapSize;
 updateMapSize = function() {
-	updateMapSizeView();
-
-	if ( tlv.map ) {
-		var mapSize = tlv.map.getSize();
-		$( '#imageSpaceMaps' ).height( mapSize[ 1 ] );
+	if ( $( '#imageSpaceMaps' ).is( ':visible' ) ) {
+		var windowHeight = $( window ).height();
+		var bannersHeight = $( ".banner" ).height() + $( ".security-classification" ).height();
+		var tileLoadProgressBarHeight = $( "#tileLoadProgressBar" ).height();
+		var mapHeight = windowHeight - bannersHeight - tileLoadProgressBarHeight;
+		$( '#imageSpaceMaps' ).height( mapHeight );
 		$.each( tlv.layers, function( index, layer ) {
-			layer.imageSpaceMap.setSize( mapSize );
+			$( '#imageSpaceMap' + index ).height( mapHeight );
 			layer.imageSpaceMap.updateSize();
 		} );
+	}
+	else {
+		updateMapSizeView();
 	}
 }
 
