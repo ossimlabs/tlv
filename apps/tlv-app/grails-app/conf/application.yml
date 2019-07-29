@@ -1,8 +1,8 @@
 # If there is a version to denote, set it here
 about:
     contactEmail: kevin.naquin@maxar.com
-    release: Laguna
-    releaseNumber: 2.8.2
+    release: Miami
+    releaseNumber: 2.9.0
 
 # If there a page banner is needed, set it here
 #banner:
