@@ -916,10 +916,6 @@ function processImageId( metadata ) {
  		imageId = metadata.title || metadata.filename.replace( /^.*[\\\/]/, "" );
 	}
 
-	if ( metadata.product_id ) {
-		imageId += ' (' +  metadata.product_id + ')';
-	}
-
 
 	return imageId;
 }

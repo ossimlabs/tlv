@@ -153,11 +153,12 @@ libraries:
 reachbackUrl: ${baseUrl}/omar-reachback/index
 
 # Uncomment this to add your own releasabilty condition statements
-# releasability:
-#   - id:
-#     string: 'tlv.layers[ tlv.currentLayer ].metadata.height < 5000 ? " // h < 5000" : " // h >= 5000"'
-#   - id:
-#     string: 'tlv.layers[ tlv.currentLayer ].metadata.index_id.contains("a0") ? " // has a0" : releasability'
+# releasability: |
+#    function x() {
+#        /* some logic */
+#         return releasability;
+#    }
+#    x();
 
 # Set the security classification banner here
 #securityClassification:
@@ -182,7 +183,7 @@ templates:
             northArrow: north-arrow.png
             text:
                 securityClassification:
-                    defaultValue: tlv.layers[ tlv.currentLayer ].metadata.security_classification
+                    defaultValue: tlv.layers[ tlv.currentLayer ].metadata.security_classification + getReleasability()
                     style:
                         color: add8e6
                         height: 25%
@@ -200,7 +201,7 @@ templates:
             height: 3%
             text:
                 securityClassification:
-                    defaultValue: tlv.layers[ tlv.currentLayer ].metadata.security_classification
+                    defaultValue: tlv.layers[ tlv.currentLayer ].metadata.security_classification + getReleasability()
                     style:
                         align: left
                         color: add8e6

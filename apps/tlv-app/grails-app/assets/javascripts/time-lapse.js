@@ -415,6 +415,11 @@ function updateImageId() {
 	var layer = tlv.layers[ tlv.currentLayer ];
 	var libraryLabel = tlv.libraries[ layer.library ].label;
     var text = Object.keys( tlv.libraries ).length > 1 ? libraryLabel + ": " : "";
+
+    var imageId = layer.imageId;
+    if ( layer.metadata.product_id ) {
+        imageId += ' (' +  layer.metadata.product_id + ')';
+    }
     $( '[id=imageIdDiv]').html( text + layer.imageId );
 }
 
@@ -492,17 +497,11 @@ function updatePqe( pixel ) {
 function getReleasability() {
 
 	var releasability = null;
-	var javascript_string = [];
-
-	$.each( tlv.releasability, function( index, releasability ) {
-		javascript_string.push( releasability.string );
-	});
 
 	try {
-		$.each( javascript_string, function( index, string ) {
-			releasability = eval( string );
-		});
-	} catch ( exception ) { /* do nothing */ }
+		releasability = eval( tlv.releasability );
+	}
+    catch ( exception ) { /* do nothing */ }
 
 
 	return releasability || '' ;
