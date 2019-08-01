@@ -8,7 +8,7 @@
 					[ label: "Line", javascript: "drawAnnotation( 'line' )" ],
 					[ label: "Point", javascript: "drawAnnotation( 'point' )" ],
 					[ label: "Polygon", javascript: "drawAnnotation( 'polygon' )" ],
-					[ label: "Rectanlge", javascript: "drawAnnotation( 'rectangle' )" ],
+					[ label: "Rectangle", javascript: "drawAnnotation( 'rectangle' )" ],
 					[ label: "Square", javascript: "drawAnnotation( 'square' )" ]
 				]}">
 					<label>${ it.label }</label>
