@@ -37,7 +37,7 @@
 				<ul class = "nav nav-tabs">
     				<g:each in = "${[ 'circle', 'line', 'point', 'polygon', 'text' ]}">
 						<li>
-							<a href = "#${ it }" data-toggle = "tab" onclick = 'javascript:displayDialog( "annotationsDialog" )'>${ it.capitalize() }</a>
+							<a href = "#${ it }" data-toggle = "tab" onclick = 'javascript:displayDialog( "annotationStylesDialog" )'>${ it.capitalize() }</a>
 						</li>
 					</g:each>
 				</ul>

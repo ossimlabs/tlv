@@ -5,7 +5,11 @@ function createAcquisitionDateControl() {
 		div.id = "acquisitionDateDiv";
 		let control = new ol.control.Control({ element: div });
 
-		tlv.mapControls.push( control );
+
+		return control;
+	}
+	else {
+		return null;
 	}
 }
 
@@ -32,7 +36,8 @@ function createAnnotationsControl() {
 	};
 	ol.inherits( AnnotationsControl, ol.control.Control );
 
-	tlv.mapControls.push( new AnnotationsControl() );
+
+	return new AnnotationsControl();
 }
 
 function createDeleteControl() {
@@ -58,7 +63,8 @@ function createDeleteControl() {
 	};
 	ol.inherits( DeleteControl, ol.control.Control );
 
-	tlv.mapControls.push( new DeleteControl() );
+
+	return new DeleteControl();
 }
 
 function createExportControl() {
@@ -84,7 +90,8 @@ function createExportControl() {
 	};
 	ol.inherits( ExportControl, ol.control.Control );
 
-	tlv.mapControls.push( new ExportControl() );
+
+	return new ExportControl();
 }
 
 function createFastForwardControl() {
@@ -110,7 +117,8 @@ function createFastForwardControl() {
 	};
 	ol.inherits( FastForwardControl, ol.control.Control );
 
-	tlv.mapControls.push( new FastForwardControl() );
+
+	return new FastForwardControl();
 }
 
 function createFullScreenControl() {
@@ -118,7 +126,8 @@ function createFullScreenControl() {
 	fullScreenSpan.className = "glyphicon glyphicon-fullscreen";
 	var fullScreenControl = new ol.control.FullScreen({ label: fullScreenSpan });
 
-	tlv.mapControls.push( fullScreenControl );
+
+	return fullScreenControl;
 }
 
 function createHelpControl() {
@@ -144,7 +153,8 @@ function createHelpControl() {
 	};
 	ol.inherits( HelpControl, ol.control.Control );
 
-	tlv.mapControls.push( new HelpControl() );
+
+	return new HelpControl();
 }
 
 function createImageIdControl() {
@@ -161,7 +171,11 @@ function createImageIdControl() {
 
 		var imageIdControl = new ol.control.Control({ element: imageIdOuterDiv });
 
-		tlv.mapControls.push( imageIdControl );
+
+		return imageIdControl;
+	}
+	else {
+		return null;
 	}
 }
 
@@ -188,7 +202,8 @@ function createImagePropertiesControl() {
 	};
 	ol.inherits( ImagePropertiesControl, ol.control.Control );
 
-	tlv.mapControls.push( new ImagePropertiesControl() );
+
+	return new ImagePropertiesControl();
 }
 
 function createLayersControl() {
@@ -214,35 +229,46 @@ function createLayersControl() {
 	};
 	ol.inherits( LayersControl, ol.control.Control );
 
-	tlv.mapControls.push( new LayersControl() );
+
+	return new LayersControl();
 }
 
 function createMapControls() {
 	tlv.mapControls = [];
 
-	createUserNameControl();
-	createAcquisitionDateControl();
-	createMousePositionControl();
+	let controls = [
+		createMousePositionControl(),
+		// needs to be first
+		createAcquisitionDateControl(),
+		createAnnotationsControl(),
+		createExportControl(),
+		createFullScreenControl(),
+		createHelpControl(),
+		createImageIdControl(),
+		createImagePropertiesControl(),
+		createLayersControl(),
+		createRotationTiltControl(),
+		createSearchControl(),
+		createToolsControl(),
+		createUserNameControl(),
+		createViewControl()
+	];
 
-	createImageIdControl();
-	createFullScreenControl();
-	createRotationTiltControl();
 	if ( tlv.layers.length > 1 ) {
-		createRewindControl();
-		createPlayStopControl();
-		createFastForwardControl();
-		createDeleteControl();
-		createSummaryTableControl();
+		controls = controls.concat([
+			createDeleteControl(),
+			createFastForwardControl(),
+			createPlayStopControl(),
+			createRewindControl(),
+			createSummaryTableControl()
+		]);
 	}
 
-	createSearchControl();
-	createAnnotationsControl();
-	createExportControl();
-	createImagePropertiesControl();
-	createLayersControl();
-	createToolsControl();
-	createViewControl();
-	createHelpControl();
+	$.each( controls, function( index, control ) {
+		if ( control ) {
+			tlv.mapControls.push( control );
+		}
+	} );
 }
 
 function createMousePositionControl() {
@@ -270,7 +296,11 @@ function createMousePositionControl() {
 			if ( mousePositionControl.coordinateDisplayFormat >= 3 ) { mousePositionControl.coordinateDisplayFormat = 0; }
 		});
 
-		tlv.mapControls.push( mousePositionControl );
+
+		return mousePositionControl;
+	}
+	else {
+		return null;
 	}
 }
 
@@ -297,7 +327,8 @@ function createPlayStopControl() {
 	};
 	ol.inherits( PlayStopControl, ol.control.Control );
 
-	tlv.mapControls.push( new PlayStopControl() );
+
+	return new PlayStopControl();
 }
 
 function createRewindControl() {
@@ -323,7 +354,8 @@ function createRewindControl() {
 	};
 	ol.inherits( RewindControl, ol.control.Control );
 
-	tlv.mapControls.push( new RewindControl() );
+
+	return new RewindControl();
 }
 
 function createRotationTiltControl() {
@@ -394,7 +426,8 @@ function createRotationTiltControl() {
 	};
 	ol.inherits( RotationTiltControl, ol.control.Control );
 
-	tlv.mapControls.push( new RotationTiltControl() );
+
+	return new RotationTiltControl();
 }
 
 function createSearchControl() {
@@ -420,7 +453,8 @@ function createSearchControl() {
 	};
 	ol.inherits( SearchControl, ol.control.Control );
 
-	tlv.mapControls.push( new SearchControl() );
+
+	return new SearchControl();
 }
 
 function createSummaryTableControl() {
@@ -447,7 +481,8 @@ function createSummaryTableControl() {
 	};
 	ol.inherits( SummaryTableControl, ol.control.Control );
 
-	tlv.mapControls.push( new SummaryTableControl() );
+
+	return new SummaryTableControl();
 }
 
 function createToolsControl() {
@@ -473,7 +508,8 @@ function createToolsControl() {
 	};
 	ol.inherits( ToolsControl, ol.control.Control );
 
-	tlv.mapControls.push( new ToolsControl() );
+
+	return new ToolsControl();
 }
 
 function createUserNameControl() {
@@ -484,7 +520,11 @@ function createUserNameControl() {
 		div.innerHTML = userNameInput.value;
 		let control = new ol.control.Control({ element: div });
 
-		tlv.mapControls.push( control );
+
+		return control;
+	}
+	else {
+		return null;
 	}
 }
 
@@ -511,5 +551,6 @@ function createViewControl() {
 	};
 	ol.inherits( ViewControl, ol.control.Control );
 
-	tlv.mapControls.push( new ViewControl() );
+
+	return new ViewControl();
 }

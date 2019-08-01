@@ -193,77 +193,31 @@ createMapControls = function() {
 	$.each( createSwipeControls(), function( i, x ) { tlv.mapControls.push( x ); } );
 
 	$.each( tlv.layers, function( index, layer ) {
-		var acquisitionDateDiv = document.createElement( "div" );
-		acquisitionDateDiv.className = "custom-map-control";
-		acquisitionDateDiv.id = "acquisitionDateDiv";
-		var acquisitionDateControl = new ol.control.Control({ element: acquisitionDateDiv });
-		layer.imageSpaceMap.addControl( acquisitionDateControl );
-
-		var DeleteControl = function() {
-			var button = document.createElement( "button" );
-			button.innerHTML = "<span class = 'glyphicon glyphicon-trash'></span>";
-			button.title = "Delete Frame";
-
-			var this_ = this;
-			$( button ).on( "click", function( event ) {
-				$( this ).blur();
-				deleteFrame( tlv.currentLayer );
-			});
-
-			var element = document.createElement( "div" );
-			element.className = "delete-control ol-unselectable ol-control";
-			element.appendChild( button );
-
-			ol.control.Control.call( this, {
-				element: element,
-				target: undefined
-			});
-		};
-		ol.inherits( DeleteControl, ol.control.Control );
-		layer.imageSpaceMap.addControl( new DeleteControl() );
-
-		var FastForwardControl = function() {
-			var button = document.createElement( "button" );
-			button.innerHTML = "<span class = 'glyphicon glyphicon-step-forward'></span>";
-			button.title = "Fast Forward";
-
-			var this_ = this;
-			$( button ).on( "click", function( event ) {
-				$( this ).blur();
-				changeFrame( "fastForward" );
-			});
-
-			var element = document.createElement( "div" );
-			element.className = "fast-forward-control ol-unselectable ol-control";
-			element.appendChild( button );
-
-			ol.control.Control.call( this, {
-				element: element,
-				target: undefined
-			});
-		};
-		ol.inherits( FastForwardControl, ol.control.Control );
-		layer.imageSpaceMap.addControl( new FastForwardControl() );
-
-
-		var fullScreenSpan = document.createElement( "span" );
-		fullScreenSpan.className = "glyphicon glyphicon-fullscreen";
-		var fullScreenControl = new ol.control.FullScreen({ label: fullScreenSpan });
-		layer.imageSpaceMap.addControl( fullScreenControl );
-
-
-		var imageIdOuterDiv = document.createElement( "div" );
-		imageIdOuterDiv.className = "custom-map-control";
-		imageIdOuterDiv.id = "imageIdOuterDiv";
-		imageIdOuterDiv.style.cssText = "background-color: rgba(0, 0, 0, 0); pointer-events: none;"
-
-		var imageIdDiv = document.createElement( "div" );
-		imageIdDiv.id = "imageIdDiv";
-		imageIdDiv.style.cssText = "background-color: rgba(0, 0, 0, 0.5); display: inline-block; text-align: left";
-		imageIdOuterDiv.appendChild( imageIdDiv );
-
-		var imageIdControl = new ol.control.Control({ element: imageIdOuterDiv });
-		layer.imageSpaceMap.addControl( imageIdControl );
+		let controls = [
+			createAcquisitionDateControl(),
+			createAnnotationsControl(),
+			tlv.layers.length > 1 ? createDeleteControl() : null,
+			createExportControl(),
+			tlv.layers.length > 1 ? createFastForwardControl() : null,
+			createFullScreenControl(),
+			createHelpControl(),
+			createImageIdControl(),
+			createImagePropertiesControl(),
+			createLayersControl(),
+			tlv.layers.length > 1 ? createPlayStopControl() : null,
+			tlv.layers.length > 1 ? createRewindControl() : null,
+			createRotationTiltControl(),
+			createSearchControl(),
+			tlv.layers.length > 1 ? createSummaryTableControl() : null,
+			createToolsControl(),
+			createUserNameControl(),
+			createViewControl()
+		];
+		$.each( controls, function( index, control ) {
+			if ( control ) {
+				layer.imageSpaceMap.addControl( control );
+			}
+		} );
 
 		var northArrowControl = new ol.control.Rotate({
 			render: function(mapEvent) {
@@ -280,122 +234,6 @@ createMapControls = function() {
 			}
 		});
 		layer.imageSpaceMap.addControl( northArrowControl );
-
-		var PlayStopControl = function() {
-			var button = document.createElement( "button" );
-			button.innerHTML = "<span class = 'glyphicon glyphicon-play'></span>";
-			button.title = "Play/Stop";
-
-			var this_ = this;
-			$( button ).on( "click", function( event ) {
-				$( this ).blur();
-				playStopTimeLapse( $( button ).children()[ 0 ] );
-			});
-
-			var element = document.createElement( "div" );
-			element.className = "play-stop-control ol-unselectable ol-control";
-			element.appendChild( button );
-
-			ol.control.Control.call( this, {
-				element: element,
-				target: undefined
-			});
-		};
-		ol.inherits( PlayStopControl, ol.control.Control );
-		layer.imageSpaceMap.addControl( new PlayStopControl() );
-
-		var RewindControl = function() {
-			var button = document.createElement( "button" );
-			button.innerHTML = "<span class = 'glyphicon glyphicon-step-backward'></span>";
-			button.title = "Rewind";
-
-			var this_ = this;
-			$( button ).on( "click", function( event ) {
-				$( this ).blur();
-				changeFrame( "rewind" );
-			});
-
-			var element = document.createElement( "div" );
-			element.className = "rewind-control ol-unselectable ol-control";
-			element.appendChild( button );
-
-			ol.control.Control.call( this, {
-				element: element,
-				target: undefined
-			});
-		};
-		ol.inherits( RewindControl, ol.control.Control );
-		layer.imageSpaceMap.addControl( new RewindControl() );
-
-
-		var RotationSliderControl = function() {
-			var rotationInput = document.createElement( "input" );
-			rotationInput.id = "rotationSliderInput";
-			rotationInput.max = "360";
-			rotationInput.min = "0";
-			rotationInput.oninput = function( event ) {
-				var degrees = $( rotationInput ).val();
-				layer.imageSpaceMap.getView().setRotation( degrees * Math.PI / 180 );
-			};
-			rotationInput.step = "1";
-			rotationInput.style.display = "none";
-			rotationInput.style[ "vertical-algin" ] = "middle";
-			rotationInput.type = "range";
-			rotationInput.value = "0";
-
-			setTimeout( function() {
-				$( ".ol-rotate" ).on( "click", function( event ) {
-					if ( $( rotationInput ).is( ":visible" ) ) {
-						$( rotationInput ).fadeOut();
-					}
-					else {
-						$( rotationInput ).fadeIn();
-					}
-				});
-			}, 2000 );
-
-			var this_ = this;
-
-			var element = document.createElement( "div" );
-			element.appendChild( rotationInput );
-			element.className = "rotation-tilt-control ol-unselectable ol-control";
-			element.style.cssText = "background: none";
-
-
-			ol.control.Control.call( this, {
-				element: element,
-				target: undefined
-			});
-
-
-		};
-		ol.inherits( RotationSliderControl, ol.control.Control );
-		layer.imageSpaceMap.addControl( new RotationSliderControl() );
-
-
-		var SummaryTableControl = function() {
-			var button = document.createElement( "button" );
-			button.innerHTML = "<span class = 'tlvLayerCountSpan'>0/0</span>&nbsp;<span class = 'glyphicon glyphicon-list-alt'></span>";
-			button.style.cssText = "width: auto";
-			button.title = "Summary Table";
-
-			var this_ = this;
-			$( button ).on( "click", function( event ) {
-				buildSummaryTable();
-				displayDialog( 'summaryTableDialog' );
-			});
-
-			var element = document.createElement( "div" );
-			element.className = "summary-table-control ol-unselectable ol-control";
-			element.appendChild( button );
-
-			ol.control.Control.call( this, {
-				element: element,
-				target: undefined
-			});
-		};
-		ol.inherits( SummaryTableControl, ol.control.Control );
-		layer.imageSpaceMap.addControl( new SummaryTableControl() );
 
 		var UpIsUpControl = function() {
 			var button = document.createElement( "button" );

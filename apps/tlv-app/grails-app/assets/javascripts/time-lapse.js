@@ -493,12 +493,10 @@ function updatePqe( pixel ) {
 }
 
 function getReleasability() {
-
-	var releasability = null;
-
-	try {
-		releasability = eval( tlv.releasability );
-	}
+    var releasability = null;
+    try {
+        releasability = eval( tlv.releasability );
+    }
     catch ( exception ) { /* do nothing */ }
 
 
