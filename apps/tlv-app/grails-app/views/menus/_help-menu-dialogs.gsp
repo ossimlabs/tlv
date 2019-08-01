@@ -1,8 +1,11 @@
-<div class = "modal" id = "aboutDialog" role = "dialog" tabindex = "-1">
+<div class = "modal" id = "helpDialog" role = "dialog" tabindex = "-1">
 	<div class = "modal-dialog">
 		<div class = "modal-content">
 			<div class = "modal-header">
-				<asset:image height = "40" src = "logos/tlv.png"/>
+				<h4>
+					<asset:image height = "40" src = "logos/tlv.png"/>
+					Help!
+				</h4>
 			</div>
 			<div align = "center" class = "modal-body">
 				<%
@@ -24,6 +27,9 @@
 				<b>JVM Version:</b> ${ System.getProperty('java.version') }
 			</div>
 			<div class = "modal-footer">
+				<g:if test = "${ grailsApplication.config.docsUrl }">
+					<a class = "btn btn-primary" href = "${ grailsApplication.config.docsUrl }" target = "_blank">User Guide</a>
+				</g:if>
 				<button type = "button" class = "btn btn-default" data-dismiss = "modal">Close</button>
 			</div>
 		</div>

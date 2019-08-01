@@ -382,7 +382,7 @@ createMapControls = function() {
 			var this_ = this;
 			$( button ).on( "click", function( event ) {
 				buildSummaryTable();
-				$( "#summaryTableDialog" ).modal( "show" );
+				displayDialog( 'summaryTableDialog' );
 			});
 
 			var element = document.createElement( "div" );

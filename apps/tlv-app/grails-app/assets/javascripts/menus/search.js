@@ -602,7 +602,7 @@ function getSearchParams() {
 
 	var libraries = getSelectedLibraries();
 	if (libraries.length == 0) {
-		//$( "#searchDialog" ).modal( "show" );
+		displayDialog( 'searchDialog' );
 		return { error: "Please select a library, thanks." };
 	}
 	searchObject.libraries = libraries;
@@ -845,11 +845,11 @@ pageLoad = function() {
 	setupSearchMenuDialog();
 
 	if ( tlv.location || tlv.filter || tlv.preferences.tlvPreference.location ) {
-		$( '#searchDialog' ).modal( 'hide' );
+		hideDialog( 'searchDialog' );
 		beginSearch();
 	}
 	else {
-		$( "#searchDialog" ).modal( "show" );
+		displayDialog( 'searchDialog' );
 	}
 }
 
@@ -980,7 +980,7 @@ function processResults() {
 			setupTimeLapse();
 		}
 		else {
-			$( '#searchDialog' ).modal( 'show' );
+			displayDialog( 'searchDialog' );
 			$( 'a:contains("Coverage")' ).trigger( 'click' );
 
 			displayErrorDialog( "Sorry, we couldn't find anything that matched your search criteria. Maybe ease up on those search constraints a bit?" );

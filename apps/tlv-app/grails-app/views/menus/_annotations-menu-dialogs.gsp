@@ -1,7 +1,38 @@
 <div class = "modal" id = "annotationsDialog" role = "dialog" tabindex = "-1">
 	<div class = "modal-dialog">
 		<div class = "modal-content">
-			<div class = "modal-header"><h4>Annotation Style</h4></div>
+			<div class = "modal-header"><h4>Annotations</h4></div>
+			<div class = "modal-body">
+				<g:each in = "${[
+					[ label: "Circle", javascript: "drawAnnotation( 'circle' )" ],
+					[ label: "Line", javascript: "drawAnnotation( 'line' )" ],
+					[ label: "Point", javascript: "drawAnnotation( 'point' )" ],
+					[ label: "Polygon", javascript: "drawAnnotation( 'polygon' )" ],
+					[ label: "Rectanlge", javascript: "drawAnnotation( 'rectangle' )" ],
+					[ label: "Square", javascript: "drawAnnotation( 'square' )" ]
+				]}">
+					<label>${ it.label }</label>
+					<button class = "btn btn-primary form-control" data-dismiss = "modal" onclick = "${ it.javascript }">
+						Draw ${ it.label }
+					</button>
+				</g:each>
+
+				<hr>
+				<button class = "btn btn-primary form-control" data-dismiss = "modal" onclick = modifyAnnotations()>
+					Modify Annotation
+				</button>
+			</div>
+			<div class = "modal-footer">
+				<button type = "button" class = "btn btn-default" data-dismiss = "modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class = "modal" id = "annotationStylesDialog" role = "dialog" tabindex = "-1">
+	<div class = "modal-dialog">
+		<div class = "modal-content">
+			<div class = "modal-header"><h4>Annotation Styles</h4></div>
 			<div class = "modal-body">
 				<ul class = "nav nav-tabs">
     				<g:each in = "${[ 'circle', 'line', 'point', 'polygon', 'text' ]}">
@@ -37,10 +68,3 @@
 		</div>
 	</div>
 </div>
-
-<asset:script type = "text/javascript">
-	$( "#annotationsDialog" ).on( "hidden.bs.modal", function (event) {
-		hideDialog( "annotationsDialog" );
-	});
-	$( "#annotationsDialog" ).on( "shown.bs.modal", function (event) { displayDialog( "annotationsDialog" ); } );
-</asset:script>

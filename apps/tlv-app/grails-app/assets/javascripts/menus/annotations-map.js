@@ -8,7 +8,7 @@ anAnnotationHasBeenAdded = function( event ) {
 	feature.setStyle( createDefaultStyle() );
 	tlv.currentAnnotation = feature;
 
-	openAnnotationsDialog();
+	openAnnotationStylesDialog();
 }
 
 function annotationsLayerToggle() {
@@ -351,7 +351,7 @@ function modifyAnnotationsMap() {
 				"select",
 				function(event) {
 					tlv.currentAnnotation = event.selected[ 0 ];
-					openAnnotationsDialog();
+					openAnnotationStylesDialog();
 					removeInteractions();
 				}
 			);
@@ -361,13 +361,13 @@ function modifyAnnotationsMap() {
 	}
 }
 
-function openAnnotationsDialog( vectorLayer ) {
-	var styleTabs = $( '#annotationsDialog' ).find( '.nav-tabs' );
+function openAnnotationStylesDialog( vectorLayer ) {
+	var styleTabs = $( '#annotationStylesDialog' ).find( '.nav-tabs' );
 	$.each( styleTabs.children(), function( index, node ) {
 		$( node ).removeClass( 'active' );
 	} );
 
-	var stylePanes = $( '#annotationsDialog' ).find( '.tab-content' );
+	var stylePanes = $( '#annotationStylesDialog' ).find( '.tab-content' );
 	$.each( stylePanes.children(), function( index, node ) {
 		$( node ).removeClass( 'active' );
 	} );
@@ -435,7 +435,7 @@ function openAnnotationsDialog( vectorLayer ) {
 		}
 	} );
 
-	$( '#annotationsDialog' ).modal( 'show' );
+	displayDialog( 'annotationStylesDialog' );
 }
 
 function removeInteractions() {

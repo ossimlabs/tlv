@@ -1,14 +1,7 @@
 function pageLoad() {
 	initializeLoadingDialog();
 
-	disableMenuButtons();
-
 	enableKeyboardShortcuts();
-
-	$( window ).mousemove( function() {
-		displayNavbar();
-	});
-	displayNavbar();
 
 	$( window ).resize( function() { updateMapSize(); } );
 

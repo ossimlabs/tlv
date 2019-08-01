@@ -14,6 +14,7 @@
 //= require time-lapse
 //= require time-lapse-map
 //= require time-lapse-globe
+//= require map-controls
 //= require menus/annotations
 //= require menus/annotations-map
 //= require menus/export

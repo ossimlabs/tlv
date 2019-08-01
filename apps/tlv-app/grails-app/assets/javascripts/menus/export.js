@@ -80,7 +80,7 @@ function exportLink() {
 	};
 
 	$( '#exportLinkInput' ).val( url + "?" + $.param( params ) );
-	$( '#exportLinkDialog' ).modal( 'show' );
+	displayDialog( 'exportLinkDialog' );
 }
 
 function exportMetadata() {
@@ -306,5 +306,5 @@ function exportWmsGetCapabilities() {
 	};
 
 	$( '#exportLinkInput' ).val( url + '?' + $.param( params ) );
-	$( '#exportLinkDialog' ).modal( 'show' );
+	displayDialog( 'exportLinkDialog' );
 }

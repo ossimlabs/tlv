@@ -19,11 +19,21 @@
 				<g:render plugin = "omar-security-plugin" template = "/security-classification-header"/>
 			</g:if>
 			<g:render template = "/banner"/>
-			<g:render template = "/navigation-menu"/>
 			<g:render template = "/time-lapse"/>
 
 			<g:render template = "/dialogs"/>
 		</div>
+
+		<g:if test = "${ grailsApplication.config.userInfo }">
+			<%
+				def userInfo = grailsApplication.config.userInfo
+				def requestHeaderUserName = userInfo.requestHeaderUserName
+				def userName = request.getHeader( requestHeaderUserName ) ?: userInfo.requestHeaderUserNameDefault
+			%>
+			<g:if test = "${ userName }">
+				<input id = "userNameInput" type = "hidden" value = "${ userName }">
+			</g:if>
+		</g:if>
 
 		<asset:javascript src = "index-bundle.js"/>
 		<asset:script type = "text/javascript">

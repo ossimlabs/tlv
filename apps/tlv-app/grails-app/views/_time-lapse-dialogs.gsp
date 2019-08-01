@@ -12,10 +12,6 @@
 	</div>
 </div>
 
-<asset:script type = "text/javascript">
-	$("#summaryTableDialog").on("hidden.bs.modal", function (event) { hideDialog("summaryTableDialog"); });
-	$("#summaryTableDialog").on("shown.bs.modal", function (event) { displayDialog("summaryTableDialog"); });
-</asset:script>
 
 <div class = "modal" id = "contextMenuDialog" role = "dialog" tabindex = "-1">
 	<div class = "modal-dialog">
@@ -49,8 +45,3 @@
 		</div>
 	</div>
 </div>
-
-<asset:script type = "text/javascript">
-	$( "#contextMenuDialog" ).on( "hidden.bs.modal", function (event) { hideDialog( "contextMenuDialog" ); } );
-	$( "#contextMenuDialog" ).on( "shown.bs.modal", function (event) { displayDialog( "contextMenuDialog" ); } );
-</asset:script>

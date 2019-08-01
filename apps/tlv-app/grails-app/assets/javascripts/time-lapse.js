@@ -323,7 +323,7 @@ pageLoad = function() {
 	pageLoadTimeLapse();
 
 	if (tlv.layers) {
-		$("#searchDialog").modal("hide");
+		hideDialog( 'searchDialog' );
 		tlv.bbox = calculateInitialViewBbox();
 		setupTimeLapse();
 	}
@@ -389,8 +389,6 @@ function setupTimeLapse() {
 
 	tlv.layers[0].mapLayer.setVisible(true);
 	tlv.layers[0].mapLayer.setOpacity(1);
-
-	enableMenuButtons();
 
 	updateScreenText();
 }

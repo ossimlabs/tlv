@@ -1,0 +1,130 @@
+#acquisitionDateDiv {
+	bottom: 0.5em;
+    right: 0.5em;
+    text-align: right;
+}
+
+.annotations-control {
+	right: 15.5em;
+	top: 0.5em;
+}
+
+.custom-map-control {
+	background-color: rgba(0, 0, 0, 0.5);
+	color: white;
+    position: absolute;
+}
+
+.delete-control {
+	left: 10.5em;
+	top: 0.5em;
+	width: auto;
+}
+
+.export-control {
+	right: 13em;
+	top: 0.5em;
+}
+
+.fast-forward-control {
+	left: 8em;
+	top: 0.5em;
+}
+
+.help-control {
+	right: 0.5em;
+	top: 0.5em;
+}
+
+#imageIdOuterDiv {
+    text-align: center;
+	top: 0.5em;
+	width: 100%
+}
+
+.image-properties-control {
+	right: 10.5em;
+	top: 0.5em;
+}
+
+.layers-control {
+	right: 8em;
+	top: 0.5em;
+}
+
+.ol-full-screen {
+	left: 0.5em;
+	right: auto;
+	top: 60px;
+}
+
+.ol-mouse-position {
+	background-color: none;
+	bottom: 0.5em;
+	color: white;
+	cursor: pointer;
+	right: auto;
+	text-align: center;
+	text-shadow: 2px 2px black;
+	top: auto;
+	width: 100%;
+}
+
+.ol-rotate, .ol-rotate.ol-hidden {
+    left: 0.5em;
+    opacity: 1;
+    right: auto;
+    top: 90px;
+    visibility: visible;
+}
+
+.play-stop-control {
+	left: 5.5em;
+	top: 0.5em;
+}
+
+.rewind-control {
+	left: 3em;
+	top: 0.5em;
+}
+
+.rotation-tilt-control {
+	left: 0.5em;
+	transform: rotate( 90deg );
+	transform-origin: 2.5em 2.5em;
+	top: 90px;
+}
+
+.search-control {
+	right: 18em;
+	top: 0.5em;
+}
+
+.summary-table-control {
+	left: 13em;
+	top: 0.5em;
+	width: auto;
+}
+
+.tools-control {
+	right: 5.5em;
+	top: 0.5em;
+}
+
+.up-is-up-control {
+	left: 0.5em;
+    opacity: 1;
+    right: auto;
+    top: 120px;
+    visibility: visible;
+}
+
+.user-name-control {
+	bottom: 0.5em;
+	left: 0.5em;
+}
+
+.view-control {
+	right: 3em;
+	top: 0.5em;
+}

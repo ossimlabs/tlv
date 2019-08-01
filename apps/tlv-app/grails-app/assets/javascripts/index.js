@@ -165,6 +165,8 @@ function disableMenuButtons() {
 }
 
 function displayDialog( dialog ) {
+    $( '#' + dialog ).modal( 'show' );
+
 	var header = $( "#" + dialog + " .modal-header" );
 	var paddingHeight = header.offset() ? header.offset().top : 0;
 	var headerHeight = header.offset() ? header.outerHeight() : 0;
@@ -199,7 +201,7 @@ function displayErrorDialog( message ) {
 }
 
 function displayLoadingDialog(message) {
-	$("#loadingDialog").modal("show");
+	displayDialog( 'loadingDialog' );
 	$("#loadingDialogMessageDiv").html(message);
 }
 
@@ -207,14 +209,6 @@ function displayNavbar() {
 	$( ".navbar" ).css( "opacity", 1 );
 	if ( tlv.hideNavbar ) { clearTimeout( tlv.hideNavbar ); }
     tlv.hideNavbar = setTimeout( function() { $( ".navbar" ).css( "opacity", 0 ); }, 5000 );
-}
-
-function enableMenuButtons() {
-	var menuButtons = $(".navbar-header")[0].children;
-	for (var i = 1; i < menuButtons.length - 1; i++) { $(menuButtons[i]).show(); }
-
-	var menuButtons = $(".navbar-nav")[0].children;
-	for (var i = 1; i < menuButtons.length; i++) { $(menuButtons[i]).show(); }
 }
 
 function enableKeyboardShortcuts() {
@@ -293,6 +287,8 @@ function groundToImagePoints( coordinates, layer, callback ) {
 }
 
 function hideDialog(dialog) {
+    $( '#' + dialog ).modal( 'hide' );
+
 	var dialogBody = $("#" + dialog + " .modal-body");
 	dialogBody.css("max-height", "");
 	dialogBody.css("overflow-y", "");
@@ -300,7 +296,9 @@ function hideDialog(dialog) {
 
 function hideErrorDialog() { $("#errorDialog").hide(); }
 
-function hideLoadingDialog() { $("#loadingDialog").modal("hide"); }
+function hideLoadingDialog() {
+    hideDialog( 'loadingDialog' );
+}
 
 function imagePointsToGround( pixels, layer, options, callback ) {
     if ( typeof options == 'function' ) {
