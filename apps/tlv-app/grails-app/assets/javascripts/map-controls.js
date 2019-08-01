@@ -1,9 +1,9 @@
 function createAcquisitionDateControl() {
 	if ( tlv.hideAcquisitionDate != "true" ) {
-		let div = document.createElement( "div" );
+		var div = document.createElement( "div" );
 		div.className = "custom-map-control";
 		div.id = "acquisitionDateDiv";
-		let control = new ol.control.Control({ element: div });
+		var control = new ol.control.Control({ element: div });
 
 
 		return control;
@@ -236,7 +236,7 @@ function createLayersControl() {
 function createMapControls() {
 	tlv.mapControls = [];
 
-	let controls = [
+	var controls = [
 		createMousePositionControl(),
 		// needs to be first
 		createAcquisitionDateControl(),
@@ -513,12 +513,12 @@ function createToolsControl() {
 }
 
 function createUserNameControl() {
-	let userNameInput = document.getElementById( 'userNameInput' );
+	var userNameInput = document.getElementById( 'userNameInput' );
 	if ( userNameInput ) {
-		let div = document.createElement( "div" );
+		var div = document.createElement( "div" );
 		div.className = "custom-map-control user-name-control";
 		div.innerHTML = userNameInput.value;
-		let control = new ol.control.Control({ element: div });
+		var control = new ol.control.Control({ element: div });
 
 
 		return control;

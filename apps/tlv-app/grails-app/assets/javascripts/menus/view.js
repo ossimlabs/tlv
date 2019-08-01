@@ -193,7 +193,7 @@ createMapControls = function() {
 	$.each( createSwipeControls(), function( i, x ) { tlv.mapControls.push( x ); } );
 
 	$.each( tlv.layers, function( index, layer ) {
-		let controls = [
+		var controls = [
 			createAcquisitionDateControl(),
 			createAnnotationsControl(),
 			tlv.layers.length > 1 ? createDeleteControl() : null,
