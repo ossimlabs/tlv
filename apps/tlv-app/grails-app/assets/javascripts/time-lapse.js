@@ -554,3 +554,19 @@ function updateTlvLayerCount() {
 	var currentCount = tlv.currentLayer + 1;
     $( '.tlvLayerCountSpan' ).html( currentCount + '/' + tlv.layers.length );
 }
+
+function zoomToFullResolution() {
+	var metadata = tlv.layers[ tlv.currentLayer ].metadata;
+	var gsdX = metadata.gsdx;
+	var gsdY = metadata.gsdy;
+	var gsd = Math.sqrt( Math.pow( gsdX, 2 ) + Math.pow( gsdY, 2 ) );
+	var resolution = gsd / 6371008.8 * 180 / Math.PI;
+	tlv.map.getView().setResolution( resolution );
+}
+
+function zoomToMaximumExtent() {
+	var footprint = tlv.layers[ tlv.currentLayer ].metadata.footprint;
+	var polygon = new ol.format.WKT().readGeometry( footprint );
+	var extent = polygon.getExtent();
+	tlv.map.getView().fit( extent, { nearest: true } );
+}

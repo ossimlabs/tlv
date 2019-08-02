@@ -15,20 +15,10 @@
 					<option ${ dimensionsOption == "3" ? "selected" : "" } value = 3>3D</option>
 				</select>
 
-				<label>Full Resolution</label>
-				<button class = "btn btn-primary form-control" data-dismiss = "modal" onclick = zoomToFullResolution()>
-					Adjust Zoom
-				</button>
-
 				<%--<label>Geometries</label>
 				<button class = "btn btn-primary form-control" onclick = "openGeometries(); hideDialog( 'viewDialog' );">
 					Open
 				</button>--%>
-
-				<label>Maximum Extent</label>
-				<button class = "btn btn-primary form-control" data-dismiss = "modal" onclick = zoomToMaximumExtent()>
-					Adjust Zoom
-				</button>
 
 				<label>Swipe</label>
 				<select class = "form-control" id = "swipeSelect" onchange = "swipeToggle(); hideDialog( 'viewDialog' );">

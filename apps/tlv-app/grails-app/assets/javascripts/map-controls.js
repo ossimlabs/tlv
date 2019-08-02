@@ -251,7 +251,8 @@ function createMapControls() {
 		createSearchControl(),
 		createToolsControl(),
 		createUserNameControl(),
-		createViewControl()
+		createViewControl(),
+		createZoomControl()
 	];
 
 	if ( tlv.layers.length > 1 ) {
@@ -553,4 +554,40 @@ function createViewControl() {
 
 
 	return new ViewControl();
+}
+
+function createZoomControl() {
+	var Control = function() {
+		var button1 = document.createElement( "button" );
+		button1.innerHTML = "<span class = 'glyphicon glyphicon-resize-full'></span>";
+		button1.title = "Full Resolution";
+
+		$( button1 ).on( "click", function( event ) {
+			$( this ).blur();
+			zoomToFullResolution();
+		});
+
+		var button2 = document.createElement( "button" );
+		button2.innerHTML = "<span class = 'glyphicon glyphicon-resize-small'></span>";
+		button2.title = "Max. Extent";
+
+		$( button2 ).on( "click", function( event ) {
+			$( this ).blur();
+			zoomToMaximumExtent();
+		});
+
+		var element = document.createElement( "div" );
+		element.className = "ol-zoom zoom-control ol-unselectable ol-control";
+		element.appendChild( button1 );
+		element.appendChild( button2 );
+
+		ol.control.Control.call( this, {
+			element: element,
+			target: undefined
+		});
+	};
+	ol.inherits( Control, ol.control.Control );
+
+
+	return new Control();
 }

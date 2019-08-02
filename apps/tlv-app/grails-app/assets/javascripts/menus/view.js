@@ -211,7 +211,8 @@ createMapControls = function() {
 			tlv.layers.length > 1 ? createSummaryTableControl() : null,
 			createToolsControl(),
 			createUserNameControl(),
-			createViewControl()
+			createViewControl(),
+			createZoomControl()
 		];
 		$.each( controls, function( index, control ) {
 			if ( control ) {
@@ -708,18 +709,33 @@ function viewSpaceToggle() {
 	}
 }
 
-function zoomToFullResolution() {
-	var metadata = tlv.layers[ tlv.currentLayer ].metadata;
-	var gsdX = metadata.gsdx;
-	var gsdY = metadata.gsdy;
-	var gsd = Math.sqrt( Math.pow( gsdX, 2 ) + Math.pow( gsdY, 2 ) );
-	var resolution = gsd / 6371008.8 * 180 / Math.PI;
-	tlv.map.getView().setResolution( resolution );
+var zoomToFullResolutionView = zoomToFullResolution;
+zoomToFullResolution = function() {
+	if ( $( '#imageSpaceMaps' ).is( ':visible' ) ) {
+		tlv.layers[ tlv.currentLayer ].imageSpaceMap.getView().setResolution( 1 );
+	}
+	else {
+		zoomToFullResolutionView();
+	}
 }
 
-function zoomToMaximumExtent() {
-	var footprint = tlv.layers[ tlv.currentLayer ].metadata.footprint;
-	var polygon = new ol.format.WKT().readGeometry( footprint );
-	var extent = polygon.getExtent();
-	tlv.map.getView().fit( extent, { nearest: true } );
+var zoomToMaximumExtentView = zoomToMaximumExtent;
+zoomToMaximumExtent = function() {
+	if ( $( '#imageSpaceMaps' ).is( ':visible' ) ) {
+		var layer = tlv.layers[ tlv.currentLayer ];
+		var map = layer.imageSpaceMap;
+		var mapSize = map.getSize();
+		var pixelWidth = Math.max( Math.min( mapSize[ 0 ], mapSize[ 1 ] ), 128 );
+		var size = Math.max( layer.metadata.width, layer.metadata.height );
+		var level = 0;
+		while (size > pixelWidth) {
+			level += 1;
+			size = size >> 1;
+		}
+		var resolution = Math.pow( 2, level );
+	    map.getView().setResolution( resolution );
+	}
+	else {
+		zoomToMaximumExtentView();
+	}
 }

@@ -16,7 +16,7 @@
 }
 
 .delete-control {
-	left: 10.5em;
+	left: 13em;
 	top: 0.5em;
 	width: auto;
 }
@@ -27,7 +27,7 @@
 }
 
 .fast-forward-control {
-	left: 8em;
+	left: 10.5em;
 	top: 0.5em;
 }
 
@@ -79,12 +79,12 @@
 }
 
 .play-stop-control {
-	left: 5.5em;
+	left: 8em;
 	top: 0.5em;
 }
 
 .rewind-control {
-	left: 3em;
+	left: 5.5em;
 	top: 0.5em;
 }
 
@@ -101,7 +101,7 @@
 }
 
 .summary-table-control {
-	left: 13em;
+	left: 15.5em;
 	top: 0.5em;
 	width: auto;
 }
@@ -126,5 +126,10 @@
 
 .view-control {
 	right: 3em;
+	top: 0.5em;
+}
+
+.zoom-control {
+	left: 3em;
 	top: 0.5em;
 }
