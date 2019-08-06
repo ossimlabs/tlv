@@ -152,19 +152,19 @@ libraries:
 
 reachbackUrl: ${baseUrl}/omar-reachback/index
 
-# Uncomment this to add your own releasabilty condition statements
-# releasability: |
-#    function x() {
-#        /* some logic */
-#         return releasability;
-#    }
-#    x();
-
 # Set the security classification banner here
 #securityClassification:
 #    backgroundColor: green
 #    classification: UNCLASSIFIED
 #    textColor: white
+
+# Uncomment this to add your own security classification function
+# securityClassificationFunction: |
+#    function x() {
+#        /* some logic */
+#         return releasability;
+#    }
+#    x();
 
 # Set the context path of the application
 server:

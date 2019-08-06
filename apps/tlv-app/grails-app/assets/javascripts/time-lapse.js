@@ -492,55 +492,40 @@ function updatePqe( pixel ) {
     } );
 }
 
-function getReleasability() {
-    var releasability = null;
-    try {
-        releasability = eval( tlv.releasability );
-    }
-    catch ( exception ) { /* do nothing */ }
-
-
-	return releasability || '' ;
-}
-
 // Updates the security banner to match the current image security-classification
 function updateSecurityBanner() {
-
-	var current_banner = '#currentClassification';
-	var default_banner = '#defaultClassification';
     var securityClassificationBanner = $( '.security-classification' );
+    securityClassificationBanner.removeClass( 'unclassified' );
+    securityClassificationBanner.removeClass( 'secret' );
+    securityClassificationBanner.removeClass( 'top-secret' );
 
-	var releasability = getReleasability();
+    var current_banner = $( '#currentClassification' );
+    current_banner.show();
+    var default_banner = $( '#defaultClassification' );
+    default_banner.hide();
 
-	$( default_banner ).hide();
-	$( current_banner ).show();
+    var securityClassification = tlv.layers[ tlv.currentLayer ].metadata.security_classification || '';
+    if ( tlv.securityClassificationFunction ) {
+        try {
+            securityClassification = eval( tlv.securityClassificationFunction );
+        }
+        catch ( exception ) { /* do nothing */ }
+    }
 
-	securityClassificationBanner.removeClass( 'unclassified' );
-	securityClassificationBanner.removeClass( 'secret' );
-	securityClassificationBanner.removeClass( 'top-secret' );
-
-	switch( tlv.layers[ tlv.currentLayer ].metadata.security_classification ) {
-		case "U":
-		case "UNCLASSIFIED":
-			addStyleAndClassification( current_banner, "unclassified", releasability );
-			break;
-		case "S":
-		case "SECRET":
-			addStyleAndClassification( current_banner, "secret", releasability );
-			break;
-		case "TS":
-		case "TOP-SECRET":
-			addStyleAndClassification( current_banner, "top-secret", releasability );
-			break;
-		default:
-			$( default_banner ).show();
-			$( current_banner ).hide();
+    current_banner ).text( securityClassification );
+    if ( securityClassification.contains( 'UNCLASSIFIED' ) ) {
+        securityClassificationBanner.addClass( 'unclassified' );
+    }
+    else if ( securityClassification.contains( 'SECRET' ) ) {
+		securityClassificationBanner.addClass( 'unclassified' );
+    }
+    else if ( securityClassification.contains( 'TOP SECRET' ) ) {
+        securityClassificationBanner.addClass( 'top-secret' );
+    }
+    else {
+		default_banner.show();
+		current_banner.hide();
 	}
-}
-
-function addStyleAndClassification( banner, classification, releasability ) {
-	$( '.security-classification' ).addClass( classification );
-	$( banner ).text( classification.toUpperCase() + releasability );
 }
 
 function updateScreenText() {
