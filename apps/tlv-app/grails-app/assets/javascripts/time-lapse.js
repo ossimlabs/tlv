@@ -512,7 +512,7 @@ function updateSecurityBanner() {
         catch ( exception ) { /* do nothing */ }
     }
 
-    current_banner ).text( securityClassification );
+    current_banner.text( securityClassification );
     if ( securityClassification.contains( 'UNCLASSIFIED' ) ) {
         securityClassificationBanner.addClass( 'unclassified' );
     }
