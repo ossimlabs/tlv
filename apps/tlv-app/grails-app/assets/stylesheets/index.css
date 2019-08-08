@@ -21,24 +21,7 @@
     z-index: 9999;
 }
 
-.navbar {
-	background: none;
-	border: none;
-	margin-bottom: 0px;
-    pointer-events: none;
-}
-
-.navbar-button {
-    background-image: -webkit-linear-gradient(#484e55, #3a3f44 60%, #313539);
-    background-image: -webkit-gradient(linear, left top, left bottom, from(#484e55), color-stop(60%, #3a3f44), to(#313539));
-    background-image: linear-gradient(#484e55, #3a3f44 60%, #313539);
-}
-
-.navbar-right {
-    pointer-events: auto;
-}
-
-.slider-selection, .slider-track-high { background: #303c3a; }
+.slider-track-high { background: white; }
 
 .table th, .table td { border-top: none !important; }
 
