@@ -233,7 +233,7 @@ function getFillStyle( styleType ) {
 	var styleInput = $( '#' + styleType );
 	var color = styleInput.find( '#fillColorInput' ).val();
 	var rgb = hexToRgb( color );
-	var opacity = styleInput.find( '#fillOpacityInput' ).val();
+	var opacity = $( styleInput.find( 'input[name="fillOpacitySliderInput"]' ) ).slider( 'getValue' ) / 100;
 
 
 	return new ol.style.Fill({
@@ -275,7 +275,7 @@ function getStrokeStyle( styleType ) {
 	var styleInput = $( '#' + styleType );
 	var color = styleInput.find( '#strokeColorInput' ).val();
 	var rgb = hexToRgb( color );
-	var opacity = styleInput.find( '#strokeOpacityInput' ).val();
+	var opacity = $( styleInput.find( 'input[name="strokeOpacitySliderInput"]' ) ).slider( 'getValue' ) / 100;
 
 	var dashLength = styleInput.find( '#strokeLineDashLengthInput' ).val();
 	var dashSpacing = styleInput.find( '#strokeLineDashLengthSpacingInput' ).val();
@@ -296,7 +296,8 @@ function getTextStyle() {
 	var styleInput = $( '#text' );
 	var color = styleInput.find( "h3:contains('Text')" ).parent().find( '#fillColorInput' ).val();
 	var rgb = hexToRgb( color );
-	var opacity = styleInput.find( "h3:contains('Text')" ).parent().find( '#fillOpacityInput' ).val();
+
+	var opacity = $( styleInput.find( "h3:contains('Text')" ).parent().find( 'input[name="fillOpacitySliderInput"]' ) ).slider( 'getValue' ) / 100;
 
 
 	var textStyle = new ol.style.Text({
@@ -438,6 +439,25 @@ function openAnnotationStylesDialog( vectorLayer ) {
 	displayDialog( 'annotationStylesDialog' );
 }
 
+var pageLoadAnnotationsMap = pageLoad;
+pageLoad = function() {
+	pageLoadAnnotationsMap();
+
+	$.each( $( '[name="fillOpacitySliderInput"]' ), function( index, element ) {
+		$( element ).slider();
+		$( element ).on( 'change', function( event ) {
+			$( element ).prev().prev().html( event.value.newValue + '%' );
+		});
+	} );
+	$.each( $( '[name="strokeOpacitySliderInput"]' ), function( index, element ) {
+		$( element ).slider();
+		$( element ).on( 'change', function( event ) {
+			$( element ).prev().prev().html( event.value.newValue + '%' );
+		});
+	} );
+}
+
+
 function removeInteractions() {
 	$.each(
 		[tlv.drawAnnotationInteraction, tlv.modifyAnnotationsInteraction, tlv.selectAnnotationInteraction],
@@ -457,7 +477,11 @@ function setFillStyle( styleType, fill ) {
 	var color = ol.color.asArray( fill.getColor() );
 	var hex = rgbToHex( color[ 0 ], color[ 1 ], color[ 2 ] );
 	styleInput.find( '#fillColorInput' ).val( hex );
-	styleInput.find( '#fillOpacityInput' ).val( color[ 3 ] );
+
+	var opacity = color[ 3 ] * 100;
+	var opacitySlider = $( styleInput.find( 'input[name="fillOpacitySliderInput"]' ) );
+	opacitySlider.slider( 'setValue', opacity );
+	opacitySlider.prev().prev().html( opacity + '%' );
 }
 
 function setLineStyle( style ) {
@@ -488,7 +512,11 @@ function setStrokeStyle( styleType, stroke ) {
 	var color = ol.color.asArray( stroke.getColor() );
 	var hex = rgbToHex( color[ 0 ], color[ 1 ], color[ 2 ] );
 	styleInput.find( '#strokeColorInput' ).val( hex );
-	styleInput.find( '#strokeOpacityInput' ).val( color[ 3 ] );
+
+	var opacity = color[ 3 ] * 100;
+	var opacitySlider = $( styleInput.find( 'input[name="strokeOpacitySliderInput"]' ) );
+	opacitySlider.slider( 'setValue', opacity );
+	opacitySlider.prev().prev().html( opacity + '%' );
 
 	var lineCap = stroke.getLineCap();
 	styleInput.find( "#strokeLineCapSelect option[value='" + lineCap + "']" ).prop( 'selected', true );
@@ -516,7 +544,11 @@ function setTextStyle( text ) {
 	var color = ol.color.asArray( text.getFill().getColor() );
 	var hex = rgbToHex( color[ 0 ], color[ 1 ], color[ 2 ] );
 	styleInput.find( "h3:contains('Text')" ).parent().find( '#fillColorInput' ).val( hex );
-	styleInput.find( "h3:contains('Text')" ).parent().find( '#fillOpacityInput' ).val( color[ 3 ] );
+
+	var opacity = color[ 3 ] * 100;
+	var opacitySlider = $( styleInput.find( "h3:contains('Text')" ).parent().find( 'input[name="fillOpacitySliderInput"]' ) );
+	opacitySlider.slider( 'setValue', opacity );
+	opacitySlider.prev().prev().html( opacity + '%' );
 
 	var offsetX = text.getOffsetX();
 	styleInput.find( '#textOffsetXInput' ).val( offsetX );

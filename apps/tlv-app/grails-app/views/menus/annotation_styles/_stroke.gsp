@@ -4,8 +4,9 @@
         <input class = "form-control" id = "strokeColorInput" type = "color">
     </div>
     <div class = "col-md-4">
-        <label>Opacity</label>
-        <input class = "form-control" id = "strokeOpacityInput" max = "1" min = "0" step = "0.1" type = "number">
+        <label>Opacity:</label>
+        <span>0%</span>
+        <input class = "form-control" data-slider-max = "100" data-slider-min = "0" data-slider-tooltip = "hide" data-slider-value = "0" name = "strokeOpacitySliderInput" style = "width: 100%" type = "text">
     </div>
     <div class = "col-md-4">
         <label>Width</label>
