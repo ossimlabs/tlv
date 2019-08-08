@@ -21,7 +21,7 @@
     z-index: 9999;
 }
 
-.slider-track-high { background: white; }
+.slider-selection, .slider-track-high { background: white; }
 
 .table th, .table td { border-top: none !important; }
 
