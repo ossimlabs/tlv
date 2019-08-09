@@ -366,6 +366,11 @@ function openAnnotationStylesDialog( vectorLayer ) {
 	var styleTabs = $( '#annotationStylesDialog' ).find( '.nav-tabs' );
 	$.each( styleTabs.children(), function( index, node ) {
 		$( node ).removeClass( 'active' );
+		var link = $( node ).children();
+		if ( link.html() != 'Text' ) {
+			$( node ).addClass( 'disabled' );
+			link.attr( 'data-toggle', '' );
+		}
 	} );
 
 	var stylePanes = $( '#annotationStylesDialog' ).find( '.tab-content' );
@@ -407,21 +412,30 @@ function openAnnotationStylesDialog( vectorLayer ) {
 				setRadiusStyle( 'circle', radius );
 				setPolygonStyle( 'circle', style );
 				if ( index == features.length - 1 ) {
-					styleTabs.find( 'a:contains("Circle")' ).parent().addClass( 'active' );
+					var styleTabLink = styleTabs.find( 'a:contains("Circle")' );
+					styleTabLink.parent().addClass( 'active' );
+					styleTabLink.parent().removeClass( 'disabled' );
+					styleTabLink.attr( 'data-toggle', 'tab' );
 					stylePanes.find( 'div#circle' ).addClass( 'active' );
 				}
 				break;
 			case 'LineString':
 				setLineStyle( style );
 				if ( index == features.length - 1 ) {
-					styleTabs.find( 'a:contains("Line")' ).parent().addClass( 'active' );
+					var styleTabLink = styleTabs.find( 'a:contains("Line")' );
+					styleTabLink.parent().addClass( 'active' );
+					styleTabLink.parent().removeClass( 'disabled' );
+					styleTabLink.attr( 'data-toggle', 'tab' );
 					stylePanes.find( 'div#line' ).addClass( 'active' );
 				}
 				break;
 			case 'Point':
 				setPointStyle( style );
 				if ( index == features.length - 1 ) {
-					styleTabs.find( 'a:contains("Point")' ).parent().addClass( 'active' );
+					var styleTabLink = styleTabs.find( 'a:contains("Point")' );
+					styleTabLink.parent().addClass( 'active' );
+					styleTabLink.parent().removeClass( 'disabled' );
+					styleTabLink.attr( 'data-toggle', 'tab' );
 					stylePanes.find( 'div#point' ).addClass( 'active' );
 				}
 				break;
@@ -429,7 +443,10 @@ function openAnnotationStylesDialog( vectorLayer ) {
 			case 'Polygon':
 				setPolygonStyle( 'polygon', style );
 				if ( index == features.length - 1 ) {
-					styleTabs.find( 'a:contains("Polygon")' ).parent().addClass( 'active' );
+					var styleTabLink = styleTabs.find( 'a:contains("Polygon")' );
+					styleTabLink.parent().addClass( 'active' );
+					styleTabLink.parent().removeClass( 'disabled' );
+					styleTabLink.attr( 'data-toggle', 'tab' );
 					stylePanes.find( 'div#polygon' ).addClass( 'active' );
 				}
 				break;
