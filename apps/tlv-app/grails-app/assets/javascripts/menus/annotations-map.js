@@ -216,7 +216,16 @@ function drawAnnotationMap( type ) {
 		case "rectangle": drawRectangle(); break;
 		case "square": drawSquare(); break;
 	}
-	tlv.map.addInteraction(tlv.drawAnnotationInteraction);
+	tlv.map.addInteraction( tlv.drawAnnotationInteraction );
+
+	$( document ).on( 'keydown', escapeDrawing );
+}
+
+function escapeDrawing( event ) {
+	if ( event.keyCode == 27 ) { // escape key
+		$( document ).unbind( 'keydown', escapeDrawing );
+		removeInteractions();
+	}
 }
 
 function getCircleRadius(geometry) {
