@@ -536,6 +536,7 @@ setupTimeLapse = function() {
 		turnOnSwipe();
 	}
 	if ( $( '#viewSpaceSelect' ).val() == 'imageSpace' ) {
+		switchToOrthoSpace(); // needed to get some map coords
 		switchToImageSpace();
 	}
 	if ( $( "#wmsTilesSelect" ).val() == "imageLayer" ) {
