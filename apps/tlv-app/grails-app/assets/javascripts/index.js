@@ -213,10 +213,10 @@ function displayNavbar() {
 
 function enableKeyboardShortcuts() {
 	$( document ).on( "keydown", function( event ) {
+        var keyCode = event.keyCode;
 		// only if a modal is not open
 		if ( !$( ".modal-backdrop" ).is( ":visible" ) ) {
 
-			var keyCode = event.keyCode;
 			switch( keyCode ) {
 				// space bar
 				case 32:
@@ -261,6 +261,12 @@ function enableKeyboardShortcuts() {
                     break;
 			}
 		}
+        else if ( $( '#searchDialog' ).is( ":visible" ) ) {
+            if ( keyCode == 13 ) {
+                beginSearch();
+                $( '#searchDialog' ).modal( 'hide' );
+            }
+        }
 	});
 }
 
