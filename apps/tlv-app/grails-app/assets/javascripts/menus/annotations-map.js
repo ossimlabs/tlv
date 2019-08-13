@@ -128,8 +128,7 @@ function createAnnotationsLayer( layer ) {
 		source.on( "addfeature", anAnnotationHasBeenAdded );
 
 		layer.annotationsLayer = new ol.layer.Vector({
-			source: source,
-			style: createDefaultStyle()
+			source: source
 		});
 		tlv.map.addLayer( layer.annotationsLayer );
 	}
@@ -345,27 +344,49 @@ function modifyAnnotationsMap() {
 	var layer = tlv.layers[tlv.currentLayer].annotationsLayer;
 	if (layer) {
 		var features = new ol.Collection(layer.getSource().getFeatures());
-		if (features) {
+		if ( features ) {
 			// allow vertices to be added and deleted
-			tlv.modifyAnnotationsInteraction = new ol.interaction.Modify({
+			tlv.modifyAnnotationInteraction = new ol.interaction.Modify({
         		deleteCondition: function(event) {
           			return ol.events.condition.shiftKeyOnly(event) && ol.events.condition.singleClick(event);
         		},
 				features: features
 			});
-    		tlv.map.addInteraction(tlv.modifyAnnotationsInteraction);
+    		tlv.map.addInteraction(tlv.modifyAnnotationInteraction);
 
 			// actually handle selecting the feature
-			tlv.selectAnnotationInteraction = new ol.interaction.Select({ layers: [layer] });
-			tlv.selectAnnotationInteraction.once(
-				"select",
-				function(event) {
-					tlv.currentAnnotation = event.selected[ 0 ];
-					openAnnotationStylesDialog();
-					removeInteractions();
-				}
-			);
-			tlv.map.addInteraction(tlv.selectAnnotationInteraction);
+			tlv.selectClickAnnotationInteraction = new ol.interaction.Select({
+				layers: [ layer ]
+			});
+			tlv.selectClickAnnotationInteraction.on( 'select', function( event ) {
+				tlv.currentAnnotation = event.selected[ 0 ];
+				var style = tlv.currentAnnotation.getProperties().style;
+				tlv.currentAnnotation.setStyle( style );
+				tlv.currentAnnotation.setProperties({ style: null });
+				openAnnotationStylesDialog();
+				removeInteractions();
+			} );
+			tlv.map.addInteraction( tlv.selectClickAnnotationInteraction );
+
+			tlv.selectHoverAnnotationInteraction = new ol.interaction.Select({
+				condition: ol.events.condition.pointerMove,
+				layers: [ layer ]
+			});
+			tlv.selectHoverAnnotationInteraction.on( 'select', function( event ) {
+					$.each( event.deselected, function( index, feature ) {
+						var style = feature.getProperties().style;
+						feature.setStyle( style );
+						feature.setProperties({ style: null });
+					} );
+
+					var defaultStyle = new ol.layer.Vector().getStyleFunction();
+					$.each( event.selected, function( index, feature ) {
+						var style = feature.getStyle();
+						feature.setProperties({ style: style });
+						feature.setStyle( defaultStyle );
+					} );
+			} );
+			tlv.map.addInteraction( tlv.selectHoverAnnotationInteraction );
 		}
 		else { displayErrorDialog("There are no annotations here to modify. :()"); }
 	}
@@ -485,16 +506,14 @@ pageLoad = function() {
 
 
 function removeInteractions() {
-	$.each(
-		[tlv.drawAnnotationInteraction, tlv.modifyAnnotationsInteraction, tlv.selectAnnotationInteraction],
-		function(i, x) {
-			// make sure there is an interaction to remove first
-			if (x) {
-				tlv.map.removeInteraction(x);
-				x = null;
-			}
+	$.each([ 'draw', 'modify', 'selectClick', 'selectHover' ], function( index, value ) {
+		var interaction = tlv[ value + 'AnnotationInteraction' ];
+		// make sure there is an interaction to remove first
+		if ( interaction ) {
+			tlv.map.removeInteraction( interaction );
+			interaction = null;
 		}
-	);
+	} );
 }
 
 function setFillStyle( styleType, fill ) {
