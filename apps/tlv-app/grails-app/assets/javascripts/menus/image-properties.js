@@ -92,27 +92,32 @@ pageLoad = function() {
 		return (mid - min) / (max - min);
 	}
 
+	var valid_min;
+	var valid_max;
+	var valid_delta = 50;
+
 	dynamicRangeSlider.on( 'change', function( event ) {
 		var midpoint = DRA_Midpoint_slider.slider("getValue");
 		var min = dynamicRangeSlider.slider("getValue")[0];
 		var max = dynamicRangeSlider.slider("getValue")[1];
-
+		var test_delta = (max - min) * set_ratio;
 		// Prevent max slider from passing midpoint
-		if (max - midpoint < DRA_min_delta) {
-			dynamicRangeSlider.slider("setValue", [min, midpoint + DRA_min_delta]);
-			event.value.newValue[1] = midpoint + DRA_min_delta;
+		if ((max - midpoint < DRA_min_delta || midpoint - min < DRA_min_delta) && test_delta <= valid_delta) {
+			dynamicRangeSlider.slider("setValue", [valid_min, valid_max]);
+		} else {
+			valid_min = min;
+			valid_max = max;
+			valid_delta = (max - min) * set_ratio;
 		}
 
-		// Prevent min slider from passing midpoint
-		if (midpoint - min < DRA_min_delta) {
-			dynamicRangeSlider.slider("setValue", [midpoint - DRA_min_delta, max]);
-			event.value.newValue[0] = midpoint - DRA_min_delta;
-		}
+		event.value.newValue[0] = valid_min;
+		event.value.newValue[1] = valid_max;
 
 		min = dynamicRangeSlider.slider("getValue")[0];
 		max = dynamicRangeSlider.slider("getValue")[1];
 
 		var delta = (max - min) * set_ratio;
+
 		DRA_Midpoint_slider.slider("setValue", min + delta);
 
 		$( '#dynamicRangeValueSpan' ).html( event.value.newValue.join( ':' ) );
