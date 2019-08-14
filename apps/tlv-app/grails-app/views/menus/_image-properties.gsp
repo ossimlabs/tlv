@@ -10,7 +10,7 @@
         </div>
         <table class = "table">
             <tr>
-                <td style="color: white;">Bands:</td>
+                <td style="color: white; min-width:135px">Bands:</td>
                 <td>
                     <select class = "form-control" id = "selectBandsMethodSelect" onchange = "selectBands( this.value )">
                         <g:each in = "${[ "default", "manual" ]}">

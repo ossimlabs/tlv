@@ -53,8 +53,8 @@ pageLoad = function() {
 
 	var DRA_Midpoint_slider = $('#DRA_Midpoint');
 	DRA_Midpoint_slider.slider({
-		max: 95,
-		min: 5,
+		max: 100,
+		min: 0,
 		tooltip: 'hide',
 		value: 50
 	});
@@ -113,7 +113,7 @@ pageLoad = function() {
 		max = dynamicRangeSlider.slider("getValue")[1];
 
 		var delta = (max - min) * set_ratio;
-
+		console.log("mid pos: " + (min + delta));
 		DRA_Midpoint_slider.slider("setValue", min + delta);
 
 		$( '#dynamicRangeValueSpan' ).html( event.value.newValue.join( ':' ) );

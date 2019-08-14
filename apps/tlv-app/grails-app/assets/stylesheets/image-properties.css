@@ -37,7 +37,7 @@
 	pointer-events: none;
 	background: none;
 	border: none;
-	height: 5px;
+	height: 0px;
 }
 
 #DRA_midpoint_parent div.slider-handle {
