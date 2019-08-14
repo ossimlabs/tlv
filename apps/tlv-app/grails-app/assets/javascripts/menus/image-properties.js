@@ -113,7 +113,6 @@ pageLoad = function() {
 		max = dynamicRangeSlider.slider("getValue")[1];
 
 		var delta = (max - min) * set_ratio;
-		console.log("mid pos: " + (min + delta));
 		DRA_Midpoint_slider.slider("setValue", min + delta);
 
 		$( '#dynamicRangeValueSpan' ).html( event.value.newValue.join( ':' ) );
