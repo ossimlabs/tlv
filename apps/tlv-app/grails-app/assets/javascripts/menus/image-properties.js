@@ -15,12 +15,13 @@ function getDefaultImageProperties() {
 		hist_op: tlv.preferences.dynamicRangeAdjustment || 'auto-minmax',
 		nullPixelFlip: tlv.preferences.nullPixelFlip || true,
 		resampler_filter: tlv.preferences.interpolation || 'bilinear',
-		sharpen_percent: tlv.preferences.sharpenPercent || 0
+		sharpen_percent: tlv.preferences.sharpenPercent || 0,
+		histCenterClip: .5
 	};
 }
 
-var DRA_midpoint = 50;
 var DRA_min_delta = 5;
+var set_ratio = .5;
 
 var pageLoadImageProperties = pageLoad;
 pageLoad = function() {
@@ -67,8 +68,6 @@ pageLoad = function() {
 		value: [ 0,100 ]
 	});
 
-	var set_ratio = .5;
-
 	DRA_Midpoint_slider.on( 'change', function( event ) {
 		var midpoint = DRA_Midpoint_slider.slider("getValue");
 		var min = dynamicRangeSlider.slider("getValue")[0];
@@ -93,14 +92,6 @@ pageLoad = function() {
 		return (mid - min) / (max - min);
 	}
 
-	function getMidpointDelta(l, m, r) {
-		if (l < m && l < r)
-			return -1;
-		else if (r < l && r < m)
-			return 1;
-		return 0;
-	}
-
 	dynamicRangeSlider.on( 'change', function( event ) {
 		var midpoint = DRA_Midpoint_slider.slider("getValue");
 		var min = dynamicRangeSlider.slider("getValue")[0];
@@ -121,13 +112,9 @@ pageLoad = function() {
 		min = dynamicRangeSlider.slider("getValue")[0];
 		max = dynamicRangeSlider.slider("getValue")[1];
 
-		var l_ratio = getRatio(midpoint - 1, min, max);
-		var ratio = getRatio(midpoint, min, max);
-		var r_ratio = getRatio(midpoint + 1, min, max);
+		var delta = (max - min) * set_ratio;
 
-		var delta = getMidpointDelta(Math.abs(l_ratio - set_ratio), Math.abs(ratio - set_ratio), Math.abs(r_ratio - set_ratio));
-
-		DRA_Midpoint_slider.slider("setValue", midpoint + delta);
+		DRA_Midpoint_slider.slider("setValue", min + delta);
 
 		$( '#dynamicRangeValueSpan' ).html( event.value.newValue.join( ':' ) );
 	});
@@ -284,7 +271,8 @@ function updateImageProperties( refreshMap ) {
 			hist_op: $( '#dynamicRangeSelect' ).val(),
 			nullPixelFlip: $( '#nullPixelFlipSelect' ).val(),
 			resampler_filter: $( '#interpolationSelect' ).val(),
-			sharpen_percent: $( '#sharpenSliderInput' ).slider( 'getValue' ) / 100
+			sharpen_percent: $( '#sharpenSliderInput' ).slider( 'getValue' ) / 100,
+			histCenterClip: set_ratio
 		});
 
 		layer.mapLayer.getSource().updateParams({ STYLES: styles });

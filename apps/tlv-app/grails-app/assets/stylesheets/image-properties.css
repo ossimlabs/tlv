@@ -24,6 +24,9 @@
 	background: none;
 	border: none;
 }
+#DRA_midpoint_parent {
+	pointer-events: none;
+}
 
 #DRA_midpoint_parent div.slider-track-low {
 	background: none;
@@ -31,12 +34,14 @@
 }
 
 #DRA_midpoint_parent div.slider-track {
+	pointer-events: none;
 	background: none;
 	border: none;
 	height: 5px;
 }
 
 #DRA_midpoint_parent div.slider-handle {
+	pointer-events: auto !important;
 	background: none;
 	width: 0;
 	height: 0;
