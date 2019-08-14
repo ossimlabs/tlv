@@ -340,20 +340,29 @@ function hexToRgb(hex) {
     } : null;
 }
 
-function modifyAnnotationsMap() {
-	var layer = tlv.layers[tlv.currentLayer].annotationsLayer;
-	if (layer) {
+function modifyAnnotationShapeMap() {
+	var layer = tlv.layers[ tlv.currentLayer ].annotationsLayer;
+	if ( layer ) {
 		var features = new ol.Collection(layer.getSource().getFeatures());
 		if ( features ) {
 			// allow vertices to be added and deleted
 			tlv.modifyAnnotationInteraction = new ol.interaction.Modify({
-        		deleteCondition: function(event) {
-          			return ol.events.condition.shiftKeyOnly(event) && ol.events.condition.singleClick(event);
+        		deleteCondition: function( event ) {
+          			return ol.events.condition.shiftKeyOnly( event ) && ol.events.condition.singleClick( event );
         		},
 				features: features
 			});
-    		tlv.map.addInteraction(tlv.modifyAnnotationInteraction);
+    		tlv.map.addInteraction( tlv.modifyAnnotationInteraction );
+		}
+		else { displayErrorDialog( 'There are no annotations here to modify. :()' ); }
+	}
+}
 
+function modifyAnnotationStyleMap() {
+	var layer = tlv.layers[ tlv.currentLayer ].annotationsLayer;
+	if ( layer ) {
+		var features = new ol.Collection(layer.getSource().getFeatures());
+		if ( features ) {
 			// actually handle selecting the feature
 			tlv.selectClickAnnotationInteraction = new ol.interaction.Select({
 				layers: [ layer ]
@@ -388,7 +397,7 @@ function modifyAnnotationsMap() {
 			} );
 			tlv.map.addInteraction( tlv.selectHoverAnnotationInteraction );
 		}
-		else { displayErrorDialog("There are no annotations here to modify. :()"); }
+		else { displayErrorDialog( 'There are no annotations here to modify. :()' ); }
 	}
 }
 

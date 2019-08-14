@@ -18,9 +18,18 @@
 				</g:each>
 
 				<hr>
-				<button class = "btn btn-primary form-control" data-dismiss = "modal" onclick = modifyAnnotations()>
-					Modify Annotation
-				</button>
+				<div class = "row">
+					<div class = "col-md-6">
+						<button class = "btn btn-primary form-control" data-dismiss = "modal" onclick = modifyAnnotationShape()>
+							Modify Shape
+						</button>
+					</div>
+					<div class = "col-md-6">
+						<button class = "btn btn-primary form-control" data-dismiss = "modal" onclick = modifyAnnotationStyle()>
+							Modify Style
+						</button>
+					</div>
+				</div>
 			</div>
 			<div class = "modal-footer">
 				<button type = "button" class = "btn btn-default" data-dismiss = "modal">Close</button>
