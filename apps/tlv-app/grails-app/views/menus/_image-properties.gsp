@@ -49,7 +49,7 @@
                     <input id = "contrastSliderInput" type = "text"/>
                 </td>
             </tr>
-            <tr>
+            <tr id="dra-control">
                 <td>DRA: <span id = "dynamicRangeValueSpan"></span></td>
                 <td>
                     <select class = "form-control" id = "dynamicRangeSelect" onchange = "updateImageProperties( true )">
@@ -65,7 +65,7 @@
                             <option value = ${ it.value }>${ it.name }</option>
                         </g:each>
                     </select>
-                    <input id = "dynamicRangeSliderInput" type = "text"/>
+                    <div id = "dynamicRangeSliderInput" type = "text"></div>
                 </td>
             </tr>
             <tr>

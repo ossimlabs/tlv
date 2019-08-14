@@ -49,6 +49,7 @@ pageLoad = function() {
 
 	var dynamicRangeSlider = $( '#dynamicRangeSliderInput' );
 	dynamicRangeSlider.slider({
+		range: true,
 		max: 100,
 		min: 0,
 		tooltip: 'hide',

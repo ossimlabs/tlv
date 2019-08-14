@@ -10,3 +10,21 @@
 #imagePropertiesDiv .table {
 	background: none;
 }
+
+#dra-control div.slider-selection {
+	background: lightskyblue;
+}
+
+div.slider-handle.min-slider-handle.round {
+	border-radius: 0px;
+	width: 10px;
+}
+
+div.slider-handle.max-slider-handle.round {
+	border-radius: 0px;
+	width: 10px;
+}
+
+div.slider-selection {
+	border-radius: 0px;
+}
