@@ -11,8 +11,43 @@
 	background: none;
 }
 
-#dra-control div.slider-selection {
+#DRA_slider_parent {
+	margin-top: 10px;
+	margin-bottom: -5px;
+}
+
+#DRA_slider_parent div.slider-selection {
 	background: lightskyblue;
+}
+
+#DRA_midpoint_parent div.slider-selection {
+	background: none;
+	border: none;
+}
+
+#DRA_midpoint_parent div.slider-track-low {
+	background: none;
+	border: none;
+}
+
+#DRA_midpoint_parent div.slider-track {
+	background: none;
+	border: none;
+	height: 5px;
+}
+
+#DRA_midpoint_parent div.slider-handle {
+	background: none;
+	width: 0;
+	height: 0;
+	border-style: solid;
+	border-width: 0 5px 12px 5px;
+	border-color: transparent transparent white transparent;
+}
+
+#DRA_midpoint_parent div.slider-track-high {
+	background: none;
+	border: none;
 }
 
 div.slider-handle.min-slider-handle.round {
@@ -27,4 +62,5 @@ div.slider-handle.max-slider-handle.round {
 
 div.slider-selection {
 	border-radius: 0px;
+	background: lightskyblue;
 }

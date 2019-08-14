@@ -19,6 +19,9 @@ function getDefaultImageProperties() {
 	};
 }
 
+var DRA_midpoint = 50;
+var DRA_min_delta = 5;
+
 var pageLoadImageProperties = pageLoad;
 pageLoad = function() {
 	pageLoadImageProperties();
@@ -47,6 +50,14 @@ pageLoad = function() {
 	});
 	contrastSlider.on( 'slideStop', function( event ) { updateImageProperties( true ); });
 
+	var DRA_Midpoint_slider = $('#DRA_Midpoint');
+	DRA_Midpoint_slider.slider({
+		max: 95,
+		min: 5,
+		tooltip: 'hide',
+		value: 50
+	});
+
 	var dynamicRangeSlider = $( '#dynamicRangeSliderInput' );
 	dynamicRangeSlider.slider({
 		range: true,
@@ -55,7 +66,69 @@ pageLoad = function() {
 		tooltip: 'hide',
 		value: [ 0,100 ]
 	});
+
+	var set_ratio = .5;
+
+	DRA_Midpoint_slider.on( 'change', function( event ) {
+		var midpoint = DRA_Midpoint_slider.slider("getValue");
+		var min = dynamicRangeSlider.slider("getValue")[0];
+		var max = dynamicRangeSlider.slider("getValue")[1];
+
+		// Prevent max slider from passing midpoint
+		if (max - midpoint < DRA_min_delta) {
+			DRA_Midpoint_slider.slider("setValue", max - DRA_min_delta);
+		}
+
+		// Prevent min slider from passing midpoint
+		if (midpoint - min < DRA_min_delta) {
+			DRA_Midpoint_slider.slider("setValue", min + DRA_min_delta);
+		}
+
+		midpoint = DRA_Midpoint_slider.slider("getValue");
+
+		set_ratio = getRatio(midpoint, min, max);
+	});
+
+	function getRatio(mid, min, max) {
+		return (mid - min) / (max - min);
+	}
+
+	function getMidpointDelta(l, m, r) {
+		if (l < m && l < r)
+			return -1;
+		else if (r < l && r < m)
+			return 1;
+		return 0;
+	}
+
 	dynamicRangeSlider.on( 'change', function( event ) {
+		var midpoint = DRA_Midpoint_slider.slider("getValue");
+		var min = dynamicRangeSlider.slider("getValue")[0];
+		var max = dynamicRangeSlider.slider("getValue")[1];
+
+		// Prevent max slider from passing midpoint
+		if (max - midpoint < DRA_min_delta) {
+			dynamicRangeSlider.slider("setValue", [min, midpoint + DRA_min_delta]);
+			event.value.newValue[1] = midpoint + DRA_min_delta;
+		}
+
+		// Prevent min slider from passing midpoint
+		if (midpoint - min < DRA_min_delta) {
+			dynamicRangeSlider.slider("setValue", [midpoint - DRA_min_delta, max]);
+			event.value.newValue[0] = midpoint - DRA_min_delta;
+		}
+
+		min = dynamicRangeSlider.slider("getValue")[0];
+		max = dynamicRangeSlider.slider("getValue")[1];
+
+		var l_ratio = getRatio(midpoint - 1, min, max);
+		var ratio = getRatio(midpoint, min, max);
+		var r_ratio = getRatio(midpoint + 1, min, max);
+
+		var delta = getMidpointDelta(Math.abs(l_ratio - set_ratio), Math.abs(ratio - set_ratio), Math.abs(r_ratio - set_ratio));
+
+		DRA_Midpoint_slider.slider("setValue", midpoint + delta);
+
 		$( '#dynamicRangeValueSpan' ).html( event.value.newValue.join( ':' ) );
 	});
 	dynamicRangeSlider.on( 'slideStop', function( event ) {
