@@ -16,8 +16,13 @@
 	margin-bottom: -5px;
 }
 
+#DRA_slider_parent div.slider-track {
+	border-radius: 0px;
+}
+
 #DRA_slider_parent div.slider-selection {
 	background: lightskyblue;
+	border-radius: 0px;
 }
 
 #DRA_midpoint_parent div.slider-selection {
@@ -60,12 +65,15 @@ div.slider-handle.min-slider-handle.round {
 	width: 10px;
 }
 
+div.slider-selection {
+	border-radius: 0px;
+}
+
+div.slider-track {
+	border-radius: 0px;
+}
+
 div.slider-handle.max-slider-handle.round {
 	border-radius: 0px;
 	width: 10px;
-}
-
-div.slider-selection {
-	border-radius: 0px;
-	background: lightskyblue;
 }

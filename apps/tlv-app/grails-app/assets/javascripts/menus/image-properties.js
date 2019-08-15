@@ -86,6 +86,8 @@ pageLoad = function() {
 		midpoint = DRA_Midpoint_slider.slider("getValue");
 
 		set_ratio = getRatio(midpoint, min, max);
+
+		$( '#dynamicRangeValueSpan' ).html( min + ":" + max + '<br>Gamma: ' + set_ratio.toFixed( 2 ) );
 	});
 
 	function getRatio(mid, min, max) {
@@ -120,7 +122,7 @@ pageLoad = function() {
 
 		DRA_Midpoint_slider.slider("setValue", min + delta);
 
-		$( '#dynamicRangeValueSpan' ).html( event.value.newValue.join( ':' ) );
+		$( '#dynamicRangeValueSpan' ).html( event.value.newValue.join( ':' ) + '<br>Gamma: ' + set_ratio.toFixed( 2 ) );
 	});
 	dynamicRangeSlider.on( 'slideStop', function( event ) {
 		$( '#dynamicRangeSelect option[value="linear"]' ).prop( 'selected', true );
@@ -234,11 +236,11 @@ function syncImageProperties() {
 	$( '#opacityValueSpan' ).html( layer.opacity );
 
 	$( '#dynamicRangeSelect option[value="' + styles.hist_op + '"]' ).prop( 'selected', true );
-
+	$('#DRA_Midpoint').slider("setValue", 50);
 	$( '#dynamicRangeSliderInput' ).slider( "setValue", styles.histLinearNormClip.split( ',' ).map( function( value ) {
 		return parseInt( value );
 	} ) );
-	$( '#dynamicRangeValueSpan' ).html( styles.histLinearNormClip.replace( ',', ':' ) );
+	$( '#dynamicRangeValueSpan' ).html( styles.histLinearNormClip.replace( ',', ':' ) + '<br>Gamma: ' + set_ratio.toFixed( 2 ) );
 
 	$( '#dynamicRangeRegionSelect option[value="' + styles['hist_center'] + '"]' ).prop( 'selected', true );
 	$( '#interpolationSelect option[value="' + styles.resampler_filter + '"]' ).prop( 'selected', true );
