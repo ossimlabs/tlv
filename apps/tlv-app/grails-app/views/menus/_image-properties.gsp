@@ -141,7 +141,7 @@
             </tr>
             <tr>
                 <td style="color: white;">Opacity: <span id = "opacityValueSpan"></span></td>
-                <td>
+                <td id="opacity_slider">
                     <input data-slider-id = "opacitySlider" id = "opacitySliderInput" type = "text"/>
                 </td>
             </tr>
