@@ -3,20 +3,20 @@ server:
   port: 8090
   contextPath: /tlv
 
-#baseUrl: https://omar.ossim.io
-baseUrl: http://localhost
-geocoderUrl: https://omar-dev.ossim.io/omar-ui/twoFishesProxy
+baseUrl: https://omar.ossim.io
+#baseUrl: http://localhost
+geocoderUrl: ${baseUrl}/omar-ui/twoFishesProxy
 
 libraries:
     o2-dev:
-        imageSpaceUrl: https://omar-dev.ossim.io/omar-ui/omar/#/mapImage
-        kmlUrl: https://omar-dev.ossim.io/omar-superoverlay/superOverlay/createKml
+        imageSpaceUrl: ${baseUrl}/omar-ui/omar/#/mapImage
+        kmlUrl: ${baseUrl}/omar-superoverlay/superOverlay/createKml
         label: O2-DEV
         layerType: wms
-        mensaUrl: https://omar-dev.ossim.io/omar-mensa/mensa
-        wfsUrl: https://omar-dev.ossim.io/omar-wfs/wfs
-        wmsUrl: https://omar-dev.ossim.io/omar-wms/wms
-        stagerUrl: https://omar-dev.ossim.io/omar-stager
+        mensaUrl: ${baseUrl}/omar-mensa/mensa
+        wfsUrl: ${baseUrl}/omar-wfs/wfs
+        wmsUrl: ${baseUrl}/omar-wms/wms
+        stagerUrl: ${baseUrl}/omar-stager
 
 # environments:
 #     production:

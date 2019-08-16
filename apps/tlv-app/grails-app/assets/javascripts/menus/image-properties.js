@@ -16,6 +16,7 @@ function getDefaultImageProperties() {
 		nullPixelFlip: tlv.preferences.nullPixelFlip || true,
 		resampler_filter: tlv.preferences.interpolation || 'bilinear',
 		sharpen_percent: tlv.preferences.sharpenPercent || 0,
+		gamma: 1
 		// histCenterClip: .5
 	};
 }
@@ -27,7 +28,7 @@ function getContrastVal(value) {
 	if (value < 0) {
 		return ((100 + value) / 100);
 	} else {
-		return (0 + value / 10);
+		return (1 + value / 30);
 	}
 }
 
@@ -43,7 +44,7 @@ pageLoad = function() {
 		value: 0
 	});
 	brightnessSlider.on( 'change', function( event ) {
-		$( '#brightnessValueSpan' ).html( ( event.value.newValue / 100 ).toFixed( 2 ) );
+		$( '#brightnessValueSpan' ).html( ( event.value.newValue ) );
 	});
 	brightnessSlider.on( 'slideStop', function( event ) { updateImageProperties( true ); });
 
@@ -60,12 +61,30 @@ pageLoad = function() {
 	});
 	contrastSlider.on( 'slideStop', function( event ) { updateImageProperties( true ); });
 
+	var gammaSlider = $( '#gammaSliderInput' );
+	gammaSlider.slider({
+		max: 2,
+		min: 0,
+		tooltip: 'hide',
+		step: .1,
+		value: 1
+	});
+
+	gammaSlider.on( 'change', function( event ) {
+		$( '#gammaValueSpan' ).html( ( event.value.newValue.toFixed(1) ) );
+	});
+	gammaSlider.on( 'slideStop', function( event ) { updateImageProperties( true ); });
+
 	var DRA_Midpoint_slider = $('#DRA_Midpoint');
 	DRA_Midpoint_slider.slider({
 		max: 100,
 		min: 0,
 		tooltip: 'hide',
 		value: 50
+	});
+
+	DRA_Midpoint_slider.on( 'slideStop', function( event ) {
+		updateImageProperties( true );
 	});
 
 	var dynamicRangeSlider = $( '#dynamicRangeSliderInput' );
@@ -234,7 +253,11 @@ function syncImageProperties() {
 		);
 	}
 
+	$( '#contrastSliderInput' ).slider( 'setValue', 0 );
 	$( '#contrastValueSpan' ).html( 0 );
+
+	$( '#gammaSliderInput' ).slider( 'setValue', 1 );
+	$( '#gammaValueSpan' ).html( 1.0 );
 
 	$.each(
 		[ 'brightness' ],
@@ -244,7 +267,7 @@ function syncImageProperties() {
 		}
 	);
 	$( '#opacitySliderInput' ).slider( 'setValue', layer.opacity * 100 );
-	$( '#opacityValueSpan' ).html( layer.opacity );
+	$( '#opacityValueSpan' ).html( layer.opacity.toFixed(2) );
 
 	$( '#dynamicRangeSelect option[value="' + styles.hist_op + '"]' ).prop( 'selected', true );
 	$('#DRA_Midpoint').slider("setValue", 50);
@@ -259,7 +282,7 @@ function syncImageProperties() {
 	$( '#nullPixelFlipSelect option[value="' + styles.nullPixelFlip + '"]' ).prop( 'selected', true );
 
 	$( '#sharpenSliderInput' ).slider( 'setValue', styles.sharpen_percent * 100 );
-	$( '#sharpenValueSpan' ).html( styles.sharpen_percent );
+	$( '#sharpenValueSpan' ).html( styles.sharpen_percent.toFixed(1) );
 }
 
 function updateImageProperties( refreshMap ) {
@@ -289,6 +312,7 @@ function updateImageProperties( refreshMap ) {
 			nullPixelFlip: $( '#nullPixelFlipSelect' ).val(),
 			resampler_filter: $( '#interpolationSelect' ).val(),
 			sharpen_percent: $( '#sharpenSliderInput' ).slider( 'getValue' ) / 100,
+			gamma: $( '#gammaSliderInput' ).slider( 'getValue')
 			// histCenterClip: set_ratio
 		});
 

@@ -49,6 +49,12 @@
                     <input id = "contrastSliderInput" type = "text"/>
                 </td>
             </tr>
+			<tr>
+				<td style="color: white;">Gamma: <span id = "gammaValueSpan"></span></td>
+				<td>
+					<input id = "gammaSliderInput" type = "text"/>
+				</td>
+			</tr>
             <tr id="dra-control">
                 <td style="color: white;">DRA: <span id = "dynamicRangeValueSpan" style="color: white;"></span></td>
                 <td>
