@@ -278,6 +278,7 @@ function syncImageProperties() {
 
 	$( '#dynamicRangeSelect option[value="' + styles.hist_op + '"]' ).prop( 'selected', true );
 	$('#DRA_Midpoint').slider("setValue", 50);
+	set_ratio = .5;
 	$( '#dynamicRangeSliderInput' ).slider( "setValue", styles.histLinearNormClip.split( ',' ).map( function( value ) {
 		return parseInt( value );
 	} ) );
