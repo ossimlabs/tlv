@@ -10,7 +10,7 @@
         </div>
         <table class = "table">
             <tr>
-                <td>Bands:</td>
+                <td style="color: white; min-width:135px">Bands:</td>
                 <td>
                     <select class = "form-control" id = "selectBandsMethodSelect" onchange = "selectBands( this.value )">
                         <g:each in = "${[ "default", "manual" ]}">
@@ -18,7 +18,7 @@
                         </g:each>
                     </select>
                     <table id = "manualBandSelectTable" style = "background: none; display: none">
-                        <tr style = "text-align: center">
+                        <tr style = "text-align: center; color: white;">
                             <td>R</td>
                             <td>G</td>
                             <td>B</td>
@@ -38,19 +38,25 @@
                 </td>
             </tr>
             <tr>
-                <td>Brightness: <span id = "brightnessValueSpan"></span></td>
+                <td style="color: white;">Brightness: <span id = "brightnessValueSpan"></span></td>
                 <td>
                     <input id = "brightnessSliderInput" type = "text"/>
                 </td>
             </tr>
             <tr>
-                <td>Contrast: <span id = "contrastValueSpan"></span></td>
+                <td style="color: white;">Contrast: <span id = "contrastValueSpan"></span></td>
                 <td>
                     <input id = "contrastSliderInput" type = "text"/>
                 </td>
             </tr>
-            <tr>
-                <td>DRA: <span id = "dynamicRangeValueSpan"></span></td>
+			<tr>
+				<td style="color: white;">Gamma: <span id = "gammaValueSpan"></span></td>
+				<td>
+					<input id = "gammaSliderInput" type = "text"/>
+				</td>
+			</tr>
+            <tr id="dra-control">
+                <td style="color: white;">DRA: <span id = "dynamicRangeValueSpan" style="color: white;"></span></td>
                 <td>
                     <select class = "form-control" id = "dynamicRangeSelect" onchange = "updateImageProperties( true )">
                         <g:each in = "${[
@@ -65,11 +71,17 @@
                             <option value = ${ it.value }>${ it.name }</option>
                         </g:each>
                     </select>
-                    <input id = "dynamicRangeSliderInput" type = "text"/>
+					<div id = "DRA_slider_parent">
+                    	<div id = "dynamicRangeSliderInput" type = "text"></div>
+					</div>
+
+					<div id = "DRA_midpoint_parent">
+						<div id = "DRA_Midpoint" type = "text"></div>
+					</div>
                 </td>
             </tr>
             <tr>
-                <td>DRA Region:</td>
+                <td style="color: white;">DRA Region:</td>
                 <td>
                     <select class = "form-control" id = "dynamicRangeRegionSelect" onchange = "updateImageProperties( true )">
                         <g:each in = "${[
@@ -82,7 +94,7 @@
                 </td>
             </tr>
             <tr>
-                <td>Interpolation:</td>
+                <td style="color: white;">Interpolation:</td>
                 <td>
                     <select class = "form-control" id = "interpolationSelect" onchange = "updateImageProperties( true )">
                         <g:each in = "${[
@@ -108,7 +120,7 @@
                 </td>
             </tr>
             <tr>
-                <td>Keep Visible:</td>
+                <td style="color: white;">Keep Visible:</td>
                 <td>
                     <select class = "form-control" id = "keepVisibleSelect" onchange = "updateImageProperties( false )">
                         <g:each in = "${[
@@ -121,7 +133,7 @@
                 </td>
             </tr>
             <tr>
-                <td>Null Pixel Flip:</td>
+                <td style="color: white;">Null Pixel Flip:</td>
                 <td>
                     <select class = "form-control" id = "nullPixelFlipSelect" onchange = "updateImageProperties( true )">
                         <g:each in = "${[
@@ -134,13 +146,13 @@
                 </td>
             </tr>
             <tr>
-                <td>Opacity: <span id = "opacityValueSpan"></span></td>
-                <td>
+                <td style="color: white;">Opacity: <span id = "opacityValueSpan"></span></td>
+                <td id="opacity_slider">
                     <input data-slider-id = "opacitySlider" id = "opacitySliderInput" type = "text"/>
                 </td>
             </tr>
             <tr>
-                <td>Sharpen: <span id = "sharpenValueSpan"></span></td>
+                <td style="color: white;">Sharpen: <span id = "sharpenValueSpan"></span></td>
                 <td>
                     <input id = "sharpenSliderInput" type = "text"/>
                 </td>
@@ -153,6 +165,6 @@
     $( document ).ready( function() {
 	   var rgb = $( 'body' ).css( 'background-color' );
 	   var colors = ol.color.asArray( rgb ).splice( 0, 3 );
-	   $( '#imagePropertiesDiv' ).css( 'background-color', 'rgba(' + colors.join( ',' ) + ', 0.5)' );
+	   $( '#imagePropertiesDiv' ).css( 'background-color', 'rgba(' + colors.join( ',' ) + ', 0.75)' );
     } );
-</asset:script
+</asset:script>
