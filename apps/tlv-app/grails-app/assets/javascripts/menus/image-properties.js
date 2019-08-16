@@ -9,19 +9,27 @@ function getDefaultImageProperties() {
 	return {
 		bands: tlv.preferences.bands || 'default',
 		brightness: tlv.preferences.brightness || 0,
-		contrast: tlv.preferences.contrast || 1,
+		contrast: tlv.preferences.contrast || 0,
 		hist_center: false,
 		histLinearNormClip: '0,100',
 		hist_op: tlv.preferences.dynamicRangeAdjustment || 'auto-minmax',
 		nullPixelFlip: tlv.preferences.nullPixelFlip || true,
 		resampler_filter: tlv.preferences.interpolation || 'bilinear',
 		sharpen_percent: tlv.preferences.sharpenPercent || 0,
-		histCenterClip: .5
+		// histCenterClip: .5
 	};
 }
 
 var DRA_min_delta = 5;
 var set_ratio = .5;
+
+function getContrastVal(value) {
+	if (value < 0) {
+		return ((100 + value) / 100);
+	} else {
+		return (0 + value / 10);
+	}
+}
 
 var pageLoadImageProperties = pageLoad;
 pageLoad = function() {
@@ -41,13 +49,14 @@ pageLoad = function() {
 
 	var contrastSlider = $( '#contrastSliderInput' );
 	contrastSlider.slider({
-		max: 2000,
-		min: 1,
+		max: 100,
+		min: -100,
 		tooltip: 'hide',
-		value: 100
+		value: 0
 	});
+
 	contrastSlider.on( 'change', function( event ) {
-		$( '#contrastValueSpan' ).html( ( event.value.newValue / 100 ).toFixed( 2 ) );
+		$( '#contrastValueSpan' ).html( ( event.value.newValue ) );
 	});
 	contrastSlider.on( 'slideStop', function( event ) { updateImageProperties( true ); });
 
@@ -87,7 +96,7 @@ pageLoad = function() {
 
 		set_ratio = getRatio(midpoint, min, max);
 
-		$( '#dynamicRangeValueSpan' ).html( min + ":" + max + '<br>Gamma: ' + set_ratio.toFixed( 2 ) );
+		$( '#dynamicRangeValueSpan' ).html( min + ":" + max + '<br>Mid: ' + set_ratio.toFixed( 2 ) );
 	});
 
 	function getRatio(mid, min, max) {
@@ -122,7 +131,7 @@ pageLoad = function() {
 
 		DRA_Midpoint_slider.slider("setValue", min + delta);
 
-		$( '#dynamicRangeValueSpan' ).html( event.value.newValue.join( ':' ) + '<br>Gamma: ' + set_ratio.toFixed( 2 ) );
+		$( '#dynamicRangeValueSpan' ).html( event.value.newValue.join( ':' ) + '<br>Mid: ' + set_ratio.toFixed( 2 ) );
 	});
 	dynamicRangeSlider.on( 'slideStop', function( event ) {
 		$( '#dynamicRangeSelect option[value="linear"]' ).prop( 'selected', true );
@@ -225,8 +234,10 @@ function syncImageProperties() {
 		);
 	}
 
+	$( '#contrastValueSpan' ).html( 0 );
+
 	$.each(
-		[ 'brightness', 'contrast' ],
+		[ 'brightness' ],
 		function( i, x ) {
 			$( '#' + x + 'SliderInput' ).slider( 'setValue', styles[ x ] * 100 );
 			$( '#' + x + 'ValueSpan' ).html( styles[ x ] );
@@ -240,7 +251,7 @@ function syncImageProperties() {
 	$( '#dynamicRangeSliderInput' ).slider( "setValue", styles.histLinearNormClip.split( ',' ).map( function( value ) {
 		return parseInt( value );
 	} ) );
-	$( '#dynamicRangeValueSpan' ).html( styles.histLinearNormClip.replace( ',', ':' ) + '<br>Gamma: ' + set_ratio.toFixed( 2 ) );
+	$( '#dynamicRangeValueSpan' ).html( styles.histLinearNormClip.replace( ',', ':' ) + '<br>Mid: ' + set_ratio.toFixed( 2 ) );
 
 	$( '#dynamicRangeRegionSelect option[value="' + styles['hist_center'] + '"]' ).prop( 'selected', true );
 	$( '#interpolationSelect option[value="' + styles.resampler_filter + '"]' ).prop( 'selected', true );
@@ -269,7 +280,7 @@ function updateImageProperties( refreshMap ) {
 		var styles = JSON.stringify({
 			bands: bands,
 			brightness: $( '#brightnessSliderInput' ).slider( 'getValue' ) / 100,
-			contrast: $( '#contrastSliderInput' ).slider( 'getValue' ) / 100,
+			contrast: getContrastVal($( '#contrastSliderInput' ).slider( 'getValue' )),
 			hist_center: $( '#dynamicRangeRegionSelect' ).val(),
 			histLinearNormClip: $( '#dynamicRangeSliderInput' ).slider( 'getValue' ).map( function( value ) {
 				return value / 100;
@@ -278,7 +289,7 @@ function updateImageProperties( refreshMap ) {
 			nullPixelFlip: $( '#nullPixelFlipSelect' ).val(),
 			resampler_filter: $( '#interpolationSelect' ).val(),
 			sharpen_percent: $( '#sharpenSliderInput' ).slider( 'getValue' ) / 100,
-			histCenterClip: set_ratio
+			// histCenterClip: set_ratio
 		});
 
 		layer.mapLayer.getSource().updateParams({ STYLES: styles });
