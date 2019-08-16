@@ -153,7 +153,7 @@
             </tr>
             <tr>
                 <td style="color: white;">Sharpen: <span id = "sharpenValueSpan"></span></td>
-                <td>
+                <td id="sharpen_slider">
                     <input id = "sharpenSliderInput" type = "text"/>
                 </td>
             </tr>
