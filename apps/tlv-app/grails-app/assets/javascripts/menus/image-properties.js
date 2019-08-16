@@ -16,8 +16,8 @@ function getDefaultImageProperties() {
 		nullPixelFlip: tlv.preferences.nullPixelFlip || true,
 		resampler_filter: tlv.preferences.interpolation || 'bilinear',
 		sharpen_percent: tlv.preferences.sharpenPercent || 0,
-		gamma: 1
-		// histCenterClip: .5
+		gamma: 1,
+		histCenterClip: .5
 	};
 }
 
@@ -29,6 +29,14 @@ function getContrastVal(value) {
 		return ((100 + value) / 100);
 	} else {
 		return (1 + value / 30);
+	}
+}
+
+function getGammaVal(value) {
+	if (value < 0) {
+		return ((100 + value) / 100);
+	} else {
+		return (1 + value * (3 / 100)).toFixed(3);
 	}
 }
 
@@ -63,15 +71,14 @@ pageLoad = function() {
 
 	var gammaSlider = $( '#gammaSliderInput' );
 	gammaSlider.slider({
-		max: 2,
-		min: 0,
+		max: 100,
+		min: -100,
 		tooltip: 'hide',
-		step: .1,
 		value: 1
 	});
 
 	gammaSlider.on( 'change', function( event ) {
-		$( '#gammaValueSpan' ).html( ( event.value.newValue.toFixed(1) ) );
+		$( '#gammaValueSpan' ).html( ( event.value.newValue ) );
 	});
 	gammaSlider.on( 'slideStop', function( event ) { updateImageProperties( true ); });
 
@@ -256,8 +263,8 @@ function syncImageProperties() {
 	$( '#contrastSliderInput' ).slider( 'setValue', 0 );
 	$( '#contrastValueSpan' ).html( 0 );
 
-	$( '#gammaSliderInput' ).slider( 'setValue', 1 );
-	$( '#gammaValueSpan' ).html( 1.0 );
+	$( '#gammaSliderInput' ).slider( 'setValue', 0 );
+	$( '#gammaValueSpan' ).html( 0 );
 
 	$.each(
 		[ 'brightness' ],
@@ -312,8 +319,8 @@ function updateImageProperties( refreshMap ) {
 			nullPixelFlip: $( '#nullPixelFlipSelect' ).val(),
 			resampler_filter: $( '#interpolationSelect' ).val(),
 			sharpen_percent: $( '#sharpenSliderInput' ).slider( 'getValue' ) / 100,
-			gamma: $( '#gammaSliderInput' ).slider( 'getValue')
-			// histCenterClip: set_ratio
+			gamma: getGammaVal($( '#gammaSliderInput' ).slider( 'getValue')),
+			histCenterClip: set_ratio
 		});
 
 		layer.mapLayer.getSource().updateParams({ STYLES: styles });

@@ -69,6 +69,10 @@
 	background: lightskyblue;
 }
 
+#sharpen_slider div.slider-selection {
+	background: lightskyblue;
+}
+
 div.slider-handle.min-slider-handle.round {
 	border-radius: 0px;
 	width: 10px;
