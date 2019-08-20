@@ -320,7 +320,7 @@ function updateImageProperties( refreshMap ) {
 			nullPixelFlip: $( '#nullPixelFlipSelect' ).val(),
 			resampler_filter: $( '#interpolationSelect' ).val(),
 			sharpen_percent: $( '#sharpenSliderInput' ).slider( 'getValue' ) / 100,
-			gamma: getGammaVal($( '#gammaSliderInput' ).slider( 'getValue')),
+			gamma: getGammaVal(-$( '#gammaSliderInput' ).slider( 'getValue')),
 			histCenterClip: set_ratio
 		});
 
