@@ -11,7 +11,7 @@ function getDefaultImageProperties() {
 		brightness: tlv.preferences.brightness || 0,
 		contrast: tlv.preferences.contrast || 0,
 		hist_center: false,
-		histLinearNormClip: '0,100',
+		histLinearNormClip: '0,1',
 		hist_op: tlv.preferences.dynamicRangeAdjustment || 'auto-minmax',
 		nullPixelFlip: tlv.preferences.nullPixelFlip || true,
 		resampler_filter: tlv.preferences.interpolation || 'bilinear',
