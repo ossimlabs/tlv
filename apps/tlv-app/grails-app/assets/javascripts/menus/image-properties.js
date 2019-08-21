@@ -280,9 +280,9 @@ function syncImageProperties() {
 	$('#DRA_Midpoint').slider("setValue", 50);
 	set_ratio = .5;
 	$( '#dynamicRangeSliderInput' ).slider( "setValue", styles.histLinearNormClip.split( ',' ).map( function( value ) {
-		return parseInt( value );
+		return parseInt( value * 100);
 	} ) );
-	$( '#dynamicRangeValueSpan' ).html( styles.histLinearNormClip.replace( ',', ':' ) + '<br>Mid: ' + set_ratio.toFixed( 2 ) );
+	$( '#dynamicRangeValueSpan' ).html( '0:100' + '<br>Mid: ' + set_ratio.toFixed( 2 ) );
 
 	$( '#dynamicRangeRegionSelect option[value="' + styles['hist_center'] + '"]' ).prop( 'selected', true );
 	$( '#interpolationSelect option[value="' + styles.resampler_filter + '"]' ).prop( 'selected', true );
