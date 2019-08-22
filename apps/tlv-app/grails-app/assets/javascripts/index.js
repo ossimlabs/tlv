@@ -18,8 +18,29 @@ function convertGeospatialCoordinateFormat(inputString, callbackFunction) {
 	var coordinateConversion = new CoordinateConversion();
 
 	if (inputString.match(dmsPattern)) {
-		var latitude = coordinateConversion.dmsToDd(RegExp.$1, RegExp.$2, RegExp.$3, RegExp.$4);
-		var longitude = coordinateConversion.dmsToDd(RegExp.$5, RegExp.$6, RegExp.$7, RegExp.$8);
+        var degreesLat = RegExp.$1;
+        var minutesLat = RegExp.$2;
+        var secondsLat = RegExp.$3;
+        var directionLat = RegExp.$4;
+
+        var degreesLon = RegExp.$5;
+        var minutesLon = RegExp.$6;
+        var secondsLon = RegExp.$7;
+        var directionLon = RegExp.$8;
+
+        if ( !secondsLat.contains( '[.]' ) ) {
+            var integer = secondsLat.substring( 0, 2 );
+            var decimal = secondsLat.substring( 2, secondsLat.length );
+            secondsLat = integer + '.' + decimal;
+        }
+		var latitude = coordinateConversion.dmsToDd( degreesLat, minutesLat, secondsLat, directionLat );
+
+        if ( !secondsLon.contains( '[.]' ) ) {
+            var integer = secondsLon.substring( 0, 2 );
+            var decimal = secondsLon.substring( 2, secondsLon.length );
+            secondsLon = integer + '.' + decimal;
+        }
+		var longitude = coordinateConversion.dmsToDd( degreesLon, minutesLon, secondsLon, directionLon );
 
 		if (latitude && longitude) {
 			latitude = parseFloat(latitude);
