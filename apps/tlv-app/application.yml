@@ -1,0 +1,84 @@
+---
+server:
+  port: 8090
+  contextPath: /tlv
+
+baseUrl: https://omar.ossim.io
+#baseUrl: http://localhost
+geocoderUrl: ${baseUrl}/omar-ui/twoFishesProxy
+
+libraries:
+    o2-dev:
+        imageSpaceUrl: ${baseUrl}/omar-ui/omar/#/mapImage
+        kmlUrl: ${baseUrl}/omar-superoverlay/superOverlay/createKml
+        label: O2-DEV
+        layerType: wms
+        mensaUrl: ${baseUrl}/omar-mensa/mensa
+        wfsUrl: ${baseUrl}/omar-wfs/wfs
+        wmsUrl: ${baseUrl}/omar-wms/wms
+        stagerUrl: ${baseUrl}/omar-stager
+
+# environments:
+#     production:
+#         dataSource:
+#             driverClassName: org.postgresql.Driver
+#             username: postgres
+#             password: postgres
+#             url: jdbc:postgresql://postgis:5432/tlv
+
+---
+defaultUsername: Anonymous
+
+requestHeaderUsername: username
+
+securityClassification:
+    backgroundColor: green
+    classification: Unclassified
+    textColor: white
+
+---
+grails:
+    plugin:
+        springsecurity:
+            userLookup:
+                userDomainClassName: 'omar.security.SecUser'
+                authorityJoinClassName: 'omar.security.SecUserSecRole'
+            authority:
+                className: 'omar.security.SecRole'
+            controllerAnnotations:
+                staticRules:
+                    - pattern: '/**'
+                      access: [ 'permitAll' ]
+                    - pattern: '/error'
+                      access: [ 'permitAll' ]
+                    - pattern: '/index'
+                      access: [ 'permitAll' ]
+                    - pattern: '/index.gsp'
+                      access: [ 'permitAll' ]
+                    - pattern: '/shutdown'
+                      access: [ 'permitAll' ]
+                    - pattern: '/assets/**'
+                      access: [ 'permitAll' ]
+                    - pattern: '/**/js/**'
+                      access: [ 'permitAll' ]
+                    - pattern: '/**/css/**'
+                      access: [ 'permitAll' ]
+                    - pattern: '/**/images/**'
+                      access: [ 'permitAll' ]
+                    - pattern: '/**/favicon.ico'
+                      access: [ 'permitAll' ]
+            filterChain:
+                chainMap:
+                    - pattern: '/assets/**'
+                      filters: 'none'
+                    - pattern: '/**/js/**'
+                      filters: 'none'
+                    - pattern: '/**/css/**'
+                      filters: 'none'
+                    - pattern: '/**/images/**'
+                      filters: 'none'
+                    - pattern: '/**/favicon.ico'
+                      filters: 'none'
+                    - pattern: '/**'
+                      filters: 'JOINED_FILTERS'
+
