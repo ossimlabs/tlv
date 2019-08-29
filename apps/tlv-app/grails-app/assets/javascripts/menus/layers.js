@@ -118,37 +118,6 @@ function displayCrossHairLayer() {
 	refreshCrossHairLayer();
 }
 
-function displayDetectionLayer( databaseId ) {
-	if ( !tlv.detectionLayers ) {
-		tlv.detectionLayers = {};
-	}
-
-	if ( !tlv.detectionLayers[ databaseId ] ) {
-		var source = new ol.source.Vector({
-			format: new ol.format.GeoJSON(),
-			url: 'https://s3.amazonaws.com/o2-test-data/test.geojson'//tlv.baseUrl + '/omar-ml/job/query/' + databaseId
-		});
-
-		var style = createDefaultStyle();
-		tlv.detectionLayers[ databaseId ] = new ol.layer.Vector({
-			declutter: true,
-			source: source,
-			style: function( feature ) {
-				var text = feature.get( 'top_cat' );
-				style.getText().setText( text );
-
-
-				return style;
-			}
-		});
-
-		tlv.map.addLayer( tlv.detectionLayers[ databaseId ] );
-	}
-	else {
-		layer.setVisible( true );
-	}
-}
-
 function displaySearchOriginLayer() {
 	if (!tlv.searchOriginLayer) {
 		var point = new ol.geom.Point( tlv.location );
