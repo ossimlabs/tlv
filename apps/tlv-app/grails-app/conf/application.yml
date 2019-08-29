@@ -159,12 +159,11 @@ reachbackUrl: ${baseUrl}/omar-reachback/index
 #    textColor: white
 
 # Uncomment this to add your own security classification function
-# securityClassificationFunction: |
-#    function x() {
-#        /* some logic */
-#         return releasability;
-#    }
-#    x();
+securityClassificationFunction: |
+    function x() {
+        return tlv.layers[ tlv.currentLayer ].metadata.security_classification;
+    }
+    x();
 
 # Set the context path of the application
 server:
@@ -183,7 +182,7 @@ templates:
             northArrow: north-arrow.png
             text:
                 securityClassification:
-                    defaultValue: tlv.layers[ tlv.currentLayer ].metadata.security_classification + getReleasability()
+                    defaultValue: tlv.securityClassificationFunction
                     style:
                         color: add8e6
                         height: 25%
@@ -201,7 +200,7 @@ templates:
             height: 3%
             text:
                 securityClassification:
-                    defaultValue: tlv.layers[ tlv.currentLayer ].metadata.security_classification + getReleasability()
+                    defaultValue: tlv.securityClassificationFunction
                     style:
                         align: left
                         color: add8e6
