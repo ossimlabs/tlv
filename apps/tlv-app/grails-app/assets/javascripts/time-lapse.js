@@ -494,33 +494,33 @@ function updatePqe( pixel ) {
 
 // Updates the security banner to match the current image security-classification
 function updateSecurityBanner() {
-    var securityClassificationBanner = $( '.security-classification' );
-    securityClassificationBanner.removeClass( 'unclassified' );
-    securityClassificationBanner.removeClass( 'secret' );
-    securityClassificationBanner.removeClass( 'top-secret' );
+    var classificationBanner = $( '.security-classification' );
+    classificationBanner.removeClass( 'unclassified' );
+    classificationBanner.removeClass( 'secret' );
+    classificationBanner.removeClass( 'top-secret' );
 
     var current_banner = $( '#currentClassification' );
     current_banner.show();
     var default_banner = $( '#defaultClassification' );
     default_banner.hide();
 
-    var securityClassification = tlv.layers[ tlv.currentLayer ].metadata.security_classification || '';
+    var classification = '';
     if ( tlv.securityClassificationFunction ) {
         try {
-            securityClassification = eval( tlv.securityClassificationFunction );
+            classification = eval( tlv.securityClassificationFunction );
         }
         catch ( exception ) { /* do nothing */ }
     }
 
-    current_banner.text( securityClassification );
-    if ( securityClassification.contains( 'UNCLASSIFIED' ) ) {
-        securityClassificationBanner.addClass( 'unclassified' );
+    current_banner.text( classification );
+    if ( classification.toLowerCase().contains( 'unclassified' ) ) {
+        classificationBanner.addClass( 'unclassified' );
     }
-    else if ( securityClassification.contains( 'SECRET' ) ) {
-		securityClassificationBanner.addClass( 'unclassified' );
+    else if ( classification.toLowerCase().contains( 'secret' ) ) {
+		classificationBanner.addClass( 'secret' );
     }
-    else if ( securityClassification.contains( 'TOP SECRET' ) ) {
-        securityClassificationBanner.addClass( 'top-secret' );
+    else if ( classification.toLowerCase().contains( 'top secret' ) ) {
+        classificationBanner.addClass( 'top-secret' );
     }
     else {
 		default_banner.show();
