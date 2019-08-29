@@ -1,10 +1,8 @@
 ---
 server:
-  port: 8090
   contextPath: /tlv
 
-baseUrl: https://omar.ossim.io
-#baseUrl: http://localhost
+baseUrl: https://omar-dev.ossim.io
 geocoderUrl: ${baseUrl}/omar-ui/twoFishesProxy
 
 libraries:
@@ -81,4 +79,3 @@ grails:
                       filters: 'none'
                     - pattern: '/**'
                       filters: 'JOINED_FILTERS'
-

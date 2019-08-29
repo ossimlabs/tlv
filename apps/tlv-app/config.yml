@@ -1,4 +1,4 @@
-baseUrl: https://omar.ossim.io
+baseUrl: https://omar-dev.ossim.io
 
 environments:
     production:
