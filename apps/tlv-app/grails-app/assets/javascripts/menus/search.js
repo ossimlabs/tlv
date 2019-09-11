@@ -21,20 +21,14 @@ function adjustLastDaysDate() {
 }
 
 function beSearch( be ) {
-	var queryParams = {
+	var params = {
 		filter: tlv.beLookup.columnName + " = '" + be + "'",
 		maxFeatures: 1,
-		outputFormat: "JSON",
-		request: "GetFeature",
-		service: "WFS",
-		typeName: tlv.beLookup.typeName,
-		version: "1.1.0"
+		typeName: tlv.beLookup.typeName
 	};
 
-	return $.ajax({
-		dataType: "json",
-		url: tlv.beLookup.url + "?" + $.param( queryParams )
-	});
+
+	return getWfs( params, tlv.beLookup.url );
 }
 
 function beginSearch() {
@@ -57,26 +51,14 @@ function beginSearch() {
 				$.each( searchParams.libraries, function( index, library ) {
 					tlv.libraries[ library ].searchComplete = false;
 
-					var data = $.param({
-						filter: "title LIKE '%" + locationString + "%'",
-						maxFeatures: 100,
-						outputFormat: 'JSON',
-						request: 'getFeature',
-						service: 'WFS',
-						typeName: 'omar:raster_entry',
-						version: '1.1.0'
-					});
+					var params = getWfs({ filter: "title LIKE '%" + locationString + "%'" });
 					var url = tlv.libraries[ library ].wfsUrl;
 					if ( tlv.libraries[ library ].wfsUrlProxy ) {
-						data = "url=" + encodeURIComponent( tlv.libraries[ library ].wfsUrlProxy + "?" + data );
+						params.url = encodeURIComponent( tlv.libraries[ library ].wfsUrlProxy + "?" + $.param( params ) );
 						url = tlv.contextPath + "/home/proxy";
 					}
 
-					$.ajax({
-						data: data,
-						dataType: "json",
-						url: url
-					})
+					getWfs( params, url )
 					.always( function() {
 						tlv.libraries[ library ].searchComplete = true;
 					} )
@@ -133,15 +115,7 @@ function beginSearch() {
 	else {
 		displayLoadingDialog( "We are searching the libraries for imagery... fingers crossed!" );
 
-		var queryParams = {
-			maxFeatures: 100,
-			outputFormat: 'JSON',
-			request: 'getFeature',
-			service: 'WFS',
-			sortBy: 'acquisition_date+D',
-			typeName: 'omar:raster_entry',
-			version: '1.1.0'
-		};
+		var queryParams = getWfs({});
 
 		tlv.location = searchParams.location;
 		$.each(
@@ -199,19 +173,19 @@ function beginSearch() {
 					}
 
 					queryParams.filter = filter;
+
+					// only do this when a filter is not supplied
+					coverageSearch();
 				}
 
-				var data = $.param( queryParams );
+				var data = getWfs( queryParams );
 				var url = tlv.libraries[ library ].wfsUrl;
 				if ( tlv.libraries[ library ].wfsUrlProxy ) {
-					data = "url=" + encodeURIComponent( tlv.libraries[ library ].wfsUrlProxy + "?" + $.param( queryParams ) );
+					data.url = encodeURIComponent( tlv.libraries[ library ].wfsUrlProxy + "?" + $.param( data ) );
 					url = tlv.contextPath + "/home/proxy";
 				}
-				$.ajax({
-					data: data,
-					dataType: "json",
-					url: url
-				})
+
+				getWfs( data, url )
 				.done( function( data ) {
 					var images = [];
 					$.each(
@@ -315,15 +289,24 @@ function coverageSearch() {
 			var table = document.createElement( 'table' );
 			table.className = 'table table-condensed';
 
-			var row = table.insertRow( table.rows.length );
-			var cell = row.insertCell( row.cells.length );
-			cell.innerHTML = '<b>Image ID</b>';
-
 			$.each( data, function( index, feature ) {
 				var row = table.insertRow( table.rows.length );
-				row.className = 'warning';
 				var cell = row.insertCell( row.cells.length );
-				cell.innerHTML = feature.imageId || 'N/A';
+
+				var progress = document.createElement( 'div' );
+				progress.className = 'progress';
+				progress.style = 'margin-bottom: 0px; width: 100%;';
+				cell.appendChild( progress );
+
+				var progressBar = document.createElement( 'div' );
+				progressBar.className = 'progress-bar progress-bar-warning';
+				progressBar.innerHTML = feature.imageId || 'N/A';
+				progressBar.style = 'width: 100%; white-space: nowrap';
+				progress.appendChild( progressBar );
+
+				progressBar.onclick = function() {
+					orderImage( feature, row );
+				}
 			} );
 
 			$( '#coverageTable' ).html( table );
@@ -336,47 +319,45 @@ function coverageSearch() {
 }
 
 function coverageStatusCheck() {
-	$( '#coverageTable' ).find( 'tr' ).each( function( index, row ) {
-		if ( row.className == 'warning' ) {
-			var imageId = $( row ).find( 'td' ).get( 0 ).innerHTML;
-			var data = $.param({
-				filter: "image_id LIKE '%" + imageId + "%'",
-				maxFeatures: 1,
-				outputFormat: 'JSON',
-				request: 'getFeature',
-				service: 'WFS',
-				typeName: 'omar:raster_entry',
-				version: '1.1.0'
-			});
-			$.ajax({
-				data: data,
-				dataType: "json",
-				url: tlv.libraries[ Object.keys( tlv.libraries )[ 0 ] ].wfsUrl
-			})
-			.done( function( data ) {
-				if ( data.totalFeatures ) {
-					var imageIds = tlv.layers.map( function( layer ) {
-						return layer.imageId
-					} );
-					if ( imageIds.contains( imageId ) ) {
-						row.className = 'info';
-					}
-					else {
-						row.className = 'success';
-					}
+	$( '#coverageTable' ).find( '.progress-bar-warning' ).each( function( index, div ) {
+		var progressBar = div;
+		var imageId = progressBar.innerHTML;
+		var params = {
+			filter: "image_id LIKE '%" + imageId + "%'",
+			maxFeatures: 1
+		};
+		var url = tlv.libraries[ Object.keys( tlv.libraries )[ 0 ] ].wfsUrl;
+
+		getWfs( params, url )
+		.done( function( data ) {
+			if ( data.totalFeatures ) {
+				var imageIds = tlv.layers.map( function( layer ) {
+					return layer.imageId
+				} );
+				if ( imageIds.contains( imageId ) ) {
+					progressBar.className = 'progress-bar progress-bar-info';
 				}
 				else {
-					row.className = 'danger';
+					progressBar.className = 'progress-bar progress-bar-success';
 				}
-			} );
 
-			setTimeout( function() { coverageStatusCheck(); }, 1000 );
+				progressBar.prepend( 'View: ' );
+				progressBar.onclick = function() {
+					window.open( tlv.contextPath + '?' + $.param( params ) );
+				}
+			}
+			else {
+				progressBar.className = 'progress-bar progress-bar-danger';
+				progressBar.prepend( 'Order: ' );
+			}
+			progressBar.style.cursor = 'pointer';
+		} );
+
+		setTimeout( function() { coverageStatusCheck(); }, 1000 );
 
 
-			return false;
-		}
+		return false;
 	} );
-
 }
 
 function demoSearch() {
@@ -385,25 +366,16 @@ function demoSearch() {
 		beginSearch();
 	}
 	else {
+		displayLoadingDialog( "We are searching the libraries for imagery... fingers crossed!" );
 		var library = Object.keys( tlv.libraries )[ 0 ];
 		tlv.libraries[ library ].searchComplete = false;
 
-		var data = $.param({
-			maxFeatures: 1,
-			outputFormat: 'JSON',
-			request: 'getFeature',
-			service: 'WFS',
-			sortBy: 'acquisition_date+D',
-			typeName: 'omar:raster_entry',
-			version: '1.1.0'
-		});
+		var params = {
+			maxFeatures: 1
+		};
+		var url = tlv.libraries[ library ].wfsUrl;
 
-		displayLoadingDialog( "We are searching the libraries for imagery... fingers crossed!" );
-		$.ajax({
-			data: data,
-			dataType: "json",
-			url: tlv.libraries[ library ].wfsUrl
-		})
+		getWfs( params, url )
 		.always( function() {
 			tlv.libraries[ library ].searchComplete = true;
 		} )
@@ -675,6 +647,30 @@ function getStartDate() {
 	return getDate(date);
 }
 
+function getWfs( params, url ) {
+	var data = $.extend({
+		maxFeatures: 100,
+		outputFormat: 'JSON',
+		request: 'getFeature',
+		service: 'WFS',
+		sortBy: 'acquisition_date+D',
+		typeName: 'omar:raster_entry',
+		version: '1.1.0'
+	}, params );
+
+
+	if ( !url ) {
+		return data;
+	}
+	else {
+		return $.ajax({
+			data: $.param( data ),
+			dataType: "json",
+			url: url
+		});
+	}
+}
+
 function handleDataList( inputId ) {
 	var inputElement = $( '#' + inputId );
 
@@ -839,6 +835,60 @@ function initializeStartDateTimePicker() {
 	});
 }
 
+function orderImage( feature, row ) {
+	displayLoadingDialog( 'Ordering image...' );
+
+	$.ajax({
+		data: 'id=' + feature.id,
+		dataType: "text",
+		url: tlv.reachbackUrl + '/order'
+	})
+	.always( function() {
+		hideLoadingDialog();
+	} )
+	.done( function( data ) {
+		var progressBar = $( row ).find( '.progress-bar' )[ 0 ];
+		progressBar.innerHTML = feature.imageId + ': Checking in 60 sec...';
+		progressBar.onclick = null;
+		progressBar.style.cursor = 'auto';
+
+		var orderImageStatusCheck = function( feature, progressBar ) {
+			var timeCheck = parseFloat( progressBar.style.width ) / 100 * 60	;
+			if ( timeCheck == 0 ) {
+				progressBar.innerHTML = feature.imageId + ': Checking...';
+				progressBar.style.width = '100%';
+				var params = { filter: "filename LIKE '%" + feature.imageId + "%' OR image_id LIKE '" + feature.imageId + "'" };
+				var url = tlv.libraries.o2.wfsUrl;
+				getWfs( params, url )
+				.done( function( data ) {
+					if ( data.features.length > 0 ) {
+						progressBar.addClass( 'bg-success' );
+						progressBar.removeClass( 'bg-danger' );
+						progressBar.innerHTML = 'View: ' + feature.imageId;
+						progressBar.style.cursor = 'cursor';
+						progressBar.onclick = function() {
+							window.open( tlv.contextPath + '?' + $.param( params ) );
+						}
+					}
+					else {
+						progressBar.innerHTML = feature.imageId + ': Checking in 60 sec...';
+						setTimeout( function() { orderImageStatusCheck( feature, progressBar ); }, 1000 );
+					}
+				} );
+			}
+			else {
+				timeCheck--;
+				if ( timeCheck <= 1 ) { timeCheck = 0; }
+				progressBar.innerHTML = feature.imageId + ': Checking in ' + Math.floor( timeCheck ) + ' sec...';
+				progressBar.style.width = ( timeCheck / 60 * 100 ) + '%';
+				setTimeout( function() { orderImageStatusCheck( feature, progressBar ); }, 1000 );
+			}
+		}
+		orderImageStatusCheck( feature, progressBar );
+	})
+	.fail( function(a, b, c) { console.dir(a); console.dir(b); console.dir(c); } );
+}
+
 var pageLoadSearch = pageLoad;
 pageLoad = function() {
 	pageLoadSearch();
@@ -985,8 +1035,6 @@ function processResults() {
 
 			displayErrorDialog( "Sorry, we couldn't find anything that matched your search criteria. Maybe ease up on those search constraints a bit?" );
 		}
-
-		coverageSearch();
 	}
 }
 

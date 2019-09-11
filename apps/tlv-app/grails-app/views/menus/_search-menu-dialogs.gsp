@@ -17,24 +17,19 @@
 						<div class = "tab-pane" id = "coverageTab">
 							<br>
 							<div class = "row">
+								<g:each in = "${[
+									[ class: "bg-danger", text: "Not In library :(" ],
+									[ class: "bg-info", text: "In stack :D" ],
+									[ class: "bg-success", text: "In library :)" ],
+									[ class: "bg-warning", text: "Don't know :O" ]
+								]}">
+									<div class = "col-md-3 bg-primary ${ it.class }" style = "text-align: center"><b>${ it.text }</b></div>
+								</g:each>
+							</div>
+							<br>
+							<div class = "row">
 								<div class = "col-md-12" style = "text-align: center">
 									<p>We'll search far and wide for any other imagery that meets your criteria!</p>
-								</div>
-							</div>
-							<div class = "row">
-								<div class = "col-md-12">
-									<table class = "table table-condensed" style = "text-align: center">
-										<tr>
-											<g:each in = "${[
-												[ class: "danger", text: "Not In library :(" ],
-												[ class: "info", text: "In stack :D" ],
-												[ class: "success", text: "In library :)" ],
-												[ class: "warning", text: "Don't know :O" ]
-											]}">
-												<td class = "${ it.class }"><b>${ it.text }</b></td>
-											</g:each>
-										</tr>
-									</table>
 								</div>
 							</div>
 							<div class = "row">

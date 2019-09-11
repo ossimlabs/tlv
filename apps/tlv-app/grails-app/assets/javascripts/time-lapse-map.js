@@ -86,6 +86,7 @@ function addLayerToTheMap( layer ) {
 }
 
 function changeBaseLayer(layerName) {
+	$( '#baseLayersSelect option[value="' + layerName + '"]' ).prop( 'selected', true );
 	$.each(tlv.baseLayers, function(i, x) { x.setVisible(false); });
 	if (tlv.baseLayers[layerName]) {
 		tlv.baseLayers[layerName].setVisible(true);
