@@ -862,8 +862,8 @@ function orderImage( feature, row ) {
 				getWfs( params, url )
 				.done( function( data ) {
 					if ( data.features.length > 0 ) {
-						$( progressBar ).addClass( 'bg-success' );
-						$( progressBar ).removeClass( 'bg-danger' );
+						$( progressBar ).addClass( 'progress-bar-success' );
+						$( progressBar ).removeClass( 'progress-bar-danger' );
 						progressBar.innerHTML = 'View: ' + feature.imageId;
 						progressBar.style.cursor = 'cursor';
 						progressBar.onclick = function() {
