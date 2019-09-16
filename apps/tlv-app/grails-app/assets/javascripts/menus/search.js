@@ -865,7 +865,7 @@ function orderImage( feature, row ) {
 						$( progressBar ).addClass( 'bg-success' );
 						$( progressBar ).removeClass( 'bg-danger' );
 						progressBar.innerHTML = 'View: ' + feature.imageId;
-						progressBar ).style.cursor = 'cursor';
+						progressBar.style.cursor = 'cursor';
 						progressBar.onclick = function() {
 							window.open( tlv.contextPath + '?' + $.param( params ) );
 						}
