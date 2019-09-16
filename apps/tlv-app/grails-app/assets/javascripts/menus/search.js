@@ -862,10 +862,10 @@ function orderImage( feature, row ) {
 				getWfs( params, url )
 				.done( function( data ) {
 					if ( data.features.length > 0 ) {
-						progressBar.addClass( 'bg-success' );
-						progressBar.removeClass( 'bg-danger' );
+						$( progressBar ).addClass( 'bg-success' );
+						$( progressBar ).removeClass( 'bg-danger' );
 						progressBar.innerHTML = 'View: ' + feature.imageId;
-						progressBar.style.cursor = 'cursor';
+						progressBar ).style.cursor = 'cursor';
 						progressBar.onclick = function() {
 							window.open( tlv.contextPath + '?' + $.param( params ) );
 						}
