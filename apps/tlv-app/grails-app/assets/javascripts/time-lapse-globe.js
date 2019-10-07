@@ -39,6 +39,7 @@ function setupGlobe() {
 	tlv.globe.enableAutoRenderLoop();
 
 	var globe = tlv.globe.getCesiumScene().globe;
+	tlv.globe.getCesiumScene().fog.enabled = false;
 	// make the globe background color the same as the body background
 	globe.baseColor = new Cesium.Color( 0.153, 0.169, 0.188, 1 );
 	// dont display tiles that are hidden by the terrain
