@@ -1,8 +1,7 @@
 package time_lapse
 
-
+import grails.gorm.transactions.Transactional
 import grails.converters.JSON
-import grails.transaction.Transactional
 import groovy.json.JsonSlurper
 
 

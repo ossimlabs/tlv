@@ -1,6 +1,6 @@
 package time_lapse
 
-import grails.transaction.Transactional
+import grails.gorm.transactions.Transactional
 import static groovyx.net.http.ContentType.TEXT
 import groovyx.net.http.HTTPBuilder
 import static groovyx.net.http.Method.GET
