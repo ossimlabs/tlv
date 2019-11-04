@@ -23,6 +23,12 @@
 					<option ${ crossHairOption ? "selected" : "" } value = "on">ON</option>
 				</select>
 
+				<label>Mosaic</label>
+				<select class = "form-control" id = "layersMosaicSelect" onchange = mosaicLayerToggle()>
+					<option value = "off">OFF</option>
+					<option value = "on">ON</option>
+				</select>
+
 				<label>Search Origin</label>
 				<select class = "form-control" id = "layersSearchOriginSelect" onchange = searchOriginLayerToggle()>
 					<%

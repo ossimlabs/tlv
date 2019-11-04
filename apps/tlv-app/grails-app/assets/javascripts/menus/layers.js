@@ -118,6 +118,84 @@ function displayCrossHairLayer() {
 	refreshCrossHairLayer();
 }
 
+function displayMosaicLayer() {
+	if ( !tlv.mosaicLayer ) {
+		tlv.mosaicImages = [];
+
+		tlv.mosaicLayer = new ol.layer.Tile({
+			source: new ol.source.TileWMS({
+				crossOrigin: connectedToLocalhost() ? 'anonymous' : undefined,
+				params: {
+					FORMAT: 'image/vnd.jpeg-png',
+					LAYERS: 'omar:raster_entry',
+					STYLES: JSON.stringify(
+						getDefaultImageProperties()
+					),
+					TRANSPARENT: true,
+					VERSION: '1.1.1'
+				},
+				tileLoadFunction: function( imageTile, src ) {
+					// everything starts as a blank tile
+					// even tiles outside the coverage zone need to have SOMETHING
+					imageTile.getImage().src = 'data:image/png,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
+
+					var bbox = decodeURIComponent( src.match( /BBOX=([^&]*)/ )[ 1 ] );
+					bbox = bbox.split( ',' ).map( function( coord ) {
+						return parseFloat( coord )
+					} );
+
+					var canvas, context;
+					$.each( tlv.mosaicImages, function( index, image ) {
+						var geometry = new ol.format.GeoJSON().readGeometry( image.geometry );
+						if ( // check to see if the tile completely fills the bbox
+							geometry.intersectsCoordinate( [ bbox[ 0 ], bbox[ 1 ] ] ) &&
+							geometry.intersectsCoordinate( [ bbox[ 2 ], bbox[ 1 ] ] ) &&
+							geometry.intersectsCoordinate( [ bbox[ 2 ], bbox[ 3 ] ] ) &&
+							geometry.intersectsCoordinate( [ bbox[ 0 ], bbox[ 3 ] ] ) &&
+							index == 0
+						) {
+							imageTile.getImage().src = src + "&filter=in(" +  image.properties.id + ")";
+							return false;
+						}
+						else if ( index == 0 ) {
+							canvas = document.createElement( 'canvas' );
+							canvas.height = 256;
+							canvas.width = 256;
+							context = canvas.getContext( '2d' );
+						}
+
+						if ( geometry.intersectsExtent( bbox ) ) {
+							var img = new Image();
+							img.crossOrigin = connectedToLocalhost() ? 'anonymous' : undefined,
+							img.onload = function() {
+								context.drawImage( img, 0, 0 );
+								imageTile.getImage().src = canvas.toDataURL();
+							}
+							img.src = src + "&filter=in(" +  image.properties.id + ")";
+							imageTile.getImage().src = src + "&filter=in(" +  image.properties.id + ")";
+							if (
+								geometry.intersectsCoordinate( [ bbox[ 0 ], bbox[ 1 ] ] ) &&
+								geometry.intersectsCoordinate( [ bbox[ 2 ], bbox[ 1 ] ] ) &&
+								geometry.intersectsCoordinate( [ bbox[ 2 ], bbox[ 3 ] ] ) &&
+								geometry.intersectsCoordinate( [ bbox[ 0 ], bbox[ 3 ] ] )
+							) {
+								// the tile is filled
+								return false;
+							}
+						}
+					} );
+				},
+				url: tlv.libraries.o2.wmsUrl
+			})
+		});
+		tlv.map.addLayer( tlv.mosaicLayer );
+	}
+	else {
+		tlv.mosaicLayer.setVisible( true );
+	}
+	refreshMosaicLayer();
+}
+
 function displaySearchOriginLayer() {
 	if (!tlv.searchOriginLayer) {
 		var point = new ol.geom.Point( tlv.location );
@@ -156,12 +234,18 @@ function hideCrossHairLayer() {
 	tlv.crossHairLayer.setVisible( false );
 }
 
-function hideDetectionLayer( databaseId ) {
-	tlv.detectionLayers[ databaseId ].setVisible( false );
+function hideMosaicLayer() {
+	tlv.mosaicLayer.setVisible( false );
 }
 
 function hideSearchOriginLayer() {
 	tlv.searchOriginLayer.setVisible( false );
+}
+
+function mosaicLayerToggle() {
+	var state = $("#layersMosaicSelect").val();
+	if (state == "on") { displayMosaicLayer(); }
+	else { hideMosaicLayer(); }
 }
 
 function overviewLayerToggle() {
@@ -200,6 +284,29 @@ function refreshCrossHairLayer() {
 	}
 }
 
+function refreshMosaicLayer() {
+
+
+	var bbox = tlv.map.getView().calculateExtent();
+	var param = { filter: 'BBOX(ground_geom,' + bbox.join( ',' ) + ')' };
+	getWfs( param, tlv.libraries.o2.wfsUrl )
+	.done( function( data ) {
+		tlv.mosaicImages = data.features.sort( function( a, b ) {
+			if ( a.properties.acquisition_date > b.properties.acquisition_date ) { return -1; }
+			else if ( a.properties.acquisition_date < b.properties.acquisition_date ) { return 1; }
+
+			// if the acquisiton dates are the same, sort by entry id
+			else if ( a.properties.entry_id < b.properties.entry_id ) { return -1; }
+			else if ( a.properties.entry_id > b.properties.entry_id ) { return 1; }
+
+
+			return 0;
+		});
+
+		tlv.mosaicLayer.getSource().updateParams({ IDENTIFIER: Math.random() });
+	} );
+}
+
 function searchOriginLayerToggle() {
 	var state = $("#layersSearchOriginSelect").val();
 	if (state == "on") { displaySearchOriginLayer(); }
@@ -229,5 +336,6 @@ var theMapHasMovedLayers = theMapHasMoved;
 theMapHasMoved = function() {
 	theMapHasMovedLayers();
 
-	if ($("#layersCrossHairSelect").val() == "on") { refreshCrossHairLayer(); }
+	if ( $( '#layersCrossHairSelect' ).val() == 'on' ) { refreshCrossHairLayer(); }
+	if ( $( '#layersMosaicSelect' ).val() == 'on' ) { refreshMosaicLayer(); }
 }
