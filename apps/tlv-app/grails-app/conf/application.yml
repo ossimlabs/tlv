@@ -102,7 +102,8 @@ dataSource:
     jmxExport: true
     driverClassName: org.postgresql.Driver
     username: postgres
-    password: postgres
+    password: ${omarDb.password}
+    dialect: org.hibernate.spatial.dialect.postgis.PostgisDialect
 
 environments:
     development:
@@ -116,7 +117,7 @@ environments:
     production:
         dataSource:
             dbCreate: none
-            url: jdbc:postgresql:omardb-prod
+            url: ${omarDb.url}
             properties:
                 jmxEnabled: true
                 initialSize: 5
@@ -140,6 +141,11 @@ server:
     servlet:
         context-path: /tlv
     contextPath: ${server.servlet.context-path}
+
+swagger:
+    schemes:
+        - HTTPS
+        - HTTP
 
 management:
   endpoints:
