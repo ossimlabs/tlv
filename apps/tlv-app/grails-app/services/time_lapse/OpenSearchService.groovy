@@ -1,7 +1,7 @@
 package time_lapse
 
 
-import grails.transaction.Transactional
+import grails.gorm.transactions.Transactional
 import java.awt.image.BufferedImage
 import java.awt.Image
 import javax.imageio.ImageIO

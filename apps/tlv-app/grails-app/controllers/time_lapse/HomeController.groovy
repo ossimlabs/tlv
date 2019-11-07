@@ -269,8 +269,7 @@ class HomeController {
 	def index() {
 		def model = restApiService.serviceMethod( params )
 
-
-		render(model: [ tlvParams: model ], view: "/index.gsp")
+		render(model: [ tlvParams: model ], view: "/index")
 	}
 
 	def openSearch() {

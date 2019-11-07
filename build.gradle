@@ -1,0 +1,266 @@
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+import com.bmuschko.gradle.docker.tasks.image.DockerPushImage
+import com.bmuschko.gradle.docker.tasks.image.DockerTagImage
+
+buildscript {
+    repositories {
+        maven { url ossimMavenProxy }
+        maven { url "https://repo.grails.org/grails/core" }
+    }
+    dependencies {
+        classpath "org.grails:grails-gradle-plugin:$grailsVersion"
+        classpath "org.grails.plugins:hibernate5:${hibernate5PluginVersion}"
+        classpath "gradle.plugin.com.github.erdi.webdriver-binaries:webdriver-binaries-gradle-plugin:${webdriverGradlePluginVersion}"
+        classpath "com.bertramlabs.plugins:asset-pipeline-gradle:${assetPipelineVersion}"
+		classpath "io.ossim:gradleDefaults:${ gradleDefaultsVersion }"
+		classpath "com.bmuschko:gradle-docker-plugin:${gradleDockerPluginVersion}"
+    }
+}
+
+plugins {
+	id 'groovy'
+    id "com.github.ben-manes.versions" version "0.26.0"
+    id "org.sonarqube" version "2.8"
+}
+
+subprojects { project ->
+	boolean isGrailsApp = project.name.endsWith( '-app' )
+	boolean isGrailsPlugin = project.name.endsWith( '-plugin' )
+	boolean isGrailsProject = isGrailsApp || isGrailsPlugin
+
+    io.ossim.gradleDefaults.Variables.setAdditionalVariables(project)
+    io.ossim.gradleDefaults.Variables.setVersionVariables(project)
+    project.version "${buildVersion}-${buildVersionTag}"
+    project.group groupName
+
+    apply plugin:"eclipse"
+    apply plugin:"idea"
+
+    if ( isGrailsProject )    
+    {
+        if ( isGrailsApp )
+        {
+            apply plugin: 'com.bmuschko.docker-remote-api'
+
+            ext {
+                dockerBuildDir = "${ rootProject.projectDir }/docker"
+                jarDestination = "${ project.projectDir }/build/libs/${ project.name }-${ version }.jar"
+                
+                dockerImageName = project.name
+                dockerBuildTag = project.dockerImageTag
+                buildArguments = [ "BASE_IMAGE": "${ dockerRegistryUrl }/${ dockerBaseImage }:${ dockerFromTag }" ]
+                
+                openshiftUrl = getConfigurationProperty( 'OPENSHIFT_URL', 'openshiftUrl' )
+                openshiftUsername = getConfigurationProperty( 'OPENSHIFT_USERNAME', 'openshiftUsername' )
+                openshiftPassword = getConfigurationProperty( 'OPENSHIFT_PASSWORD', 'openshiftPassword' )                
+                openshiftProjectName =  getConfigurationProperty( 'OPENSHIFT_PROJECT_NAME', 'openshiftProjectName' )
+            }
+
+            io.ossim.gradleDefaults.Openshift.addOpenshiftTasks(
+                project, 
+                openshiftUrl, 
+                openshiftUsername, 
+                openshiftPassword, 
+                openshiftProjectName, 
+                openshiftServiceName,  
+                dockerRegistryUrl, 
+                dockerImageName, 
+                dockerImageTag
+            )
+
+            docker {
+                registryCredentials {
+                    url = dockerRegistryUrl
+                    username = getConfigurationProperty( 'DOCKER_REGISTRY_USERNAME', 'dockerRegistryUsername' )
+                    password = getConfigurationProperty( 'DOCKER_REGISTRY_PASSWORD', 'dockerRegistryPassword' )
+                }
+            }
+
+            // Copy the built jar to the docker directory
+            task copyJarToDockerDir( type: Copy ) {
+                doFirst {
+                    println "Copying ${ jarDestination } to ${ dockerBuildDir }"
+                }
+                from jarDestination
+                into dockerBuildDir
+            }
+
+
+            task buildDockerImage( type: DockerBuildImage, dependsOn: copyJarToDockerDir ) {
+                inputDir = project.file( dockerBuildDir )
+                tags.add( "${ dockerImageName }:${ dockerBuildTag }" )
+                buildArgs = buildArguments
+                doFirst {
+                    if ( buildArguments )
+                    {
+                        println( "Using ${ buildArguments } as build args" )
+                    }
+                }
+            }
+
+            task tagDockerImage( type: DockerTagImage, dependsOn: buildDockerImage ) {
+                imageId = "${ dockerImageName }:${ dockerBuildTag }"
+                tag = dockerBuildTag
+                repository = "${ dockerRegistryUrl }/${ dockerImageName }"
+            }
+
+            task pushDockerImage( type: DockerPushImage, dependsOn: 'tagDockerImage' ) {
+                imageName = "${ dockerRegistryUrl }/${ dockerImageName }"
+                tag = dockerBuildTag
+            }
+
+            apply plugin:"org.grails.grails-web"
+            apply plugin:"com.github.erdi.webdriver-binaries"
+        }
+        else if ( isGrailsPlugin ) 
+        {
+            apply plugin:"org.grails.grails-plugin"
+            apply plugin:"org.grails.grails-plugin-publish"
+
+            ext {
+                jarDestination = "${project.projectDir}/build/libs/${project.name}-${version}.jar"
+            }
+
+            io.ossim.gradleDefaults.Publications.addPublication(project, groupName, name, "${buildVersion}-${buildVersionTag}")
+            io.ossim.gradleDefaults.Publications.addRepository(project, mavenPublishUrl, mavenRepoUsername, mavenRepoPassword)                    
+        }
+
+        apply plugin:"asset-pipeline"
+        apply plugin:"org.grails.grails-gsp"
+
+        repositories {
+            mavenLocal()
+            maven { url ossimMavenProxy }
+            maven { url "https://repo.grails.org/grails/core" }
+        }
+
+        configurations {
+            developmentOnly
+            runtimeClasspath {
+                extendsFrom developmentOnly
+            }
+        }
+
+        if ( isGrailsApp )
+        {
+            dependencyManagement {
+                imports {
+                    mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+                }
+            }
+        }
+
+        dependencies {
+            developmentOnly("org.springframework.boot:spring-boot-devtools")
+            compile "org.springframework.boot:spring-boot-starter-logging"
+            compile "org.springframework.boot:spring-boot-autoconfigure"
+            compile "org.grails:grails-core"
+            compile "org.springframework.boot:spring-boot-starter-actuator"
+            compile "org.springframework.boot:spring-boot-starter-tomcat"
+            compile "org.grails:grails-web-boot"
+            compile "org.grails:grails-logging"
+            compile "org.grails:grails-plugin-rest"
+            compile "org.grails:grails-plugin-databinding"
+            compile "org.grails:grails-plugin-i18n"
+            compile "org.grails:grails-plugin-services"
+            compile "org.grails:grails-plugin-url-mappings"
+            compile "org.grails:grails-plugin-interceptors"
+            compile "org.grails.plugins:cache"
+            compile "org.grails.plugins:async"
+            compile "org.grails.plugins:scaffolding"
+            compile "org.grails.plugins:gsp"
+            compileOnly "io.micronaut:micronaut-inject-groovy"
+            console "org.grails:grails-console"
+            runtime "com.bertramlabs.plugins:asset-pipeline-grails:${assetPipelineVersion}"
+            testCompile "org.grails:grails-gorm-testing-support"
+            testCompile "org.mockito:mockito-core"
+            testCompile "org.grails:grails-web-testing-support"
+
+            if ( isGrailsApp )
+            {
+                compile "org.grails.plugins:events"
+                compile "org.grails.plugins:hibernate5"
+                compile "org.hibernate:hibernate-core:${hibernateCoreVersion}"
+                profile "org.grails.profiles:web"
+                runtime "org.glassfish.web:el-impl:${glassfishWebVersion}"
+                runtime "com.h2database:h2"
+                runtime "org.apache.tomcat:tomcat-jdbc"
+                runtime "javax.xml.bind:jaxb-api:${jaxbApiVersion}"
+                testCompile "org.grails.plugins:geb"
+                testCompile "org.seleniumhq.selenium:selenium-remote-driver:${seleniumVersion}"
+                testCompile "org.seleniumhq.selenium:selenium-api:${seleniumVersion}"
+                testCompile "org.seleniumhq.selenium:selenium-support:${seleniumVersion}"
+                testRuntime "org.seleniumhq.selenium:selenium-chrome-driver:${seleniumVersion}"
+                testRuntime "org.seleniumhq.selenium:selenium-firefox-driver:${seleniumVersion}"
+
+                compile 'org.springframework.cloud:spring-cloud-starter-config'
+                compile "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client"
+            }
+            else if ( isGrailsPlugin ) 
+            {
+                profile "org.grails.profiles:web-plugin"
+                testCompile "org.grails:grails-plugin-testing"
+            }
+        }
+
+        bootRun {
+            jvmArgs(
+                '-Dspring.output.ansi.enabled=always', 
+                '-noverify', 
+                '-XX:TieredStopAtLevel=1',
+                '-Xmx1024m')
+            sourceResources sourceSets.main
+            String springProfilesActive = 'spring.profiles.active'
+            systemProperty springProfilesActive, System.getProperty(springProfilesActive)
+        }
+
+        if ( isGrailsApp )
+        {
+            webdriverBinaries {
+                chromedriver '2.45.0'
+                geckodriver '0.24.0'
+            }
+
+            tasks.withType(Test) {
+                systemProperty "geb.env", System.getProperty('geb.env')
+                systemProperty "geb.build.reportsDir", reporting.file("geb/integrationTest")
+                systemProperty "webdriver.chrome.driver", System.getProperty('webdriver.chrome.driver')
+                systemProperty "webdriver.gecko.driver", System.getProperty('webdriver.gecko.driver')
+            }
+        }
+        else if ( isGrailsPlugin )
+        {
+            // enable if you wish to package this plugin as a standalone application
+            bootJar.enabled = false
+            grailsPublish {
+                // TODO: Provide values here
+                user = 'user'
+                key = 'key'
+                githubSlug = 'foo/bar'
+                license {
+                    name = 'Apache-2.0'
+                }
+                title = "My Plugin"
+                desc = "Full plugin description"
+                developers = [johndoe:"John Doe"]
+            }
+        }
+
+        assets {
+            if ( isGrailsApp )
+            {
+                minifyJs = true
+                minifyCss = true
+            }
+            else if ( isGrailsPlugin )
+            {
+                packagePlugin = true
+            }
+        }
+    }    
+}
+
+String getConfigurationProperty( String envVar, String sysProp )
+{
+	System.getenv( envVar ) ?: project.findProperty( sysProp )
+}

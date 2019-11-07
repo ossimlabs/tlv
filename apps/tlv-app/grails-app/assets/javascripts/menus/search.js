@@ -3,6 +3,9 @@ function adjustLastDaysDate() {
 	var endDate = new Date();
 	var endDateTimePicker = $( '#searchEndDateTimePicker' );
 	endDateTimePicker.data( 'DateTimePicker' ).destroy();
+
+Object.getPrototypeOf($('#endDateTimePicker')).size = function() { return this.length; }; // Workaround for https://github.com/Eonasdan/bootstrap-datetimepicker/issues/1714
+
 	endDateTimePicker.datetimepicker({
 		date: endDate,
 		format: 'MM/DD/YYYY HH:mm:ss',
@@ -13,6 +16,9 @@ function adjustLastDaysDate() {
 	var startDate = new Date( endDate.setDate( endDate.getDate() - days ) );
 	var startDateTimePicker = $( '#searchStartDateTimePicker' );
 	startDateTimePicker.data( 'DateTimePicker' ).destroy();
+
+Object.getPrototypeOf($('#searchStartDateTimePicker')).size = function() { return this.length; }; // Workaround for https://github.com/Eonasdan/bootstrap-datetimepicker/issues/1714
+
 	startDateTimePicker.datetimepicker({
 		date: startDate,
 		format: 'MM/DD/YYYY HH:mm:ss',
@@ -723,6 +729,7 @@ function initializeEndDateTimePicker() {
 	endDate.setSeconds( tlv.endSecond || endDate.getUTCSeconds() );
 
 	var endDateTimePicker = $( "#searchEndDateTimePicker" );
+Object.getPrototypeOf($('#searchEndDateTimePicker')).size = function() { return this.length; }; // Workaround for https://github.com/Eonasdan/bootstrap-datetimepicker/issues/1714
 	endDateTimePicker.datetimepicker({
 		date: endDate,
 		format: "MM/DD/YYYY HH:mm:ss",
@@ -828,6 +835,9 @@ function initializeStartDateTimePicker() {
 	startDate.setSeconds(tlv.startSecond ? tlv.startSecond : 0);
 
 	var startDateTimePicker = $( "#searchStartDateTimePicker" );
+
+Object.getPrototypeOf($('#startDateTimePicker')).size = function() { return this.length; }; // Workaround for https://github.com/Eonasdan/bootstrap-datetimepicker/issues/1714
+
 	startDateTimePicker.datetimepicker({
 		date: startDate,
 		format: "MM/DD/YYYY HH:mm:ss",

@@ -20,7 +20,6 @@
 			</g:if>
 			<g:render template = "/banner"/>
 			<g:render template = "/time-lapse"/>
-
 			<g:render template = "/dialogs"/>
 		</div>
 

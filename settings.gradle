@@ -1,22 +1,36 @@
 pluginManagement {
 	repositories {
+		mavenLocal()
 		maven { url ossimMavenProxy }
+		gradlePluginPortal()
 	}
 }
 
-include 'tlv-app'
+rootProject.name='tlv'
 
-project(':tlv-app').projectDir = "${rootProject.projectDir}/apps/tlv-app" as File
+[ 'lib', 'plugin', 'app' ].each { String projectType ->
+	File projectTypeDir = new File( rootDir, "${ projectType }s" )
 
-if ( System.getenv('O2_INLINE_BUILD')) {
-  def modules = [
-      "omar-core",
-      "omar-security"
-  ]
+	if ( projectTypeDir.exists() )
+	{
+		projectTypeDir.eachDirMatch( { it.endsWith( projectType ) } ) { File subprojectDir ->
+			include subprojectDir.name
 
-  modules.each { module ->
-    include "${module}-plugin"
+			project( ":${ subprojectDir.name }" ).projectDir = subprojectDir
+		}
+	}
+}
 
-    project(":${module}-plugin").projectDir = "${rootProject.projectDir}/../${module}/plugins/${module}-plugin" as File
-  }
+if ( System.getenv( 'O2_INLINE_BUILD' ) )
+{
+	def modules = [ 
+           'omar-core',
+           'omar-security'
+        ]
+
+	modules.each { module ->
+		include "${ module }-plugin"
+
+		project( ":${ module }-plugin" ).projectDir = "${ rootProject.projectDir }/../${ module }/plugins/${ module }-plugin" as File
+	}
 }

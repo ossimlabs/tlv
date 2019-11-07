@@ -8,17 +8,18 @@ properties([
     ]),
     [$class: 'GithubProjectProperty', displayName: '', projectUrlStr: 'https://github.com/ossimlabs/tlv'],
     buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '3', daysToKeepStr: '', numToKeepStr: '20')),
-    disableConcurrentBuilds(),
-    buildDiscarder( logRotator( numToKeepStr: '5' ) )
+    disableConcurrentBuilds()
 ])
 
 node("${BUILD_NODE}"){
 
-    stage( "Checkout branch $BRANCH_NAME" ) {
-        checkout( scm )
+    stage("Checkout branch $BRANCH_NAME")
+    {
+        checkout(scm)
     }
 
-    stage( "Load Variables" ) {
+    stage("Load Variables")
+    {
         withCredentials([string(credentialsId: 'o2-artifact-project', variable: 'o2ArtifactProject')]) {
             step ([$class: "CopyArtifact",
                 projectName: o2ArtifactProject,
@@ -29,46 +30,69 @@ node("${BUILD_NODE}"){
         load "common-variables.groovy"
     }
 
-    stage ( "Assemble" ) {
-        sh "gradle assemble -PossimMavenProxy=${ OSSIM_MAVEN_PROXY }"
+    stage ("Assemble") {
+        sh """
+        ./gradlew assemble \
+            -PossimMavenProxy=${OSSIM_MAVEN_PROXY}
+        """
+        // archiveArtifacts "plugins/*/build/libs/*.jar"
         archiveArtifacts "apps/*/build/libs/*.jar"
     }
 
-    stage ("Publish Nexus") {
+/*
+    stage ("Publish Nexus")
+    {
         withCredentials([[$class: 'UsernamePasswordMultiBinding',
-            credentialsId: 'nexusCredentials',
-            usernameVariable: 'MAVEN_REPO_USERNAME',
-            passwordVariable: 'MAVEN_REPO_PASSWORD']]) {
-            sh "gradle publish -PossimMavenProxy=${ OSSIM_MAVEN_PROXY }"
+                        credentialsId: 'nexusCredentials',
+                        usernameVariable: 'MAVEN_REPO_USERNAME',
+                        passwordVariable: 'MAVEN_REPO_PASSWORD']])
+        {
+            sh """
+            ./gradlew publish \
+                -PossimMavenProxy=${OSSIM_MAVEN_PROXY}
+            """
         }
     }
+*/
 
-    stage ( "Publish Docker App" ) {
+    stage ("Publish Docker App")
+    {
         withCredentials([[$class: 'UsernamePasswordMultiBinding',
-            credentialsId: 'dockerCredentials',
-            usernameVariable: 'DOCKER_REGISTRY_USERNAME',
-            passwordVariable: 'DOCKER_REGISTRY_PASSWORD']]) {
+                        credentialsId: 'dockerCredentials',
+                        usernameVariable: 'DOCKER_REGISTRY_USERNAME',
+                        passwordVariable: 'DOCKER_REGISTRY_PASSWORD']])
+        {
             // Run all tasks on the app. This includes pushing to OpenShift and S3.
-            sh "gradle pushDockerImage -PossimMavenProxy=${ OSSIM_MAVEN_PROXY }"
+            sh """
+            ./gradlew pushDockerImage \
+                -PossimMavenProxy=${OSSIM_MAVEN_PROXY}
+            """
         }
     }
 
     try {
-        stage ( "OpenShift Tag Image" ) {
+        stage ("OpenShift Tag Image")
+        {
             withCredentials([[$class: 'UsernamePasswordMultiBinding',
-                credentialsId: 'openshiftCredentials',
-                usernameVariable: 'OPENSHIFT_USERNAME',
-                passwordVariable: 'OPENSHIFT_PASSWORD']]) {
+                            credentialsId: 'openshiftCredentials',
+                            usernameVariable: 'OPENSHIFT_USERNAME',
+                            passwordVariable: 'OPENSHIFT_PASSWORD']])
+            {
                 // Run all tasks on the app. This includes pushing to OpenShift and S3.
-                sh "gradle openshiftTagImage -PossimMavenProxy=${ OSSIM_MAVEN_PROXY }"
+                sh """
+                    ./gradlew openshiftTagImage \
+                        -PossimMavenProxy=${OSSIM_MAVEN_PROXY}
+
+                """
             }
         }
-    } catch ( e ) {
+    } catch (e) {
         echo e.toString()
     }
 
-    stage( "Clean Workspace" ) {
-        if ( "${ CLEAN_WORKSPACE }" == "true" )
-            step([ $class: 'WsCleanup' ])
+    stage("Clean Workspace")
+    {
+        if ("${CLEAN_WORKSPACE}" == "true")
+            step([$class: 'WsCleanup'])
     }
 }
