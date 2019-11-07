@@ -408,3 +408,10 @@ templates:
 userInfo:
     requestHeaderUserName: username
     requestHeaderUserNameDefault: Anonymous
+
+---
+defaultPreferences:
+    defaultUsername: Anonymous
+
+requestHeaderUsername: username
+
