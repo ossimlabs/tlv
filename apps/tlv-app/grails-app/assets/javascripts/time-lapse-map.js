@@ -201,9 +201,20 @@ function createLayerSources( layer ) {
 		layer.imageSource.setUrl( tlv.contextPath + '/home/dummyRedirect' );
 	}
 
+	var extent = ol.proj.get( 'EPSG:4326' ).getExtent();
+	var startResolution = ol.extent.getWidth( extent ) / 512;
+	var resolutions = new Array( 22 );
+	for ( var i = 0; i < resolutions.length; ++i ) {
+  		resolutions[ i ] = startResolution / Math.pow( 2, i );
+	}
 	layer.tileSource = new ol.source.TileWMS({
 		crossOrigin: connectedToLocalhost() ? 'anonymous' : undefined,
 		params: params,
+		tileGrid: new ol.tilegrid.TileGrid({
+	  		extent: extent,
+	  		resolutions: resolutions,
+	  		tileSize: [ 512, 512 ]
+		}),
 		url: tlv.libraries[ layer.library ].wmsUrl
 	});
 	if ( tlv.libraries[ layer.library ].wmsUrlProxy ) {
