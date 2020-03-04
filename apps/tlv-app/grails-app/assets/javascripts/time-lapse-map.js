@@ -15,7 +15,7 @@ function addBaseLayersToTheMap() {
 							TRANSPARENT: true,
 							VERSION: x.version || "1.1.1"
 						},
-						url: x.url
+						urls: x.urls.split( ',' )
 					});
 
 					if ( x.crs ) { source.updateParams({ CRS: x.crs }); }
@@ -45,14 +45,14 @@ function addBaseLayersToTheMap() {
 							resolutions: resolutions,
 							matrixIds: matrixIds
 						}),
-						url: x.url,
+						urls: x.urls.split( ',' ),
 					});
 					break;
 
 				case "xyz":
 					source = new ol.source.XYZ({
 						crossOrigin: connectedToLocalhost() ? 'anonymous' : undefined,
-						url: x.url
+						urls: x.urls.split( ',' )
 					});
 					break;
 			}
@@ -194,7 +194,7 @@ function createLayerSources( layer ) {
 	layer.imageSource = new ol.source.ImageWMS({
 		crossOrigin: connectedToLocalhost() ? 'anonymous' : undefined,
 		params: params,
-		url: tlv.libraries[ layer.library ].wmsUrl
+		urls: tlv.libraries[ layer.library ].wmsUrls.split( ',' )
 	});
 	if ( tlv.libraries[ layer.library ].wmsUrlProxy ) {
 		layer.imageSource.updateParams({ redirectUrl: tlv.libraries[ layer.library ].wmsUrlProxy });
@@ -215,7 +215,7 @@ function createLayerSources( layer ) {
 	  		resolutions: resolutions,
 	  		tileSize: [ 512, 512 ]
 		}),
-		url: tlv.libraries[ layer.library ].wmsUrl
+		urls: tlv.libraries[ layer.library ].wmsUrls.split( ',' )
 	});
 	if ( tlv.libraries[ layer.library ].wmsUrlProxy ) {
 		layer.tileSource.updateParams({ redirectUrl: tlv.libraries[ layer.library ].wmsUrlProxy });

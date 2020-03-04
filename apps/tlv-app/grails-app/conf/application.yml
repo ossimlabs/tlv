@@ -208,13 +208,13 @@ baseLayers:
 #        style: default
 #        type: wmts
 #        visible: false
-#        url: ${baseUrl}/omar-wmts/wmts/getTile
+#        urls: ${baseUrl}/omar-wmts/wmts/getTile
     osmBasic:
         layers: o2-basemap-basic
         name: OSM Basic
         styles:
         type: wms
-        url: ${baseUrl}/omar-mapproxy/service
+        urls: ${baseUrl}/omar-mapproxy/service
         visible: false
     osmBright:
         layers: o2-basemap-bright
@@ -222,31 +222,31 @@ baseLayers:
         styles:
         type: wms
         visible: true
-        url: ${baseUrl}/omar-mapproxy/service
+        urls: ${baseUrl}/omar-mapproxy/service
 #    googleMaps:
 #        name: Google Maps
 #        type: xyz
-#        url: https://mt1.google.com/vt/lyrs=r&x={x}&y={y}&z={z}
+#        urls: https://mt1.google.com/vt/lyrs=r&x={x}&y={y}&z={z}
 #        visibility: false
 #    googleSatellite:
 #        name: Google Satellite
 #        type: xyz
-#        url: http://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}
+#        urls: http://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}
 #        visible: false
 #    googleSatelliteHybrid:
 #        name: Google Satellite Hybrid
 #        type: xyz
-#        url: https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}
+#        urls: https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}
 #        visible: false
 #    googleTerrain:
 #        name: Google Terrain
 #        type: xyz
-#        url: https://mt1.google.com/vt/lyrs=t&x={x}&y={y}&z={z}
+#        urls: https://mt1.google.com/vt/lyrs=t&x={x}&y={y}&z={z}
 #        visible: false
 #    googleRoads:
 #        name: Google Roads
 #        type: xyz
-#        url: https://mt1.google.com/vt/lyrs=h&x={x}&y={y}&z={z}
+#        urls: https://mt1.google.com/vt/lyrs=h&x={x}&y={y}&z={z}
 #        visible: false
 
 # Define the base URL to be used throughout the configuration
@@ -326,7 +326,7 @@ libraries:
         omsUrl: ${baseUrl}/omar-oms/imageSpace
         stagerUrl: ${baseUrl}/omar-stager/
         wfsUrl: ${baseUrl}/omar-wfs/wfs
-        wmsUrl: ${baseUrl}/omar-wms/wms
+        wmsUrls: ${baseUrl}/omar-wms/wms
 #    o2-prod:
 #        kmlUrl: https://omar.ossim.io/omar-superoverlay/superOverlay/createKml
 #        label: O2
@@ -334,7 +334,7 @@ libraries:
 #        omsUrl: https://omar.ossim.io/omar-oms/imageSpace
 #        stagerUrl: https://omar.ossim.io/omar-stager/
 #        wfsUrl: https://omar.ossim.io/omar-wfs/wfs
-#        wmsUrl: https://omar.ossim.io/omar-wms/wms
+#        wmsUrls: https://a-omar.ossim.io/omar-wms/wms,https://b-omar.ossim.io/omar-wms/wms
 
 reachbackUrl: ${baseUrl}/omar-reachback/index
 
