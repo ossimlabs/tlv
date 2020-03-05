@@ -203,7 +203,7 @@ function createLayerSources( layer ) {
 
 	layer.tileSource = new ol.source.TileWMS({
 		crossOrigin: connectedToLocalhost() ? 'anonymous' : undefined,
-		params: params
+		params: params,
 		urls: tlv.libraries[ layer.library ].wmsUrls.split( ',' )
 	});
 	if ( tlv.libraries[ layer.library ].wmsUrlProxy ) {
