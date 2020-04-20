@@ -194,7 +194,7 @@ function createLayerSources( layer ) {
 	layer.imageSource = new ol.source.ImageWMS({
 		crossOrigin: connectedToLocalhost() ? 'anonymous' : undefined,
 		params: params,
-		urls: tlv.libraries[ layer.library ].wmsUrls.split( ',' )
+		url: tlv.libraries[ layer.library ].wmsUrls.split( ',' )[ 0 ]
 	});
 	if ( tlv.libraries[ layer.library ].wmsUrlProxy ) {
 		layer.imageSource.updateParams({ redirectUrl: tlv.libraries[ layer.library ].wmsUrlProxy });
