@@ -10,9 +10,9 @@ function getDefaultImageProperties() {
 		bands: tlv.preferences.bands || 'default',
 		brightness: tlv.preferences.brightness || 0,
 		contrast: tlv.preferences.contrast || 0,
-		hist_center: false,
+		histCenterTile: false,
 		histLinearNormClip: '0,1',
-		hist_op: tlv.preferences.dynamicRangeAdjustment || 'auto-minmax',
+		histOp: tlv.preferences.dynamicRangeAdjustment || 'auto-minmax',
 		nullPixelFlip: tlv.preferences.nullPixelFlip || true,
 		resampler_filter: tlv.preferences.interpolation || 'bilinear',
 		sharpen_percent: tlv.preferences.sharpenPercent || 0,
@@ -276,7 +276,7 @@ function syncImageProperties() {
 	$( '#opacitySliderInput' ).slider( 'setValue', layer.opacity * 100 );
 	$( '#opacityValueSpan' ).html( layer.opacity.toFixed(2) );
 
-	$( '#dynamicRangeSelect option[value="' + styles.hist_op + '"]' ).prop( 'selected', true );
+	$( '#dynamicRangeSelect option[value="' + styles.histOp + '"]' ).prop( 'selected', true );
 	$('#DRA_Midpoint').slider("setValue", 50);
 	set_ratio = .5;
 	$( '#dynamicRangeSliderInput' ).slider( "setValue", styles.histLinearNormClip.split( ',' ).map( function( value ) {
@@ -284,7 +284,7 @@ function syncImageProperties() {
 	} ) );
 	$( '#dynamicRangeValueSpan' ).html( '0:100' + '<br>Mid: ' + set_ratio.toFixed( 2 ) );
 
-	$( '#dynamicRangeRegionSelect option[value="' + styles['hist_center'] + '"]' ).prop( 'selected', true );
+	$( '#dynamicRangeRegionSelect option[value="' + styles['histCenterTile'] + '"]' ).prop( 'selected', true );
 	$( '#interpolationSelect option[value="' + styles.resampler_filter + '"]' ).prop( 'selected', true );
 	$( '#keepVisibleSelect option[value="' + layer.keepVisible + '"]' ).prop( 'selected', true );
 	$( '#nullPixelFlipSelect option[value="' + styles.nullPixelFlip + '"]' ).prop( 'selected', true );
@@ -312,11 +312,11 @@ function updateImageProperties( refreshMap ) {
 			bands: bands,
 			brightness: $( '#brightnessSliderInput' ).slider( 'getValue' ) / 100,
 			contrast: getContrastVal($( '#contrastSliderInput' ).slider( 'getValue' )),
-			hist_center: $( '#dynamicRangeRegionSelect' ).val(),
+			histCenterTile: $( '#dynamicRangeRegionSelect' ).val(),
 			histLinearNormClip: $( '#dynamicRangeSliderInput' ).slider( 'getValue' ).map( function( value ) {
 				return value / 100;
 			} ).join( ',' ),
-			hist_op: $( '#dynamicRangeSelect' ).val(),
+			histOp: $( '#dynamicRangeSelect' ).val(),
 			nullPixelFlip: $( '#nullPixelFlipSelect' ).val(),
 			resampler_filter: $( '#interpolationSelect' ).val(),
 			sharpen_percent: $( '#sharpenSliderInput' ).slider( 'getValue' ) / 100,
