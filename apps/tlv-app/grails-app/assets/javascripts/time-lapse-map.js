@@ -192,7 +192,7 @@ function createLayerSources( layer ) {
 	}
 
 	layer.imageSource = new ol.source.ImageWMS({
-		crossOrigin: connectedToLocalhost() ? 'anonymous' : undefined,
+		crossOrigin: ( connectedToLocalhost() || tlv.crossOrigin == 'true' ) ? 'anonymous' : undefined,
 		params: params,
 		url: tlv.libraries[ layer.library ].wmsUrls.split( ',' )[ 0 ]
 	});
@@ -202,7 +202,7 @@ function createLayerSources( layer ) {
 	}
 
 	layer.tileSource = new ol.source.TileWMS({
-		crossOrigin: connectedToLocalhost() ? 'anonymous' : undefined,
+		crossOrigin: ( connectedToLocalhost() || tlv.crossOrigin == 'true' ) ? 'anonymous' : undefined,
 		params: params,
 		urls: tlv.libraries[ layer.library ].wmsUrls.split( ',' )
 	});
