@@ -11,3 +11,7 @@ out/
 .settings
 .classpath
 prodDb.mv.db
+apps/tlv-app/bin/
+packaged-chart
+*.lock
+charts/*.tgz
