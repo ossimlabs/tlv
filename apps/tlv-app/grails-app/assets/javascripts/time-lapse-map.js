@@ -155,14 +155,14 @@ function createLayers( layer ) {
 	var extent = footprint ? new ol.format.WKT().readGeometry( footprint ).getExtent() : undefined;
 
 	layer.imageLayer = new ol.layer.Image({
-		extent: extent,
+		//extent: extent,
 		opacity: 0,
 		source: layer.imageSource,
 		visible: false
 	});
 
 	layer.tileLayer = new ol.layer.Tile({
-		extent: extent,
+		//extent: extent,
 		opacity: 0,
 		source: layer.tileSource,
 		visible: false
