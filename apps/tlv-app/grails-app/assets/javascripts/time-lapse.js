@@ -372,7 +372,7 @@ function setupTimeLapse() {
 	// add layers to the map
     tlv.layers.reverse();
 	$.each( tlv.layers, function( index, layer ) {
-	   layer.keepVisible = layer.keepVisible || false;
+	   layer.keepVisible = tlv.keepVisible == "true" ? true : false;
 		addLayerToTheMap( layer );
 	});
     //tlv.layers.reverse();
