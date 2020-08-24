@@ -94,6 +94,20 @@
                 </td>
             </tr>
             <tr>
+                <td style="color: white;">Format:</td>
+                <td>
+                    <select class = "form-control" id = "formatSelect" onchange = "updateImageProperties( true )">
+                        <g:each in = "${[
+                            "image/jpeg",
+                            "image/png",
+                            "image/vnd.jpeg-png"
+                        ]}">
+                            <option value = ${ it }>${ it }</option>
+                        </g:each>
+                    </select>
+                </td>
+            </tr>
+            <tr>
                 <td style="color: white;">Interpolation:</td>
                 <td>
                     <select class = "form-control" id = "interpolationSelect" onchange = "updateImageProperties( true )">
