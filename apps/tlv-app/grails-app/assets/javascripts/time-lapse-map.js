@@ -201,9 +201,22 @@ function createLayerSources( layer ) {
 		layer.imageSource.setUrl( tlv.contextPath + '/home/dummyRedirect' );
 	}
 
+
+	var extent = ol.proj.get( 'EPSG:4326' ).getExtent();
+	var tileSize = tlv.tileSize ? parseInt( tlv.tileSize ) : 256;
+	var startResolution = ol.extent.getWidth( extent ) / tileSize;
+	var resolutions = new Array( 22 );
+	for ( var i = 0; i < resolutions.length; ++i ) {
+		resolutions[ i ] = startResolution / Math.pow( 2, i );
+	}
 	layer.tileSource = new ol.source.TileWMS({
 		crossOrigin: ( connectedToLocalhost() || tlv.crossOrigin == 'true' ) ? 'anonymous' : undefined,
 		params: params,
+		tileGrid: new ol.tilegrid.TileGrid({
+			extent: extent,
+			resolutions: resolutions,
+			tileSize: [ tileSize, tileSize ]
+		}),
 		urls: tlv.libraries[ layer.library ].wmsUrls.split( ',' )
 	});
 	if ( tlv.libraries[ layer.library ].wmsUrlProxy ) {
