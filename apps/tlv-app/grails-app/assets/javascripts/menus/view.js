@@ -106,9 +106,11 @@ function changeWmsLayerType() {
 		tlv.layers,
 		function( index, layer ) {
 			layer.mapLayer.setVisible( false );
+			var format = layer.mapLayer.getSource().getParams().FORMAT;
 			var styles = layer.mapLayer.getSource().getParams().STYLES;
 
 			layer.mapLayer = layer[ layerType ];
+			layer.mapLayer.getSource().updateParams({ FORMAT: format });
 			layer.mapLayer.getSource().updateParams({ STYLES: styles });
 
 			layer.imageSpaceMapLayer = layer[ 'imageSpace' + layerType.capitalize() ];

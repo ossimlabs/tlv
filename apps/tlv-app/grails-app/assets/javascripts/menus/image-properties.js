@@ -231,8 +231,12 @@ setupTimeLapse = function() {
 
 function syncImageProperties() {
 	var layer = tlv.layers[ tlv.currentLayer ];
-	var styles = JSON.parse( layer.mapLayer.getSource().getParams().STYLES );
 
+	var format = layer.mapLayer.getSource().getParams().FORMAT;
+	$( '#formatSelect option[value="' + format + '"]' ).prop( 'selected', true );
+
+
+	var styles = JSON.parse( layer.mapLayer.getSource().getParams().STYLES );
 
 	$.each(
 		[ 'red', 'green', 'blue' ],
@@ -295,6 +299,9 @@ function syncImageProperties() {
 
 function updateImageProperties( refreshMap ) {
 	var layer = tlv.layers[ tlv.currentLayer ];
+
+	layer.mapLayer.getSource().updateParams({ FORMAT: $( '#formatSelect' ).val() });
+	layer.imageSpaceMapLayer.getSource().updateParams({ FORMAT: $( '#formatSelect' ).val() });
 
 	layer.keepVisible = ( $( '#keepVisibleSelect' ).val() == "true" );
 	layer.opacity = $( '#opacitySliderInput' ).slider( 'getValue' ) / 100;

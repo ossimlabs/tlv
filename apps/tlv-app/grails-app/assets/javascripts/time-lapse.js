@@ -114,6 +114,10 @@ function changeFrame( param ) {
 
 	updateScreenText();
 	updateTileLoadingProgressBar();
+
+    if ( tlv.qcMode == 'true' ) {
+        tlv.map.getView().fit( layer.mapLayer.getExtent(), { nearest: true } );
+    }
 }
 
 function deleteFrame( index ) {
@@ -372,7 +376,7 @@ function setupTimeLapse() {
 	// add layers to the map
     tlv.layers.reverse();
 	$.each( tlv.layers, function( index, layer ) {
-	   layer.keepVisible = layer.keepVisible || false;
+	   layer.keepVisible = tlv.keepVisible == "true" ? true : false;
 		addLayerToTheMap( layer );
 	});
     //tlv.layers.reverse();
@@ -424,7 +428,7 @@ function updateImageId() {
 function updateMapSize() {
 	if ( tlv.map ) {
 		var windowHeight = $( window ).height();
-		var bannersHeight = $( ".banner" ).height() + $( ".security-classification" ).height();
+		var bannersHeight = ( $( ".banner" ).height() || 0 ) + $( ".security-classification" ).height();
 		var tileLoadProgressBarHeight = $( "#tileLoadProgressBar" ).height();
 		var mapHeight = windowHeight
 			- bannersHeight

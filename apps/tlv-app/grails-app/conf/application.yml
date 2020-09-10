@@ -209,20 +209,20 @@ baseLayers:
 #        type: wmts
 #        visible: false
 #        urls: ${baseUrl}/omar-wmts/wmts/getTile
-    osmBasic:
-        layers: o2-basemap-basic
-        name: OSM Basic
-        styles:
-        type: wms
-        urls: ${baseUrl}/omar-mapproxy/service
-        visible: false
-    osmBright:
-        layers: o2-basemap-bright
-        name: OSM Bright
-        styles:
-        type: wms
-        visible: true
-        urls: ${baseUrl}/omar-mapproxy/service
+#    osmBasic:
+#        layers: o2-basemap-basic
+#        name: OSM Basic
+#        styles:
+#        type: wms
+#        urls: ${baseUrl}/omar-mapproxy/service
+#        visible: false
+#    osmBright:
+#        layers: o2-basemap-bright
+#        name: OSM Bright
+#        styles:
+#        type: wms
+#        visible: true
+#        urls: ${baseUrl}/omar-mapproxy/service
 #    googleMaps:
 #        name: Google Maps
 #        type: xyz
