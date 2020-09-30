@@ -12,6 +12,9 @@ out/
 .classpath
 prodDb.mv.db
 apps/tlv-app/bin/
+apps/tlv-app/application.yml
 packaged-chart
 *.lock
 charts/*.tgz
+.asscache
+*java_pid*
