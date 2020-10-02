@@ -1,6 +1,8 @@
 ---
 grails:
     profile: web
+    cors:
+        enabled: true
     codegen:
         defaultPackage: tlv.app
     gorm:
@@ -158,7 +160,7 @@ management:
       sensitive: false
     health:
       enabled: true
-    
+
 grails:
     cors:
         enabled: true
