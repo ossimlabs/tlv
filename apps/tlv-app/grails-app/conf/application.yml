@@ -1,6 +1,4 @@
 ---
-crossOrigin: true
-
 grails:
     profile: web
     codegen:
