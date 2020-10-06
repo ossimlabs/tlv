@@ -192,7 +192,7 @@ function createLayerSources( layer ) {
 	}
 
 	layer.imageSource = new ol.source.ImageWMS({
-		crossOrigin: ( connectedToLocalhost() || tlv.crossOrigin == 'true' ) ? 'anonymous' : undefined,
+		crossOrigin: ( connectedToLocalhost() || tlv.crossOrigin == true ) ? 'anonymous' : undefined,
 		params: params,
 		url: tlv.libraries[ layer.library ].wmsUrls.split( ',' )[ 0 ]
 	});
@@ -210,7 +210,7 @@ function createLayerSources( layer ) {
 		resolutions[ i ] = startResolution / Math.pow( 2, i );
 	}
 	layer.tileSource = new ol.source.TileWMS({
-		crossOrigin: ( connectedToLocalhost() || tlv.crossOrigin == 'true' ) ? 'anonymous' : undefined,
+		crossOrigin: ( connectedToLocalhost() || tlv.crossOrigin == true ) ? 'anonymous' : undefined,
 		params: params,
 		tileGrid: new ol.tilegrid.TileGrid({
 			extent: extent,
