@@ -102,6 +102,20 @@ podTemplate(
     
     }
 
+    stage('SonarQube Analysis') {
+        nodejs(nodeJSInstallationName: "${NODEJS_VERSION}") {
+            def scannerHome = tool "${SONARQUBE_SCANNER_VERSION}"
+
+            withSonarQubeEnv('sonarqube'){
+                sh """
+                  ${scannerHome}/bin/sonar-scanner \
+                  -Dsonar.projectKey=tlv \
+                  -Dsonar.login=${SONARQUBE_TOKEN}
+                """
+            }
+        }
+    }
+	  
     stage('Build') {
       container('builder') {
         sh """
