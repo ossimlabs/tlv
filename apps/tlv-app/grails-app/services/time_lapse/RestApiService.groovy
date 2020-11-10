@@ -25,6 +25,7 @@ class RestApiService {
 		params.geocoderUrl = config.geocoderUrl ?: null
 		params.ionAccessToken = config.ionAccessToken ?: null
 		params.libraries = config.libraries
+		params.crossOrigin = config.grails.cors.enabled
 
 		JSON.use( "deep" ) {
 			def json = preferencesService.getPreferences() as JSON

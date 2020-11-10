@@ -1,14 +1,14 @@
 ---
 server:
-  port: 8090
-  contextPath: /tlv
+    port: 8090
+    contextPath: /tlv
 
-#baseUrl: https://omar.ossim.io
-baseUrl: http://localhost
+baseUrl: https://omar.ossim.io
+#baseUrl: http://localhost
 geocoderUrl: ${baseUrl}/omar-ui/twoFishesProxy
 
 omarDb:
-  url: jdbc:postgresql:omardb-prod
+    url: jdbc:postgresql:omardb-prod
 
 libraries:
     o2-dev:
@@ -21,13 +21,20 @@ libraries:
         wmsUrl: ${baseUrl}/omar-wms/wms
         stagerUrl: ${baseUrl}/omar-stager
 
-# environments:
-#     production:
-#         dataSource:
-#             driverClassName: org.postgresql.Driver
-#             username: postgres
-#             password: postgres
-#             url: jdbc:postgresql://postgis:5432/tlv
+dataSource:
+    pooled: true
+    jmxExport: true
+    driverClassName: org.h2.Driver
+    username: sa
+    password: ''
+    #dialect: org.hibernate.spatial.dialect.postgis.PostgisDialect
+
+environments:
+    development:
+        dataSource:
+            dbCreate: update
+            url: jdbc:h2:mem:devDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE
+#            url: jdbc:postgresql:omardb-dev
 
 ---
 defaultUsername: Anonymous
@@ -84,4 +91,13 @@ securityClassification:
 #                       filters: 'none'
 #                     - pattern: '/**'
 #                       filters: 'JOINED_FILTERS'
+
+baseLayers:
+    osmBright:
+        layers: o2-basemap-bright
+        name: OSM Bright
+        styles:
+        type: wms
+        visible: true
+        urls: http://omar-dev.ossim.io/omar-mapproxy/service
 

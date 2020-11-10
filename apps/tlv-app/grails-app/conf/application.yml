@@ -158,7 +158,7 @@ management:
       sensitive: false
     health:
       enabled: true
-    
+
 grails:
     cors:
         enabled: true
