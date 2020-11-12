@@ -74,7 +74,7 @@ function applyAnnotationStyle() {
 				if ( typeof label == "object" ) { label = 'JS Object'; }
 				style.getText().setText( '' + label );
 			}
-			else {
+			else if (style != null){
 				style.getText().setText( 'N/A' );
 			}
 
