@@ -8053,7 +8053,7 @@ ol.layer.Group = function(opt_options) {
     } else {
       ol.asserts.assert(layers instanceof ol.Collection,
           43); // Expected `layers` to be an array or an `ol.Collection`
-      layers = layers;
+      //layers = layers;
     }
   } else {
     layers = new ol.Collection(undefined, {unique: true});
@@ -24520,7 +24520,7 @@ ol.style.Style.prototype.setGeometry = function(geometry) {
     };
   } else if (!geometry) {
     this.geometryFunction_ = ol.style.Style.defaultGeometryFunction;
-  } else if (geometry !== undefined) {
+  } else if (geometry != undefined) {
     this.geometryFunction_ = function() {
       return /** @type {ol.geom.Geometry} */ (geometry);
     };
