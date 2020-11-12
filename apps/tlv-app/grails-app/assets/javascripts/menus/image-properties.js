@@ -226,7 +226,7 @@ var setupTimeLapseImageProperties = setupTimeLapse;
 setupTimeLapse = function() {
 	setupTimeLapseImageProperties();
 
-	syncImageProperties( true );
+	syncImageProperties();
 }
 
 function syncImageProperties() {
