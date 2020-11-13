@@ -23,7 +23,7 @@ var pageLoadTimeLapseGlobe = pageLoad;
 var pageLoad = function() {
 	pageLoadTimeLapseGlobe();
 
-	const CESIUM_BASE_URL = tlv.contextPath + "/assets/webjars/cesium/1.43.0/Build/Cesium";
+	CESIUM_BASE_URL = tlv.contextPath + "/assets/webjars/cesium/1.43.0/Build/Cesium";
 }
 
 function setupGlobe() {

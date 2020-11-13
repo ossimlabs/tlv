@@ -21032,7 +21032,7 @@ ol.structs.RBush.prototype.forEach_ = function(values, callback, opt_this) {
       return result;
     }
   }
-  return null;
+  return result;
 };
 
 
