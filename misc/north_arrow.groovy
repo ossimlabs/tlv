@@ -44,29 +44,29 @@ def drawN( graphics ) {
 	def rightX = getInnerCircleX() + getInnerDiameter() / 2 + STROKE_WIDTH / 2
 	def leftX = rightX - width
 
-	int[] x = [ 
-		rightX, 
-		rightX, 
-		rightX - STROKE_WIDTH, 
-		leftX + STROKE_WIDTH, 
-		leftX + STROKE_WIDTH, 
-		leftX, 
-		leftX, 
-		leftX + STROKE_WIDTH, 
-		rightX - STROKE_WIDTH, 
-		rightX - STROKE_WIDTH 
+	int[] x = [
+		rightX,
+		rightX,
+		rightX - STROKE_WIDTH,
+		leftX + STROKE_WIDTH,
+		leftX + STROKE_WIDTH,
+		leftX,
+		leftX,
+		leftX + STROKE_WIDTH,
+		rightX - STROKE_WIDTH,
+		rightX - STROKE_WIDTH
 	]
-	int[] y = [ 
-		height - 2 * BUFFER, 
-		bottomY, 
-		bottomY, 
-		topY + 2 * STROKE_WIDTH, 
-		bottomY, 
-		bottomY, 
-		topY, 
-		topY, 
-		bottomY - 2 * STROKE_WIDTH, 
-		height - 2* BUFFER 
+	int[] y = [
+		height - 2 * BUFFER,
+		bottomY,
+		bottomY,
+		topY + 2 * STROKE_WIDTH,
+		bottomY,
+		bottomY,
+		topY,
+		topY,
+		bottomY - 2 * STROKE_WIDTH,
+		height - 2* BUFFER
 	]
 	graphics.fillPolygon( x, y, 10 )
 }
@@ -87,7 +87,7 @@ def drawWhiteCircle( graphics ) {
 	graphics.setColor( WHITE )
 	graphics.fillOval( outerX, outerY, outerDiameter, outerDiameter )
 
-	def innerCircleDiameter = getInnerDiameter()
+	def innerDiameter = getInnerDiameter()
 	def innerX = getInnerCircleX()
 	def innerY = getInnerCircleY()
 	graphics.setColor( BLACK )

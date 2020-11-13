@@ -7,12 +7,14 @@ import static groovyx.net.http.Method.GET
 import java.security.KeyStore
 import org.apache.http.conn.scheme.Scheme
 import org.apache.http.conn.ssl.SSLSocketFactory
+import java.util.logging.Logger
 
 
 @Transactional
 class HttpProxyService {
 
     def grailsApplication
+	Logger logger = Logger.getLogger("")
 
 
 	def serviceMethod( url ) {
@@ -42,20 +44,16 @@ class HttpProxyService {
 		try {
             http.request( GET, TEXT ) { req ->
 				response.failure = { resp, reader ->
-                    println 'Failure: ${reader}'
-
-
+					logger.info ('Failure: ${reader}')
 					return null
 				}
 				response.success = { resp, reader ->
-
-
 					return reader.text
 				}
 			}
 		}
 		catch ( Exception event ) {
-			println event
+			logger.info (event)
 			return null
 		}
 	}

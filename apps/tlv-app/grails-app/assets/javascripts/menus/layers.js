@@ -166,7 +166,7 @@ function displayMosaicLayer() {
 
 						if ( geometry.intersectsExtent( bbox ) ) {
 							var img = new Image();
-							img.crossOrigin = connectedToLocalhost() ? 'anonymous' : undefined,
+							img.crossOrigin = connectedToLocalhost() ? 'anonymous' : undefined;
 							img.onload = function() {
 								context.drawImage( img, 0, 0 );
 								imageTile.getImage().src = canvas.toDataURL();
