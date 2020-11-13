@@ -1123,7 +1123,7 @@
                     return false;
                 }
                 actions[$(e.currentTarget).data('action')].apply(picker, arguments);
-                return false;
+                return true;
             },
 
             show = function () {
