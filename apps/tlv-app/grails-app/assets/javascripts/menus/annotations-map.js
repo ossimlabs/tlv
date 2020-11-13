@@ -69,12 +69,15 @@ function applyAnnotationStyle() {
 					break;
 			}
 
+			if(style == null)
+				return null;
+
 			var label = feature.getProperties()[ propertyKey ];
 			if ( label ) {
 				if ( typeof label == "object" ) { label = 'JS Object'; }
 				style.getText().setText( '' + label );
 			}
-			else if (style != null){
+			else {
 				style.getText().setText( 'N/A' );
 			}
 
