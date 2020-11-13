@@ -900,7 +900,7 @@ function orderImage( feature, row ) {
 }
 
 var pageLoadSearch = pageLoad;
-pageLoad = function() {
+var pageLoad = function() {
 	pageLoadSearch();
 	setupSearchMenuDialog();
 
