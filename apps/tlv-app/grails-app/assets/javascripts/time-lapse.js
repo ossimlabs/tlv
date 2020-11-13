@@ -320,7 +320,7 @@ function orientationToggle() {
 }
 
 var pageLoadTimeLapse = pageLoad;
-var pageLoad = function() {
+pageLoad = function() {
     var bannersHeight = $( ".banner" ).height() + $( ".security-classification" ).height();
     $( "#navigationMenu" ).css( "padding-top", bannersHeight );
 

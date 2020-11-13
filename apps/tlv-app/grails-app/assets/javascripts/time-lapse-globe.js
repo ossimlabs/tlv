@@ -20,7 +20,7 @@ function checkWebGlCompatability() {
 }
 
 var pageLoadTimeLapseGlobe = pageLoad;
-var pageLoad = function() {
+pageLoad = function() {
 	pageLoadTimeLapseGlobe();
 
 	CESIUM_BASE_URL = tlv.contextPath + "/assets/webjars/cesium/1.43.0/Build/Cesium";
@@ -86,6 +86,6 @@ function setupGlobe() {
 }
 
 var setupTimeLapseGlobe = setupTimeLapse;
-var setupTimeLapse = function() {
+setupTimeLapse = function() {
 	setupTimeLapseGlobe();
 }
