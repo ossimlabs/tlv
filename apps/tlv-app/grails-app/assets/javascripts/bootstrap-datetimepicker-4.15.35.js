@@ -386,7 +386,7 @@
                 } else if (element.is('input')) {
                     parent = element.after(widget).parent();
                 } else if (options.inline) {
-                    parent = element.append(widget);
+                    //parent = element.append(widget);
                     return;
                 } else {
                     parent = element;
@@ -777,18 +777,18 @@
             },
 
             fillTime = function () {
-                var toggle, newDate, timeComponents = widget.find('.timepicker span[data-time-component]');
+                var toggleP, newDate, timeComponents = widget.find('.timepicker span[data-time-component]');
 
                 if (!use24Hours) {
-                    toggle = widget.find('.timepicker [data-action=togglePeriod]');
+                    toggleP = widget.find('.timepicker [data-action=togglePeriod]');
                     newDate = date.clone().add((date.hours() >= 12) ? -12 : 12, 'h');
 
-                    toggle.text(date.format('A'));
+                    toggleP.text(date.format('A'));
 
                     if (isValid(newDate, 'h')) {
-                        toggle.removeClass('disabled');
+                        toggleP.removeClass('disabled');
                     } else {
-                        toggle.addClass('disabled');
+                        toggleP.addClass('disabled');
                     }
                 }
                 timeComponents.filter('[data-time-component=hours]').text(date.format(use24Hours ? 'HH' : 'hh'));
@@ -2103,13 +2103,13 @@
             return picker;
         };
 
-        picker.parseInputDate = function (parseInputDate) {
+        picker.setParseInputDate = function (parseInputDate) {
             if (arguments.length === 0) {
                 return options.parseInputDate;
             }
 
             if (typeof parseInputDate !== 'function') {
-                throw new TypeError('parseInputDate() sholud be as function');
+                throw new TypeError('parseInputDate() should be as function');
             }
 
             options.parseInputDate = parseInputDate;
