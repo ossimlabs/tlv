@@ -7,7 +7,7 @@
  * @version 0.1 AS3 implementation
  */
 
-var LZWEncoder = function() {
+LZWEncoder = function() {
 
 	var exports = {};
 	var EOF = -1;

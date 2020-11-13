@@ -380,8 +380,6 @@ function openGeometries() {
 				width: size[ 0 ]
 			};
 
-			var mapCanvas = event.context.canvas;
-
 			var popup = window.open( tlv.contextPath + "/geometries?" + $.param( params ), "Collection Geometries", "height=512,width=512" );
 		});
 		tlv.map.renderSync();
