@@ -20,10 +20,10 @@ function checkWebGlCompatability() {
 }
 
 var pageLoadTimeLapseGlobe = pageLoad;
-pageLoad = function() {
+var pageLoad = function() {
 	pageLoadTimeLapseGlobe();
 
-	CESIUM_BASE_URL = tlv.contextPath + "/assets/webjars/cesium/1.43.0/Build/Cesium";
+	const CESIUM_BASE_URL = tlv.contextPath + "/assets/webjars/cesium/1.43.0/Build/Cesium";
 }
 
 function setupGlobe() {
@@ -86,6 +86,6 @@ function setupGlobe() {
 }
 
 var setupTimeLapseGlobe = setupTimeLapse;
-setupTimeLapse = function() {
+var setupTimeLapse = function() {
 	setupTimeLapseGlobe();
 }

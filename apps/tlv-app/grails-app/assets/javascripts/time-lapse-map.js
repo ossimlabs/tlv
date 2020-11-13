@@ -624,7 +624,7 @@ function theTileHasStartedLoadingMap(layerSource) {
 }
 
 function updateTileLoadingProgressBar() {
-	var tilesLoaded = tilesLoading = 0;
+	var tilesLoaded = var tilesLoading = 0;
 	$.each(
 		tlv.layers,
 		function(i, x) {
