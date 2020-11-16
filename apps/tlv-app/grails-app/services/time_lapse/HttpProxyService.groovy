@@ -52,7 +52,7 @@ class HttpProxyService {
 				}
 			}
 		}
-		catch ( Exception event ) {
+		catch ( event ) {
 			logger.info (event)
 			return null
 		}
