@@ -91,6 +91,9 @@ p {
 
 abbr[title],
 abbr[data-original-title] {
+
+  -webkit-text-decoration: underline dotted;
+
   text-decoration: underline dotted;
   -webkit-text-decoration: underline dotted;
   cursor: help;

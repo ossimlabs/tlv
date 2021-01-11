@@ -5,7 +5,7 @@ function configLayerToggle( key ) {
 }
 
 var createMapControlsLayers = createMapControls;
-createMapControls = function() {
+var createMapControls = function() {
 	createMapControlsLayers();
 
 	var overviewMapControl = new ol.control.OverviewMap();
@@ -166,7 +166,7 @@ function displayMosaicLayer() {
 
 						if ( geometry.intersectsExtent( bbox ) ) {
 							var img = new Image();
-							img.crossOrigin = connectedToLocalhost() ? 'anonymous' : undefined,
+							img.crossOrigin = connectedToLocalhost() ? 'anonymous' : undefined;
 							img.onload = function() {
 								context.drawImage( img, 0, 0 );
 								imageTile.getImage().src = canvas.toDataURL();
@@ -314,7 +314,7 @@ function searchOriginLayerToggle() {
 }
 
 var setupTimeLapseLayers = setupTimeLapse;
-setupTimeLapse = function() {
+var setupTimeLapse = function() {
 	setupTimeLapseLayers();
 
 	tlv.crossHairLayer = null;
@@ -333,7 +333,7 @@ setupTimeLapse = function() {
 }
 
 var theMapHasMovedLayers = theMapHasMoved;
-theMapHasMoved = function() {
+var theMapHasMoved = function() {
 	theMapHasMovedLayers();
 
 	if ( $( '#layersCrossHairSelect' ).val() == 'on' ) { refreshCrossHairLayer(); }
