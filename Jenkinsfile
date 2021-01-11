@@ -113,6 +113,7 @@ podTemplate(
 	  
     stage('Build') {
       container('builder') {
+		  buildVersion = VERSION
         sh """
         ./gradlew assemble \
             -PossimMavenProxy=${MAVEN_DOWNLOAD_URL}
