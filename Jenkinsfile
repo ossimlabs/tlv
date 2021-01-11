@@ -55,7 +55,7 @@ podTemplate(
     
         GIT_BRANCH_NAME = scmVars.GIT_BRANCH
         BRANCH_NAME = """${sh(returnStdout: true, script: "echo ${GIT_BRANCH_NAME} | awk -F'/' '{print \$2}'").trim()}"""
-		VERSION = """${sh( script: "cat chart/Chart.yaml" ).findAll( /appVersion:.*/ )[ 0 ].split( ":" )[ 1 ].trim()}"""
+		VERSION = """${sh( returnStdout: true, script: "cat chart/Chart.yaml" ).findAll( /appVersion:.*/ )[ 0 ].split( ":" )[ 1 ].trim()}"""
 
         GIT_TAG_NAME = "tlv" + "-" + VERSION
         ARTIFACT_NAME = "ArtifactName"
