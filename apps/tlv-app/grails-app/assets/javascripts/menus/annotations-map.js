@@ -1,5 +1,5 @@
 var anAnnotationHasBeenAddedMap = anAnnotationHasBeenAdded;
-anAnnotationHasBeenAdded = function( event ) {
+var anAnnotationHasBeenAdded = function( event ) {
 	anAnnotationHasBeenAddedMap( event );
 
 	removeInteractions();
@@ -69,6 +69,9 @@ function applyAnnotationStyle() {
 					break;
 			}
 
+			if(style == null)
+				return null;
+
 			var label = feature.getProperties()[ propertyKey ];
 			if ( label ) {
 				if ( typeof label == "object" ) { label = 'JS Object'; }
@@ -110,7 +113,7 @@ function calculateCircleFromRadius(center, radius) {
 }
 
 var changeFrameAnnotations = changeFrame;
-changeFrame = function(param) {
+var changeFrame = function(param) {
 	var annotationsLayer = tlv.layers[tlv.currentLayer].annotationsLayer;
 	if (annotationsLayer) { annotationsLayer.setVisible(false); }
 
@@ -496,7 +499,7 @@ function openAnnotationStylesDialog( vectorLayer ) {
 }
 
 var pageLoadAnnotationsMap = pageLoad;
-pageLoad = function() {
+var pageLoad = function() {
 	pageLoadAnnotationsMap();
 
 	$.each( $( '[name="fillOpacitySliderInput"]' ), function( index, element ) {

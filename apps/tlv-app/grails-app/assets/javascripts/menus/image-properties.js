@@ -1,5 +1,5 @@
 var changeFrameImageProperties = changeFrame;
-changeFrame = function( params ) {
+var changeFrame = function( params ) {
 	changeFrameImageProperties( params );
 
 	syncImageProperties();
@@ -41,7 +41,7 @@ function getGammaVal(value) {
 }
 
 var pageLoadImageProperties = pageLoad;
-pageLoad = function() {
+var pageLoad = function() {
 	pageLoadImageProperties();
 
 	var brightnessSlider = $( '#brightnessSliderInput' );
@@ -214,7 +214,7 @@ function selectBands( selectionMethod ) {
 }
 
 var setupMapImageProperties = setupMap;
-setupMap = function() {
+var setupMap = function() {
 	setupMapImageProperties();
 
 	tlv.map.on( 'click', function() {
@@ -223,10 +223,10 @@ setupMap = function() {
 }
 
 var setupTimeLapseImageProperties = setupTimeLapse;
-setupTimeLapse = function() {
+var setupTimeLapse = function() {
 	setupTimeLapseImageProperties();
 
-	syncImageProperties( true );
+	syncImageProperties();
 }
 
 function syncImageProperties() {

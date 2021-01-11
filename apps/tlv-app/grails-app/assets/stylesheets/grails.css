@@ -8,7 +8,7 @@ html, body {
     -webkit-overflow-scrolling: touch;
 }
 
-p, ul, pre, h1, h2, h3, h4, h5, h6, h7, h8 {
+p, ul, pre, h1, h2, h3, h4, h5, h6 {
     margin: 1em 0;
 }
 
@@ -16,7 +16,7 @@ p {
     display: block;
 }
 
-h1, h2, h3, h4, h5, h6, h7, h8 {
+h1, h2, h3, h4, h5, h6 {
     font-weight: bold;
 }
 
@@ -440,15 +440,6 @@ h6 {
     color: #2559a7;
 }
 
-h7 {
-    font-weight: bold;
-    color: #245f78;
-}
-
-h8 {
-    color: #245f78;
-}
-
 #footer {
     background: #f2f2f2;
     text-align: center;
@@ -857,7 +848,7 @@ html, body, .st-container, .st-pusher, .st-content {
 }
 
 .sign-in-fa-icon:before {
-    font-family: FontAwesome;
+    font-family: FontAwesome, sans-serif;
     content: '\f090';
     padding-right: 10px;
 }
