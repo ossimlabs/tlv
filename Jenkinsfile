@@ -55,12 +55,7 @@ podTemplate(
     
         GIT_BRANCH_NAME = scmVars.GIT_BRANCH
         BRANCH_NAME = """${sh(returnStdout: true, script: "echo ${GIT_BRANCH_NAME} | awk -F'/' '{print \$2}'").trim()}"""
-        sh """
-        touch buildVersion.txt
-        grep buildVersion gradle.properties | cut -d "=" -f2 > "buildVersion.txt"
-        """
-        preVERSION = readFile "buildVersion.txt"
-        VERSION = preVERSION.substring(0, preVERSION.indexOf('\n'))
+        VERSION = new File( "chart/Chart.yaml" ).getText().findAll( /appVersion:.*/ )[ 0 ].split( ":" )[ 1 ].trim()
 
         GIT_TAG_NAME = "tlv" + "-" + VERSION
         ARTIFACT_NAME = "ArtifactName"
