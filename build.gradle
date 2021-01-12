@@ -30,7 +30,7 @@ subprojects { project ->
 
     io.ossim.gradleDefaults.Variables.setAdditionalVariables(project)
     io.ossim.gradleDefaults.Variables.setVersionVariables(project)
-    project.version "${buildVersion}-${buildVersionTag}"
+    //project.version "${buildVersion}-${buildVersionTag}"
     project.group groupName
 
     apply plugin:"eclipse"
@@ -118,7 +118,7 @@ subprojects { project ->
             apply plugin:"org.grails.grails-plugin-publish"
 
             ext {
-                jarDestination = "${project.projectDir}/build/libs/${project.name}-${version}.jar"
+                //jarDestination = "${project.projectDir}/build/libs/${project.name}-${version}.jar"
             }
 
             //io.ossim.gradleDefaults.Publications.addPublication(project, groupName, name, "${buildVersion}-${buildVersionTag}")
