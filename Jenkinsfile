@@ -120,7 +120,7 @@ podTemplate(
         ./gradlew copyJarToDockerDir \
             -PossimMavenProxy=${MAVEN_DOWNLOAD_URL}
         """
-        archiveArtifacts "apps/*/build/libs/*.jar"
+        //archiveArtifacts "apps/*/build/libs/*.jar"
       }
     }
 
