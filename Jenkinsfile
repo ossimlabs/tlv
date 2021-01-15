@@ -109,7 +109,7 @@ podTemplate(
           }
 
           sh """
-            docker build --network=host -t "${DOCKER_REGISTRY_PUBLIC_UPLOAD_URL}"/tlv:"${TAG_NAME}" ./docker
+            docker build --network=host -t "${DOCKER_REGISTRY_PUBLIC_UPLOAD_URL}/tlv:${TAG_NAME}" ./docker
           """
         }
       }
@@ -153,7 +153,7 @@ podTemplate(
           else if (BRANCH_NAME == 'dev') {
             sh "aws eks --region us-east-1 update-kubeconfig --name gsp-dev-v2 --alias dev"
             sh "kubectl config set-context dev --namespace=omar-dev"
-            sh "kubectl rollout restart deployment/tlv"
+            sh "kubectl set image deployment/tlv tlv=${DOCKER_REGISTRY_DOWNLOAD_URL}/tlv:${TAG_NAME}"
           }
           else {
             sh "echo Not deploying ${BRANCH_NAME} branch"
