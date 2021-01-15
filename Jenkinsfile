@@ -57,9 +57,9 @@ podTemplate(
 
       script {
         if (BRANCH_NAME == 'master') {
-          buildName "${VERSION} - ${BRANCH_NAME}"
+          buildName "${CHART_APP_VERSION} - ${BRANCH_NAME}"
         } else {
-          buildName "${VERSION} - ${BRANCH_NAME}-SNAPSHOT"
+          buildName "${CHART_APP_VERSION} - ${BRANCH_NAME}-SNAPSHOT"
         }
       }
     }
@@ -91,7 +91,7 @@ podTemplate(
     stage('Build') {
       container('builder') {
         sh """
-		      buildVersion="${VERSION}"
+		      buildVersion="${CHART_APP_VERSION}"
           ./gradlew assemble -PossimMavenProxy=${MAVEN_DOWNLOAD_URL}
           ./gradlew copyJarToDockerDir -PossimMavenProxy=${MAVEN_DOWNLOAD_URL}
         """
