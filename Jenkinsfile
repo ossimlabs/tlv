@@ -150,11 +150,10 @@ podTemplate(
           if (BRANCH_NAME == 'master') {
             //insert future instructions here
           }
-          else if (BRANCH_NAME == 'dev' || true) {
+          else if (BRANCH_NAME == 'dev') {
             sh "aws eks --region us-east-1 update-kubeconfig --name gsp-dev-v2 --alias dev"
             sh "kubectl config set-context dev --namespace=omar-dev"
             sh "kubectl set image deployment/tlv tlv=${DOCKER_REGISTRY_DOWNLOAD_URL}/tlv:${TAG_NAME}"
-            sh "kubectl rollout restart deployment/tlv"
           }
           else {
             sh "echo Not deploying ${BRANCH_NAME} branch"
