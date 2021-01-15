@@ -94,6 +94,7 @@ podTemplate(
 		      buildVersion="${CHART_APP_VERSION}"
           ./gradlew assemble -PossimMavenProxy=${MAVEN_DOWNLOAD_URL}
           ./gradlew copyJarToDockerDir -PossimMavenProxy=${MAVEN_DOWNLOAD_URL}
+          ls docker
         """
       }
     }
