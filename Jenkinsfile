@@ -53,7 +53,7 @@ podTemplate(
       GIT_BRANCH_NAME = scmVars.GIT_BRANCH
       BRANCH_NAME = "${sh(returnStdout: true, script: "echo ${GIT_BRANCH_NAME} | awk -F'/' '{print \$2}'").trim()}"
       CHART_APP_VERSION = "${sh(returnStdout: true, script: "grep -Po \"(?<=appVersion: ).*\" chart/Chart.yaml").trim()}"
-      GRADLE_APP_VERSION = "${sh(returnStdout: true, script: "grep -Po \"(?<=buildVersion=).*\" gradle.properties").trim()}"
+      //GRADLE_APP_VERSION = "${sh(returnStdout: true, script: "grep -Po \"(?<=buildVersion=).*\" gradle.properties").trim()}"
 
       script {
         if (BRANCH_NAME == 'master') {
@@ -102,7 +102,7 @@ podTemplate(
       container('docker') {
         withDockerRegistry(credentialsId: 'dockerCredentials', url: "https://${DOCKER_REGISTRY_DOWNLOAD_URL}") {
           if (BRANCH_NAME == 'master') {
-            TAG_NAME = GRADLE_APP_VERSION
+            TAG_NAME = CHART_APP_VERSION
           } else {
             TAG_NAME = BRANCH_NAME + "-" + System.currentTimeMillis()
           }
