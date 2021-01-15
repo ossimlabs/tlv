@@ -1,6 +1,5 @@
 properties([
     parameters ([
-        booleanParam(name: 'CLEAN_WORKSPACE', defaultValue: true, description: 'Clean the workspace at the end of the run'),
         string(name: 'DOCKER_REGISTRY_DOWNLOAD_URL', defaultValue: 'nexus-docker-private-group.ossim.io', description: 'Repository of docker images')
     ]),
     pipelineTriggers([
@@ -45,29 +44,25 @@ podTemplate(
       mountPath: '/var/run/docker.sock'
     ),
   ]
-)
-{
-  node(POD_LABEL){
+) {
+  node(POD_LABEL) {
 
-    stage("Checkout branch")
-    {
-        scmVars = checkout(scm)
-    
-        GIT_BRANCH_NAME = scmVars.GIT_BRANCH
-        BRANCH_NAME = """${sh(returnStdout: true, script: "echo ${GIT_BRANCH_NAME} | awk -F'/' '{print \$2}'").trim()}"""
-		VERSION = """${sh( returnStdout: true, script: "cat chart/Chart.yaml | grep appVersion | cut -d':' -f 2 | tr -d '[:space:]'")}"""
+    stage("Checkout branch") {
+      scmVars = checkout(scm)
 
-        GIT_TAG_NAME = "tlv" + "-" + VERSION
-        ARTIFACT_NAME = "ArtifactName"
+      GIT_BRANCH_NAME = scmVars.GIT_BRANCH
+      BRANCH_NAME = "${sh(returnStdout: true, script: "echo ${GIT_BRANCH_NAME} | awk -F'/' '{print \$2}'").trim()}"
+      CHART_APP_VERSION = "${sh(returnStdout: true, script: "grep -Po \"(?<=appVersion: ).*\" chart/Chart.yaml").trim()}"
+      GRADLE_APP_VERSION = "${sh(returnStdout: true, script: "grep -Po \"(?<=buildVersion=).*\" gradle.properties").trim()}"
 
-        script {
-          if (BRANCH_NAME != 'master') {
-            buildName "${VERSION} - ${BRANCH_NAME}-SNAPSHOT"
-          } else {
-            buildName "${VERSION} - ${BRANCH_NAME}"
-          }
+      script {
+        if (BRANCH_NAME == 'master') {
+          buildName "${VERSION} - ${BRANCH_NAME}"
+        } else {
+          buildName "${VERSION} - ${BRANCH_NAME}-SNAPSHOT"
         }
       }
+    }
 
     stage("Load Variables")
     {
@@ -76,95 +71,60 @@ podTemplate(
           projectName: o2ArtifactProject,
           filter: "common-variables.groovy",
           flatten: true])
-        }
-        load "common-variables.groovy"
-    
-         switch (BRANCH_NAME) {
-        case "master":
-          TAG_NAME = VERSION
-          break
-
-        case "dev":
-          TAG_NAME = "latest"
-          break
-
-        default:
-          TAG_NAME = BRANCH_NAME
-          break
       }
-
-    DOCKER_IMAGE_PATH = "${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/tlv"
-    
+      load "common-variables.groovy"
     }
 
     stage('SonarQube Analysis') {
-        nodejs(nodeJSInstallationName: "${NODEJS_VERSION}") {
-            def scannerHome = tool "${SONARQUBE_SCANNER_VERSION}"
-
-            withSonarQubeEnv('sonarqube'){
-                sh """
-                  ${scannerHome}/bin/sonar-scanner \
+      nodejs(nodeJSInstallationName: "${NODEJS_VERSION}") {
+        def scannerHome = tool "${SONARQUBE_SCANNER_VERSION}"
+          withSonarQubeEnv('sonarqube') {
+            sh """
+              ${scannerHome}/bin/sonar-scanner \
                   -Dsonar.projectKey=tlv \
                   -Dsonar.login=${SONARQUBE_TOKEN}
-                """
-            }
+            """
         }
+      }
     }
-	  
+
     stage('Build') {
       container('builder') {
         sh """
-		buildVersion="${VERSION}"
-        ./gradlew assemble \
-            -PossimMavenProxy=${MAVEN_DOWNLOAD_URL}
-        ./gradlew copyJarToDockerDir \
-            -PossimMavenProxy=${MAVEN_DOWNLOAD_URL}
+		      buildVersion="${VERSION}"
+          ./gradlew assemble -PossimMavenProxy=${MAVEN_DOWNLOAD_URL}
+          ./gradlew copyJarToDockerDir -PossimMavenProxy=${MAVEN_DOWNLOAD_URL}
         """
-        //archiveArtifacts "apps/*/build/libs/*.jar"
       }
     }
 
     stage('Docker build') {
       container('docker') {
-        withDockerRegistry(credentialsId: 'dockerCredentials', url: "https://${DOCKER_REGISTRY_DOWNLOAD_URL}") {  //TODO
-          if (BRANCH_NAME == 'master'){
-                sh """
-                    docker build --network=host -t "${DOCKER_REGISTRY_PUBLIC_UPLOAD_URL}"/tlv:"${VERSION}" ./docker
-                """
+        withDockerRegistry(credentialsId: 'dockerCredentials', url: "https://${DOCKER_REGISTRY_DOWNLOAD_URL}") {
+          if (BRANCH_NAME == 'master') {
+            TAG_NAME = GRADLE_APP_VERSION
+          } else {
+            TAG_NAME = BRANCH_NAME + "-" + System.currentTimeMillis()
           }
-          else {
-                sh """
-                    docker build --network=host -t "${DOCKER_REGISTRY_PUBLIC_UPLOAD_URL}"/tlv:"${VERSION}".a ./docker
-                """
-          }
+
+          sh """
+            docker build --network=host -t "${DOCKER_REGISTRY_PUBLIC_UPLOAD_URL}"/tlv:"${TAG_NAME}" ./docker
+          """
         }
       }
     }
 
-    stage('Docker push'){
-        container('docker') {
-          withDockerRegistry(credentialsId: 'dockerCredentials', url: "https://${DOCKER_REGISTRY_PUBLIC_UPLOAD_URL}") {
-            if (BRANCH_NAME == 'master'){
-                sh """
-                    docker push "${DOCKER_REGISTRY_PUBLIC_UPLOAD_URL}"/tlv:"${VERSION}"
-                """
-            }
-            else if (BRANCH_NAME == 'dev') {
-                sh """
-                    docker tag "${DOCKER_REGISTRY_PUBLIC_UPLOAD_URL}"/tlv:"${VERSION}".a "${DOCKER_REGISTRY_PUBLIC_UPLOAD_URL}"/tlv:dev
-                    docker push "${DOCKER_REGISTRY_PUBLIC_UPLOAD_URL}"/tlv:"${VERSION}".a
-                    docker push "${DOCKER_REGISTRY_PUBLIC_UPLOAD_URL}"/tlv:dev
-                """
-            }
-            else {
-                sh """
-                    docker push "${DOCKER_REGISTRY_PUBLIC_UPLOAD_URL}"/tlv:"${VERSION}".a           
-                """
-            }
-          }
+    stage('Docker push') {
+      container('docker') {
+        withDockerRegistry(credentialsId: 'dockerCredentials', url: "https://${DOCKER_REGISTRY_PUBLIC_UPLOAD_URL}") {
+          sh """
+            docker push "${DOCKER_REGISTRY_PUBLIC_UPLOAD_URL}"/tlv:${TAG_NAME}
+          """
         }
       }
-    stage('Package chart'){
+    }
+
+    stage('Package chart') {
       container('helm') {
         sh """
             mkdir packaged-chart
@@ -173,36 +133,32 @@ podTemplate(
       }
     }
 
-    stage('Upload chart'){
+    stage('Upload chart') {
       container('builder') {
         withCredentials([usernameColonPassword(credentialsId: 'helmCredentials', variable: 'HELM_CREDENTIALS')]) {
           sh "curl -u ${HELM_CREDENTIALS} ${HELM_UPLOAD_URL} --upload-file packaged-chart/*.tgz -v"
         }
       }
     }
-	  stage('New Deploy'){
-        container('kubectl-aws-helm') {
-            withAWS(
-            credentials: 'Jenkins-AWS-IAM',
-            region: 'us-east-1'){
-                if (BRANCH_NAME == 'master'){
-                    //insert future instructions here
-                }
-                else if (BRANCH_NAME == 'dev') {
-                    sh "aws eks --region us-east-1 update-kubeconfig --name gsp-dev-v2 --alias dev"
-                    sh "kubectl config set-context dev --namespace=omar-dev"
-                    sh "kubectl rollout restart deployment/tlv"   
-                }
-                else {
-                    sh "echo Not deploying ${BRANCH_NAME} branch"
-                }
-            }
-        }
-    }
 
-    stage("Clean Workspace"){
-      if ("${CLEAN_WORKSPACE}" == "true")
-        step([$class: 'WsCleanup'])
+	  stage('New Deploy') {
+      container('kubectl-aws-helm') {
+          withAWS(
+          credentials: 'Jenkins-AWS-IAM',
+        region: 'us-east-1') {
+          if (BRANCH_NAME == 'master') {
+            //insert future instructions here
+          }
+          else if (BRANCH_NAME == 'dev') {
+            sh "aws eks --region us-east-1 update-kubeconfig --name gsp-dev-v2 --alias dev"
+            sh "kubectl config set-context dev --namespace=omar-dev"
+            sh "kubectl rollout restart deployment/tlv"
+          }
+          else {
+            sh "echo Not deploying ${BRANCH_NAME} branch"
+          }
+        }
+      }
     }
   }
 }
