@@ -25,4 +25,4 @@ Each commit to master will result in a newly published docker image of the versi
 
 ### Dev
 
-Each commit will initiate a deployment of the newly created docker image (named `dev-<timestamp>`) to the omar-dev.ossim.io domain.
+Each commit will initiate a deployment of the newly created docker image (named `dev-<timestamp>`) to the omar-dev.ossim.io domain. Only the image name is changed, but any commit on this branch will lead to a rebuild/redeploy of the docker image.
