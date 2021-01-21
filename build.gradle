@@ -22,6 +22,11 @@ subprojects { project ->
 	boolean isGrailsPlugin = project.name.endsWith( '-plugin' )
 	boolean isGrailsProject = isGrailsApp || isGrailsPlugin
 
+   project.ext {
+     gitBranch = getCurrentGitBranch(project)
+     buildVersionTag = gitBranch == "master" ? "RELEASE" : "SNAPSHOT"
+    }
+
     project.version "${project.buildVersion}-${buildVersionTag}"
     project.group groupName
 
@@ -32,6 +37,11 @@ subprojects { project ->
     {
         if ( isGrailsApp )
         {
+            ext {
+                dockerBuildDir = "${ rootProject.projectDir }/docker"
+                jarDestination = "${ project.projectDir }/build/libs/${ project.name }-${ version }.jar"
+            }
+
             // Copy the built jar to the docker directory
             task copyJarToDockerDir( type: Copy ) {
                 doFirst {
@@ -192,4 +202,19 @@ subprojects { project ->
 String getConfigurationProperty( String envVar, String sysProp )
 {
 	System.getenv( envVar ) ?: project.findProperty( sysProp )
+}
+
+String getCurrentGitBranch(Project project) {
+    def gitBranch = "Unknown branch"
+    try {
+        def workingDir = new File("${project.projectDir}")
+        def result = 'git rev-parse --abbrev-ref HEAD'.execute(null, workingDir)
+        result.waitFor()
+        if (result.exitValue() == 0) {
+            gitBranch = result.text.trim()
+        }
+    } catch (e) {
+        e.printStackTrace()
+    }
+    return gitBranch
 }
