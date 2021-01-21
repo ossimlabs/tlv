@@ -15,7 +15,7 @@ function addBaseLayersToTheMap() {
 							TRANSPARENT: true,
 							VERSION: x.version || "1.1.1"
 						},
-						urls: x.urls.split( ',' )
+						urls: (x.urls) ? x.urls.split( ',' ) : []
 					});
 
 					if ( x.crs ) { source.updateParams({ CRS: x.crs }); }
