@@ -45,14 +45,14 @@ function addBaseLayersToTheMap() {
 							resolutions: resolutions,
 							matrixIds: matrixIds
 						}),
-						urls: x.urls.split( ',' ),
+						urls: (x.urls) ? x.urls.split( ',' ) : [],
 					});
 					break;
 
 				case "xyz":
 					source = new ol.source.XYZ({
 						crossOrigin: connectedToLocalhost() ? 'anonymous' : undefined,
-						urls: x.urls.split( ',' )
+						urls: (x.urls) ? x.urls.split( ',' ) : []
 					});
 					break;
 			}
