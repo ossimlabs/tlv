@@ -30,7 +30,7 @@ subprojects { project ->
 
     io.ossim.gradleDefaults.Variables.setAdditionalVariables(project)
     io.ossim.gradleDefaults.Variables.setVersionVariables(project)
-    project.version "${buildVersion}-${buildVersionTag}"
+    //project.version "${buildVersion}-${buildVersionTag}"
     project.group groupName
 
     apply plugin:"eclipse"
@@ -70,7 +70,7 @@ subprojects { project ->
 
             docker {
                 registryCredentials {
-					url = dockerRegistryPrivateUrl 
+					url = dockerRegistryPrivateUrl
                     username = getConfigurationProperty( 'DOCKER_REGISTRY_USERNAME', 'dockerRegistryUsername' )
                     password = getConfigurationProperty( 'DOCKER_REGISTRY_PASSWORD', 'dockerRegistryPassword' )
                 }
@@ -121,8 +121,8 @@ subprojects { project ->
                 jarDestination = "${project.projectDir}/build/libs/${project.name}-${version}.jar"
             }
 
-            io.ossim.gradleDefaults.Publications.addPublication(project, groupName, name, "${buildVersion}-${buildVersionTag}")
-            io.ossim.gradleDefaults.Publications.addRepository(project, mavenPublishUrl, mavenRepoUsername, mavenRepoPassword)
+            //io.ossim.gradleDefaults.Publications.addPublication(project, groupName, name, "${buildVersion}-${buildVersionTag}")
+            //io.ossim.gradleDefaults.Publications.addRepository(project, mavenPublishUrl, mavenRepoUsername, mavenRepoPassword)
         }
 
         apply plugin:"asset-pipeline"

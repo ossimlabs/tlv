@@ -8,6 +8,7 @@ properties([
   [$class: 'GithubProjectProperty', displayName: '', projectUrlStr: 'https://github.com/ossimlabs/omar-tlv'],
   buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '3', daysToKeepStr: '', numToKeepStr: '20')),
   disableConcurrentBuilds()
+
 ])
 podTemplate(
   containers: [
@@ -53,6 +54,7 @@ podTemplate(
       GIT_BRANCH_NAME = scmVars.GIT_BRANCH
       BRANCH_NAME = "${sh(returnStdout: true, script: "echo ${GIT_BRANCH_NAME} | awk -F'/' '{print \$2}'").trim()}"
       CHART_APP_VERSION = "${sh(returnStdout: true, script: "grep -Po \"(?<=appVersion: ).*\" chart/Chart.yaml").trim()}"
+      //GRADLE_APP_VERSION = "${sh(returnStdout: true, script: "grep -Po \"(?<=buildVersion=).*\" gradle.properties").trim()}"
 
       script {
         if (BRANCH_NAME == 'master') {
