@@ -1,6 +1,6 @@
 properties([
     parameters ([
-        booleanParam(name: 'CLEAN_WORKSPACE', defaultValue: true, description: 'Clean the workspace at the end of the run'),
+        //booleanParam(name: 'CLEAN_WORKSPACE', defaultValue: true, description: 'Clean the workspace at the end of the run'),
         string(name: 'DOCKER_REGISTRY_DOWNLOAD_URL', defaultValue: 'nexus-docker-private-group.ossim.io', description: 'Repository of docker images')
     ]),
     pipelineTriggers([
@@ -204,9 +204,11 @@ podTemplate(
         }
     }
 
+/*
     stage("Clean Workspace"){
       if ("${CLEAN_WORKSPACE}" == "true")
         step([$class: 'WsCleanup'])
     }
   }
+*/  
 }
