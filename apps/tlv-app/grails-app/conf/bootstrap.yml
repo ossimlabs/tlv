@@ -1,14 +1,7 @@
 ---
-kubernetes:
-  client:
-    secure: true
-    secrets:
-      enabled: true
-    discovery:
-      enabled: true
-
-    config-maps:
-      enabled: true
-      watch: true
-      labels:
-        - app: tlv
+---
+spring:
+  cloud:
+    config:
+      enabled: ${SPRING_CLOUD_CONFIG_ENABLED:false}
+      uri: http://omar-config-server:8888/omar-config-server
