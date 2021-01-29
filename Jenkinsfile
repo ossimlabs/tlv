@@ -1,13 +1,14 @@
 properties([
-    parameters ([
-        string(name: 'DOCKER_REGISTRY_DOWNLOAD_URL', defaultValue: 'nexus-docker-private-group.ossim.io', description: 'Repository of docker images')
-    ]),
-    pipelineTriggers([
-            [$class: "GitHubPushTrigger"]
-    ]),
-    [$class: 'GithubProjectProperty', displayName: '', projectUrlStr: 'https://github.com/ossimlabs/tlv'],
-    buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '3', daysToKeepStr: '', numToKeepStr: '20')),
-    disableConcurrentBuilds()
+  parameters ([
+    string(name: 'DOCKER_REGISTRY_DOWNLOAD_URL', defaultValue: 'nexus-docker-private-group.ossim.io', description: 'Repository of docker images')
+  ]),
+  pipelineTriggers([
+    [$class: "GitHubPushTrigger"]
+  ]),
+  [$class: 'GithubProjectProperty', displayName: '', projectUrlStr: 'https://github.com/ossimlabs/omar-tlv'],
+  buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '3', daysToKeepStr: '', numToKeepStr: '20')),
+  disableConcurrentBuilds()
+
 ])
 podTemplate(
   containers: [
@@ -24,7 +25,7 @@ podTemplate(
       command: 'cat',
       ttyEnabled: true
     ),
-	  containerTemplate(
+    containerTemplate(
       image: "${DOCKER_REGISTRY_DOWNLOAD_URL}/kubectl-aws-helm:latest",
       name: 'kubectl-aws-helm',
       command: 'cat',
@@ -63,26 +64,25 @@ podTemplate(
       }
     }
 
-    stage("Load Variables")
-    {
-      withCredentials([string(credentialsId: 'o2-artifact-project', variable: 'o2ArtifactProject')]) {
-        step ([$class: "CopyArtifact",
-          projectName: o2ArtifactProject,
-          filter: "common-variables.groovy",
-          flatten: true])
+    stage("Load Variables") {
+        withCredentials([string(credentialsId: 'o2-artifact-project', variable: 'o2ArtifactProject')]) {
+          step ([$class: "CopyArtifact",
+                 projectName: o2ArtifactProject,
+                 filter: "common-variables.groovy",
+                 flatten: true])
+        }
+        load "common-variables.groovy"
       }
-      load "common-variables.groovy"
-    }
 
     stage('SonarQube Analysis') {
       nodejs(nodeJSInstallationName: "${NODEJS_VERSION}") {
         def scannerHome = tool "${SONARQUBE_SCANNER_VERSION}"
-          withSonarQubeEnv('sonarqube') {
-            sh """
-              ${scannerHome}/bin/sonar-scanner \
-                  -Dsonar.projectKey=tlv \
-                  -Dsonar.login=${SONARQUBE_TOKEN}
-            """
+        withSonarQubeEnv('sonarqube') {
+          sh """
+            ${scannerHome}/bin/sonar-scanner \
+                -Dsonar.projectKey=tlv \
+                -Dsonar.login=${SONARQUBE_TOKEN}
+          """
         }
       }
     }
@@ -93,7 +93,6 @@ podTemplate(
 		      buildVersion="${CHART_APP_VERSION}"
           ./gradlew assemble -PossimMavenProxy=${MAVEN_DOWNLOAD_URL}
           cp build/libs/*.jar docker/
-          ls docker
         """
       }
     }
@@ -141,11 +140,11 @@ podTemplate(
       }
     }
 
-	  stage('New Deploy') {
+    stage('New Deploy') {
       container('kubectl-aws-helm') {
-          withAWS(
+        withAWS(
           credentials: 'Jenkins-AWS-IAM',
-        region: 'us-east-1') {
+          region: 'us-east-1') {
           if (BRANCH_NAME == 'master') {
             //insert future instructions here
           }
