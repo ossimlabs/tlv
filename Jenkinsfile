@@ -20,7 +20,7 @@ podTemplate(
       privileged: true
     ),
     containerTemplate(
-      image: "${DOCKER_REGISTRY_DOWNLOAD_URL}/omar-builder:latest",
+      image: "${DOCKER_REGISTRY_DOWNLOAD_URL}/omar-builder:jdk11",
       name: 'builder',
       command: 'cat',
       ttyEnabled: true
@@ -53,8 +53,7 @@ podTemplate(
 
       GIT_BRANCH_NAME = scmVars.GIT_BRANCH
       BRANCH_NAME = "${sh(returnStdout: true, script: "echo ${GIT_BRANCH_NAME} | awk -F'/' '{print \$2}'").trim()}"
-      CHART_APP_VERSION = "${sh(returnStdout: true, script: "grep -Po \"(?<=appVersion: ).*\" chart/Chart.yaml").trim()}"
-      //GRADLE_APP_VERSION = "${sh(returnStdout: true, script: "grep -Po \"(?<=buildVersion=).*\" gradle.properties").trim()}"
+      CHART_APP_VERSION = """${sh(returnStdout: true, script: "cat chart/Chart.yaml | grep version: | awk -F'version:' '{print \$2}'").trim()}"""
 
       script {
         if (BRANCH_NAME == 'master') {
@@ -159,6 +158,6 @@ podTemplate(
           }
         }
       }
-    }
+    }  
   }
 }

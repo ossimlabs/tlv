@@ -15,7 +15,7 @@ function addBaseLayersToTheMap() {
 							TRANSPARENT: true,
 							VERSION: x.version || "1.1.1"
 						},
-						urls: x.urls.split( ',' )
+						urls: (x.urls) ? x.urls.split( ',' ) : []
 					});
 
 					if ( x.crs ) { source.updateParams({ CRS: x.crs }); }
@@ -45,14 +45,14 @@ function addBaseLayersToTheMap() {
 							resolutions: resolutions,
 							matrixIds: matrixIds
 						}),
-						urls: x.urls.split( ',' ),
+						urls: (x.urls) ? x.urls.split( ',' ) : [],
 					});
 					break;
 
 				case "xyz":
 					source = new ol.source.XYZ({
 						crossOrigin: connectedToLocalhost() ? 'anonymous' : undefined,
-						urls: x.urls.split( ',' )
+						urls: (x.urls) ? x.urls.split( ',' ) : []
 					});
 					break;
 			}
