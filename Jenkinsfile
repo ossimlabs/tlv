@@ -152,7 +152,6 @@ node(POD_LABEL){
         }
     }
 
-
     stage('Docker Build') {
         container('docker') {
             withDockerRegistry(credentialsId: 'dockerCredentials', url: "https://${DOCKER_REGISTRY_DOWNLOAD_URL}") {
@@ -214,7 +213,3 @@ node(POD_LABEL){
         }
     }
 }
-
-
-
-
