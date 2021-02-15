@@ -26,7 +26,7 @@ function addDimension() {
 }
 
 var addLayerToTheMapView = addLayerToTheMap;
-addLayerToTheMap = function( layer ) {
+var addLayerToTheMap = function( layer ) {
 	addLayerToTheMapView( layer );
 
 	layer.imageSpaceMap.addLayer( layer.imageSpaceImageLayer );
@@ -66,7 +66,7 @@ function addSwipeListenerToMap() {
 }
 
 var changeFrameView = changeFrame;
-changeFrame = function( params ) {
+var changeFrame = function( params ) {
 	var oldLayer = tlv.layers[ tlv.currentLayer ];
 	var oldMap = oldLayer.imageSpaceMap;
 	var center = oldMap.getView().getCenter();
@@ -123,7 +123,7 @@ function changeWmsLayerType() {
 }
 
 var createLayersView = createLayers;
-createLayers = function( layer ) {
+var createLayers = function( layer ) {
 	createLayersView( layer );
 
 	var imageHeight = layer.metadata.height;
@@ -144,7 +144,7 @@ createLayers = function( layer ) {
 }
 
 var createLayerSourcesView = createLayerSources;
-createLayerSources = function( layer ) {
+var createLayerSources = function( layer ) {
 	createLayerSourcesView( layer );
 
 	var imageHeight = layer.metadata.height;
@@ -189,7 +189,7 @@ createLayerSources = function( layer ) {
 }
 
 var createMapControlsView = createMapControls;
-createMapControls = function() {
+var createMapControls = function() {
 	createMapControlsView();
 
 	$.each( createSwipeControls(), function( i, x ) { tlv.mapControls.push( x ); } );
@@ -284,7 +284,7 @@ function dimensionToggle() {
 }
 
 var geoJumpView = geoJump;
-geoJump = function( location ) {
+var geoJump = function( location ) {
 	if ( $( '#viewSpaceSelect' ).val() == 'imageSpace' ) {
 		convertGeospatialCoordinateFormat( location, function( coordinate ) {
 			if ( coordinate ) {
@@ -303,7 +303,7 @@ geoJump = function( location ) {
 }
 
 var getScreenshotMapView = getScreenshotMap;
-getScreenshotMap = function( callback ) {
+var getScreenshotMap = function( callback ) {
 	if ( $( '#imageSpaceMaps' ).is( ':visible' ) ) {
 		var map = tlv.layers[ tlv.currentLayer ].imageSpaceMap;
 		map.once(
@@ -380,8 +380,6 @@ function openGeometries() {
 				width: size[ 0 ]
 			};
 
-			mapCanvas = event.context.canvas;
-
 			var popup = window.open( tlv.contextPath + "/geometries?" + $.param( params ), "Collection Geometries", "height=512,width=512" );
 		});
 		tlv.map.renderSync();
@@ -451,7 +449,7 @@ function removeSwipeListenerFromMap() {
 }
 
 var rightClickView = rightClick;
-rightClick = function( event ) {
+var rightClick = function( event ) {
 	event.preventDefault();
 
 	if ( tlv.layers.length > 1 ) {
@@ -525,7 +523,7 @@ function setupImageSpaceMaps() {
 }
 
 var setupTimeLapseView = setupTimeLapse;
-setupTimeLapse = function() {
+var setupTimeLapse = function() {
 	setupImageSpaceMaps();
 
 	setupTimeLapseView();
@@ -667,7 +665,7 @@ function turnOnSwipe() {
 }
 
 var updateMapSizeView = updateMapSize;
-updateMapSize = function() {
+var updateMapSize = function() {
 	if ( $( '#imageSpaceMaps' ).is( ':visible' ) ) {
 		var windowHeight = $( window ).height();
 		var bannersHeight = $( ".banner" ).height() + $( ".security-classification" ).height();
@@ -685,7 +683,7 @@ updateMapSize = function() {
 }
 
 var updateScreenTextView = updateScreenText;
-updateScreenText = function() {
+var updateScreenText = function() {
 	updateScreenTextView();
 
 	if ( $( "#swipeSelect" ).val() == "on" && tlv.sipwLayers ) {
@@ -713,7 +711,7 @@ function viewSpaceToggle() {
 }
 
 var zoomToFullResolutionView = zoomToFullResolution;
-zoomToFullResolution = function() {
+var zoomToFullResolution = function() {
 	if ( $( '#imageSpaceMaps' ).is( ':visible' ) ) {
 		tlv.layers[ tlv.currentLayer ].imageSpaceMap.getView().setResolution( 1 );
 	}
@@ -723,7 +721,7 @@ zoomToFullResolution = function() {
 }
 
 var zoomToMaximumExtentView = zoomToMaximumExtent;
-zoomToMaximumExtent = function() {
+var zoomToMaximumExtent = function() {
 	if ( $( '#imageSpaceMaps' ).is( ':visible' ) ) {
 		var layer = tlv.layers[ tlv.currentLayer ];
 		var map = layer.imageSpaceMap;

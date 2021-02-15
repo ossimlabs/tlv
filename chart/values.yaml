@@ -2,17 +2,10 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicas: 1
-
 appName: tlv
 
 global:
   dockerRepository: nexus-docker-private-group.ossim.io
-  imagePullSecret:
-    registry: null
-    username: null
-    password: null
-  hostname: omar-dev.ossim.io
 
   createIngress: true
   useTls: false
@@ -22,19 +15,6 @@ global:
 
   createImagePullSecret: true
   useImagePullSecret: true
-  
-  createHpa: true
-
-  useSpringConfigServer: false
-
-# These variables can be overridden because of the use of the 'pluck' function:
-# - createIngress
-# - useTls
-# - useTlsClientAuth
-# - createImagePullSecret
-# - createHpa
-# - createPVs
-# - useSpringConfigServer
 
 resources:
   limits:
@@ -46,7 +26,6 @@ resources:
     
 image:
   name: tlv
-  tag: dev
   pullPolicy: Always
 
 ingressPath: /tlv
@@ -69,17 +48,3 @@ readinessProbe:
   path: /tlv/actuator/health
 
 terminationGracePeriodSeconds: 30
-
-envVars:
-  SPRING_CLOUD_CONFIG_LABEL: master
-  JAVA_OPTS: "-server -Xms256m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=1 -XX:+CMSClassUnloadingEnabled -XX:+UseGCOverheadLimit -Djava.awt.headless=true -XshowSettings:vm -Djava.security.egd=file:/dev/./urandom"
-
-configmaps: {}
-
-extraVolumes: []
-
-extraVolumeMounts: []
-
-extraInitContainers: []
-
-sideCars: []

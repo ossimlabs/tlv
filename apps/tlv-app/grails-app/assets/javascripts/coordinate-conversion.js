@@ -2,44 +2,44 @@ function CoordinateConversion() {
 	this.ddToDms = function(dd, position) {
 		var degreesAbs = Math.abs(dd);
 		var degrees = Math.floor(degreesAbs);
-		
+
 		var minutesAbs = Math.abs((degreesAbs - degrees) * 60);
 		var minutes = Math.floor(minutesAbs);
-		
+
 		var seconds = Math.abs((minutesAbs - minutes) * 60);
 		seconds = seconds.toFixed(2);
-		
+
 		var dms = "";
 		if(degrees < 10) {
 			if (position == "lat") { dms += "0" + degrees; }
 			else if (position == "lon") { dms += "00" + degrees; }
 		}
-		else if(degrees < 100) {  
+		else if(degrees < 100) {
 			if (position == "lon") { dms += "0" + degrees; }
 			else { dms += degrees; }
 		}
 		else { dms += degrees; }
 		dms = minutes < 10 ? dms + "0" + minutes : dms + minutes;
 		dms = seconds < 10 ? dms + "0" + seconds : dms + seconds;
-		
+
 		if(position == "lat" && dd > 0) { dms += " N"; }
 		else if(position == "lat" && dd < 0) { dms += " S"; }
 		else if(position == "lon" && dd > 0) { dms += " E"; }
 		else if(position == "lon" && dd < 0) { dms += " W"; }
-		
+
 
 		return dms;
-	};	
-	
+	};
+
 	this.dmsToDd = function(deg, min, sec, ori) {
 		var dd = Math.abs(deg) + Math.abs(min / 60) + Math.abs(sec / 3600);
-		
+
 		if(ori == "S" || ori == "s" || ori == "W" || ori == "w") { dd = -dd; }
-	
-	
+
+
 		return dd;
 	};
-	
+
 	this.ddToMgrs = function(lat, lon) {
 		var K0 = 0.9996;
 		var A1 = 6378137.0 * K0;
@@ -47,7 +47,7 @@ function CoordinateConversion() {
 		K0 = 0;
 		var N0 = 0;
 		var E0 = 500000;
-		
+
 		var N1 = (A1 - B1) / (A1 + B1);
 		var N2 = N1 * N1;
 		var N3 = N2 * N1;
@@ -55,12 +55,12 @@ function CoordinateConversion() {
 
 		var latRad = lat * (Math.PI / 180.0);
 		var lonRad = lon * (Math.PI / 180.0);
-		
+
 		var latRadSin = Math.sin(latRad);
 		var latRadCos = Math.cos(latRad);
 		var latRadCos2 = latRadCos * latRadCos;
 		var latRadCos3 = latRadCos2 * latRadCos;
-		
+
 		var latRadTan = latRadSin / latRadCos;
 		var latRadTan2 = latRadTan * latRadTan;
 
@@ -207,7 +207,7 @@ function CoordinateConversion() {
     };
 
 	this.mgrsToDd = function(one, two, three, four, five, six)
-    {    
+    {
             var zone = one;
             var zdl = two;
             var c1 = three;
@@ -235,7 +235,7 @@ function CoordinateConversion() {
                 u.N+=10000000;
             }
 
-            latlon = new Array(2);
+            var latlon = new Array(2);
             var x, y, southhemi;
 
             x = u.E;
@@ -263,7 +263,7 @@ function CoordinateConversion() {
             var lonZone = one;
             var latZone = two;
             var easting = three;
-            var northing = four;       
+            var northing = four;
             var remainder = five;
 
             if (latZone == "C" || latZone == "D" || latZone == "E" || latZone == "F" || latZone == "G" || latZone == "H"
@@ -282,7 +282,7 @@ function CoordinateConversion() {
             var lon = ( RadToDeg (latlon[0]));
 
             return lon + " " + lat;
-        
+
     };
 
     var UTMzdlChars="CDEFGHJKLMNPQRSTUVWXX";
@@ -451,7 +451,7 @@ function CoordinateConversion() {
         N0+=Math.round((approxN-N0)/20)*20;   // add a multiple of 2000km to get the MGRS square closest
                                               // to approxN (letters repeat every 20*100km=2000km)
 
-        d=er.length;
+        var d=er.length;
 
         if(nr.length!=d)
         {

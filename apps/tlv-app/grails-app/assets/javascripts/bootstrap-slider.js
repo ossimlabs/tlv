@@ -1268,7 +1268,7 @@
 				var val = this._calculateValue(true);
 				this.setValue(val, true, true);
 
-				return false;
+				return true;
 			},
 			_adjustPercentageForRangeSliders: function(percentage) {
 				if (this.options.range) {
@@ -1307,7 +1307,7 @@
 				this._setDataVal(val);
 				this._trigger('slideStop', val);
 
-				return false;
+				return true;
 			},
 			_calculateValue: function(snapToClosestTick) {
 				var val;
