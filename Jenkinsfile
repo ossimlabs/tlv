@@ -137,7 +137,7 @@ node(POD_LABEL){
         container('builder') {
             sh """
               ./gradlew assemble -PossimMavenProxy=${MAVEN_DOWNLOAD_URL}
-              cp build/libs/*.jar docker/
+              ./gradlew copyJarToDockerDir
             """
         }
     }
