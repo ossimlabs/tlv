@@ -1,0 +1,1927 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="0.2330" tests="24" failures="16">
+  <testsuite name="Root Suite" timestamp="2021-02-18T21:30:08" tests="0" file="cypress/integration/Tests.js" time="0.0000" failures="0">
+  </testsuite>
+  <testsuite name="Automated tests for TLV API endpoints" timestamp="2021-02-18T21:30:08" tests="24" time="0.2330" failures="16">
+    <testcase name="Automated tests for TLV API endpoints Should test 200 code for all_default test values" time="0.0000" classname="Should test 200 code for all_default test values">
+      <failure message="`cy.request()` failed on:
+
+https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+
+The response we received from your web server was:
+
+  &gt; 503: Service Unavailable
+
+This was considered a failure because the status code was not `2xx` or `3xx`.
+
+If you do not want status codes to cause failures pass the option: `failOnStatusCode: false`
+
+-----------------------------------------------------------
+
+The request we sent was:
+
+Method: GET
+URL: https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+Headers: {
+  &quot;Connection&quot;: &quot;keep-alive&quot;,
+  &quot;user-agent&quot;: &quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_1) AppleWebKit/537.36 (KHTML, like Gecko) Cypress/6.5.0 Chrome/87.0.4280.141 Electron/11.2.3 Safari/537.36&quot;,
+  &quot;accept&quot;: &quot;*/*&quot;,
+  &quot;accept-encoding&quot;: &quot;gzip, deflate&quot;
+}
+
+-----------------------------------------------------------
+
+The response we got was:
+
+Status: 503 - Service Unavailable
+Headers: {
+  &quot;server&quot;: &quot;nginx/1.17.10&quot;,
+  &quot;date&quot;: &quot;Thu, 18 Feb 2021 21:30:08 GMT&quot;,
+  &quot;content-type&quot;: &quot;text/html&quot;,
+  &quot;content-length&quot;: &quot;600&quot;,
+  &quot;connection&quot;: &quot;keep-alive&quot;,
+  &quot;strict-transport-security&quot;: &quot;max-age=15724800; includeSubDomains&quot;
+}
+Body: &lt;html&gt;
+&lt;head&gt;&lt;title&gt;503 Service Temporarily Unavailable&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+&lt;center&gt;&lt;h1&gt;503 Service Temporarily Unavailable&lt;/h1&gt;&lt;/center&gt;
+&lt;hr&gt;&lt;center&gt;nginx/1.17.10&lt;/center&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+
+https://on.cypress.io/request" type="CypressError"><![CDATA[CypressError: `cy.request()` failed on:
+
+https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+
+The response we received from your web server was:
+
+  > 503: Service Unavailable
+
+This was considered a failure because the status code was not `2xx` or `3xx`.
+
+If you do not want status codes to cause failures pass the option: `failOnStatusCode: false`
+
+-----------------------------------------------------------
+
+The request we sent was:
+
+Method: GET
+URL: https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+Headers: {
+  "Connection": "keep-alive",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_1) AppleWebKit/537.36 (KHTML, like Gecko) Cypress/6.5.0 Chrome/87.0.4280.141 Electron/11.2.3 Safari/537.36",
+  "accept": "*/*",
+  "accept-encoding": "gzip, deflate"
+}
+
+-----------------------------------------------------------
+
+The response we got was:
+
+Status: 503 - Service Unavailable
+Headers: {
+  "server": "nginx/1.17.10",
+  "date": "Thu, 18 Feb 2021 21:30:08 GMT",
+  "content-type": "text/html",
+  "content-length": "600",
+  "connection": "keep-alive",
+  "strict-transport-security": "max-age=15724800; includeSubDomains"
+}
+Body: <html>
+<head><title>503 Service Temporarily Unavailable</title></head>
+<body>
+<center><h1>503 Service Temporarily Unavailable</h1></center>
+<hr><center>nginx/1.17.10</center>
+</body>
+</html>
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+
+https://on.cypress.io/request
+    at https://omar.ossim.io/__cypress/runner/cypress_runner.js:160251:21
+    at tryCatcher (https://omar.ossim.io/__cypress/runner/cypress_runner.js:10765:23)
+    at Promise._settlePromiseFromHandler (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8700:31)
+    at Promise._settlePromise (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8757:18)
+    at Promise._settlePromise0 (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8802:10)
+    at Promise._settlePromises (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8882:18)
+    at _drainQueueStep (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5472:12)
+    at _drainQueue (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5465:9)
+    at Async.../../node_modules/bluebird/js/release/async.js.Async._drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5481:5)
+    at Async.drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5351:14)
+From Your Spec Code:
+    at Context.eval (https://omar.ossim.io/__cypress/tests?p=cypress/integration/Tests.js:121:12)]]></failure>
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should test response header for all_default" time="0.0000" classname="Should test response header for all_default">
+      <failure message="`cy.request()` failed on:
+
+https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+
+The response we received from your web server was:
+
+  &gt; 503: Service Unavailable
+
+This was considered a failure because the status code was not `2xx` or `3xx`.
+
+If you do not want status codes to cause failures pass the option: `failOnStatusCode: false`
+
+-----------------------------------------------------------
+
+The request we sent was:
+
+Method: GET
+URL: https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+Headers: {
+  &quot;Connection&quot;: &quot;keep-alive&quot;,
+  &quot;user-agent&quot;: &quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_1) AppleWebKit/537.36 (KHTML, like Gecko) Cypress/6.5.0 Chrome/87.0.4280.141 Electron/11.2.3 Safari/537.36&quot;,
+  &quot;accept&quot;: &quot;*/*&quot;,
+  &quot;accept-encoding&quot;: &quot;gzip, deflate&quot;
+}
+
+-----------------------------------------------------------
+
+The response we got was:
+
+Status: 503 - Service Unavailable
+Headers: {
+  &quot;server&quot;: &quot;nginx/1.17.10&quot;,
+  &quot;date&quot;: &quot;Thu, 18 Feb 2021 21:30:09 GMT&quot;,
+  &quot;content-type&quot;: &quot;text/html&quot;,
+  &quot;content-length&quot;: &quot;600&quot;,
+  &quot;connection&quot;: &quot;keep-alive&quot;,
+  &quot;strict-transport-security&quot;: &quot;max-age=15724800; includeSubDomains&quot;
+}
+Body: &lt;html&gt;
+&lt;head&gt;&lt;title&gt;503 Service Temporarily Unavailable&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+&lt;center&gt;&lt;h1&gt;503 Service Temporarily Unavailable&lt;/h1&gt;&lt;/center&gt;
+&lt;hr&gt;&lt;center&gt;nginx/1.17.10&lt;/center&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+
+https://on.cypress.io/request" type="CypressError"><![CDATA[CypressError: `cy.request()` failed on:
+
+https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+
+The response we received from your web server was:
+
+  > 503: Service Unavailable
+
+This was considered a failure because the status code was not `2xx` or `3xx`.
+
+If you do not want status codes to cause failures pass the option: `failOnStatusCode: false`
+
+-----------------------------------------------------------
+
+The request we sent was:
+
+Method: GET
+URL: https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+Headers: {
+  "Connection": "keep-alive",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_1) AppleWebKit/537.36 (KHTML, like Gecko) Cypress/6.5.0 Chrome/87.0.4280.141 Electron/11.2.3 Safari/537.36",
+  "accept": "*/*",
+  "accept-encoding": "gzip, deflate"
+}
+
+-----------------------------------------------------------
+
+The response we got was:
+
+Status: 503 - Service Unavailable
+Headers: {
+  "server": "nginx/1.17.10",
+  "date": "Thu, 18 Feb 2021 21:30:09 GMT",
+  "content-type": "text/html",
+  "content-length": "600",
+  "connection": "keep-alive",
+  "strict-transport-security": "max-age=15724800; includeSubDomains"
+}
+Body: <html>
+<head><title>503 Service Temporarily Unavailable</title></head>
+<body>
+<center><h1>503 Service Temporarily Unavailable</h1></center>
+<hr><center>nginx/1.17.10</center>
+</body>
+</html>
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+
+https://on.cypress.io/request
+    at https://omar.ossim.io/__cypress/runner/cypress_runner.js:160251:21
+    at tryCatcher (https://omar.ossim.io/__cypress/runner/cypress_runner.js:10765:23)
+    at Promise._settlePromiseFromHandler (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8700:31)
+    at Promise._settlePromise (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8757:18)
+    at Promise._settlePromise0 (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8802:10)
+    at Promise._settlePromises (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8882:18)
+    at _drainQueueStep (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5472:12)
+    at _drainQueue (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5465:9)
+    at Async.../../node_modules/bluebird/js/release/async.js.Async._drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5481:5)
+    at Async.drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5351:14)
+From Your Spec Code:
+    at Context.eval (https://omar.ossim.io/__cypress/tests?p=cypress/integration/Tests.js:126:12)]]></failure>
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should write data to JSON" time="0.0200" classname="Should write data to JSON">
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should test 200 code for default_w_location test values" time="0.0000" classname="Should test 200 code for default_w_location test values">
+      <failure message="`cy.request()` failed on:
+
+https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+
+The response we received from your web server was:
+
+  &gt; 503: Service Unavailable
+
+This was considered a failure because the status code was not `2xx` or `3xx`.
+
+If you do not want status codes to cause failures pass the option: `failOnStatusCode: false`
+
+-----------------------------------------------------------
+
+The request we sent was:
+
+Method: GET
+URL: https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+Headers: {
+  &quot;Connection&quot;: &quot;keep-alive&quot;,
+  &quot;user-agent&quot;: &quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_1) AppleWebKit/537.36 (KHTML, like Gecko) Cypress/6.5.0 Chrome/87.0.4280.141 Electron/11.2.3 Safari/537.36&quot;,
+  &quot;accept&quot;: &quot;*/*&quot;,
+  &quot;accept-encoding&quot;: &quot;gzip, deflate&quot;
+}
+
+-----------------------------------------------------------
+
+The response we got was:
+
+Status: 503 - Service Unavailable
+Headers: {
+  &quot;server&quot;: &quot;nginx/1.17.10&quot;,
+  &quot;date&quot;: &quot;Thu, 18 Feb 2021 21:30:09 GMT&quot;,
+  &quot;content-type&quot;: &quot;text/html&quot;,
+  &quot;content-length&quot;: &quot;600&quot;,
+  &quot;connection&quot;: &quot;keep-alive&quot;,
+  &quot;strict-transport-security&quot;: &quot;max-age=15724800; includeSubDomains&quot;
+}
+Body: &lt;html&gt;
+&lt;head&gt;&lt;title&gt;503 Service Temporarily Unavailable&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+&lt;center&gt;&lt;h1&gt;503 Service Temporarily Unavailable&lt;/h1&gt;&lt;/center&gt;
+&lt;hr&gt;&lt;center&gt;nginx/1.17.10&lt;/center&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+
+https://on.cypress.io/request" type="CypressError"><![CDATA[CypressError: `cy.request()` failed on:
+
+https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+
+The response we received from your web server was:
+
+  > 503: Service Unavailable
+
+This was considered a failure because the status code was not `2xx` or `3xx`.
+
+If you do not want status codes to cause failures pass the option: `failOnStatusCode: false`
+
+-----------------------------------------------------------
+
+The request we sent was:
+
+Method: GET
+URL: https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+Headers: {
+  "Connection": "keep-alive",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_1) AppleWebKit/537.36 (KHTML, like Gecko) Cypress/6.5.0 Chrome/87.0.4280.141 Electron/11.2.3 Safari/537.36",
+  "accept": "*/*",
+  "accept-encoding": "gzip, deflate"
+}
+
+-----------------------------------------------------------
+
+The response we got was:
+
+Status: 503 - Service Unavailable
+Headers: {
+  "server": "nginx/1.17.10",
+  "date": "Thu, 18 Feb 2021 21:30:09 GMT",
+  "content-type": "text/html",
+  "content-length": "600",
+  "connection": "keep-alive",
+  "strict-transport-security": "max-age=15724800; includeSubDomains"
+}
+Body: <html>
+<head><title>503 Service Temporarily Unavailable</title></head>
+<body>
+<center><h1>503 Service Temporarily Unavailable</h1></center>
+<hr><center>nginx/1.17.10</center>
+</body>
+</html>
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+
+https://on.cypress.io/request
+    at https://omar.ossim.io/__cypress/runner/cypress_runner.js:160251:21
+    at tryCatcher (https://omar.ossim.io/__cypress/runner/cypress_runner.js:10765:23)
+    at Promise._settlePromiseFromHandler (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8700:31)
+    at Promise._settlePromise (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8757:18)
+    at Promise._settlePromise0 (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8802:10)
+    at Promise._settlePromises (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8882:18)
+    at _drainQueueStep (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5472:12)
+    at _drainQueue (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5465:9)
+    at Async.../../node_modules/bluebird/js/release/async.js.Async._drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5481:5)
+    at Async.drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5351:14)
+From Your Spec Code:
+    at Context.eval (https://omar.ossim.io/__cypress/tests?p=cypress/integration/Tests.js:121:12)]]></failure>
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should test response header for default_w_location" time="0.0000" classname="Should test response header for default_w_location">
+      <failure message="`cy.request()` failed on:
+
+https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+
+The response we received from your web server was:
+
+  &gt; 503: Service Unavailable
+
+This was considered a failure because the status code was not `2xx` or `3xx`.
+
+If you do not want status codes to cause failures pass the option: `failOnStatusCode: false`
+
+-----------------------------------------------------------
+
+The request we sent was:
+
+Method: GET
+URL: https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+Headers: {
+  &quot;Connection&quot;: &quot;keep-alive&quot;,
+  &quot;user-agent&quot;: &quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_1) AppleWebKit/537.36 (KHTML, like Gecko) Cypress/6.5.0 Chrome/87.0.4280.141 Electron/11.2.3 Safari/537.36&quot;,
+  &quot;accept&quot;: &quot;*/*&quot;,
+  &quot;accept-encoding&quot;: &quot;gzip, deflate&quot;
+}
+
+-----------------------------------------------------------
+
+The response we got was:
+
+Status: 503 - Service Unavailable
+Headers: {
+  &quot;server&quot;: &quot;nginx/1.17.10&quot;,
+  &quot;date&quot;: &quot;Thu, 18 Feb 2021 21:30:10 GMT&quot;,
+  &quot;content-type&quot;: &quot;text/html&quot;,
+  &quot;content-length&quot;: &quot;600&quot;,
+  &quot;connection&quot;: &quot;keep-alive&quot;,
+  &quot;strict-transport-security&quot;: &quot;max-age=15724800; includeSubDomains&quot;
+}
+Body: &lt;html&gt;
+&lt;head&gt;&lt;title&gt;503 Service Temporarily Unavailable&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+&lt;center&gt;&lt;h1&gt;503 Service Temporarily Unavailable&lt;/h1&gt;&lt;/center&gt;
+&lt;hr&gt;&lt;center&gt;nginx/1.17.10&lt;/center&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+
+https://on.cypress.io/request" type="CypressError"><![CDATA[CypressError: `cy.request()` failed on:
+
+https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+
+The response we received from your web server was:
+
+  > 503: Service Unavailable
+
+This was considered a failure because the status code was not `2xx` or `3xx`.
+
+If you do not want status codes to cause failures pass the option: `failOnStatusCode: false`
+
+-----------------------------------------------------------
+
+The request we sent was:
+
+Method: GET
+URL: https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+Headers: {
+  "Connection": "keep-alive",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_1) AppleWebKit/537.36 (KHTML, like Gecko) Cypress/6.5.0 Chrome/87.0.4280.141 Electron/11.2.3 Safari/537.36",
+  "accept": "*/*",
+  "accept-encoding": "gzip, deflate"
+}
+
+-----------------------------------------------------------
+
+The response we got was:
+
+Status: 503 - Service Unavailable
+Headers: {
+  "server": "nginx/1.17.10",
+  "date": "Thu, 18 Feb 2021 21:30:10 GMT",
+  "content-type": "text/html",
+  "content-length": "600",
+  "connection": "keep-alive",
+  "strict-transport-security": "max-age=15724800; includeSubDomains"
+}
+Body: <html>
+<head><title>503 Service Temporarily Unavailable</title></head>
+<body>
+<center><h1>503 Service Temporarily Unavailable</h1></center>
+<hr><center>nginx/1.17.10</center>
+</body>
+</html>
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+
+https://on.cypress.io/request
+    at https://omar.ossim.io/__cypress/runner/cypress_runner.js:160251:21
+    at tryCatcher (https://omar.ossim.io/__cypress/runner/cypress_runner.js:10765:23)
+    at Promise._settlePromiseFromHandler (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8700:31)
+    at Promise._settlePromise (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8757:18)
+    at Promise._settlePromise0 (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8802:10)
+    at Promise._settlePromises (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8882:18)
+    at _drainQueueStep (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5472:12)
+    at _drainQueue (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5465:9)
+    at Async.../../node_modules/bluebird/js/release/async.js.Async._drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5481:5)
+    at Async.drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5351:14)
+From Your Spec Code:
+    at Context.eval (https://omar.ossim.io/__cypress/tests?p=cypress/integration/Tests.js:126:12)]]></failure>
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should write data to JSON" time="0.0210" classname="Should write data to JSON">
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should test 200 code for good_dates test values" time="0.0000" classname="Should test 200 code for good_dates test values">
+      <failure message="`cy.request()` failed on:
+
+https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+
+The response we received from your web server was:
+
+  &gt; 503: Service Unavailable
+
+This was considered a failure because the status code was not `2xx` or `3xx`.
+
+If you do not want status codes to cause failures pass the option: `failOnStatusCode: false`
+
+-----------------------------------------------------------
+
+The request we sent was:
+
+Method: GET
+URL: https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+Headers: {
+  &quot;Connection&quot;: &quot;keep-alive&quot;,
+  &quot;user-agent&quot;: &quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_1) AppleWebKit/537.36 (KHTML, like Gecko) Cypress/6.5.0 Chrome/87.0.4280.141 Electron/11.2.3 Safari/537.36&quot;,
+  &quot;accept&quot;: &quot;*/*&quot;,
+  &quot;accept-encoding&quot;: &quot;gzip, deflate&quot;
+}
+
+-----------------------------------------------------------
+
+The response we got was:
+
+Status: 503 - Service Unavailable
+Headers: {
+  &quot;server&quot;: &quot;nginx/1.17.10&quot;,
+  &quot;date&quot;: &quot;Thu, 18 Feb 2021 21:30:10 GMT&quot;,
+  &quot;content-type&quot;: &quot;text/html&quot;,
+  &quot;content-length&quot;: &quot;600&quot;,
+  &quot;connection&quot;: &quot;keep-alive&quot;,
+  &quot;strict-transport-security&quot;: &quot;max-age=15724800; includeSubDomains&quot;
+}
+Body: &lt;html&gt;
+&lt;head&gt;&lt;title&gt;503 Service Temporarily Unavailable&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+&lt;center&gt;&lt;h1&gt;503 Service Temporarily Unavailable&lt;/h1&gt;&lt;/center&gt;
+&lt;hr&gt;&lt;center&gt;nginx/1.17.10&lt;/center&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+
+https://on.cypress.io/request" type="CypressError"><![CDATA[CypressError: `cy.request()` failed on:
+
+https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+
+The response we received from your web server was:
+
+  > 503: Service Unavailable
+
+This was considered a failure because the status code was not `2xx` or `3xx`.
+
+If you do not want status codes to cause failures pass the option: `failOnStatusCode: false`
+
+-----------------------------------------------------------
+
+The request we sent was:
+
+Method: GET
+URL: https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+Headers: {
+  "Connection": "keep-alive",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_1) AppleWebKit/537.36 (KHTML, like Gecko) Cypress/6.5.0 Chrome/87.0.4280.141 Electron/11.2.3 Safari/537.36",
+  "accept": "*/*",
+  "accept-encoding": "gzip, deflate"
+}
+
+-----------------------------------------------------------
+
+The response we got was:
+
+Status: 503 - Service Unavailable
+Headers: {
+  "server": "nginx/1.17.10",
+  "date": "Thu, 18 Feb 2021 21:30:10 GMT",
+  "content-type": "text/html",
+  "content-length": "600",
+  "connection": "keep-alive",
+  "strict-transport-security": "max-age=15724800; includeSubDomains"
+}
+Body: <html>
+<head><title>503 Service Temporarily Unavailable</title></head>
+<body>
+<center><h1>503 Service Temporarily Unavailable</h1></center>
+<hr><center>nginx/1.17.10</center>
+</body>
+</html>
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+
+https://on.cypress.io/request
+    at https://omar.ossim.io/__cypress/runner/cypress_runner.js:160251:21
+    at tryCatcher (https://omar.ossim.io/__cypress/runner/cypress_runner.js:10765:23)
+    at Promise._settlePromiseFromHandler (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8700:31)
+    at Promise._settlePromise (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8757:18)
+    at Promise._settlePromise0 (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8802:10)
+    at Promise._settlePromises (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8882:18)
+    at _drainQueueStep (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5472:12)
+    at _drainQueue (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5465:9)
+    at Async.../../node_modules/bluebird/js/release/async.js.Async._drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5481:5)
+    at Async.drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5351:14)
+From Your Spec Code:
+    at Context.eval (https://omar.ossim.io/__cypress/tests?p=cypress/integration/Tests.js:121:12)]]></failure>
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should test response header for good_dates" time="0.0000" classname="Should test response header for good_dates">
+      <failure message="`cy.request()` failed on:
+
+https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+
+The response we received from your web server was:
+
+  &gt; 503: Service Unavailable
+
+This was considered a failure because the status code was not `2xx` or `3xx`.
+
+If you do not want status codes to cause failures pass the option: `failOnStatusCode: false`
+
+-----------------------------------------------------------
+
+The request we sent was:
+
+Method: GET
+URL: https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+Headers: {
+  &quot;Connection&quot;: &quot;keep-alive&quot;,
+  &quot;user-agent&quot;: &quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_1) AppleWebKit/537.36 (KHTML, like Gecko) Cypress/6.5.0 Chrome/87.0.4280.141 Electron/11.2.3 Safari/537.36&quot;,
+  &quot;accept&quot;: &quot;*/*&quot;,
+  &quot;accept-encoding&quot;: &quot;gzip, deflate&quot;
+}
+
+-----------------------------------------------------------
+
+The response we got was:
+
+Status: 503 - Service Unavailable
+Headers: {
+  &quot;server&quot;: &quot;nginx/1.17.10&quot;,
+  &quot;date&quot;: &quot;Thu, 18 Feb 2021 21:30:10 GMT&quot;,
+  &quot;content-type&quot;: &quot;text/html&quot;,
+  &quot;content-length&quot;: &quot;600&quot;,
+  &quot;connection&quot;: &quot;keep-alive&quot;,
+  &quot;strict-transport-security&quot;: &quot;max-age=15724800; includeSubDomains&quot;
+}
+Body: &lt;html&gt;
+&lt;head&gt;&lt;title&gt;503 Service Temporarily Unavailable&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+&lt;center&gt;&lt;h1&gt;503 Service Temporarily Unavailable&lt;/h1&gt;&lt;/center&gt;
+&lt;hr&gt;&lt;center&gt;nginx/1.17.10&lt;/center&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+
+https://on.cypress.io/request" type="CypressError"><![CDATA[CypressError: `cy.request()` failed on:
+
+https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+
+The response we received from your web server was:
+
+  > 503: Service Unavailable
+
+This was considered a failure because the status code was not `2xx` or `3xx`.
+
+If you do not want status codes to cause failures pass the option: `failOnStatusCode: false`
+
+-----------------------------------------------------------
+
+The request we sent was:
+
+Method: GET
+URL: https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+Headers: {
+  "Connection": "keep-alive",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_1) AppleWebKit/537.36 (KHTML, like Gecko) Cypress/6.5.0 Chrome/87.0.4280.141 Electron/11.2.3 Safari/537.36",
+  "accept": "*/*",
+  "accept-encoding": "gzip, deflate"
+}
+
+-----------------------------------------------------------
+
+The response we got was:
+
+Status: 503 - Service Unavailable
+Headers: {
+  "server": "nginx/1.17.10",
+  "date": "Thu, 18 Feb 2021 21:30:10 GMT",
+  "content-type": "text/html",
+  "content-length": "600",
+  "connection": "keep-alive",
+  "strict-transport-security": "max-age=15724800; includeSubDomains"
+}
+Body: <html>
+<head><title>503 Service Temporarily Unavailable</title></head>
+<body>
+<center><h1>503 Service Temporarily Unavailable</h1></center>
+<hr><center>nginx/1.17.10</center>
+</body>
+</html>
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+
+https://on.cypress.io/request
+    at https://omar.ossim.io/__cypress/runner/cypress_runner.js:160251:21
+    at tryCatcher (https://omar.ossim.io/__cypress/runner/cypress_runner.js:10765:23)
+    at Promise._settlePromiseFromHandler (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8700:31)
+    at Promise._settlePromise (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8757:18)
+    at Promise._settlePromise0 (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8802:10)
+    at Promise._settlePromises (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8882:18)
+    at _drainQueueStep (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5472:12)
+    at _drainQueue (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5465:9)
+    at Async.../../node_modules/bluebird/js/release/async.js.Async._drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5481:5)
+    at Async.drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5351:14)
+From Your Spec Code:
+    at Context.eval (https://omar.ossim.io/__cypress/tests?p=cypress/integration/Tests.js:126:12)]]></failure>
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should write data to JSON" time="0.0260" classname="Should write data to JSON">
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should test 200 code for end&lt;start test values" time="0.0000" classname="Should test 200 code for end&lt;start test values">
+      <failure message="`cy.request()` failed on:
+
+https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+
+The response we received from your web server was:
+
+  &gt; 503: Service Unavailable
+
+This was considered a failure because the status code was not `2xx` or `3xx`.
+
+If you do not want status codes to cause failures pass the option: `failOnStatusCode: false`
+
+-----------------------------------------------------------
+
+The request we sent was:
+
+Method: GET
+URL: https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+Headers: {
+  &quot;Connection&quot;: &quot;keep-alive&quot;,
+  &quot;user-agent&quot;: &quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_1) AppleWebKit/537.36 (KHTML, like Gecko) Cypress/6.5.0 Chrome/87.0.4280.141 Electron/11.2.3 Safari/537.36&quot;,
+  &quot;accept&quot;: &quot;*/*&quot;,
+  &quot;accept-encoding&quot;: &quot;gzip, deflate&quot;
+}
+
+-----------------------------------------------------------
+
+The response we got was:
+
+Status: 503 - Service Unavailable
+Headers: {
+  &quot;server&quot;: &quot;nginx/1.17.10&quot;,
+  &quot;date&quot;: &quot;Thu, 18 Feb 2021 21:30:11 GMT&quot;,
+  &quot;content-type&quot;: &quot;text/html&quot;,
+  &quot;content-length&quot;: &quot;600&quot;,
+  &quot;connection&quot;: &quot;keep-alive&quot;,
+  &quot;strict-transport-security&quot;: &quot;max-age=15724800; includeSubDomains&quot;
+}
+Body: &lt;html&gt;
+&lt;head&gt;&lt;title&gt;503 Service Temporarily Unavailable&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+&lt;center&gt;&lt;h1&gt;503 Service Temporarily Unavailable&lt;/h1&gt;&lt;/center&gt;
+&lt;hr&gt;&lt;center&gt;nginx/1.17.10&lt;/center&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+
+https://on.cypress.io/request" type="CypressError"><![CDATA[CypressError: `cy.request()` failed on:
+
+https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+
+The response we received from your web server was:
+
+  > 503: Service Unavailable
+
+This was considered a failure because the status code was not `2xx` or `3xx`.
+
+If you do not want status codes to cause failures pass the option: `failOnStatusCode: false`
+
+-----------------------------------------------------------
+
+The request we sent was:
+
+Method: GET
+URL: https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+Headers: {
+  "Connection": "keep-alive",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_1) AppleWebKit/537.36 (KHTML, like Gecko) Cypress/6.5.0 Chrome/87.0.4280.141 Electron/11.2.3 Safari/537.36",
+  "accept": "*/*",
+  "accept-encoding": "gzip, deflate"
+}
+
+-----------------------------------------------------------
+
+The response we got was:
+
+Status: 503 - Service Unavailable
+Headers: {
+  "server": "nginx/1.17.10",
+  "date": "Thu, 18 Feb 2021 21:30:11 GMT",
+  "content-type": "text/html",
+  "content-length": "600",
+  "connection": "keep-alive",
+  "strict-transport-security": "max-age=15724800; includeSubDomains"
+}
+Body: <html>
+<head><title>503 Service Temporarily Unavailable</title></head>
+<body>
+<center><h1>503 Service Temporarily Unavailable</h1></center>
+<hr><center>nginx/1.17.10</center>
+</body>
+</html>
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+
+https://on.cypress.io/request
+    at https://omar.ossim.io/__cypress/runner/cypress_runner.js:160251:21
+    at tryCatcher (https://omar.ossim.io/__cypress/runner/cypress_runner.js:10765:23)
+    at Promise._settlePromiseFromHandler (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8700:31)
+    at Promise._settlePromise (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8757:18)
+    at Promise._settlePromise0 (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8802:10)
+    at Promise._settlePromises (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8882:18)
+    at _drainQueueStep (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5472:12)
+    at _drainQueue (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5465:9)
+    at Async.../../node_modules/bluebird/js/release/async.js.Async._drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5481:5)
+    at Async.drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5351:14)
+From Your Spec Code:
+    at Context.eval (https://omar.ossim.io/__cypress/tests?p=cypress/integration/Tests.js:121:12)]]></failure>
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should test response header for end&lt;start" time="0.0000" classname="Should test response header for end&lt;start">
+      <failure message="`cy.request()` failed on:
+
+https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+
+The response we received from your web server was:
+
+  &gt; 503: Service Unavailable
+
+This was considered a failure because the status code was not `2xx` or `3xx`.
+
+If you do not want status codes to cause failures pass the option: `failOnStatusCode: false`
+
+-----------------------------------------------------------
+
+The request we sent was:
+
+Method: GET
+URL: https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+Headers: {
+  &quot;Connection&quot;: &quot;keep-alive&quot;,
+  &quot;user-agent&quot;: &quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_1) AppleWebKit/537.36 (KHTML, like Gecko) Cypress/6.5.0 Chrome/87.0.4280.141 Electron/11.2.3 Safari/537.36&quot;,
+  &quot;accept&quot;: &quot;*/*&quot;,
+  &quot;accept-encoding&quot;: &quot;gzip, deflate&quot;
+}
+
+-----------------------------------------------------------
+
+The response we got was:
+
+Status: 503 - Service Unavailable
+Headers: {
+  &quot;server&quot;: &quot;nginx/1.17.10&quot;,
+  &quot;date&quot;: &quot;Thu, 18 Feb 2021 21:30:11 GMT&quot;,
+  &quot;content-type&quot;: &quot;text/html&quot;,
+  &quot;content-length&quot;: &quot;600&quot;,
+  &quot;connection&quot;: &quot;keep-alive&quot;,
+  &quot;strict-transport-security&quot;: &quot;max-age=15724800; includeSubDomains&quot;
+}
+Body: &lt;html&gt;
+&lt;head&gt;&lt;title&gt;503 Service Temporarily Unavailable&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+&lt;center&gt;&lt;h1&gt;503 Service Temporarily Unavailable&lt;/h1&gt;&lt;/center&gt;
+&lt;hr&gt;&lt;center&gt;nginx/1.17.10&lt;/center&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+
+https://on.cypress.io/request" type="CypressError"><![CDATA[CypressError: `cy.request()` failed on:
+
+https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+
+The response we received from your web server was:
+
+  > 503: Service Unavailable
+
+This was considered a failure because the status code was not `2xx` or `3xx`.
+
+If you do not want status codes to cause failures pass the option: `failOnStatusCode: false`
+
+-----------------------------------------------------------
+
+The request we sent was:
+
+Method: GET
+URL: https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+Headers: {
+  "Connection": "keep-alive",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_1) AppleWebKit/537.36 (KHTML, like Gecko) Cypress/6.5.0 Chrome/87.0.4280.141 Electron/11.2.3 Safari/537.36",
+  "accept": "*/*",
+  "accept-encoding": "gzip, deflate"
+}
+
+-----------------------------------------------------------
+
+The response we got was:
+
+Status: 503 - Service Unavailable
+Headers: {
+  "server": "nginx/1.17.10",
+  "date": "Thu, 18 Feb 2021 21:30:11 GMT",
+  "content-type": "text/html",
+  "content-length": "600",
+  "connection": "keep-alive",
+  "strict-transport-security": "max-age=15724800; includeSubDomains"
+}
+Body: <html>
+<head><title>503 Service Temporarily Unavailable</title></head>
+<body>
+<center><h1>503 Service Temporarily Unavailable</h1></center>
+<hr><center>nginx/1.17.10</center>
+</body>
+</html>
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+
+https://on.cypress.io/request
+    at https://omar.ossim.io/__cypress/runner/cypress_runner.js:160251:21
+    at tryCatcher (https://omar.ossim.io/__cypress/runner/cypress_runner.js:10765:23)
+    at Promise._settlePromiseFromHandler (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8700:31)
+    at Promise._settlePromise (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8757:18)
+    at Promise._settlePromise0 (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8802:10)
+    at Promise._settlePromises (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8882:18)
+    at _drainQueueStep (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5472:12)
+    at _drainQueue (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5465:9)
+    at Async.../../node_modules/bluebird/js/release/async.js.Async._drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5481:5)
+    at Async.drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5351:14)
+From Your Spec Code:
+    at Context.eval (https://omar.ossim.io/__cypress/tests?p=cypress/integration/Tests.js:126:12)]]></failure>
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should write data to JSON" time="0.0310" classname="Should write data to JSON">
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should test 200 code for invalid_start test values" time="0.0000" classname="Should test 200 code for invalid_start test values">
+      <failure message="`cy.request()` failed on:
+
+https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+
+The response we received from your web server was:
+
+  &gt; 503: Service Unavailable
+
+This was considered a failure because the status code was not `2xx` or `3xx`.
+
+If you do not want status codes to cause failures pass the option: `failOnStatusCode: false`
+
+-----------------------------------------------------------
+
+The request we sent was:
+
+Method: GET
+URL: https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+Headers: {
+  &quot;Connection&quot;: &quot;keep-alive&quot;,
+  &quot;user-agent&quot;: &quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_1) AppleWebKit/537.36 (KHTML, like Gecko) Cypress/6.5.0 Chrome/87.0.4280.141 Electron/11.2.3 Safari/537.36&quot;,
+  &quot;accept&quot;: &quot;*/*&quot;,
+  &quot;accept-encoding&quot;: &quot;gzip, deflate&quot;
+}
+
+-----------------------------------------------------------
+
+The response we got was:
+
+Status: 503 - Service Unavailable
+Headers: {
+  &quot;server&quot;: &quot;nginx/1.17.10&quot;,
+  &quot;date&quot;: &quot;Thu, 18 Feb 2021 21:30:12 GMT&quot;,
+  &quot;content-type&quot;: &quot;text/html&quot;,
+  &quot;content-length&quot;: &quot;600&quot;,
+  &quot;connection&quot;: &quot;keep-alive&quot;,
+  &quot;strict-transport-security&quot;: &quot;max-age=15724800; includeSubDomains&quot;
+}
+Body: &lt;html&gt;
+&lt;head&gt;&lt;title&gt;503 Service Temporarily Unavailable&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+&lt;center&gt;&lt;h1&gt;503 Service Temporarily Unavailable&lt;/h1&gt;&lt;/center&gt;
+&lt;hr&gt;&lt;center&gt;nginx/1.17.10&lt;/center&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+
+https://on.cypress.io/request" type="CypressError"><![CDATA[CypressError: `cy.request()` failed on:
+
+https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+
+The response we received from your web server was:
+
+  > 503: Service Unavailable
+
+This was considered a failure because the status code was not `2xx` or `3xx`.
+
+If you do not want status codes to cause failures pass the option: `failOnStatusCode: false`
+
+-----------------------------------------------------------
+
+The request we sent was:
+
+Method: GET
+URL: https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+Headers: {
+  "Connection": "keep-alive",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_1) AppleWebKit/537.36 (KHTML, like Gecko) Cypress/6.5.0 Chrome/87.0.4280.141 Electron/11.2.3 Safari/537.36",
+  "accept": "*/*",
+  "accept-encoding": "gzip, deflate"
+}
+
+-----------------------------------------------------------
+
+The response we got was:
+
+Status: 503 - Service Unavailable
+Headers: {
+  "server": "nginx/1.17.10",
+  "date": "Thu, 18 Feb 2021 21:30:12 GMT",
+  "content-type": "text/html",
+  "content-length": "600",
+  "connection": "keep-alive",
+  "strict-transport-security": "max-age=15724800; includeSubDomains"
+}
+Body: <html>
+<head><title>503 Service Temporarily Unavailable</title></head>
+<body>
+<center><h1>503 Service Temporarily Unavailable</h1></center>
+<hr><center>nginx/1.17.10</center>
+</body>
+</html>
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+
+https://on.cypress.io/request
+    at https://omar.ossim.io/__cypress/runner/cypress_runner.js:160251:21
+    at tryCatcher (https://omar.ossim.io/__cypress/runner/cypress_runner.js:10765:23)
+    at Promise._settlePromiseFromHandler (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8700:31)
+    at Promise._settlePromise (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8757:18)
+    at Promise._settlePromise0 (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8802:10)
+    at Promise._settlePromises (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8882:18)
+    at _drainQueueStep (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5472:12)
+    at _drainQueue (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5465:9)
+    at Async.../../node_modules/bluebird/js/release/async.js.Async._drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5481:5)
+    at Async.drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5351:14)
+From Your Spec Code:
+    at Context.eval (https://omar.ossim.io/__cypress/tests?p=cypress/integration/Tests.js:121:12)]]></failure>
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should test response header for invalid_start" time="0.0000" classname="Should test response header for invalid_start">
+      <failure message="`cy.request()` failed on:
+
+https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+
+The response we received from your web server was:
+
+  &gt; 503: Service Unavailable
+
+This was considered a failure because the status code was not `2xx` or `3xx`.
+
+If you do not want status codes to cause failures pass the option: `failOnStatusCode: false`
+
+-----------------------------------------------------------
+
+The request we sent was:
+
+Method: GET
+URL: https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+Headers: {
+  &quot;Connection&quot;: &quot;keep-alive&quot;,
+  &quot;user-agent&quot;: &quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_1) AppleWebKit/537.36 (KHTML, like Gecko) Cypress/6.5.0 Chrome/87.0.4280.141 Electron/11.2.3 Safari/537.36&quot;,
+  &quot;accept&quot;: &quot;*/*&quot;,
+  &quot;accept-encoding&quot;: &quot;gzip, deflate&quot;
+}
+
+-----------------------------------------------------------
+
+The response we got was:
+
+Status: 503 - Service Unavailable
+Headers: {
+  &quot;server&quot;: &quot;nginx/1.17.10&quot;,
+  &quot;date&quot;: &quot;Thu, 18 Feb 2021 21:30:12 GMT&quot;,
+  &quot;content-type&quot;: &quot;text/html&quot;,
+  &quot;content-length&quot;: &quot;600&quot;,
+  &quot;connection&quot;: &quot;keep-alive&quot;,
+  &quot;strict-transport-security&quot;: &quot;max-age=15724800; includeSubDomains&quot;
+}
+Body: &lt;html&gt;
+&lt;head&gt;&lt;title&gt;503 Service Temporarily Unavailable&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+&lt;center&gt;&lt;h1&gt;503 Service Temporarily Unavailable&lt;/h1&gt;&lt;/center&gt;
+&lt;hr&gt;&lt;center&gt;nginx/1.17.10&lt;/center&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+
+https://on.cypress.io/request" type="CypressError"><![CDATA[CypressError: `cy.request()` failed on:
+
+https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+
+The response we received from your web server was:
+
+  > 503: Service Unavailable
+
+This was considered a failure because the status code was not `2xx` or `3xx`.
+
+If you do not want status codes to cause failures pass the option: `failOnStatusCode: false`
+
+-----------------------------------------------------------
+
+The request we sent was:
+
+Method: GET
+URL: https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+Headers: {
+  "Connection": "keep-alive",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_1) AppleWebKit/537.36 (KHTML, like Gecko) Cypress/6.5.0 Chrome/87.0.4280.141 Electron/11.2.3 Safari/537.36",
+  "accept": "*/*",
+  "accept-encoding": "gzip, deflate"
+}
+
+-----------------------------------------------------------
+
+The response we got was:
+
+Status: 503 - Service Unavailable
+Headers: {
+  "server": "nginx/1.17.10",
+  "date": "Thu, 18 Feb 2021 21:30:12 GMT",
+  "content-type": "text/html",
+  "content-length": "600",
+  "connection": "keep-alive",
+  "strict-transport-security": "max-age=15724800; includeSubDomains"
+}
+Body: <html>
+<head><title>503 Service Temporarily Unavailable</title></head>
+<body>
+<center><h1>503 Service Temporarily Unavailable</h1></center>
+<hr><center>nginx/1.17.10</center>
+</body>
+</html>
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+
+https://on.cypress.io/request
+    at https://omar.ossim.io/__cypress/runner/cypress_runner.js:160251:21
+    at tryCatcher (https://omar.ossim.io/__cypress/runner/cypress_runner.js:10765:23)
+    at Promise._settlePromiseFromHandler (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8700:31)
+    at Promise._settlePromise (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8757:18)
+    at Promise._settlePromise0 (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8802:10)
+    at Promise._settlePromises (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8882:18)
+    at _drainQueueStep (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5472:12)
+    at _drainQueue (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5465:9)
+    at Async.../../node_modules/bluebird/js/release/async.js.Async._drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5481:5)
+    at Async.drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5351:14)
+From Your Spec Code:
+    at Context.eval (https://omar.ossim.io/__cypress/tests?p=cypress/integration/Tests.js:126:12)]]></failure>
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should write data to JSON" time="0.0060" classname="Should write data to JSON">
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should test 200 code for invalid_end test values" time="0.0000" classname="Should test 200 code for invalid_end test values">
+      <failure message="`cy.request()` failed on:
+
+https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+
+The response we received from your web server was:
+
+  &gt; 503: Service Unavailable
+
+This was considered a failure because the status code was not `2xx` or `3xx`.
+
+If you do not want status codes to cause failures pass the option: `failOnStatusCode: false`
+
+-----------------------------------------------------------
+
+The request we sent was:
+
+Method: GET
+URL: https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+Headers: {
+  &quot;Connection&quot;: &quot;keep-alive&quot;,
+  &quot;user-agent&quot;: &quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_1) AppleWebKit/537.36 (KHTML, like Gecko) Cypress/6.5.0 Chrome/87.0.4280.141 Electron/11.2.3 Safari/537.36&quot;,
+  &quot;accept&quot;: &quot;*/*&quot;,
+  &quot;accept-encoding&quot;: &quot;gzip, deflate&quot;
+}
+
+-----------------------------------------------------------
+
+The response we got was:
+
+Status: 503 - Service Unavailable
+Headers: {
+  &quot;server&quot;: &quot;nginx/1.17.10&quot;,
+  &quot;date&quot;: &quot;Thu, 18 Feb 2021 21:30:12 GMT&quot;,
+  &quot;content-type&quot;: &quot;text/html&quot;,
+  &quot;content-length&quot;: &quot;600&quot;,
+  &quot;connection&quot;: &quot;keep-alive&quot;,
+  &quot;strict-transport-security&quot;: &quot;max-age=15724800; includeSubDomains&quot;
+}
+Body: &lt;html&gt;
+&lt;head&gt;&lt;title&gt;503 Service Temporarily Unavailable&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+&lt;center&gt;&lt;h1&gt;503 Service Temporarily Unavailable&lt;/h1&gt;&lt;/center&gt;
+&lt;hr&gt;&lt;center&gt;nginx/1.17.10&lt;/center&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+
+https://on.cypress.io/request" type="CypressError"><![CDATA[CypressError: `cy.request()` failed on:
+
+https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+
+The response we received from your web server was:
+
+  > 503: Service Unavailable
+
+This was considered a failure because the status code was not `2xx` or `3xx`.
+
+If you do not want status codes to cause failures pass the option: `failOnStatusCode: false`
+
+-----------------------------------------------------------
+
+The request we sent was:
+
+Method: GET
+URL: https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+Headers: {
+  "Connection": "keep-alive",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_1) AppleWebKit/537.36 (KHTML, like Gecko) Cypress/6.5.0 Chrome/87.0.4280.141 Electron/11.2.3 Safari/537.36",
+  "accept": "*/*",
+  "accept-encoding": "gzip, deflate"
+}
+
+-----------------------------------------------------------
+
+The response we got was:
+
+Status: 503 - Service Unavailable
+Headers: {
+  "server": "nginx/1.17.10",
+  "date": "Thu, 18 Feb 2021 21:30:12 GMT",
+  "content-type": "text/html",
+  "content-length": "600",
+  "connection": "keep-alive",
+  "strict-transport-security": "max-age=15724800; includeSubDomains"
+}
+Body: <html>
+<head><title>503 Service Temporarily Unavailable</title></head>
+<body>
+<center><h1>503 Service Temporarily Unavailable</h1></center>
+<hr><center>nginx/1.17.10</center>
+</body>
+</html>
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+
+https://on.cypress.io/request
+    at https://omar.ossim.io/__cypress/runner/cypress_runner.js:160251:21
+    at tryCatcher (https://omar.ossim.io/__cypress/runner/cypress_runner.js:10765:23)
+    at Promise._settlePromiseFromHandler (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8700:31)
+    at Promise._settlePromise (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8757:18)
+    at Promise._settlePromise0 (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8802:10)
+    at Promise._settlePromises (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8882:18)
+    at _drainQueueStep (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5472:12)
+    at _drainQueue (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5465:9)
+    at Async.../../node_modules/bluebird/js/release/async.js.Async._drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5481:5)
+    at Async.drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5351:14)
+From Your Spec Code:
+    at Context.eval (https://omar.ossim.io/__cypress/tests?p=cypress/integration/Tests.js:121:12)]]></failure>
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should test response header for invalid_end" time="0.0000" classname="Should test response header for invalid_end">
+      <failure message="`cy.request()` failed on:
+
+https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+
+The response we received from your web server was:
+
+  &gt; 503: Service Unavailable
+
+This was considered a failure because the status code was not `2xx` or `3xx`.
+
+If you do not want status codes to cause failures pass the option: `failOnStatusCode: false`
+
+-----------------------------------------------------------
+
+The request we sent was:
+
+Method: GET
+URL: https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+Headers: {
+  &quot;Connection&quot;: &quot;keep-alive&quot;,
+  &quot;user-agent&quot;: &quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_1) AppleWebKit/537.36 (KHTML, like Gecko) Cypress/6.5.0 Chrome/87.0.4280.141 Electron/11.2.3 Safari/537.36&quot;,
+  &quot;accept&quot;: &quot;*/*&quot;,
+  &quot;accept-encoding&quot;: &quot;gzip, deflate&quot;
+}
+
+-----------------------------------------------------------
+
+The response we got was:
+
+Status: 503 - Service Unavailable
+Headers: {
+  &quot;server&quot;: &quot;nginx/1.17.10&quot;,
+  &quot;date&quot;: &quot;Thu, 18 Feb 2021 21:30:13 GMT&quot;,
+  &quot;content-type&quot;: &quot;text/html&quot;,
+  &quot;content-length&quot;: &quot;600&quot;,
+  &quot;connection&quot;: &quot;keep-alive&quot;,
+  &quot;strict-transport-security&quot;: &quot;max-age=15724800; includeSubDomains&quot;
+}
+Body: &lt;html&gt;
+&lt;head&gt;&lt;title&gt;503 Service Temporarily Unavailable&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+&lt;center&gt;&lt;h1&gt;503 Service Temporarily Unavailable&lt;/h1&gt;&lt;/center&gt;
+&lt;hr&gt;&lt;center&gt;nginx/1.17.10&lt;/center&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+
+https://on.cypress.io/request" type="CypressError"><![CDATA[CypressError: `cy.request()` failed on:
+
+https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+
+The response we received from your web server was:
+
+  > 503: Service Unavailable
+
+This was considered a failure because the status code was not `2xx` or `3xx`.
+
+If you do not want status codes to cause failures pass the option: `failOnStatusCode: false`
+
+-----------------------------------------------------------
+
+The request we sent was:
+
+Method: GET
+URL: https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+Headers: {
+  "Connection": "keep-alive",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_1) AppleWebKit/537.36 (KHTML, like Gecko) Cypress/6.5.0 Chrome/87.0.4280.141 Electron/11.2.3 Safari/537.36",
+  "accept": "*/*",
+  "accept-encoding": "gzip, deflate"
+}
+
+-----------------------------------------------------------
+
+The response we got was:
+
+Status: 503 - Service Unavailable
+Headers: {
+  "server": "nginx/1.17.10",
+  "date": "Thu, 18 Feb 2021 21:30:13 GMT",
+  "content-type": "text/html",
+  "content-length": "600",
+  "connection": "keep-alive",
+  "strict-transport-security": "max-age=15724800; includeSubDomains"
+}
+Body: <html>
+<head><title>503 Service Temporarily Unavailable</title></head>
+<body>
+<center><h1>503 Service Temporarily Unavailable</h1></center>
+<hr><center>nginx/1.17.10</center>
+</body>
+</html>
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+
+https://on.cypress.io/request
+    at https://omar.ossim.io/__cypress/runner/cypress_runner.js:160251:21
+    at tryCatcher (https://omar.ossim.io/__cypress/runner/cypress_runner.js:10765:23)
+    at Promise._settlePromiseFromHandler (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8700:31)
+    at Promise._settlePromise (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8757:18)
+    at Promise._settlePromise0 (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8802:10)
+    at Promise._settlePromises (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8882:18)
+    at _drainQueueStep (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5472:12)
+    at _drainQueue (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5465:9)
+    at Async.../../node_modules/bluebird/js/release/async.js.Async._drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5481:5)
+    at Async.drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5351:14)
+From Your Spec Code:
+    at Context.eval (https://omar.ossim.io/__cypress/tests?p=cypress/integration/Tests.js:126:12)]]></failure>
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should write data to JSON" time="0.0450" classname="Should write data to JSON">
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should test 200 code for invalid_maxCloudCoverage test values" time="0.0000" classname="Should test 200 code for invalid_maxCloudCoverage test values">
+      <failure message="`cy.request()` failed on:
+
+https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+
+The response we received from your web server was:
+
+  &gt; 503: Service Unavailable
+
+This was considered a failure because the status code was not `2xx` or `3xx`.
+
+If you do not want status codes to cause failures pass the option: `failOnStatusCode: false`
+
+-----------------------------------------------------------
+
+The request we sent was:
+
+Method: GET
+URL: https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+Headers: {
+  &quot;Connection&quot;: &quot;keep-alive&quot;,
+  &quot;user-agent&quot;: &quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_1) AppleWebKit/537.36 (KHTML, like Gecko) Cypress/6.5.0 Chrome/87.0.4280.141 Electron/11.2.3 Safari/537.36&quot;,
+  &quot;accept&quot;: &quot;*/*&quot;,
+  &quot;accept-encoding&quot;: &quot;gzip, deflate&quot;
+}
+
+-----------------------------------------------------------
+
+The response we got was:
+
+Status: 503 - Service Unavailable
+Headers: {
+  &quot;server&quot;: &quot;nginx/1.17.10&quot;,
+  &quot;date&quot;: &quot;Thu, 18 Feb 2021 21:30:13 GMT&quot;,
+  &quot;content-type&quot;: &quot;text/html&quot;,
+  &quot;content-length&quot;: &quot;600&quot;,
+  &quot;connection&quot;: &quot;keep-alive&quot;,
+  &quot;strict-transport-security&quot;: &quot;max-age=15724800; includeSubDomains&quot;
+}
+Body: &lt;html&gt;
+&lt;head&gt;&lt;title&gt;503 Service Temporarily Unavailable&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+&lt;center&gt;&lt;h1&gt;503 Service Temporarily Unavailable&lt;/h1&gt;&lt;/center&gt;
+&lt;hr&gt;&lt;center&gt;nginx/1.17.10&lt;/center&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+
+https://on.cypress.io/request" type="CypressError"><![CDATA[CypressError: `cy.request()` failed on:
+
+https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+
+The response we received from your web server was:
+
+  > 503: Service Unavailable
+
+This was considered a failure because the status code was not `2xx` or `3xx`.
+
+If you do not want status codes to cause failures pass the option: `failOnStatusCode: false`
+
+-----------------------------------------------------------
+
+The request we sent was:
+
+Method: GET
+URL: https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+Headers: {
+  "Connection": "keep-alive",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_1) AppleWebKit/537.36 (KHTML, like Gecko) Cypress/6.5.0 Chrome/87.0.4280.141 Electron/11.2.3 Safari/537.36",
+  "accept": "*/*",
+  "accept-encoding": "gzip, deflate"
+}
+
+-----------------------------------------------------------
+
+The response we got was:
+
+Status: 503 - Service Unavailable
+Headers: {
+  "server": "nginx/1.17.10",
+  "date": "Thu, 18 Feb 2021 21:30:13 GMT",
+  "content-type": "text/html",
+  "content-length": "600",
+  "connection": "keep-alive",
+  "strict-transport-security": "max-age=15724800; includeSubDomains"
+}
+Body: <html>
+<head><title>503 Service Temporarily Unavailable</title></head>
+<body>
+<center><h1>503 Service Temporarily Unavailable</h1></center>
+<hr><center>nginx/1.17.10</center>
+</body>
+</html>
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+
+https://on.cypress.io/request
+    at https://omar.ossim.io/__cypress/runner/cypress_runner.js:160251:21
+    at tryCatcher (https://omar.ossim.io/__cypress/runner/cypress_runner.js:10765:23)
+    at Promise._settlePromiseFromHandler (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8700:31)
+    at Promise._settlePromise (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8757:18)
+    at Promise._settlePromise0 (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8802:10)
+    at Promise._settlePromises (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8882:18)
+    at _drainQueueStep (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5472:12)
+    at _drainQueue (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5465:9)
+    at Async.../../node_modules/bluebird/js/release/async.js.Async._drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5481:5)
+    at Async.drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5351:14)
+From Your Spec Code:
+    at Context.eval (https://omar.ossim.io/__cypress/tests?p=cypress/integration/Tests.js:121:12)]]></failure>
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should test response header for invalid_maxCloudCoverage" time="0.0000" classname="Should test response header for invalid_maxCloudCoverage">
+      <failure message="`cy.request()` failed on:
+
+https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+
+The response we received from your web server was:
+
+  &gt; 503: Service Unavailable
+
+This was considered a failure because the status code was not `2xx` or `3xx`.
+
+If you do not want status codes to cause failures pass the option: `failOnStatusCode: false`
+
+-----------------------------------------------------------
+
+The request we sent was:
+
+Method: GET
+URL: https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+Headers: {
+  &quot;Connection&quot;: &quot;keep-alive&quot;,
+  &quot;user-agent&quot;: &quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_1) AppleWebKit/537.36 (KHTML, like Gecko) Cypress/6.5.0 Chrome/87.0.4280.141 Electron/11.2.3 Safari/537.36&quot;,
+  &quot;accept&quot;: &quot;*/*&quot;,
+  &quot;accept-encoding&quot;: &quot;gzip, deflate&quot;
+}
+
+-----------------------------------------------------------
+
+The response we got was:
+
+Status: 503 - Service Unavailable
+Headers: {
+  &quot;server&quot;: &quot;nginx/1.17.10&quot;,
+  &quot;date&quot;: &quot;Thu, 18 Feb 2021 21:30:14 GMT&quot;,
+  &quot;content-type&quot;: &quot;text/html&quot;,
+  &quot;content-length&quot;: &quot;600&quot;,
+  &quot;connection&quot;: &quot;keep-alive&quot;,
+  &quot;strict-transport-security&quot;: &quot;max-age=15724800; includeSubDomains&quot;
+}
+Body: &lt;html&gt;
+&lt;head&gt;&lt;title&gt;503 Service Temporarily Unavailable&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+&lt;center&gt;&lt;h1&gt;503 Service Temporarily Unavailable&lt;/h1&gt;&lt;/center&gt;
+&lt;hr&gt;&lt;center&gt;nginx/1.17.10&lt;/center&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+
+https://on.cypress.io/request" type="CypressError"><![CDATA[CypressError: `cy.request()` failed on:
+
+https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+
+The response we received from your web server was:
+
+  > 503: Service Unavailable
+
+This was considered a failure because the status code was not `2xx` or `3xx`.
+
+If you do not want status codes to cause failures pass the option: `failOnStatusCode: false`
+
+-----------------------------------------------------------
+
+The request we sent was:
+
+Method: GET
+URL: https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+Headers: {
+  "Connection": "keep-alive",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_1) AppleWebKit/537.36 (KHTML, like Gecko) Cypress/6.5.0 Chrome/87.0.4280.141 Electron/11.2.3 Safari/537.36",
+  "accept": "*/*",
+  "accept-encoding": "gzip, deflate"
+}
+
+-----------------------------------------------------------
+
+The response we got was:
+
+Status: 503 - Service Unavailable
+Headers: {
+  "server": "nginx/1.17.10",
+  "date": "Thu, 18 Feb 2021 21:30:14 GMT",
+  "content-type": "text/html",
+  "content-length": "600",
+  "connection": "keep-alive",
+  "strict-transport-security": "max-age=15724800; includeSubDomains"
+}
+Body: <html>
+<head><title>503 Service Temporarily Unavailable</title></head>
+<body>
+<center><h1>503 Service Temporarily Unavailable</h1></center>
+<hr><center>nginx/1.17.10</center>
+</body>
+</html>
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+
+https://on.cypress.io/request
+    at https://omar.ossim.io/__cypress/runner/cypress_runner.js:160251:21
+    at tryCatcher (https://omar.ossim.io/__cypress/runner/cypress_runner.js:10765:23)
+    at Promise._settlePromiseFromHandler (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8700:31)
+    at Promise._settlePromise (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8757:18)
+    at Promise._settlePromise0 (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8802:10)
+    at Promise._settlePromises (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8882:18)
+    at _drainQueueStep (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5472:12)
+    at _drainQueue (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5465:9)
+    at Async.../../node_modules/bluebird/js/release/async.js.Async._drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5481:5)
+    at Async.drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5351:14)
+From Your Spec Code:
+    at Context.eval (https://omar.ossim.io/__cypress/tests?p=cypress/integration/Tests.js:126:12)]]></failure>
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should write data to JSON" time="0.0370" classname="Should write data to JSON">
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should test 200 code for invalid_maxResults test values" time="0.0000" classname="Should test 200 code for invalid_maxResults test values">
+      <failure message="`cy.request()` failed on:
+
+https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+
+The response we received from your web server was:
+
+  &gt; 503: Service Unavailable
+
+This was considered a failure because the status code was not `2xx` or `3xx`.
+
+If you do not want status codes to cause failures pass the option: `failOnStatusCode: false`
+
+-----------------------------------------------------------
+
+The request we sent was:
+
+Method: GET
+URL: https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+Headers: {
+  &quot;Connection&quot;: &quot;keep-alive&quot;,
+  &quot;user-agent&quot;: &quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_1) AppleWebKit/537.36 (KHTML, like Gecko) Cypress/6.5.0 Chrome/87.0.4280.141 Electron/11.2.3 Safari/537.36&quot;,
+  &quot;accept&quot;: &quot;*/*&quot;,
+  &quot;accept-encoding&quot;: &quot;gzip, deflate&quot;
+}
+
+-----------------------------------------------------------
+
+The response we got was:
+
+Status: 503 - Service Unavailable
+Headers: {
+  &quot;server&quot;: &quot;nginx/1.17.10&quot;,
+  &quot;date&quot;: &quot;Thu, 18 Feb 2021 21:30:14 GMT&quot;,
+  &quot;content-type&quot;: &quot;text/html&quot;,
+  &quot;content-length&quot;: &quot;600&quot;,
+  &quot;connection&quot;: &quot;keep-alive&quot;,
+  &quot;strict-transport-security&quot;: &quot;max-age=15724800; includeSubDomains&quot;
+}
+Body: &lt;html&gt;
+&lt;head&gt;&lt;title&gt;503 Service Temporarily Unavailable&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+&lt;center&gt;&lt;h1&gt;503 Service Temporarily Unavailable&lt;/h1&gt;&lt;/center&gt;
+&lt;hr&gt;&lt;center&gt;nginx/1.17.10&lt;/center&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+
+https://on.cypress.io/request" type="CypressError"><![CDATA[CypressError: `cy.request()` failed on:
+
+https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+
+The response we received from your web server was:
+
+  > 503: Service Unavailable
+
+This was considered a failure because the status code was not `2xx` or `3xx`.
+
+If you do not want status codes to cause failures pass the option: `failOnStatusCode: false`
+
+-----------------------------------------------------------
+
+The request we sent was:
+
+Method: GET
+URL: https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+Headers: {
+  "Connection": "keep-alive",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_1) AppleWebKit/537.36 (KHTML, like Gecko) Cypress/6.5.0 Chrome/87.0.4280.141 Electron/11.2.3 Safari/537.36",
+  "accept": "*/*",
+  "accept-encoding": "gzip, deflate"
+}
+
+-----------------------------------------------------------
+
+The response we got was:
+
+Status: 503 - Service Unavailable
+Headers: {
+  "server": "nginx/1.17.10",
+  "date": "Thu, 18 Feb 2021 21:30:14 GMT",
+  "content-type": "text/html",
+  "content-length": "600",
+  "connection": "keep-alive",
+  "strict-transport-security": "max-age=15724800; includeSubDomains"
+}
+Body: <html>
+<head><title>503 Service Temporarily Unavailable</title></head>
+<body>
+<center><h1>503 Service Temporarily Unavailable</h1></center>
+<hr><center>nginx/1.17.10</center>
+</body>
+</html>
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+
+https://on.cypress.io/request
+    at https://omar.ossim.io/__cypress/runner/cypress_runner.js:160251:21
+    at tryCatcher (https://omar.ossim.io/__cypress/runner/cypress_runner.js:10765:23)
+    at Promise._settlePromiseFromHandler (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8700:31)
+    at Promise._settlePromise (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8757:18)
+    at Promise._settlePromise0 (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8802:10)
+    at Promise._settlePromises (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8882:18)
+    at _drainQueueStep (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5472:12)
+    at _drainQueue (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5465:9)
+    at Async.../../node_modules/bluebird/js/release/async.js.Async._drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5481:5)
+    at Async.drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5351:14)
+From Your Spec Code:
+    at Context.eval (https://omar.ossim.io/__cypress/tests?p=cypress/integration/Tests.js:121:12)]]></failure>
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should test response header for invalid_maxResults" time="0.0000" classname="Should test response header for invalid_maxResults">
+      <failure message="`cy.request()` failed on:
+
+https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+
+The response we received from your web server was:
+
+  &gt; 503: Service Unavailable
+
+This was considered a failure because the status code was not `2xx` or `3xx`.
+
+If you do not want status codes to cause failures pass the option: `failOnStatusCode: false`
+
+-----------------------------------------------------------
+
+The request we sent was:
+
+Method: GET
+URL: https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+Headers: {
+  &quot;Connection&quot;: &quot;keep-alive&quot;,
+  &quot;user-agent&quot;: &quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_1) AppleWebKit/537.36 (KHTML, like Gecko) Cypress/6.5.0 Chrome/87.0.4280.141 Electron/11.2.3 Safari/537.36&quot;,
+  &quot;accept&quot;: &quot;*/*&quot;,
+  &quot;accept-encoding&quot;: &quot;gzip, deflate&quot;
+}
+
+-----------------------------------------------------------
+
+The response we got was:
+
+Status: 503 - Service Unavailable
+Headers: {
+  &quot;server&quot;: &quot;nginx/1.17.10&quot;,
+  &quot;date&quot;: &quot;Thu, 18 Feb 2021 21:30:15 GMT&quot;,
+  &quot;content-type&quot;: &quot;text/html&quot;,
+  &quot;content-length&quot;: &quot;600&quot;,
+  &quot;connection&quot;: &quot;keep-alive&quot;,
+  &quot;strict-transport-security&quot;: &quot;max-age=15724800; includeSubDomains&quot;
+}
+Body: &lt;html&gt;
+&lt;head&gt;&lt;title&gt;503 Service Temporarily Unavailable&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+&lt;center&gt;&lt;h1&gt;503 Service Temporarily Unavailable&lt;/h1&gt;&lt;/center&gt;
+&lt;hr&gt;&lt;center&gt;nginx/1.17.10&lt;/center&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+&lt;!-- a padding to disable MSIE and Chrome friendly error page --&gt;
+
+https://on.cypress.io/request" type="CypressError"><![CDATA[CypressError: `cy.request()` failed on:
+
+https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+
+The response we received from your web server was:
+
+  > 503: Service Unavailable
+
+This was considered a failure because the status code was not `2xx` or `3xx`.
+
+If you do not want status codes to cause failures pass the option: `failOnStatusCode: false`
+
+-----------------------------------------------------------
+
+The request we sent was:
+
+Method: GET
+URL: https://omar.ossim.io/omar-wmts/home/index?maxResults=7
+Headers: {
+  "Connection": "keep-alive",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_1) AppleWebKit/537.36 (KHTML, like Gecko) Cypress/6.5.0 Chrome/87.0.4280.141 Electron/11.2.3 Safari/537.36",
+  "accept": "*/*",
+  "accept-encoding": "gzip, deflate"
+}
+
+-----------------------------------------------------------
+
+The response we got was:
+
+Status: 503 - Service Unavailable
+Headers: {
+  "server": "nginx/1.17.10",
+  "date": "Thu, 18 Feb 2021 21:30:15 GMT",
+  "content-type": "text/html",
+  "content-length": "600",
+  "connection": "keep-alive",
+  "strict-transport-security": "max-age=15724800; includeSubDomains"
+}
+Body: <html>
+<head><title>503 Service Temporarily Unavailable</title></head>
+<body>
+<center><h1>503 Service Temporarily Unavailable</h1></center>
+<hr><center>nginx/1.17.10</center>
+</body>
+</html>
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+
+https://on.cypress.io/request
+    at https://omar.ossim.io/__cypress/runner/cypress_runner.js:160251:21
+    at tryCatcher (https://omar.ossim.io/__cypress/runner/cypress_runner.js:10765:23)
+    at Promise._settlePromiseFromHandler (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8700:31)
+    at Promise._settlePromise (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8757:18)
+    at Promise._settlePromise0 (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8802:10)
+    at Promise._settlePromises (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8882:18)
+    at _drainQueueStep (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5472:12)
+    at _drainQueue (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5465:9)
+    at Async.../../node_modules/bluebird/js/release/async.js.Async._drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5481:5)
+    at Async.drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5351:14)
+From Your Spec Code:
+    at Context.eval (https://omar.ossim.io/__cypress/tests?p=cypress/integration/Tests.js:126:12)]]></failure>
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should write data to JSON" time="0.0470" classname="Should write data to JSON">
+    </testcase>
+  </testsuite>
+</testsuites>
