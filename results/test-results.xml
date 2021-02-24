@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="0.0000" tests="1" failures="1">
+  <testsuite name="Root Suite" timestamp="2021-02-18T20:54:51" tests="1" file="cypress/integration/APITesting.js" time="0.0000" failures="1">
+    <testcase name="An uncaught error was detected outside of a test" time="0.0000" classname="An uncaught error was detected outside of a test">
+      <failure message="The following error originated from your test code, not from Cypress.
+
+  &gt; git is not defined
+
+When Cypress detects uncaught errors originating from your test code it will automatically fail the current test.
+
+Cypress could not associate this error to any specific test.
+
+We dynamically generated a new test to display this failure." type="ReferenceError"><![CDATA[ReferenceError: The following error originated from your test code, not from Cypress.
+
+  > git is not defined
+
+When Cypress detects uncaught errors originating from your test code it will automatically fail the current test.
+
+Cypress could not associate this error to any specific test.
+
+We dynamically generated a new test to display this failure.
+    at Object../cypress/support/index.js (https://omar.ossim.io/__cypress/tests?p=cypress/support/index.js:138:1)
+    at __webpack_require__ (https://omar.ossim.io/__cypress/tests?p=cypress/support/index.js:20:30)
+    at Object.0 (https://omar.ossim.io/__cypress/tests?p=cypress/support/index.js:165:18)
+    at __webpack_require__ (https://omar.ossim.io/__cypress/tests?p=cypress/support/index.js:20:30)
+    at eval (https://omar.ossim.io/__cypress/tests?p=cypress/support/index.js:84:18)
+    at eval (https://omar.ossim.io/__cypress/tests?p=cypress/support/index.js:87:10)
+    at eval (<anonymous>)]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>
