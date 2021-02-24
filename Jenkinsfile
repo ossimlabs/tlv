@@ -1,6 +1,6 @@
 properties([
     parameters([
-        string(name: 'PROJECT_URL', defaultValue: 'https://github.com/ossimlabs/omar-tlv', description: 'The project github URL'),
+        string(name: 'PROJECT_URL', defaultValue: 'https://github.com/ossimlabs/tlv', description: 'The project github URL'),
         string(name: 'DOCKER_REGISTRY_DOWNLOAD_URL', defaultValue: 'nexus-docker-private-group.ossim.io', description: 'Repository of docker images')
     ]),
     pipelineTriggers([
