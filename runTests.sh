@@ -20,6 +20,9 @@ cd ../../..
 
 python3 comparison.py
 
+echo "\n\n\n done with comparison \n\n\n"
+cd ..
+
 npx cypress run --spec "cypress/integration/Final.js"
 
 

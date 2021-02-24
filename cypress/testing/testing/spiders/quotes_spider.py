@@ -9,7 +9,7 @@ class urlObject:
 
 
 class QuotesSpider(scrapy.Spider):
-	name = "quotes"
+	name = "tests"
 	iter = 0
 	names = []
 	urlObjects = []
