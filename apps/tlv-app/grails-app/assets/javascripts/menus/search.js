@@ -38,18 +38,23 @@ function beSearch( be ) {
 }
 
 function beginSearch() {
+
 	var location = getLocation();
 	var locationString = $( "#searchLocationInput" ).val();
+
 	if ( !location && locationString != "" ) {
+    
 		var callbackFunction = function( point ) {
 			if ( point ) {
 				var getLocationCallback = getLocation;
-				getLocation = function() { return point; }
+				getLocation = function() { 
+          return point; 
+        }
 				beginSearch();
 				getLocation = getLocationCallback;
-			}
-			// ok so maybe the input was an image ID?
-			else {
+        
+			} else { // ok so maybe the input was an image ID?
+
 				// needs to be reset so TLV will calculate a position
 				tlv.location = '';
 
@@ -63,7 +68,6 @@ function beginSearch() {
 						params.url = encodeURIComponent( tlv.libraries[ library ].wfsUrlProxy + "?" + $.param( params ) );
 						url = tlv.contextPath + "/home/proxy";
 					}
-
 					getWfs( params, url )
 					.always( function() {
 						tlv.libraries[ library ].searchComplete = true;
@@ -110,15 +114,29 @@ function beginSearch() {
 
 		// if an ajax call is needed to find the location, we don't want an erroneous error messge while we wait
 		return;
-	}
-	else if ( locationString == '' && !tlv.filter ) {
+	} else if ( locationString == '' && !tlv.filter ) {
 		displayErrorDialog( 'Ummm, you need to enter a location first.' );
 		return;
 	}
-
 	var searchParams = getSearchParams();
-	if ( searchParams.error ) { displayErrorDialog( searchParams.error ); }
-	else {
+
+  // check that location param is what we expect [lon,lat]
+  if (!isLatitude(searchParams.location[1]) || !isLongitude(searchParams.location[0])){
+    searchParams.inputError = true;
+  }
+
+  // added input check 
+	if ( searchParams.error || searchParams.inputError ) { 
+    
+    if(searchParams.error) {
+      searchError()
+      displayErrorDialog( `${searchParams.error}` ); 
+    } else {
+      // display error if we have invalid input
+      displayErrorDialog( `Something went wrong check search input` );
+    }
+    
+  } else {
 		displayLoadingDialog( "We are searching the libraries for imagery... fingers crossed!" );
 
 		var queryParams = getWfs({});
@@ -462,7 +480,6 @@ function getDistinctFsg() {
 	});
 }
 
-
 function getDistinctSensors() {
 	var updateSensorSelect = function() {
 		var sensors = [];
@@ -557,7 +574,6 @@ function getLocation() {
 	var locationString = $( "#searchLocationInput" ).val();
 	var location = convertGeospatialCoordinateFormat( locationString );
 
-
 	return location;
 }
 
@@ -608,7 +624,8 @@ function getSearchParams() {
 	searchObject.startMinute = startDate.minute;
 	searchObject.startSecond = startDate.second;
 
-
+  searchObject.inputError = false;
+  
 	return searchObject;
 }
 
@@ -799,6 +816,16 @@ function initializeMaxCloudCoverInput() {
 	maxCloudCover = tlv.preferences.tlvPreference.maxCloudCover || maxCloudCover;
 	maxCloudCover = tlv.maxCloudCover || maxCloudCover;
 	$( "#searchMaxCloudCoverInput" ).val( maxCloudCover );
+}
+
+// checks that lat value is a valid latitude
+function isLatitude(lat) {
+  return isFinite(lat) && Math.abs(lat) <= 90;
+}
+
+// checks that lon value is a valid latitude
+function isLongitude(lng) {
+  return isFinite(lng) && Math.abs(lng) <= 180;
 }
 
 function initializeMaxResultsSelect() {
@@ -1048,7 +1075,9 @@ function processResults() {
 	}
 }
 
-function searchError() { displayErrorDialog("Uh oh, something went wrong with your search!"); }
+function searchError() {
+   displayErrorDialog("Uh oh, something went wrong with your search!"); 
+}
 
 function setupSearchMenuDialog() {
 	// start with the end date since the start date's default is based on the end date
