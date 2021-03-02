@@ -823,7 +823,7 @@ function isLatitude(lat) {
   return isFinite(lat) && Math.abs(lat) <= 90;
 }
 
-// checks that lon value is a valid latitude
+// checks that lon value is a valid longitude
 function isLongitude(lng) {
   return isFinite(lng) && Math.abs(lng) <= 180;
 }
