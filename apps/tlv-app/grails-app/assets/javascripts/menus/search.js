@@ -130,7 +130,7 @@ function beginSearch() {
     
     if(searchParams.inputError) {
       // display error if we have invalid input
-      displayErrorDialog( `Something went wrong check search input` ); 
+      displayErrorDialog( `Something went wrong! Check search input.` ); 
     } else {
       displayErrorDialog( `${searchParams.error}` );
     }
