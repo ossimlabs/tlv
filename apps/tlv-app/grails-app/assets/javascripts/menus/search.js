@@ -128,12 +128,11 @@ function beginSearch() {
   // added input check 
 	if ( searchParams.inputError || searchParams.error ) { 
     
-    if(searchParams.error) {
-      searchError()
-      //displayErrorDialog( `${searchParams.error}` ); 
-    } else {
+    if(searchParams.inputError) {
       // display error if we have invalid input
-      displayErrorDialog( `Something went wrong check search input` );
+      displayErrorDialog( `Something went wrong check search input` ); 
+    } else {
+      displayErrorDialog( `${searchParams.error}` );
     }
     
   } else {
