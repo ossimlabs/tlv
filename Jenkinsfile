@@ -43,10 +43,11 @@ podTemplate(
         ),
         containerTemplate(
             name: 'cypress',
-            image: "${DOCKER_REGISTRY_DOWNLOAD_URL}/cypress/included:4.9.0",
+            image: "${DOCKER_REGISTRY_DOWNLOAD_URL}/cypress/included:4.9.2",
             ttyEnabled: true,
             command: 'cat',
-            privileged: true
+            privileged: true,
+            alwaysPullImage: true
         )
       ],
     volumes: [
@@ -92,6 +93,80 @@ node(POD_LABEL){
         load "common-variables.groovy"
         DOCKER_IMAGE_PATH = "${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/${APP_NAME}"
     }
+
+    stage ('Run Tests')
+    {
+        container('cypress')
+        {
+                    try {
+                        sh """
+                            cypress run --headless
+                        """
+                    } catch (err) {}
+                    sh """
+                        npm i -g xunit-viewer
+                        xunit-viewer -r results -o results/omar-wmts-test-results.html
+                        """
+                        junit 'results/*.xml'
+                        archiveArtifacts "results/*.xml"
+                        archiveArtifacts "results/*.html"
+                        s3Upload(file:'results/omar-wmts-test-results.html', bucket:'ossimlabs', path:'cypressTests/')
+
+                    sh """
+                    cd cypress/jsonFiles
+                    chmod +x fixCypressOutput.sh
+                    ./fixCypressOutput.sh
+
+                    cd ../testing/testing/spiders
+                    scrapy crawl tests -o output.json
+                    chmod +x temp.sh
+                    ./temp.sh
+
+                    cd ../../..
+
+                    python comparison.py
+
+                    cd ..
+                    """
+                    try
+                    {
+                      sh """
+                          cypress run --headless --spec "cypress/integration/Final.js"
+                      """
+                   } catch (err) {}
+                   sh """
+                       npm i -g xunit-viewer
+                       xunit-viewer -r results -o results/omar-wmts-test-results.html
+                       """
+                       junit 'results/*.xml'
+                       archiveArtifacts "results/*.xml"
+                       archiveArtifacts "results/*.html"
+                       s3Upload(file:'results/omar-wmts-test-results.html', bucket:'ossimlabs', path:'cypressTests/')
+                }
+    }
+
+
+
+
+    // will probably need to fix/change the way the scrapy output is taken care of.... but can't do this until i can get
+    // clean output from scrapy again.
+
+    //need to push the new image to nexus. or learn how anyways...
+
+
+
+    // we were good until running the scrapy tests.. needed to get pip installed to take care of scrapy, or just install
+    // scrapy directly to the image... then we can run the tests, grab the output. need to make sure the output script works
+    // or make a new one/ fix what we have. once the scrapy output is taken care of, the comparison python file works
+    // either way, and outputs either way, which also means the cypress tests will work either w.
+
+
+
+
+
+
+
+
 
 //     CYPRESS TESTS COMING SOON
 //     stage ("Run Cypress Test") {
