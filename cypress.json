@@ -1,5 +1,5 @@
 {
-	"baseUrl": "https://omar.ossim.io/omar-wmts",
+	"baseUrl": "https://omar-dev.ossim.io/tlv",
 	"reporter": "junit",
 	"video": false,
 	"reporterOptions": {

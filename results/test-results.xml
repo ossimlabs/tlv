@@ -1,255 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="Mocha Tests" time="0.0000" tests="8" failures="8">
-  <testsuite name="Root Suite" timestamp="2021-02-24T19:45:04" tests="0" file="cypress/integration/Final.js" time="0.0000" failures="0">
+<testsuites name="Mocha Tests" time="1.6870" tests="24" failures="0">
+  <testsuite name="Root Suite" timestamp="2021-03-02T17:24:46" tests="0" file="cypress/integration/Tests.js" time="0.0000" failures="0">
   </testsuite>
-  <testsuite name="Automated tests for TLV API endpoints" timestamp="2021-02-24T19:45:04" tests="8" time="0.0000" failures="8">
-    <testcase name="Automated tests for TLV API endpoints Should test input/output result for all_default" time="0.0000" classname="Should test input/output result for all_default">
-      <failure message="`cy.readFile(&quot;cypress/finalResult.json&quot;)` failed while trying to read the file at the following path:
-
-  `/Users/coryrobertson/work/tlv/tlv/cypress/finalResult.json`
-
-The following error occurred:
-
-  &gt; &quot;/Users/coryrobertson/work/tlv/tlv/cypress/finalResult.json: Unexpected end of JSON input&quot;
-
-https://on.cypress.io/readfile" type="CypressError"><![CDATA[CypressError: `cy.readFile("cypress/finalResult.json")` failed while trying to read the file at the following path:
-
-  `/Users/coryrobertson/work/tlv/tlv/cypress/finalResult.json`
-
-The following error occurred:
-
-  > "/Users/coryrobertson/work/tlv/tlv/cypress/finalResult.json: Unexpected end of JSON input"
-
-https://on.cypress.io/readfile
-    at https://omar.ossim.io/__cypress/runner/cypress_runner.js:157576:28
-    at tryCatcher (https://omar.ossim.io/__cypress/runner/cypress_runner.js:10765:23)
-    at Promise._settlePromiseFromHandler (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8700:31)
-    at Promise._settlePromise (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8757:18)
-    at Promise._settlePromise0 (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8802:10)
-    at Promise._settlePromises (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8878:18)
-    at _drainQueueStep (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5472:12)
-    at _drainQueue (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5465:9)
-    at Async.../../node_modules/bluebird/js/release/async.js.Async._drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5481:5)
-    at Async.drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5351:14)
-From Your Spec Code:
-    at Context.eval (https://omar.ossim.io/__cypress/tests?p=cypress/integration/Final.js:112:12)]]></failure>
+  <testsuite name="Automated tests for TLV API endpoints" timestamp="2021-03-02T17:24:46" tests="24" time="1.6870" failures="0">
+    <testcase name="Automated tests for TLV API endpoints Should test 200 code for all_default test values" time="0.3520" classname="Should test 200 code for all_default test values">
     </testcase>
-    <testcase name="Automated tests for TLV API endpoints Should test input/output result for default_w_location" time="0.0000" classname="Should test input/output result for default_w_location">
-      <failure message="`cy.readFile(&quot;cypress/finalResult.json&quot;)` failed while trying to read the file at the following path:
-
-  `/Users/coryrobertson/work/tlv/tlv/cypress/finalResult.json`
-
-The following error occurred:
-
-  &gt; &quot;/Users/coryrobertson/work/tlv/tlv/cypress/finalResult.json: Unexpected end of JSON input&quot;
-
-https://on.cypress.io/readfile" type="CypressError"><![CDATA[CypressError: `cy.readFile("cypress/finalResult.json")` failed while trying to read the file at the following path:
-
-  `/Users/coryrobertson/work/tlv/tlv/cypress/finalResult.json`
-
-The following error occurred:
-
-  > "/Users/coryrobertson/work/tlv/tlv/cypress/finalResult.json: Unexpected end of JSON input"
-
-https://on.cypress.io/readfile
-    at https://omar.ossim.io/__cypress/runner/cypress_runner.js:157576:28
-    at tryCatcher (https://omar.ossim.io/__cypress/runner/cypress_runner.js:10765:23)
-    at Promise._settlePromiseFromHandler (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8700:31)
-    at Promise._settlePromise (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8757:18)
-    at Promise._settlePromise0 (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8802:10)
-    at Promise._settlePromises (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8878:18)
-    at _drainQueueStep (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5472:12)
-    at _drainQueue (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5465:9)
-    at Async.../../node_modules/bluebird/js/release/async.js.Async._drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5481:5)
-    at Async.drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5351:14)
-From Your Spec Code:
-    at Context.eval (https://omar.ossim.io/__cypress/tests?p=cypress/integration/Final.js:112:12)]]></failure>
+    <testcase name="Automated tests for TLV API endpoints Should test response header for all_default" time="0.1280" classname="Should test response header for all_default">
     </testcase>
-    <testcase name="Automated tests for TLV API endpoints Should test input/output result for good_dates" time="0.0000" classname="Should test input/output result for good_dates">
-      <failure message="`cy.readFile(&quot;cypress/finalResult.json&quot;)` failed while trying to read the file at the following path:
-
-  `/Users/coryrobertson/work/tlv/tlv/cypress/finalResult.json`
-
-The following error occurred:
-
-  &gt; &quot;/Users/coryrobertson/work/tlv/tlv/cypress/finalResult.json: Unexpected end of JSON input&quot;
-
-https://on.cypress.io/readfile" type="CypressError"><![CDATA[CypressError: `cy.readFile("cypress/finalResult.json")` failed while trying to read the file at the following path:
-
-  `/Users/coryrobertson/work/tlv/tlv/cypress/finalResult.json`
-
-The following error occurred:
-
-  > "/Users/coryrobertson/work/tlv/tlv/cypress/finalResult.json: Unexpected end of JSON input"
-
-https://on.cypress.io/readfile
-    at https://omar.ossim.io/__cypress/runner/cypress_runner.js:157576:28
-    at tryCatcher (https://omar.ossim.io/__cypress/runner/cypress_runner.js:10765:23)
-    at Promise._settlePromiseFromHandler (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8700:31)
-    at Promise._settlePromise (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8757:18)
-    at Promise._settlePromise0 (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8802:10)
-    at Promise._settlePromises (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8878:18)
-    at _drainQueueStep (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5472:12)
-    at _drainQueue (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5465:9)
-    at Async.../../node_modules/bluebird/js/release/async.js.Async._drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5481:5)
-    at Async.drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5351:14)
-From Your Spec Code:
-    at Context.eval (https://omar.ossim.io/__cypress/tests?p=cypress/integration/Final.js:112:12)]]></failure>
+    <testcase name="Automated tests for TLV API endpoints Should write data to JSON" time="0.0140" classname="Should write data to JSON">
     </testcase>
-    <testcase name="Automated tests for TLV API endpoints Should test input/output result for end&lt;start" time="0.0000" classname="Should test input/output result for end&lt;start">
-      <failure message="`cy.readFile(&quot;cypress/finalResult.json&quot;)` failed while trying to read the file at the following path:
-
-  `/Users/coryrobertson/work/tlv/tlv/cypress/finalResult.json`
-
-The following error occurred:
-
-  &gt; &quot;/Users/coryrobertson/work/tlv/tlv/cypress/finalResult.json: Unexpected end of JSON input&quot;
-
-https://on.cypress.io/readfile" type="CypressError"><![CDATA[CypressError: `cy.readFile("cypress/finalResult.json")` failed while trying to read the file at the following path:
-
-  `/Users/coryrobertson/work/tlv/tlv/cypress/finalResult.json`
-
-The following error occurred:
-
-  > "/Users/coryrobertson/work/tlv/tlv/cypress/finalResult.json: Unexpected end of JSON input"
-
-https://on.cypress.io/readfile
-    at https://omar.ossim.io/__cypress/runner/cypress_runner.js:157576:28
-    at tryCatcher (https://omar.ossim.io/__cypress/runner/cypress_runner.js:10765:23)
-    at Promise._settlePromiseFromHandler (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8700:31)
-    at Promise._settlePromise (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8757:18)
-    at Promise._settlePromise0 (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8802:10)
-    at Promise._settlePromises (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8878:18)
-    at _drainQueueStep (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5472:12)
-    at _drainQueue (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5465:9)
-    at Async.../../node_modules/bluebird/js/release/async.js.Async._drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5481:5)
-    at Async.drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5351:14)
-From Your Spec Code:
-    at Context.eval (https://omar.ossim.io/__cypress/tests?p=cypress/integration/Final.js:112:12)]]></failure>
+    <testcase name="Automated tests for TLV API endpoints Should test 200 code for default_w_location test values" time="0.0810" classname="Should test 200 code for default_w_location test values">
     </testcase>
-    <testcase name="Automated tests for TLV API endpoints Should test input/output result for invalid_start" time="0.0000" classname="Should test input/output result for invalid_start">
-      <failure message="`cy.readFile(&quot;cypress/finalResult.json&quot;)` failed while trying to read the file at the following path:
-
-  `/Users/coryrobertson/work/tlv/tlv/cypress/finalResult.json`
-
-The following error occurred:
-
-  &gt; &quot;/Users/coryrobertson/work/tlv/tlv/cypress/finalResult.json: Unexpected end of JSON input&quot;
-
-https://on.cypress.io/readfile" type="CypressError"><![CDATA[CypressError: `cy.readFile("cypress/finalResult.json")` failed while trying to read the file at the following path:
-
-  `/Users/coryrobertson/work/tlv/tlv/cypress/finalResult.json`
-
-The following error occurred:
-
-  > "/Users/coryrobertson/work/tlv/tlv/cypress/finalResult.json: Unexpected end of JSON input"
-
-https://on.cypress.io/readfile
-    at https://omar.ossim.io/__cypress/runner/cypress_runner.js:157576:28
-    at tryCatcher (https://omar.ossim.io/__cypress/runner/cypress_runner.js:10765:23)
-    at Promise._settlePromiseFromHandler (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8700:31)
-    at Promise._settlePromise (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8757:18)
-    at Promise._settlePromise0 (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8802:10)
-    at Promise._settlePromises (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8878:18)
-    at _drainQueueStep (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5472:12)
-    at _drainQueue (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5465:9)
-    at Async.../../node_modules/bluebird/js/release/async.js.Async._drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5481:5)
-    at Async.drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5351:14)
-From Your Spec Code:
-    at Context.eval (https://omar.ossim.io/__cypress/tests?p=cypress/integration/Final.js:112:12)]]></failure>
+    <testcase name="Automated tests for TLV API endpoints Should test response header for default_w_location" time="0.0830" classname="Should test response header for default_w_location">
     </testcase>
-    <testcase name="Automated tests for TLV API endpoints Should test input/output result for invalid_end" time="0.0000" classname="Should test input/output result for invalid_end">
-      <failure message="`cy.readFile(&quot;cypress/finalResult.json&quot;)` failed while trying to read the file at the following path:
-
-  `/Users/coryrobertson/work/tlv/tlv/cypress/finalResult.json`
-
-The following error occurred:
-
-  &gt; &quot;/Users/coryrobertson/work/tlv/tlv/cypress/finalResult.json: Unexpected end of JSON input&quot;
-
-https://on.cypress.io/readfile" type="CypressError"><![CDATA[CypressError: `cy.readFile("cypress/finalResult.json")` failed while trying to read the file at the following path:
-
-  `/Users/coryrobertson/work/tlv/tlv/cypress/finalResult.json`
-
-The following error occurred:
-
-  > "/Users/coryrobertson/work/tlv/tlv/cypress/finalResult.json: Unexpected end of JSON input"
-
-https://on.cypress.io/readfile
-    at https://omar.ossim.io/__cypress/runner/cypress_runner.js:157576:28
-    at tryCatcher (https://omar.ossim.io/__cypress/runner/cypress_runner.js:10765:23)
-    at Promise._settlePromiseFromHandler (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8700:31)
-    at Promise._settlePromise (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8757:18)
-    at Promise._settlePromise0 (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8802:10)
-    at Promise._settlePromises (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8878:18)
-    at _drainQueueStep (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5472:12)
-    at _drainQueue (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5465:9)
-    at Async.../../node_modules/bluebird/js/release/async.js.Async._drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5481:5)
-    at Async.drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5351:14)
-From Your Spec Code:
-    at Context.eval (https://omar.ossim.io/__cypress/tests?p=cypress/integration/Final.js:112:12)]]></failure>
+    <testcase name="Automated tests for TLV API endpoints Should write data to JSON" time="0.0110" classname="Should write data to JSON">
     </testcase>
-    <testcase name="Automated tests for TLV API endpoints Should test input/output result for invalid_maxCloudCoverage" time="0.0000" classname="Should test input/output result for invalid_maxCloudCoverage">
-      <failure message="`cy.readFile(&quot;cypress/finalResult.json&quot;)` failed while trying to read the file at the following path:
-
-  `/Users/coryrobertson/work/tlv/tlv/cypress/finalResult.json`
-
-The following error occurred:
-
-  &gt; &quot;/Users/coryrobertson/work/tlv/tlv/cypress/finalResult.json: Unexpected end of JSON input&quot;
-
-https://on.cypress.io/readfile" type="CypressError"><![CDATA[CypressError: `cy.readFile("cypress/finalResult.json")` failed while trying to read the file at the following path:
-
-  `/Users/coryrobertson/work/tlv/tlv/cypress/finalResult.json`
-
-The following error occurred:
-
-  > "/Users/coryrobertson/work/tlv/tlv/cypress/finalResult.json: Unexpected end of JSON input"
-
-https://on.cypress.io/readfile
-    at https://omar.ossim.io/__cypress/runner/cypress_runner.js:157576:28
-    at tryCatcher (https://omar.ossim.io/__cypress/runner/cypress_runner.js:10765:23)
-    at Promise._settlePromiseFromHandler (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8700:31)
-    at Promise._settlePromise (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8757:18)
-    at Promise._settlePromise0 (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8802:10)
-    at Promise._settlePromises (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8878:18)
-    at _drainQueueStep (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5472:12)
-    at _drainQueue (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5465:9)
-    at Async.../../node_modules/bluebird/js/release/async.js.Async._drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5481:5)
-    at Async.drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5351:14)
-From Your Spec Code:
-    at Context.eval (https://omar.ossim.io/__cypress/tests?p=cypress/integration/Final.js:112:12)]]></failure>
+    <testcase name="Automated tests for TLV API endpoints Should test 200 code for good_dates test values" time="0.0740" classname="Should test 200 code for good_dates test values">
     </testcase>
-    <testcase name="Automated tests for TLV API endpoints Should test input/output result for invalid_maxResults" time="0.0000" classname="Should test input/output result for invalid_maxResults">
-      <failure message="`cy.readFile(&quot;cypress/finalResult.json&quot;)` failed while trying to read the file at the following path:
-
-  `/Users/coryrobertson/work/tlv/tlv/cypress/finalResult.json`
-
-The following error occurred:
-
-  &gt; &quot;/Users/coryrobertson/work/tlv/tlv/cypress/finalResult.json: Unexpected end of JSON input&quot;
-
-https://on.cypress.io/readfile" type="CypressError"><![CDATA[CypressError: `cy.readFile("cypress/finalResult.json")` failed while trying to read the file at the following path:
-
-  `/Users/coryrobertson/work/tlv/tlv/cypress/finalResult.json`
-
-The following error occurred:
-
-  > "/Users/coryrobertson/work/tlv/tlv/cypress/finalResult.json: Unexpected end of JSON input"
-
-https://on.cypress.io/readfile
-    at https://omar.ossim.io/__cypress/runner/cypress_runner.js:157576:28
-    at tryCatcher (https://omar.ossim.io/__cypress/runner/cypress_runner.js:10765:23)
-    at Promise._settlePromiseFromHandler (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8700:31)
-    at Promise._settlePromise (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8757:18)
-    at Promise._settlePromise0 (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8802:10)
-    at Promise._settlePromises (https://omar.ossim.io/__cypress/runner/cypress_runner.js:8878:18)
-    at _drainQueueStep (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5472:12)
-    at _drainQueue (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5465:9)
-    at Async.../../node_modules/bluebird/js/release/async.js.Async._drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5481:5)
-    at Async.drainQueues (https://omar.ossim.io/__cypress/runner/cypress_runner.js:5351:14)
-From Your Spec Code:
-    at Context.eval (https://omar.ossim.io/__cypress/tests?p=cypress/integration/Final.js:112:12)]]></failure>
+    <testcase name="Automated tests for TLV API endpoints Should test response header for good_dates" time="0.0750" classname="Should test response header for good_dates">
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should write data to JSON" time="0.0070" classname="Should write data to JSON">
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should test 200 code for end&lt;start test values" time="0.0850" classname="Should test 200 code for end&lt;start test values">
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should test response header for end&lt;start" time="0.0770" classname="Should test response header for end&lt;start">
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should write data to JSON" time="0.0120" classname="Should write data to JSON">
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should test 200 code for invalid_start test values" time="0.0710" classname="Should test 200 code for invalid_start test values">
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should test response header for invalid_start" time="0.0790" classname="Should test response header for invalid_start">
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should write data to JSON" time="0.0160" classname="Should write data to JSON">
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should test 200 code for invalid_end test values" time="0.0810" classname="Should test 200 code for invalid_end test values">
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should test response header for invalid_end" time="0.0800" classname="Should test response header for invalid_end">
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should write data to JSON" time="0.0150" classname="Should write data to JSON">
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should test 200 code for invalid_maxCloudCoverage test values" time="0.0830" classname="Should test 200 code for invalid_maxCloudCoverage test values">
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should test response header for invalid_maxCloudCoverage" time="0.0770" classname="Should test response header for invalid_maxCloudCoverage">
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should write data to JSON" time="0.0130" classname="Should write data to JSON">
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should test 200 code for invalid_maxResults test values" time="0.0770" classname="Should test 200 code for invalid_maxResults test values">
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should test response header for invalid_maxResults" time="0.0830" classname="Should test response header for invalid_maxResults">
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should write data to JSON" time="0.0130" classname="Should write data to JSON">
     </testcase>
   </testsuite>
 </testsuites>
