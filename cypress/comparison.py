@@ -1,5 +1,6 @@
 import json
 
+testPoint = 1
 result = []
 go = 0
 #read the testParameters, and load into input
@@ -7,11 +8,12 @@ while True:
 	try:
 		with open('../testParameters.json') as f:
 			input = json.load(f)
-			go = 1
 		break
 	except ValueError:
+		go = 1
 		print("Error, there were no original parameters")
 		break
+
 
 #read the results.json, load into result
 while True:
@@ -20,6 +22,7 @@ while True:
 			result = json.load(f)
 		break
 	except ValueError:
+		go = 1
 		print("Error, there were no Scrapy results")
 		break
 
@@ -30,31 +33,37 @@ while True:
 			names = json.load(f)
 		break
 	except ValueError:
+		go = 1
 		print("Error, there were no Links from Cypress")
 		break
 
-#create a list of parameters to later be compared
-params = []
-for key in input["tests"]:
-	params.insert(0, input["tests"][key]["parameters"])
-
-#use prev data to have easily usable list of test Names
-testNames = []
-for i in range (0, len(names["Links"])):
-	testNames.insert(0, names["Links"][i]["test"])
-
-#reverse to get original order of the testParameters
-params.reverse()
-testNames.reverse()
-
-#set up partA which is the input parameters
-partA = {}
-for i in range(0, len(testNames)):
-	partA[testNames[i]] = [params[i]]
 
 
 if (go == 0):
-	print("\n\n\n\n it is starting \n\n\n\n")
+
+	#create a list of parameters to later be compared
+	params = []
+	for key in input["tests"]:
+		params.insert(0, input["tests"][key]["parameters"])
+
+
+	#use prev data to have easily usable list of test Names
+	testNames = []
+	for i in range (0, len(names["Links"])):
+		testNames.insert(0, names["Links"][i]["test"])
+
+	#reverse to get original order of the testParameters
+	params.reverse()
+	testNames.reverse()
+
+	#set up partA which is the input parameters
+	partA = {}
+	for i in range(0, len(testNames)):
+		partA[testNames[i]] = [params[i]]
+
+
+
+
 	iter = 0
 	partB = {}
 	for item in result:
