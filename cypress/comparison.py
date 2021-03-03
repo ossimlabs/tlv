@@ -76,6 +76,10 @@ if (go == 0):
 
 	for name in testNames:
 		q.write('\n\t"' + str(name) + '" : ')
+		print("\n\n")
+		print(partA[name])
+		print(partB[name])
+		print("\n\n")
 		if partA[name] == partB[name]:
 			q.write("true")
 			print(name + " test PASSED")
