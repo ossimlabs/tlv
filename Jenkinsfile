@@ -98,11 +98,6 @@ node(POD_LABEL){
     {
         container('cypress')
         {
-                    sh """
-                    chmod +x cleanup.sh
-                    ./cleanup.sh
-                    """
-
                     try {
                         sh """
                             cypress run --headless
