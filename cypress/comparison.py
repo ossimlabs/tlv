@@ -3,7 +3,7 @@ import json
 testPoint = 1
 result = []
 go = 0
-#read the testParameters, and load into input
+# read the testParameters, and load into input
 while True:
 	try:
 		with open('../testParameters.json') as f:
@@ -14,8 +14,7 @@ while True:
 		print("Error, there were no original parameters")
 		break
 
-
-#read the results.json, load into result
+# read the results.json, load into result
 while True:
 	try:
 		with open('testing/testing/spiders/results.json') as f:
@@ -26,7 +25,7 @@ while True:
 		print("Error, there were no Scrapy results")
 		break
 
-#reads original links file to get list of test names
+# reads original links file to get list of test names
 while True:
 	try:
 		with open('jsonFiles/links.json') as f:
@@ -37,32 +36,26 @@ while True:
 		print("Error, there were no Links from Cypress")
 		break
 
-
-
 if (go == 0):
 
-	#create a list of parameters to later be compared
+	# create a list of parameters to later be compared
 	params = []
 	for key in input["tests"]:
 		params.insert(0, input["tests"][key]["parameters"])
 
-
-	#use prev data to have easily usable list of test Names
+	# use prev data to have easily usable list of test Names
 	testNames = []
-	for i in range (0, len(names["Links"])):
+	for i in range(0, len(names["Links"])):
 		testNames.insert(0, names["Links"][i]["test"])
 
-	#reverse to get original order of the testParameters
+	# reverse to get original order of the testParameters
 	params.reverse()
 	testNames.reverse()
 
-	#set up partA which is the input parameters
+	# set up partA which is the input parameters
 	partA = {}
 	for i in range(0, len(testNames)):
 		partA[testNames[i]] = [params[i]]
-
-
-
 
 	iter = 0
 	partB = {}
@@ -70,14 +63,13 @@ if (go == 0):
 		keyList = list(item.items())
 		resultParams = {}
 		for item in keyList:
-			if(item[0] == 'format'):
+			if (item[0] == 'format'):
 				break
 			resultParams[str(item[0])] = str(item[1])
 		resultParamsList = []
 		resultParamsList.insert(len(resultParamsList), resultParams)
 		partB[testNames[iter]] = resultParamsList
 		iter = iter + 1
-
 
 	q = open("finalResult.json", "w")
 	q.write("{")
@@ -90,7 +82,7 @@ if (go == 0):
 		else:
 			q.write("false")
 			print(name + " test FAILED")
-		if (name != testNames[len(testNames)-1]):
+		if (name != testNames[len(testNames) - 1]):
 			q.write(",")
 
 	q.write("\n}")
