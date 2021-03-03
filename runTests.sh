@@ -1,5 +1,5 @@
 #attempted cleanup from previous builds
-rm cypress/testing/testing/spiders/results.json cypress/jsonFiles/links.json
+
 
 npx cypress run --spec "cypress/integration/Tests.js"
 
@@ -14,11 +14,12 @@ cd ../testing/testing/spiders
 
 scrapy crawl tests -o output.json
 
-./temp.sh
+./fixScrapyOutput.sh
 
 cd ../../..
 
 python3 comparison.py
+
 
 echo "\n\n\n done with comparison \n\n\n"
 cd ..

@@ -1,8 +1,8 @@
 import json
 
-testPoint = 1
 result = []
 go = 0
+
 # read the testParameters, and load into input
 while True:
 	try:
@@ -38,45 +38,50 @@ while True:
 
 if (go == 0):
 
-	# create a list of parameters to later be compared
-	params = []
+	# create a list of input parameters to later be compared to output params
+	inputParams = []
 	for key in input["tests"]:
-		params.insert(0, input["tests"][key]["parameters"])
+		inputParams.insert(0, input["tests"][key]["parameters"])
 
-	# use prev data to have easily usable list of test Names
+	# creates a list that only contains the testNames
 	testNames = []
 	for i in range(0, len(names["Links"])):
 		testNames.insert(0, names["Links"][i]["test"])
 
-	# reverse to get original order of the testParameters
-	params.reverse()
+	# reverse to get correct order
+	inputParams.reverse()
 	testNames.reverse()
 
-	# set up partA which is the input parameters
+	# set up partA: dict with format {"testName" : [params]}, contains input
 	partA = {}
 	for i in range(0, len(testNames)):
-		partA[testNames[i]] = params[i]
+		partA[testNames[i]] = inputParams[i]
 
-	iter = 0
+	# set up partB, dict with format {"testName" : [params]}
 	partB = {}
-
 	keyList = []
 	subKeyList = []
-	for param in params:
+	# sets up a list of lists that contain the parameters used for each test
+	# we use this to grab the specific parameters from the Scrapy results, which contain
+	# way more information than we are using.
+	for param in inputParams:
 		for key, value in param.items():
 			subKeyList.append(key)
 		keyList.append(subKeyList)
 		subKeyList = []
 
+	# final set up for partB
 	for i in range(0, len(result)):
 		tempDict = {}
 		for j in range(0, len(keyList[i])):
 			tempDict[keyList[i][j]] = result[i][keyList[i][j]]
 		partB[testNames[i]] = tempDict
 
+	# create a results file to later be compared for passing/failing
 	q = open("finalResult.json", "w")
 	q.write("{")
 
+	# compare the tests, partA for input, partB for output.
 	for name in testNames:
 		q.write('\n\t"' + str(name) + '" : ')
 

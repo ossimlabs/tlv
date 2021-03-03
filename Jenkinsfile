@@ -98,6 +98,11 @@ node(POD_LABEL){
     {
         container('cypress')
         {
+                    sh """
+                    chmod +x cleanup.sh
+                    ./cleanup.sh
+                    """
+
                     try {
                         sh """
                             cypress run --headless
@@ -119,8 +124,8 @@ node(POD_LABEL){
 
                     cd ../testing/testing/spiders
                     scrapy crawl tests -o output.json
-                    chmod +x temp.sh
-                    ./temp.sh
+                    chmod +x fixScrapyOutput.sh
+                    ./fixScrapyOutput.sh
                     echo "\n\n\n\n Results:"
                     cat results.json
                     echo "\n\n\n\n"
