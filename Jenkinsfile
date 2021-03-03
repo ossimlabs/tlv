@@ -132,7 +132,7 @@ node(POD_LABEL){
 
                     cd ../../..
 
-                    python comparison.py
+                    python3 comparison.py
 
                     cd ..
                     """
