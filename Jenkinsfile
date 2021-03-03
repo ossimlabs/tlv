@@ -132,7 +132,7 @@ node(POD_LABEL){
 
                     cd ../../..
 
-                    python3 comparison.py
+                    python comparison.py
 
                     cd ..
                     """
@@ -152,29 +152,6 @@ node(POD_LABEL){
                        s3Upload(file:'results/omar-wmts-test-results.html', bucket:'ossimlabs', path:'cypressTests/')
                 }
     }
-
-
-
-
-    // will probably need to fix/change the way the scrapy output is taken care of.... but can't do this until i can get
-    // clean output from scrapy again.
-
-    //need to push the new image to nexus. or learn how anyways...
-
-
-
-    // we were good until running the scrapy tests.. needed to get pip installed to take care of scrapy, or just install
-    // scrapy directly to the image... then we can run the tests, grab the output. need to make sure the output script works
-    // or make a new one/ fix what we have. once the scrapy output is taken care of, the comparison python file works
-    // either way, and outputs either way, which also means the cypress tests will work either w.
-
-
-
-
-
-
-
-
 
 //     CYPRESS TESTS COMING SOON
 //     stage ("Run Cypress Test") {
@@ -286,3 +263,4 @@ node(POD_LABEL){
         }
     }
 }
+

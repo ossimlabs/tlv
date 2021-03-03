@@ -43,3 +43,4 @@ class QuotesSpider(scrapy.Spider):
 				'Output' : thing.xpath('/html/body/script[7]/text()').extract_first()
 			}
 			self.iter = self.iter + 1
+

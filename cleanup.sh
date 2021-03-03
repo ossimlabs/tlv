@@ -3,3 +3,5 @@ rm cypress/jsonFiles/links.json cypress/jsonFiles/links2.json cypress/jsonFiles/
 rm cypress/finalResult.json
 
 rm cypress/testing/testing/spiders/results.json
+
+rm results/test-result.xml
