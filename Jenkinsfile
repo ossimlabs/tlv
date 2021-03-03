@@ -121,6 +121,9 @@ node(POD_LABEL){
                     scrapy crawl tests -o output.json
                     chmod +x temp.sh
                     ./temp.sh
+                    echo "\n\n\n\n Results:"
+                    cat results.json
+                    echo "\n\n\n\n"
 
                     cd ../../..
 
