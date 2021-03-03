@@ -68,61 +68,21 @@ if (go == 0):
 		keyList.append(subKeyList)
 		subKeyList = []
 
-
 	for i in range(0, len(result)):
-		# print("..........")
 		tempDict = {}
 		for j in range(0, len(keyList[i])):
-
-			# partB[testNames[i]] =
 			tempDict[keyList[i][j]] = result[i][keyList[i][j]]
 		partB[testNames[i]] = tempDict
-	# print("PartA\n...........")
-	# print(partA)
-	# print("PartB\n...........")
-	# print(partB)
-
-
-	# use this to cycle through each param in each keyList
-	# for test in keyList:
-	# 	print(".........\n")
-	# 	for param in test:
-	# 		print(param)
-
-
-
-
-	# iter = 0
-	# partB = {}
-	# for item in result:
-	# 	keyList = list(item.items())
-	# 	resultParams = {}
-	# 	for item in keyList:
-	# 		if (item[0] == 'format'):
-	# 			continue
-	# 		resultParams[str(item[0])] = str(item[1])
-	# 	resultParamsList = []
-	# 	resultParamsList.insert(len(resultParamsList), resultParams)
-	# 	partB[testNames[iter]] = resultParamsList
-	# 	iter = iter + 1
-	#
 
 	q = open("finalResult.json", "w")
 	q.write("{")
 
-	#
-	# print("\n\n.......................")
-	# print(partA)
-	# print("......................\n\n")
-	#
 	for name in testNames:
 		q.write('\n\t"' + str(name) + '" : ')
 
 		if partA[name] == partB[name]:
 			q.write("true")
 			print(name + " test PASSED")
-			print(partA[name])
-			print(partB[name])
 		else:
 			q.write("false")
 			print(name + " test FAILED")
