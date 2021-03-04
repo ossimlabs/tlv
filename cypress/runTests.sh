@@ -1,5 +1,7 @@
 #attempted cleanup from previous builds
+cd ..
 
+pwd
 
 npx cypress run --spec "cypress/integration/Tests.js"
 
