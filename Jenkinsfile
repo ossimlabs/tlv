@@ -43,10 +43,11 @@ podTemplate(
         ),
         containerTemplate(
             name: 'cypress',
-            image: "${DOCKER_REGISTRY_DOWNLOAD_URL}/cypress/included:4.9.0",
+            image: "${DOCKER_REGISTRY_DOWNLOAD_URL}/cypress/included:4.9.2",
             ttyEnabled: true,
             command: 'cat',
-            privileged: true
+            privileged: true,
+            alwaysPullImage: true
         )
       ],
     volumes: [
@@ -93,6 +94,57 @@ node(POD_LABEL){
         DOCKER_IMAGE_PATH = "${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/${APP_NAME}"
     }
 
+    stage ('Run Tests')
+    {
+        container('cypress')
+        {
+                    try {
+                        sh """
+                            cypress run --headless
+                        """
+                    } catch (err) {}
+                    sh """
+                        npm i -g xunit-viewer
+                        xunit-viewer -r results -o results/tlv-test-results.html
+                        """
+                        junit 'results/*.xml'
+                        archiveArtifacts "results/*.xml"
+                        archiveArtifacts "results/*.html"
+                        s3Upload(file:'results/tlv-test-results.html', bucket:'ossimlabs', path:'cypressTests/')
+
+                    sh """
+                    cd cypress/jsonFiles
+                    chmod +x fixCypressOutput.sh
+                    ./fixCypressOutput.sh
+
+                    cd ../testing/testing/spiders
+                    scrapy crawl tests -o output.json
+                    chmod +x fixScrapyOutput.sh
+                    ./fixScrapyOutput.sh
+
+                    cd ../../..
+
+                    python3 comparison.py
+
+                    cd ..
+                    """
+                    try
+                    {
+                      sh """
+                          cypress run --headless --spec "cypress/integration/Final.js"
+                      """
+                   } catch (err) {}
+                   sh """
+                       npm i -g xunit-viewer
+                       xunit-viewer -r results -o results/tlv-test-results.html
+                       """
+                       junit 'results/*.xml'
+                       archiveArtifacts "results/*.xml"
+                       archiveArtifacts "results/*.html"
+                       s3Upload(file:'results/tlv-test-results.html', bucket:'ossimlabs', path:'cypressTests/')
+                }
+    }
+
 //     CYPRESS TESTS COMING SOON
 //     stage ("Run Cypress Test") {
 //         container('cypress') {
@@ -126,8 +178,7 @@ node(POD_LABEL){
                 withSonarQubeEnv('sonarqube'){
                     sh """
                         ${scannerHome}/bin/sonar-scanner \
-                        -Dsonar.projectKey=${APP_NAME} \
-                        -Dsonar.login=${SONARQUBE_TOKEN}
+                        -Dsonar.projectKey=${APP_NAME} 
                     """
             }
         }
@@ -203,3 +254,5 @@ node(POD_LABEL){
         }
     }
 }
+
+//
