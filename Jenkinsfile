@@ -1,6 +1,6 @@
 properties([
     parameters([
-        string(name: 'PROJECT_URL', defaultValue: 'https://github.com/ossimlabs/omar-tlv', description: 'The project github URL'),
+        string(name: 'PROJECT_URL', defaultValue: 'https://github.com/ossimlabs/tlv', description: 'The project github URL'),
         string(name: 'DOCKER_REGISTRY_DOWNLOAD_URL', defaultValue: 'nexus-docker-private-group.ossim.io', description: 'Repository of docker images')
     ]),
     pipelineTriggers([
@@ -105,12 +105,12 @@ node(POD_LABEL){
                     } catch (err) {}
                     sh """
                         npm i -g xunit-viewer
-                        xunit-viewer -r results -o results/omar-wmts-test-results.html
+                        xunit-viewer -r results -o results/tlv-test-results.html
                         """
                         junit 'results/*.xml'
                         archiveArtifacts "results/*.xml"
                         archiveArtifacts "results/*.html"
-                        s3Upload(file:'results/omar-wmts-test-results.html', bucket:'ossimlabs', path:'cypressTests/')
+                        s3Upload(file:'results/tlv-test-results.html', bucket:'ossimlabs', path:'cypressTests/')
 
                     sh """
                     cd cypress/jsonFiles
@@ -121,7 +121,7 @@ node(POD_LABEL){
                     scrapy crawl tests -o output.json
                     chmod +x fixScrapyOutput.sh
                     ./fixScrapyOutput.sh
-                    
+
                     cd ../../..
 
                     python3 comparison.py
@@ -136,12 +136,12 @@ node(POD_LABEL){
                    } catch (err) {}
                    sh """
                        npm i -g xunit-viewer
-                       xunit-viewer -r results -o results/omar-wmts-test-results.html
+                       xunit-viewer -r results -o results/tlv-test-results.html
                        """
                        junit 'results/*.xml'
                        archiveArtifacts "results/*.xml"
                        archiveArtifacts "results/*.html"
-                       s3Upload(file:'results/omar-wmts-test-results.html', bucket:'ossimlabs', path:'cypressTests/')
+                       s3Upload(file:'results/tlv-test-results.html', bucket:'ossimlabs', path:'cypressTests/')
                 }
     }
 
