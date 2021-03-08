@@ -120,20 +120,22 @@ function beginSearch() {
 	}
 	var searchParams = getSearchParams();
 
-  // check that location param is what we expect [lon,lat]
-  if (!isLatitude(searchParams.location[1]) || !isLongitude(searchParams.location[0])){
-    searchParams.inputError = true;
-  }
+  // // check that location param is what we expect [lon,lat]
+  // if (!isLatitude(searchParams.location[1]) || !isLongitude(searchParams.location[0])){
+  //   searchParams.inputError = true;
+  // }
 
   // added input check 
-	if ( searchParams.inputError || searchParams.error ) { 
+	if ( /*searchParams.inputError || */ searchParams.error ) { 
+
+    displayErrorDialog( `${searchParams.error}` );
     
-    if(searchParams.inputError) {
-      // display error if we have invalid input
-      displayErrorDialog( `Something went wrong! Check search input.` ); 
-    } else {
-      displayErrorDialog( `${searchParams.error}` );
-    }
+    // if(searchParams.inputError) {
+    //   // display error if we have invalid input
+    //   displayErrorDialog( `Something went wrong! Check search input.` ); 
+    // } else {
+    //   displayErrorDialog( `${searchParams.error}` );
+    // }
     
   } else {
 		displayLoadingDialog( "We are searching the libraries for imagery... fingers crossed!" );
