@@ -114,28 +114,15 @@ function beginSearch() {
 
 		// if an ajax call is needed to find the location, we don't want an erroneous error messge while we wait
 		return;
-	} else if ( locationString == '' && !tlv.filter ) {
+  } else if ( locationString == '' && !tlv.filter ) {
 		displayErrorDialog( 'Ummm, you need to enter a location first.' );
 		return;
 	}
-	var searchParams = getSearchParams();
 
-  // check that location param is what we expect [lon,lat]
-  if (!isLatitude(searchParams.location[1]) || !isLongitude(searchParams.location[0])){
-    searchParams.inputError = true;
-  }
-
-  // added input check 
-	if ( searchParams.inputError || searchParams.error ) { 
+	  var searchParams = getSearchParams();
+	  if ( searchParams.error ) { displayErrorDialog( searchParams.error ); }
     
-    if(searchParams.inputError) {
-      // display error if we have invalid input
-      displayErrorDialog( `Something went wrong! Check search input.` ); 
-    } else {
-      displayErrorDialog( `${searchParams.error}` );
-    }
-    
-  } else {
+    else {
 		displayLoadingDialog( "We are searching the libraries for imagery... fingers crossed!" );
 
 		var queryParams = getWfs({});
@@ -623,7 +610,6 @@ function getSearchParams() {
 	searchObject.startMinute = startDate.minute;
 	searchObject.startSecond = startDate.second;
 
-  searchObject.inputError = false;
   
 	return searchObject;
 }
@@ -817,15 +803,6 @@ function initializeMaxCloudCoverInput() {
 	$( "#searchMaxCloudCoverInput" ).val( maxCloudCover );
 }
 
-// checks that lat value is a valid latitude
-function isLatitude(lat) {
-  return isFinite(lat) && Math.abs(lat) <= 90;
-}
-
-// checks that lon value is a valid longitude
-function isLongitude(lng) {
-  return isFinite(lng) && Math.abs(lng) <= 180;
-}
 
 function initializeMaxResultsSelect() {
 	var maxResults = 10;
