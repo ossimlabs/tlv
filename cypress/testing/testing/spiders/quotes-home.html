@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale = 1">
+		<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+		<title>Time Lapse Viewer (TLV)</title>
+		<link href = "/tlv/home/openSearch" rel = "search" title = "Time Lapse Viewer" type = "application/opensearchdescription+xml">
+		<link href = "/tlv/assets/tlvicon.ico" rel = "shortcut icon" type = "image/x-icon">
+
+		<link rel="stylesheet" href="/tlv/assets/webjars/bootswatch/3.3.5+4/slate/bootstrap.min-0d21c24901ccac5f096344ab58556765.css" />
+		<link rel="stylesheet" href="/tlv/assets/index-bundle-5146ee675d31ef2d328bbd665ff794b0.css" />
+	</head>
+	<body>
+		<div class = "container-fluid">
+			
+				
+<div class = "row security-classification" style = "background-color: green; color: white;">
+	<div class = "col-md-12">
+		<span id = "defaultClassification">
+			UNCLASSIFIED
+		</span>
+		<span id = "currentClassification" hidden>
+			UNCLASSIFIED
+		</span>
+	</div>
+</div>
+
+			
+			
+	<div class = "row banner">
+		<div class = "col-md-12" data-placement = "bottom" data-toggle = "tooltip" style = "background-color: darkgray; color: white;" title = "This application is subject to change without notice.">
+			BETA
+		</div>
+	</div>
+
+
+			<div class = "row">
+	<div id = "tileLoadProgressBar"></div>
+</div>
+<div class = "row">
+	 <div id = "imagePropertiesDiv">
+	<div>
+        <div style = "text-align: right">
+            <button class = "btn btn-default btn-sm" onclick = resetImageProperties() title = "Reset" type = "button">
+                <span class = "fa fa-undo"></span>
+            </button>
+            <button class = "btn btn-default btn-sm" onclick = 'javascript:$( "#imagePropertiesDiv" ).hide()' type = "button">
+                <span class = "glyphicon glyphicon-remove"></span>
+            </button>
+        </div>
+        <table class = "table">
+            <tr>
+                <td style="color: white; min-width:135px">Bands:</td>
+                <td>
+                    <select class = "form-control" id = "selectBandsMethodSelect" onchange = "selectBands( this.value )">
+                        
+                            <option value = default>Default</option>
+                        
+                            <option value = manual>Manual</option>
+                        
+                    </select>
+                    <table id = "manualBandSelectTable" style = "background: none; display: none">
+                        <tr style = "text-align: center; color: white;">
+                            <td>R</td>
+                            <td>G</td>
+                            <td>B</td>
+                        </tr>
+                        <tr>
+                            
+                                <td>
+                                    <select class = "form-control" id = "redGunSelect" onchange = "updateImageProperties( true )">
+                                        
+                                            <option value = 1>1</option>
+                                        
+                                            <option value = 2>2</option>
+                                        
+                                            <option value = 3>3</option>
+                                        
+                                            <option value = 4>4</option>
+                                        
+                                    </select>
+                                </td>
+                            
+                                <td>
+                                    <select class = "form-control" id = "greenGunSelect" onchange = "updateImageProperties( true )">
+                                        
+                                            <option value = 1>1</option>
+                                        
+                                            <option value = 2>2</option>
+                                        
+                                            <option value = 3>3</option>
+                                        
+                                            <option value = 4>4</option>
+                                        
+                                    </select>
+                                </td>
+                            
+                                <td>
+                                    <select class = "form-control" id = "blueGunSelect" onchange = "updateImageProperties( true )">
+                                        
+                                            <option value = 1>1</option>
+                                        
+                                            <option value = 2>2</option>
+                                        
+                                            <option value = 3>3</option>
+                                        
+                                            <option value = 4>4</option>
+                                        
+                                    </select>
+                                </td>
+                            
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td style="color: white;">Brightness: <span id = "brightnessValueSpan"></span></td>
+                <td>
+                    <input id = "brightnessSliderInput" type = "text"/>
+                </td>
+            </tr>
+            <tr>
+                <td style="color: white;">Contrast: <span id = "contrastValueSpan"></span></td>
+                <td>
+                    <input id = "contrastSliderInput" type = "text"/>
+                </td>
+            </tr>
+			<tr>
+				<td style="color: white;">Gamma: <span id = "gammaValueSpan"></span></td>
+				<td>
+					<input id = "gammaSliderInput" type = "text"/>
+				</td>
+			</tr>
+            <tr id="dra-control">
+                <td style="color: white;">DRA: <span id = "dynamicRangeValueSpan" style="color: white;"></span></td>
+                <td>
+                    <select class = "form-control" id = "dynamicRangeSelect" onchange = "updateImageProperties( true )">
+                        
+                            <option value = none>None</option>
+                        
+                            <option value = auto-minmax>Auto Min Max</option>
+                        
+                            <option value = auto-percentile>Auto Percentile</option>
+                        
+                            <option value = linear>Linear</option>
+                        
+                            <option value = std-stretch-1>STD 1</option>
+                        
+                            <option value = std-stretch-2>STD 2</option>
+                        
+                            <option value = std-stretch-3>STD 3</option>
+                        
+                    </select>
+					<div id = "DRA_slider_parent">
+                    	<div id = "dynamicRangeSliderInput" type = "text"></div>
+					</div>
+
+					<div id = "DRA_midpoint_parent">
+						<div id = "DRA_Midpoint" type = "text"></div>
+					</div>
+                </td>
+            </tr>
+            <tr>
+                <td style="color: white;">DRA Region:</td>
+                <td>
+                    <select class = "form-control" id = "dynamicRangeRegionSelect" onchange = "updateImageProperties( true )">
+                        
+                            <option value = false>Global</option>
+                        
+                            <option value = true>Viewport</option>
+                        
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td style="color: white;">Format:</td>
+                <td>
+                    <select class = "form-control" id = "formatSelect" onchange = "updateImageProperties( true )">
+                        
+                            <option value = image/jpeg>image/jpeg</option>
+                        
+                            <option value = image/png>image/png</option>
+                        
+                            <option value = image/vnd.jpeg-png>image/vnd.jpeg-png</option>
+                        
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td style="color: white;">Interpolation:</td>
+                <td>
+                    <select class = "form-control" id = "interpolationSelect" onchange = "updateImageProperties( true )">
+                        
+                            <option value = bessel>Bessel</option>
+                        
+                            <option value = bilinear>Bilinear</option>
+                        
+                            <option value = blackman>Blackman</option>
+                        
+                            <option value = bspline>Bspline</option>
+                        
+                            <option value = catrom>Catrom</option>
+                        
+                            <option value = cubic>Cubic</option>
+                        
+                            <option value = gaussian>Gaussian</option>
+                        
+                            <option value = hamming>Hamming</option>
+                        
+                            <option value = hermite>Hermite</option>
+                        
+                            <option value = lanczos>Lanczos</option>
+                        
+                            <option value = magic>Magic</option>
+                        
+                            <option value = mitchell>Mitchell</option>
+                        
+                            <option value = nearest>Nearest</option>
+                        
+                            <option value = quadratic>Quadratic</option>
+                        
+                            <option value = sinc>Sinc</option>
+                        
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td style="color: white;">Keep Visible:</td>
+                <td>
+                    <select class = "form-control" id = "keepVisibleSelect" onchange = "updateImageProperties( false )">
+                        
+                            <option value = false>No</option>
+                        
+                            <option value = true>Yes</option>
+                        
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td style="color: white;">Null Pixel Flip:</td>
+                <td>
+                    <select class = "form-control" id = "nullPixelFlipSelect" onchange = "updateImageProperties( true )">
+                        
+                            <option value = false>False</option>
+                        
+                            <option value = true>True</option>
+                        
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td style="color: white;">Opacity: <span id = "opacityValueSpan"></span></td>
+                <td id="opacity_slider">
+                    <input data-slider-id = "opacitySlider" id = "opacitySliderInput" type = "text"/>
+                </td>
+            </tr>
+            <tr>
+                <td style="color: white;">Sharpen: <span id = "sharpenValueSpan"></span></td>
+                <td id="sharpen_slider">
+                    <input id = "sharpenSliderInput" type = "text"/>
+                </td>
+            </tr>
+        </table>
+	</div>
+</div>
+
+
+
+	<div class = "map" id = "map"></div>
+	<div id = "imageSpaceMaps" style = "display: none;"></div>
+</div>
+
+			<div class = "alert alert-danger" id = "errorDialog" role = "alert">
+	<button aria-label = "Close" class = "close" onclick = hideErrorDialog() type = "button">
+		<span aria-hidden = "true">&times;</span>
+	</button>
+	<div></div>
+</div>
+
+<div class = "alert" id = "infoDialog" role = "alert"></div>
+
+<div class = "modal" id = "loadingDialog" role = "dialog" style = "z-index: 2147483647" tabindex = "-1">
+	<div class = "modal-dialog">
+		<div class = "modal-content">
+			<div class = "modal-header"><h4>Please wait...</h4></div>
+			<div class = "modal-body">
+				<div id = "loadingDialogMessageDiv"></div>
+				<br>
+				<div class = "progress progress-striped">
+					<div class = "progress-bar progress-bar-info" role = "progressbar" style = "width: 100%"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class = "modal" id = "summaryTableDialog" role = "dialog" tabindex = "-1">
+	<div class = "modal-dialog modal-xl">
+ 		<div class = "modal-content">
+			<div class = "modal-header"><h4>Summary Table</h4></div>
+			<div class = "modal-body">
+				<table class = "table table-condensed table-hover table-striped" id = "timeLapseSummaryTable"></table>
+			</div>
+			<div class = "modal-footer">
+				<button type = "button" class = "btn btn-default" data-dismiss = "modal">Close</button>
+ 			</div>
+		</div>
+	</div>
+</div>
+
+
+<div class = "modal" id = "contextMenuDialog" role = "dialog" tabindex = "-1">
+	<div class = "modal-dialog">
+		<div class = "modal-content">
+			<div class = "modal-header"><h4>Context Menu</h4></div>
+			<div class = "modal-body">
+				<ul class = "nav nav-tabs">
+					<li class = "active">
+						<a href = "#clickPoint" data-toggle = "tab">Point</a>
+					</li>
+					<li>
+						<a href = "#imageMetadata" data-toggle = "tab">Image Metadata</a>
+					</li>
+				</ul>
+
+				<div class = "tab-content">
+					<div class = "tab-pane active" id = "clickPoint">
+						<div class = "row" style = "text-align: center"><b><i>You clicked here</i></b></div>
+						<div class = "row" id = "mouseClickDiv"></div>
+						<hr>
+						<div class = "row" id = "pqeDiv" style = "text-align: center"></div>
+					</div>
+					<div class = "tab-pane" id = "imageMetadata">
+						<pre id = "imageMetadataPre" style = "background: none; color: #c8c8c8"></pre>
+					</div>
+				</div>
+			</div>
+			<div class = "modal-footer">
+				<button type = "button" class = "btn btn-default" data-dismiss = "modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div class = "modal" id = "annotationsDialog" role = "dialog" tabindex = "-1">
+	<div class = "modal-dialog">
+		<div class = "modal-content">
+			<div class = "modal-header"><h4>Annotations</h4></div>
+			<div class = "modal-body">
+				
+					<label>Circle</label>
+					<button class = "btn btn-primary form-control" data-dismiss = "modal" onclick = "drawAnnotation( &#39;circle&#39; )">
+						Draw Circle
+					</button>
+				
+					<label>Line</label>
+					<button class = "btn btn-primary form-control" data-dismiss = "modal" onclick = "drawAnnotation( &#39;line&#39; )">
+						Draw Line
+					</button>
+				
+					<label>Point</label>
+					<button class = "btn btn-primary form-control" data-dismiss = "modal" onclick = "drawAnnotation( &#39;point&#39; )">
+						Draw Point
+					</button>
+				
+					<label>Polygon</label>
+					<button class = "btn btn-primary form-control" data-dismiss = "modal" onclick = "drawAnnotation( &#39;polygon&#39; )">
+						Draw Polygon
+					</button>
+				
+					<label>Rectangle</label>
+					<button class = "btn btn-primary form-control" data-dismiss = "modal" onclick = "drawAnnotation( &#39;rectangle&#39; )">
+						Draw Rectangle
+					</button>
+				
+					<label>Square</label>
+					<button class = "btn btn-primary form-control" data-dismiss = "modal" onclick = "drawAnnotation( &#39;square&#39; )">
+						Draw Square
+					</button>
+				
+
+				<hr>
+				<div class = "row">
+					<div class = "col-md-6">
+						<button class = "btn btn-primary form-control" data-dismiss = "modal" onclick = modifyAnnotationShape()>
+							Modify Shape
+						</button>
+					</div>
+					<div class = "col-md-6">
+						<button class = "btn btn-primary form-control" data-dismiss = "modal" onclick = modifyAnnotationStyle()>
+							Modify Style
+						</button>
+					</div>
+				</div>
+			</div>
+			<div class = "modal-footer">
+				<button type = "button" class = "btn btn-default" data-dismiss = "modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class = "modal" id = "annotationStylesDialog" role = "dialog" tabindex = "-1">
+	<div class = "modal-dialog">
+		<div class = "modal-content">
+			<div class = "modal-header"><h4>Annotation Styles</h4></div>
+			<div class = "modal-body">
+				<ul class = "nav nav-tabs">
+    				
+						<li>
+							<a href = "#circle" data-toggle = "tab" onclick = 'javascript:displayDialog( "annotationStylesDialog" )'>Circle</a>
+						</li>
+					
+						<li>
+							<a href = "#line" data-toggle = "tab" onclick = 'javascript:displayDialog( "annotationStylesDialog" )'>Line</a>
+						</li>
+					
+						<li>
+							<a href = "#point" data-toggle = "tab" onclick = 'javascript:displayDialog( "annotationStylesDialog" )'>Point</a>
+						</li>
+					
+						<li>
+							<a href = "#polygon" data-toggle = "tab" onclick = 'javascript:displayDialog( "annotationStylesDialog" )'>Polygon</a>
+						</li>
+					
+						<li>
+							<a href = "#text" data-toggle = "tab" onclick = 'javascript:displayDialog( "annotationStylesDialog" )'>Text</a>
+						</li>
+					
+				</ul>
+				<div class = "tab-content">
+					
+						<div class = "tab-pane" id = "circle">
+							
+								<span>
+									<h3>Fill</h3>
+									<div class = "row">
+    <div class = "col-md-6">
+        <label>Color</label>
+        <input class = "form-control" id = "fillColorInput" type = "color">
+    </div>
+    <div class = "col-md-6">
+        <label>Opacity: </label>
+        <span>0%</span>
+        <input data-slider-max = "100" data-slider-min = "0" data-slider-tooltip = "hide"  data-slider-value = "0" name = "fillOpacitySliderInput" style = "width: 100%" type = "text">
+    </div>
+</div>
+
+								</span>
+							
+								<span>
+									<h3>Radius</h3>
+									<div class = "row">
+    <div class = "col-md-12">
+        <input class = "form-control" id = "radiusInput" min = "0" type = "number">
+    </div>
+</div>
+
+								</span>
+							
+								<span>
+									<h3>Stroke</h3>
+									<div class = "row">
+    <div class = "col-md-4">
+        <label>Color</label>
+        <input class = "form-control" id = "strokeColorInput" type = "color">
+    </div>
+    <div class = "col-md-4">
+        <label>Opacity:</label>
+        <span>0%</span>
+        <input class = "form-control" data-slider-max = "100" data-slider-min = "0" data-slider-tooltip = "hide" data-slider-value = "0" name = "strokeOpacitySliderInput" style = "width: 100%" type = "text">
+    </div>
+    <div class = "col-md-4">
+        <label>Width</label>
+        <input class = "form-control" id = "strokeWidthInput" max = "100" min = "1" step = "1" type = "number">
+    </div>
+</div>
+
+<div class = "row">
+    <div class = "col-md-4">
+        <label>Line Dash Length</label>
+        <input class = "form-control" id = "strokeLineDashLengthInput" step = "1" type = "number">
+    </div>
+    <div class = "col-md-4">
+        <label>Line Dash Spacing</label>
+        <input class = "form-control" id = "strokeLineDashLengthSpacingInput" step = "1" type = "number">
+    </div>
+    <div class = "col-md-4">
+        <label>Line Dash Offset</label>
+        <input class = "form-control" id = "strokeLineDashOffsetInput" step = "1" type = "number">
+    </div>
+</div>
+
+<div class = "row">
+    <div class = "col-md-4">
+        <label>Line Cap</label>
+        <select class = "form-control" id = "strokeLineCapSelect">
+            <option value = "butt">Butt</option>
+            <option value = "round">Round</option>
+            <option value = "square">Square</option>
+        </select>
+    </div>
+    <div class = "col-md-4">
+        <label>Line Join</label>
+        <select class = "form-control" id = "strokeLineJoinSelect">
+            <option value = "bevel">Bevel</option>
+            <option value = "miter">Miter</option>
+            <option value = "round">Round</option>
+        </select>
+    </div>
+    <div class = "col-md-4">
+        <label>Miter Limit</label>
+        <input class = "form-control" id = "strokeMiterLimitInput" step = "1" type = "number">
+    </div>
+</div>
+
+								</span>
+							
+						</div>
+					
+						<div class = "tab-pane" id = "line">
+							
+								<span>
+									<h3>Stroke</h3>
+									<div class = "row">
+    <div class = "col-md-4">
+        <label>Color</label>
+        <input class = "form-control" id = "strokeColorInput" type = "color">
+    </div>
+    <div class = "col-md-4">
+        <label>Opacity:</label>
+        <span>0%</span>
+        <input class = "form-control" data-slider-max = "100" data-slider-min = "0" data-slider-tooltip = "hide" data-slider-value = "0" name = "strokeOpacitySliderInput" style = "width: 100%" type = "text">
+    </div>
+    <div class = "col-md-4">
+        <label>Width</label>
+        <input class = "form-control" id = "strokeWidthInput" max = "100" min = "1" step = "1" type = "number">
+    </div>
+</div>
+
+<div class = "row">
+    <div class = "col-md-4">
+        <label>Line Dash Length</label>
+        <input class = "form-control" id = "strokeLineDashLengthInput" step = "1" type = "number">
+    </div>
+    <div class = "col-md-4">
+        <label>Line Dash Spacing</label>
+        <input class = "form-control" id = "strokeLineDashLengthSpacingInput" step = "1" type = "number">
+    </div>
+    <div class = "col-md-4">
+        <label>Line Dash Offset</label>
+        <input class = "form-control" id = "strokeLineDashOffsetInput" step = "1" type = "number">
+    </div>
+</div>
+
+<div class = "row">
+    <div class = "col-md-4">
+        <label>Line Cap</label>
+        <select class = "form-control" id = "strokeLineCapSelect">
+            <option value = "butt">Butt</option>
+            <option value = "round">Round</option>
+            <option value = "square">Square</option>
+        </select>
+    </div>
+    <div class = "col-md-4">
+        <label>Line Join</label>
+        <select class = "form-control" id = "strokeLineJoinSelect">
+            <option value = "bevel">Bevel</option>
+            <option value = "miter">Miter</option>
+            <option value = "round">Round</option>
+        </select>
+    </div>
+    <div class = "col-md-4">
+        <label>Miter Limit</label>
+        <input class = "form-control" id = "strokeMiterLimitInput" step = "1" type = "number">
+    </div>
+</div>
+
+								</span>
+							
+						</div>
+					
+						<div class = "tab-pane" id = "point">
+							
+								<span>
+									<h3>Fill</h3>
+									<div class = "row">
+    <div class = "col-md-6">
+        <label>Color</label>
+        <input class = "form-control" id = "fillColorInput" type = "color">
+    </div>
+    <div class = "col-md-6">
+        <label>Opacity: </label>
+        <span>0%</span>
+        <input data-slider-max = "100" data-slider-min = "0" data-slider-tooltip = "hide"  data-slider-value = "0" name = "fillOpacitySliderInput" style = "width: 100%" type = "text">
+    </div>
+</div>
+
+								</span>
+							
+								<span>
+									<h3>Radius</h3>
+									<div class = "row">
+    <div class = "col-md-12">
+        <input class = "form-control" id = "radiusInput" min = "0" type = "number">
+    </div>
+</div>
+
+								</span>
+							
+								<span>
+									<h3>Stroke</h3>
+									<div class = "row">
+    <div class = "col-md-4">
+        <label>Color</label>
+        <input class = "form-control" id = "strokeColorInput" type = "color">
+    </div>
+    <div class = "col-md-4">
+        <label>Opacity:</label>
+        <span>0%</span>
+        <input class = "form-control" data-slider-max = "100" data-slider-min = "0" data-slider-tooltip = "hide" data-slider-value = "0" name = "strokeOpacitySliderInput" style = "width: 100%" type = "text">
+    </div>
+    <div class = "col-md-4">
+        <label>Width</label>
+        <input class = "form-control" id = "strokeWidthInput" max = "100" min = "1" step = "1" type = "number">
+    </div>
+</div>
+
+<div class = "row">
+    <div class = "col-md-4">
+        <label>Line Dash Length</label>
+        <input class = "form-control" id = "strokeLineDashLengthInput" step = "1" type = "number">
+    </div>
+    <div class = "col-md-4">
+        <label>Line Dash Spacing</label>
+        <input class = "form-control" id = "strokeLineDashLengthSpacingInput" step = "1" type = "number">
+    </div>
+    <div class = "col-md-4">
+        <label>Line Dash Offset</label>
+        <input class = "form-control" id = "strokeLineDashOffsetInput" step = "1" type = "number">
+    </div>
+</div>
+
+<div class = "row">
+    <div class = "col-md-4">
+        <label>Line Cap</label>
+        <select class = "form-control" id = "strokeLineCapSelect">
+            <option value = "butt">Butt</option>
+            <option value = "round">Round</option>
+            <option value = "square">Square</option>
+        </select>
+    </div>
+    <div class = "col-md-4">
+        <label>Line Join</label>
+        <select class = "form-control" id = "strokeLineJoinSelect">
+            <option value = "bevel">Bevel</option>
+            <option value = "miter">Miter</option>
+            <option value = "round">Round</option>
+        </select>
+    </div>
+    <div class = "col-md-4">
+        <label>Miter Limit</label>
+        <input class = "form-control" id = "strokeMiterLimitInput" step = "1" type = "number">
+    </div>
+</div>
+
+								</span>
+							
+						</div>
+					
+						<div class = "tab-pane" id = "polygon">
+							
+								<span>
+									<h3>Fill</h3>
+									<div class = "row">
+    <div class = "col-md-6">
+        <label>Color</label>
+        <input class = "form-control" id = "fillColorInput" type = "color">
+    </div>
+    <div class = "col-md-6">
+        <label>Opacity: </label>
+        <span>0%</span>
+        <input data-slider-max = "100" data-slider-min = "0" data-slider-tooltip = "hide"  data-slider-value = "0" name = "fillOpacitySliderInput" style = "width: 100%" type = "text">
+    </div>
+</div>
+
+								</span>
+							
+								<span>
+									<h3>Stroke</h3>
+									<div class = "row">
+    <div class = "col-md-4">
+        <label>Color</label>
+        <input class = "form-control" id = "strokeColorInput" type = "color">
+    </div>
+    <div class = "col-md-4">
+        <label>Opacity:</label>
+        <span>0%</span>
+        <input class = "form-control" data-slider-max = "100" data-slider-min = "0" data-slider-tooltip = "hide" data-slider-value = "0" name = "strokeOpacitySliderInput" style = "width: 100%" type = "text">
+    </div>
+    <div class = "col-md-4">
+        <label>Width</label>
+        <input class = "form-control" id = "strokeWidthInput" max = "100" min = "1" step = "1" type = "number">
+    </div>
+</div>
+
+<div class = "row">
+    <div class = "col-md-4">
+        <label>Line Dash Length</label>
+        <input class = "form-control" id = "strokeLineDashLengthInput" step = "1" type = "number">
+    </div>
+    <div class = "col-md-4">
+        <label>Line Dash Spacing</label>
+        <input class = "form-control" id = "strokeLineDashLengthSpacingInput" step = "1" type = "number">
+    </div>
+    <div class = "col-md-4">
+        <label>Line Dash Offset</label>
+        <input class = "form-control" id = "strokeLineDashOffsetInput" step = "1" type = "number">
+    </div>
+</div>
+
+<div class = "row">
+    <div class = "col-md-4">
+        <label>Line Cap</label>
+        <select class = "form-control" id = "strokeLineCapSelect">
+            <option value = "butt">Butt</option>
+            <option value = "round">Round</option>
+            <option value = "square">Square</option>
+        </select>
+    </div>
+    <div class = "col-md-4">
+        <label>Line Join</label>
+        <select class = "form-control" id = "strokeLineJoinSelect">
+            <option value = "bevel">Bevel</option>
+            <option value = "miter">Miter</option>
+            <option value = "round">Round</option>
+        </select>
+    </div>
+    <div class = "col-md-4">
+        <label>Miter Limit</label>
+        <input class = "form-control" id = "strokeMiterLimitInput" step = "1" type = "number">
+    </div>
+</div>
+
+								</span>
+							
+						</div>
+					
+						<div class = "tab-pane" id = "text">
+							
+								<span>
+									<h3>Text</h3>
+									<div class = "row">
+    <div class = "col-md-6">
+        <label>Color</label>
+        <input class = "form-control" id = "fillColorInput" type = "color">
+    </div>
+    <div class = "col-md-6">
+        <label>Opacity: </label>
+        <span>0%</span>
+        <input data-slider-max = "100" data-slider-min = "0" data-slider-tooltip = "hide"  data-slider-value = "0" name = "fillOpacitySliderInput" style = "width: 100%" type = "text">
+    </div>
+</div>
+
+
+<div class = "row">
+    <div class = "col-md-4">
+        <label>Offset X</label>
+        <input class = "form-control" id = "textOffsetXInput" step = "1" type = "number">
+    </div>
+    <div class = "col-md-4">
+        <label>Offset Y</label>
+        <input class = "form-control" id = "textOffsetYInput" step = "1" type = "number">
+    </div>
+    <div class = "col-md-4">
+        <label>Sacle</label>
+        <input class = "form-control" id = "textScaleInput" step = "0.1" type = "number">
+    </div>
+</div>
+
+<div class = "row">
+    <div class = "col-md-4">
+        <label>Rotate With View</label>
+        <select class = "form-control" id = "textRotateWithViewSelect">
+            <option vlaue = "flase">No</option>
+            <option value = "true">Yes</option>
+        </select>
+    </div>
+    <div class = "col-md-4">
+        <label>Rotation</label>
+        <input class = "form-control" id = "textRotationInput" type = "number">
+    </div>
+    <div class = "col-md-4">
+        <label>Text Align</label>
+        <select class = "form-control" id = "textTextAlignSelect">
+            <option value = "left">Left</option>
+            <option value = "right">Right</option>
+            <option value = "center">Center</option>
+            <option value = "end">End</option>
+            <option value = "start">Start</option>
+        </select>
+    </div>
+</div>
+
+<div class = "row">
+    <div class = "col-md-12">
+        <label>Text</label>
+        <input class = "form-control" id = "textTextInput" type = "text">
+    </div>
+</div>
+
+<div class = "row">
+    <div class = "col-md-12">
+        <label>Label</label>
+        <select class = "form-control" id = "textTextSelect"></select>
+    </div>
+</div>
+
+								</span>
+							
+						</div>
+					
+				</div>
+			</div>
+			<div class = "modal-footer">
+				<button type = "button" class = "btn btn-primary" data-dismiss = "modal" onclick = applyAnnotationStyle()>Apply</button>
+				<button type = "button" class = "btn btn-primary" data-dismiss = "modal" onclick = deleteFeature()>Delete</button>
+                <button type = "button" class = "btn btn-default" data-dismiss = "modal">Close</button>
+            </div>
+		</div>
+	</div>
+</div>
+
+<div class = "modal" id = "exportDialog" role = "dialog" tabindex = "-1">
+	<div class = "modal-dialog">
+		<div class = "modal-content">
+			<div class = "modal-header"><h4>Export</h4></div>
+			<div class = "modal-body">
+				
+
+					<label>GIF</label>
+					<button class = "btn btn-primary form-control" data-dismiss = "modal" onclick = exportGifCheck()>
+						Export GIF
+					</button>
+				
+
+					<label>Metadata</label>
+					<button class = "btn btn-primary form-control" data-dismiss = "modal" onclick = exportMetadata()>
+						Export Metadata
+					</button>
+				
+
+					<label>KML</label>
+					<button class = "btn btn-primary form-control" data-dismiss = "modal" onclick = exportKml()>
+						Export KML
+					</button>
+				
+
+					<label>Link</label>
+					<button class = "btn btn-primary form-control" data-dismiss = "modal" onclick = exportLink()>
+						Export Link
+					</button>
+				
+
+					<label>Powerpoint</label>
+					<button class = "btn btn-primary form-control" data-dismiss = "modal" onclick = exportPptCheck()>
+						Export Powerpoint
+					</button>
+				
+
+					<label>Screenshot</label>
+					<button class = "btn btn-primary form-control" data-dismiss = "modal" onclick = exportScreenshot()>
+						Export Screenshot
+					</button>
+				
+
+					<label>WMS Get Capabilities</label>
+					<button class = "btn btn-primary form-control" data-dismiss = "modal" onclick = exportWmsGetCapabilities()>
+						Export WMS Get Capabilities
+					</button>
+				
+			</div>
+			<div class = "modal-footer">
+				<button type = "button" class = "btn btn-default" data-dismiss = "modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+<div class = "modal" id = "exportLinkDialog" role = "dialog" tabindex = "-1">
+	<div class = "modal-dialog">
+		<div class = "modal-content">
+			<div class = "modal-header"><h4>Export Link</h4></div>
+			<div class = "modal-body">
+				<div class = "row" >
+					<div class = "col-md-12">
+						<input class = "form-control" id = "exportLinkInput">
+					</div>
+				</div>
+				<div class = "row template" id = "templateFooter"></div>
+			</div>
+			<div class = "modal-footer">
+				<button type = "button" class = "btn btn-primary" data-dismiss = "modal" onclick = downloadTemplate() >Download</button>
+                <button type = "button" class = "btn btn-default" data-dismiss = "modal">Close</button>
+            </div>
+		</div>
+	</div>
+</div>
+
+<div class = "modal" id = "helpDialog" role = "dialog" tabindex = "-1">
+	<div class = "modal-dialog">
+		<div class = "modal-content">
+			<div class = "modal-header">
+				<h4>
+					<img src="/tlv/assets/logos/tlv-2918f32194bcc2501d9ebc59dc509fcb.png" height="40"/>
+					Help!
+				</h4>
+			</div>
+			<div align = "center" class = "modal-body">
+				
+				
+					<b>Contact: </b> <a href = "mailto:omar&#64;maxar.com">omar&#64;maxar.com</a>
+					<hr>
+				
+
+				<b>Release:</b> Miami 2.12.0
+				<br>
+				<b>Build Version:</b> 2.12.6-SNAPSHOT
+				<hr>
+				<b>Grails Version:</b> 4.0.6
+				<br>
+				<b>Groovy Version:</b> 2.5.14
+				<br>
+				<b>JVM Version:</b> 11.0.9.1
+			</div>
+			<div class = "modal-footer">
+				
+					<a class = "btn btn-primary" href = "/omar-docs/" target = "_blank">User Guide</a>
+				
+				<button type = "button" class = "btn btn-default" data-dismiss = "modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class = "modal" id = "layersDialog" role = "dialog" tabindex = "-1">
+	<div class = "modal-dialog">
+		<div class = "modal-content">
+			<div class = "modal-header"><h4>Layers</h4></div>
+			<div class = "modal-body">
+				<label>Base Layer</label>
+				<select class = "form-control" id = "baseLayersSelect" onchange = "changeBaseLayer( this.value )">
+					<option value = "">None</option>
+					
+						<option value = "osmBasic">OSM Basic</option>
+					
+						<option value = "osmBright">OSM Bright</option>
+					
+				</select>
+
+				<label>Cross-Hair</label>
+				<select class = "form-control" id = "layersCrossHairSelect" onchange = crossHairLayerToggle()>
+					
+					<option selected value = "off">OFF</option>
+					<option  value = "on">ON</option>
+				</select>
+
+				<label>Mosaic</label>
+				<select class = "form-control" id = "layersMosaicSelect" onchange = mosaicLayerToggle()>
+					<option value = "off">OFF</option>
+					<option value = "on">ON</option>
+				</select>
+
+				<label>Search Origin</label>
+				<select class = "form-control" id = "layersSearchOriginSelect" onchange = searchOriginLayerToggle()>
+					
+					<option selected value = "off">OFF</option>
+					<option  value = "on">ON</option>
+				</select>
+
+				<label>Overview</label>
+				<select class = "form-control" id = "layersOverviewSelect" onchange = overviewLayerToggle()>
+					<option value = "off">OFF</option>
+					<option value = "on">ON</option>
+				</select>
+
+				
+			</div>
+			<div class = "modal-footer">
+				<button type = "button" class = "btn btn-default" data-dismiss = "modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class = "modal" id = "searchDialog" role = "dialog" tabindex = "-1">
+	<div class = "modal-dialog">
+		<div class = "modal-content">
+			<div class = "modal-header"><h4>Search Parameters</h4></div>
+			<div class = "modal-body">
+				
+					<ul class = "nav nav-tabs">
+						<li>
+							<a href = "#coverageTab" data-toggle = "tab">Coverage</a>
+						</li>
+						<li class = "active">
+							<a href = "#searchTab" data-toggle = "tab">Search</a>
+						</li>
+					</ul>
+
+					<div class = "tab-content">
+						<div class = "tab-pane" id = "coverageTab">
+							<br>
+							<div class = "row">
+								
+									<div class = "col-md-3 bg-primary bg-danger" style = "text-align: center"><b>Not In library :(</b></div>
+								
+									<div class = "col-md-3 bg-primary bg-info" style = "text-align: center"><b>In stack :D</b></div>
+								
+									<div class = "col-md-3 bg-primary bg-success" style = "text-align: center"><b>In library :)</b></div>
+								
+									<div class = "col-md-3 bg-primary bg-warning" style = "text-align: center"><b>Don&#39;t know :O</b></div>
+								
+							</div>
+							<br>
+							<div class = "row">
+								<div class = "col-md-12" style = "text-align: center">
+									<p>We'll search far and wide for any other imagery that meets your criteria!</p>
+								</div>
+							</div>
+							<div class = "row">
+								<div class = "col-md-12" id = "coverageTable"></div>
+							</div>
+						</div>
+						<div class = "tab-pane active" id = "searchTab">
+				
+						<div class = "form-group">
+
+							<div class = "row">
+								<div class = "col-md-12">
+									<label>Location</label>
+									
+									<input class = "typeahead form-control" id = "searchLocationInput" placeholder = "Placename, Coordinate, Image ID" type = "text">
+								</div>
+							</div>
+
+							<div class = "row">
+								<div class = "col-md-5">
+									<label>Start Date</label>
+									<div class = "input-group date" id = "searchStartDateTimePicker">
+										<input class = "form-control" type = "text">
+										<span class="input-group-addon">
+											<span class = "glyphicon glyphicon-calendar"></span>
+										</span>
+									</div>
+								</div>
+								<div class = "col-md-5">
+									<label>End Date</label>
+									<div class = "input-group date" id = "searchEndDateTimePicker">
+										<input class = "form-control" type = "text">
+										<span class="input-group-addon">
+											<span class = "glyphicon glyphicon-calendar"></span>
+										</span>
+									</div>
+								</div>
+								<div class = "col-md-2">
+									<label>Last Days</label>
+									<input class = "form-control" id = "searchLastDaysInput" onchange = adjustLastDaysDate() type = "number">
+								</div>
+							</div>
+
+							<div class = "row">
+								<div class = "col-md-12">
+									<label>Sensors</label>
+									<div class = "input-group">
+										<div class = "btn-group" data-toggle = "buttons">
+											<label class = "btn btn-primary" onclick = "javascript:checkAllSensors( this )">
+												<input type = "checkbox">
+												ALL
+											</label>
+										</div>
+										<div class = "btn-group" data-toggle = "buttons" id = "searchSensorDiv"></div>
+									</div>
+								</div>
+							</div>
+
+							<div class = "row">
+								<div class = "col-md-12">
+									<label>Full Spectrum GEOINT</label>
+									<div class = "form-inline">
+										<input class = "form-control"
+											id = "searchFsgInput"
+											list = "searchFsgList"
+											onchange = "javascript: handleDataList( 'searchFsgInput' )"
+											onkeyup = "javascript: handleDataList( 'searchFsgInput' )"
+											placeholder = "Full Spectrum GEOINT">
+										<datalist id = "searchFsgList"></datalist>
+										<button class = "btn btn-danger" data-toggle = "button" id = "searchFsgNotCheckbox" title = "Eveyrhting but these..." type = "button">
+											<span class = "glyphicon glyphicon-ban-circle"></span>
+										</button>
+									</div>
+								</div>
+							</div>
+
+							<div class = "row">
+								<div class = "col-md-4">
+									<label>Min. NIIRS</label>
+									<input class = "form-control" id = "searchMinNiirsInput" max = "9" min = "0" step = "0.1" type = "number">
+								</div>
+								<div class = "col-md-4">
+									<label>Max. Cloud Cover (%)</label>
+									<input class = "form-control" id = "searchMaxCloudCoverInput" max = "100" min = "0" step = "1" type = "number">
+								</div>
+								<div class = "col-md-4">
+									<label>Max. Results</label>
+									<select class = "form-control" id = "searchMaxResultsSelect">
+										
+											<option value = 5>5</option>
+										
+											<option value = 10>10</option>
+										
+											<option value = 25>25</option>
+										
+											<option value = 50>50</option>
+										
+											<option value = 75>75</option>
+										
+											<option value = 100>100</option>
+										
+											<option value = 250>250</option>
+										
+											<option value = 500>500</option>
+										
+									</select>
+								</div>
+							</div>
+
+							
+
+						</div>
+				
+						</div>
+					</div>
+				
+			</div>
+			<div class = "modal-footer">
+				<button type = "button" class = "btn btn-primary pull-left" data-dismiss = "modal" onclick = demoSearch()>Demo</button>
+				<button type = "button" class = "btn btn-primary" data-dismiss = "modal" onclick = beginSearch()>Search</button>
+				<button type = "button" class = "btn btn-primary" data-dismiss = "modal" onclick = "javascript:displayDialog( 'helpDialog' )">
+					<span class = 'glyphicon glyphicon-question-sign'></span>
+				</button>
+				<button type = "button" class = "btn btn-default" data-dismiss = "modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+<div class = "modal" id = "toolsDialog" role = "dialog" tabindex = "-1">
+	<div class = "modal-dialog">
+		<div class = "modal-content">
+			<div class = "modal-header"><h4>Tools</h4></div>
+			<div class = "modal-body">
+				<label>Geo-Jump</label>
+				<div class = "input-group">
+					
+					<input class = "typeahead form-control" id = "geoJumpLocationInput" placeholder = "Placename, Coordinate" type = "text">
+					<span class = "input-group-btn">
+						<button class = "btn btn-primary"  onclick = "geoJump($('#geoJumpLocationInput').val()); hideDialog( 'toolsDialog' )" type = "button">Go!</button>
+					</span>
+				</div>
+
+				<label>Measure</label>
+				<button class = "btn btn-primary form-control" data-dismiss = "modal" onclick = measure()>
+					Length/Area
+				</button>
+
+				<label>Orientation</label>
+				<select class = "form-control" id = "orientationSelect" onchange = "orientationToggle(); hideDialog( 'toolsDialog' )">
+					<option value = "manual">Manual</option>
+					<option value = "auto">Auto (Device)</option>
+				</select>
+
+				<label>Reverse Order</label>
+				<button class = "btn btn-primary form-control" onclick = "reverseOrder(); hideDialog( 'toolsDialog' )">
+					Reverse Order
+				</button>
+			</div>
+			<div class = "modal-footer">
+				<button type = "button" class = "btn btn-default" data-dismiss = "modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+<div class = "modal" id = "viewDialog" role = "dialog" tabindex = "-1">
+	<div class = "modal-dialog">
+		<div class = "modal-content">
+			<div class = "modal-header"><h4>View</h4></div>
+			<div class = "modal-body">
+				<label>Dimensions</label>
+				<select class = "form-control" id = "dimensionsSelect" onchange = "hideDialog( 'viewDialog' ); dimensionToggle();">
+					
+					<option selected value = 2>2D</option>
+					<option  value = 3>3D</option>
+				</select>
+
+				
+
+				<label>Swipe</label>
+				<select class = "form-control" id = "swipeSelect" onchange = "swipeToggle(); hideDialog( 'viewDialog' );">
+					
+					<option selected value = "off">OFF</option>
+					<option  value = "on">ON</option>
+				</select>
+
+				<label>Terrain Wireframe</label>
+				<select class = "form-control" id = "terrainWireframeSelect" onchange = "terrainWireframeToggle(); hideDialog( 'viewDialog' );">
+					
+					<option selected value = "off">OFF</option>
+					<option  value = "on">ON</option>
+				</select>
+
+				<label>View Space</label>
+				<select class = "form-control" id = "viewSpaceSelect" onchange = "viewSpaceToggle(); hideDialog( 'viewDialog' );">
+					
+					<option  value = "imageSpace">Image Space</option>
+					<option selected value = "ortho">Orthorectified</option>
+				</select>
+
+				<label>WMS Tiles</label>
+				<select class = "form-control" id = "wmsTilesSelect" onchange = "changeWmsLayerType(); hideDialog( 'viewDialog' );">
+					
+					<option selected value = "tileLayer">Multiple Tiles</option>
+					<option  value = "imageLayer">Single Tile</option>
+				</select>
+			</div>
+			<div class = "modal-footer">
+				<button type = "button" class = "btn btn-default" data-dismiss = "modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+		</div>
+
+		
+			
+			
+				<input id = "userNameInput" type = "hidden" value = "Anonymous">
+			
+		
+
+		<script type="text/javascript" src="/tlv/assets/index-bundle-7eb0de7bf98901aee9faf3bf6f1b954a.js" ></script>
+		
+		<script type="text/javascript">
+    $( document ).ready( function() {
+	   var rgb = $( 'body' ).css( 'background-color' );
+	   var colors = ol.color.asArray( rgb ).splice( 0, 3 );
+	   $( '#imagePropertiesDiv' ).css( 'background-color', 'rgba(' + colors.join( ',' ) + ', 0.75)' );
+    } );
+</script><script type="text/javascript">
+	function exportGifCheck() {
+		// only load the files if needed
+		if ( typeof GIFEncoder === "undefined" ) {
+			$.ajax({
+				dataType: "script",
+				url: "/tlv/assets/gif/gif-bundle-d219dd78a6a91b769595b48e64a0e379.js"
+			})
+			.done( function() {
+				exportGif();
+			});
+		}
+		else {
+			exportGif();
+		}
+	}
+
+	function exportPptCheck() {
+		// only load the files if needed
+		if ( typeof PptxGenJS === "undefined" ) {
+			$.ajax({
+				dataType: "script",
+				url: "/tlv/assets/ppt/ppt-bundle-449e797d687a07530206be477fc829e0.js"
+			})
+			.done( function() {
+				exportPowerpoint();
+			});
+		}
+		else {
+			exportPowerpoint();
+		}
+	}
+</script><script type="text/javascript">
+	$( 'a:contains("Coverage")' ).on( 'shown.bs.tab', function( event ) {
+		displayDialog( 'searchDialog' );
+	} );
+
+	$( "#searchLocationInput" ).on( "input", function () {
+		if ( tlv.geocoderUrl ) {
+			placenameSearch( $("#searchLocationInput") );
+		}
+	});
+
+	$( "#searchDialog" ).modal({
+		backdrop: "static",
+		keyboard: false
+	});
+</script><script type="text/javascript">
+	$( "#geoJumpLocationInput" ).on( "input", function () {
+		if ( tlv.geocoderUrl ) {
+			placenameSearch( $("#geoJumpLocationInput") );
+		}
+	});
+</script><script type="text/javascript">
+	function loadCesiumJavascript() {
+		return $.ajax({
+			dataType: "script",
+			url: "/tlv/assets/webjars/cesium/1.43.0/Build/Cesium/Cesium-cbb86b7d11ede860a8d7c516fa368804.js"
+		});
+	}
+</script><script type="text/javascript">
+			var tlv = {"availableBaseLayers":{"osmBasic":{"layers":"o2-basemap-basic","name":"OSM Basic","styles":"","type":"wms","url":"https://omar-dev.ossim.io/omar-mapproxy/service","visible":false},"osmBright":{"layers":"o2-basemap-bright","name":"OSM Bright","styles":"","type":"wms","visible":true,"url":"https://omar-dev.ossim.io/omar-mapproxy/service"}},"baseUrl":"","beLookup":null,"configLayers":{},"demoLocation":null,"geocoderUrl":"/twofishes/","ionAccessToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwMTU5ODJmNy0zNzk4LTRjNWQtODdjYS1kZGFkZWMzNGJiYTQiLCJpZCI6NDA0OCwic2NvcGVzIjpbImFzciIsImdjIl0sImlhdCI6MTUzOTcxNTA1NX0.-qjovBHf2Kelpg1INqW3arEjWNwW1OwKkftwWtxJo9w","libraries":{"o2":{"kmlUrl":"/omar-superoverlay/superOverlay/createKml","label":"O2","mensaUrl":"/omar-mensa/mensa","omsUrl":"/omar-oms/imageSpace","stagerUrl":"/omar-stager/","wfsUrl":"/omar-wfs/wfs","wmsUrls":"https://a-omar-dev.ossim.io/omar-wms/wms,https://b-omar-dev.ossim.io/omar-wms/wms,https://c-omar-dev.ossim.io/omar-wms/wms,https://d-omar-dev.ossim.io/omar-wms/wms"}},"crossOrigin":true,"preferences":{"id":2,"dynamicRangeAdjustment":"auto-minmax","coordinateFormat":"dd","brightness":0.0,"nullPixelFlip":true,"bandsRed":1,"sharpenPercent":0.0,"contrast":1.0,"pageTheme":"slate","interpolation":"bilinear","dynamicRangeAdjustmentRegion":"global","user":{"id":1,"passwordExpired":false,"preference":{"_ref":"..","class":"omar.security.plugin.Preference"},"username":"Anonymous","accountLocked":false,"password":"{bcrypt}$2a$10$ChBd15R/3xh3niKimJF86.JbWlIxNWQT8bTf8otDTrLPNO3JsYEZq","savedLink":[],"accountExpired":false,"enabled":true},"bands":"default","bandsBlue":3,"tlvPreference":{"id":3,"crossHairLayer":false,"overviewMap":false,"preference":{"_ref":"..","class":"omar.security.plugin.Preference"},"location":"","terrainWireframe":false,"maxResults":25,"endDate":"","startDate":"","minNiirs":0.0,"wmsTileSchema":"multiple","viewSpace":"ortho","maxCloudCover":100.0,"dimensions":2,"sensor":"","searchOriginLayer":false,"swipe":false},"o2SearchPreference":{"id":4,"customEndDateTime":"2020-05-18 18:04:00","azimuthMin":0.0,"wac":"","sunElevationEnabled":false,"sensorIdEnabled":false,"imageryEnabled":true,"azimuthMax":360.0,"sunElevationMax":90.0,"imageIdEnabled":false,"preference":{"_ref":"..","class":"omar.security.plugin.Preference"},"mapZoom":3,"elevationMax":90.0,"cloudCoverMin":0.0,"niirsEnabled":false,"sunElevationMin":-90.0,"mapCenterX":0.0,"productTypeEnabled":false,"sunAzimuthMin":0.0,"mapCenterY":0.0,"elevationMin":0.0,"sunAzimuthEnabled":false,"videoEnabled":false,"duration":"none","sunAzimuthMax":360.0,"beEnabled":false,"niirsMin":0.0,"dateType":"acquisition_date","sensorId":"","wacEnabled":false,"countryCode":"","gsdMax":50.0,"niirsMax":9.0,"targetId":"","productType":"","spatial":"none","azimuthEnabled":false,"cloudCoverEnabled":false,"cloudCoverMax":100.0,"customStartDateTime":"1970-01-01 00:00:00","be":"","gsdEnabled":false,"filename":"","imageId":"","elevationEnabled":false,"mapVisibility":false,"targetIdEnabled":false,"gsdMin":0.0,"countryCodeEnabled":false,"missionIdEnabled":false,"missionId":"","resultsSort":"acquisition_date,+D,Acquired","filenameEnabled":false,"mapRotation":0.0},"bandsGreen":2},"templates":{"default":{"header":{"height":"10%","logo":"tlv.png","northArrow":"north-arrow.png","text":{"securityClassification":{"defaultValue":"tlv.securityClassificationFunction","style":{"color":"add8e6","height":"25%"}},"title":{"defaultValue":"tlv.layers[ tlv.currentLayer ].imageId","style":{"color":"ffff00","height":"43%"}},"description":{"defaultValue":"\"CC: \" + tlv.layers[ tlv.currentLayer ].metadata.country_code","style":{"color":"ffffff","height":"32%"}}}},"footer":{"height":"3%","text":{"securityClassification":{"defaultValue":"tlv.securityClassificationFunction","style":{"align":"left","color":"add8e6"}},"location":{"defaultValue":"getMapCenterText( \"dms\" )","style":{"align":"center","color":"add8e6"}},"acquisitionDate":{"defaultValue":"tlv.layers[ tlv.currentLayer ].acquisitionDate","style":{"align":"right","color":"add8e6"}}}}}},"terrainProvider":null,"reachbackUrl":"/omar-reachback/index","releasability":null};
+			tlv.contextPath = "/tlv";
+		</script>
+	</body>
+</html>
