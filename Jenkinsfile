@@ -109,7 +109,7 @@ podTemplate(
           }
 
           sh """
-            docker build --network=host -t "${DOCKER_REGISTRY_PUBLIC_UPLOAD_URL}/tlv:${TAG_NAME}" ./docker
+            docker build --build-arg BASE_IMAGE=${JDK11_BASE_IMAGE} --network=host -t "${DOCKER_REGISTRY_PUBLIC_UPLOAD_URL}/tlv:${TAG_NAME}" ./docker
           """
         }
       }
