@@ -81,8 +81,7 @@ podTemplate(
           withSonarQubeEnv('sonarqube') {
             sh """
               ${scannerHome}/bin/sonar-scanner \
-                  -Dsonar.projectKey=tlv \
-                  -Dsonar.login=${SONARQUBE_TOKEN}
+                  -Dsonar.projectKey=tlv 
             """
         }
       }
