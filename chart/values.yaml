@@ -6,8 +6,11 @@ appName: tlv
 
 global:
   dockerRepository: nexus-docker-private-group.ossim.io
-
-  createIngress: true
+  imagePullSecret:
+    registry: null
+    username: null
+    password: null
+  createIngress: false
   useTls: false
   useTLSClientAuth: false
   sslCertSecretName: null
@@ -15,6 +18,13 @@ global:
 
   createImagePullSecret: true
   useImagePullSecret: true
+
+  omarDb:
+    name: null
+    host: null
+    user: null
+    password: null
+    port: null
 
 resources:
   limits:
@@ -26,9 +36,10 @@ resources:
     
 image:
   name: tlv
+  tag: 2.13
   pullPolicy: Always
 
-ingressPath: /tlv
+path: /tlv
 internalPort: 8080
 externalPort: 8080
 
