@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="0.1360" tests="8" failures="0">
+  <testsuite name="Root Suite" timestamp="2021-03-03T16:27:17" tests="0" file="cypress/integration/Final.js" time="0.0000" failures="0">
+  </testsuite>
+  <testsuite name="Automated tests for TLV API endpoints" timestamp="2021-03-03T16:27:17" tests="8" time="0.1360" failures="0">
+    <testcase name="Automated tests for TLV API endpoints Should test input/output result for all_default" time="0.0310" classname="Should test input/output result for all_default">
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should test input/output result for default_w_location" time="0.0230" classname="Should test input/output result for default_w_location">
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should test input/output result for good_dates" time="0.0110" classname="Should test input/output result for good_dates">
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should test input/output result for end&lt;start" time="0.0150" classname="Should test input/output result for end&lt;start">
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should test input/output result for invalid_start" time="0.0140" classname="Should test input/output result for invalid_start">
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should test input/output result for invalid_end" time="0.0150" classname="Should test input/output result for invalid_end">
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should test input/output result for invalid_maxCloudCoverage" time="0.0150" classname="Should test input/output result for invalid_maxCloudCoverage">
+    </testcase>
+    <testcase name="Automated tests for TLV API endpoints Should test input/output result for invalid_maxResults" time="0.0120" classname="Should test input/output result for invalid_maxResults">
+    </testcase>
+  </testsuite>
+</testsuites>

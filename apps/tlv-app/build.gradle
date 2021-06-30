@@ -9,8 +9,8 @@ grails {
 }
 dependencies {
     if ( ! System.getenv('O2_INLINE_BUILD') ) {
-        compile "io.ossim.omar.plugins:omar-core-plugin:+"
-        compile "io.ossim.omar.plugins:omar-security-plugin:+"
+        compile "io.ossim.omar.plugins-RELEASE:omar-core-plugin:+"
+        compile "io.ossim.omar.plugins-RELEASE:omar-security-plugin:+"
     }
 
     // compile "de.codecentric:spring-boot-admin-starter-client:${springBootAdminStarterClientV}"
@@ -26,7 +26,7 @@ dependencies {
     compile 'org.webjars.npm:cesium:1.43.0'
     compile 'org.webjars:bootswatch:3.3.5+4'
 
-    compile 'org.postgresql:postgresql:42.2.8'
+    compile 'org.postgresql:postgresql:42.2.18'
 
 }
 

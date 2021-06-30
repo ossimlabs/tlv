@@ -2,8 +2,6 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicas: 1
-
 appName: tlv
 
 global:
@@ -12,9 +10,7 @@ global:
     registry: null
     username: null
     password: null
-  hostname: omar-dev.ossim.io
-
-  createIngress: true
+  createIngress: false
   useTls: false
   useTLSClientAuth: false
   sslCertSecretName: null
@@ -22,19 +18,13 @@ global:
 
   createImagePullSecret: true
   useImagePullSecret: true
-  
-  createHpa: true
 
-  useSpringConfigServer: false
-
-# These variables can be overridden because of the use of the 'pluck' function:
-# - createIngress
-# - useTls
-# - useTlsClientAuth
-# - createImagePullSecret
-# - createHpa
-# - createPVs
-# - useSpringConfigServer
+  omarDb:
+    name: null
+    host: null
+    user: null
+    password: null
+    port: null
 
 resources:
   limits:
@@ -46,10 +36,10 @@ resources:
     
 image:
   name: tlv
-  tag: dev
+  tag: 2.13
   pullPolicy: Always
 
-ingressPath: /tlv
+path: /tlv
 internalPort: 8080
 externalPort: 8080
 
@@ -69,17 +59,3 @@ readinessProbe:
   path: /tlv/actuator/health
 
 terminationGracePeriodSeconds: 30
-
-envVars:
-  SPRING_CLOUD_CONFIG_LABEL: master
-  JAVA_OPTS: "-server -Xms256m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=1 -XX:+CMSClassUnloadingEnabled -XX:+UseGCOverheadLimit -Djava.awt.headless=true -XshowSettings:vm -Djava.security.egd=file:/dev/./urandom"
-
-configmaps: {}
-
-extraVolumes: []
-
-extraVolumeMounts: []
-
-extraInitContainers: []
-
-sideCars: []
