@@ -10,7 +10,7 @@ global:
     registry: null
     username: null
     password: null
-  createIngress: false
+  createIngress: true
   useTls: false
   useTLSClientAuth: false
   sslCertSecretName: null
