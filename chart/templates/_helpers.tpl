@@ -40,12 +40,6 @@
 {{- define "tlv.volumeMounts" -}}
 {{- include "tlv.volumeMounts.configmaps" . -}}
 {{- include "tlv.volumeMounts.pvcs" . -}}
-{{- if .Values.global.extraVolumeMounts }}
-{{ toYaml .Values.global.extraVolumeMounts }}
-{{- end }}
-{{- if .Values.extraVolumeMounts }}
-{{ toYaml .Values.extraVolumeMounts }}
-{{- end }}
 {{- end -}}
 
 
@@ -74,10 +68,4 @@
 {{- define "tlv.volumes" -}}
 {{- include "tlv.volumes.configmaps" . -}}
 {{- include "tlv.volumes.pvcs" . -}}
-{{- if .Values.global.extraVolumes }}
-{{ toYaml .Values.global.extraVolumes }}
-{{- end }}
-{{- if .Values.extraVolumes }}
-{{ toYaml .Values.extraVolumes }}
-{{- end }}
 {{- end -}}
