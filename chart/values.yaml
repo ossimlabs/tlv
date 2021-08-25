@@ -33,13 +33,13 @@ resources:
   requests:
     cpu: 35m
     memory: 500Mi
-    
+
 image:
   name: tlv
   tag: 2.13
   pullPolicy: Always
 
-path: /tlv
+ingressPath: /tlv
 internalPort: 8080
 externalPort: 8080
 
