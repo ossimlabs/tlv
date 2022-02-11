@@ -1,14 +1,14 @@
 ---
 server:
-    port: 8090
-    contextPath: /tlv
+  port: 8090
+  contextPath: /tlv
 
-baseUrl: https://omar.ossim.io
-#baseUrl: http://localhost
+#baseUrl: https://omar.ossim.io
+baseUrl: http://localhost
 geocoderUrl: ${baseUrl}/omar-ui/twoFishesProxy
 
 omarDb:
-    url: jdbc:postgresql:omardb-prod
+  url: jdbc:postgresql:omardb-prod
 
 libraries:
     o2-dev:
@@ -21,20 +21,13 @@ libraries:
         wmsUrl: ${baseUrl}/omar-wms/wms
         stagerUrl: ${baseUrl}/omar-stager
 
-dataSource:
-    pooled: true
-    jmxExport: true
-    driverClassName: org.h2.Driver
-    username: sa
-    password: ''
-    #dialect: org.hibernate.spatial.dialect.postgis.PostgisDialect
-
-environments:
-    development:
-        dataSource:
-            dbCreate: update
-            url: jdbc:h2:mem:devDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE
-#            url: jdbc:postgresql:omardb-dev
+# environments:
+#     production:
+#         dataSource:
+#             driverClassName: org.postgresql.Driver
+#             username: postgres
+#             password: postgres
+#             url: jdbc:postgresql://postgis:5432/tlv
 
 ---
 defaultUsername: Anonymous
@@ -92,12 +85,55 @@ securityClassification:
 #                     - pattern: '/**'
 #                       filters: 'JOINED_FILTERS'
 
-baseLayers:
-    osmBright:
-        layers: o2-basemap-bright
-        name: OSM Bright
-        styles:
-        type: wms
-        visible: true
-        urls: http://omar-dev.ossim.io/omar-mapproxy/service
+omarDev: http://omar-dev.ossim.io
 
+# List any base layers that may be available
+baseLayers:
+   o2Mosaic:
+       layer: WorldGeographic
+       matrixSet: WorldGeographic
+       name: O2 Mosaic
+       projection: EPSG:4326
+       style: default
+       type: wmts
+       visible: false
+       urls: ${omarDev}/omar-wmts/wmts/getTile
+   osmBasic:
+       layers: o2-basemap-basic
+       name: OSM Basic
+       styles:
+       type: wms
+       urls: ${omarDev}/omar-mapproxy/service
+       visible: false
+   osmBright:
+       layers: o2-basemap-bright
+       name: OSM Bright
+       styles:
+       type: wms
+       visible: false
+       urls: ${omarDev}/omar-mapproxy/service
+   googleMaps:
+       name: Google Maps
+       type: xyz
+       urls: https://mt1.google.com/vt/lyrs=r&x={x}&y={y}&z={z}
+       visibility: true
+   googleSatellite:
+       name: Google Satellite
+       type: xyz
+       urls: http://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}
+       visible: false
+   googleSatelliteHybrid:
+       name: Google Satellite Hybrid
+       type: xyz
+       urls: https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}
+       visible: true
+   googleTerrain:
+       name: Google Terrain
+       type: xyz
+       urls: https://mt1.google.com/vt/lyrs=t&x={x}&y={y}&z={z}
+       visible: false
+   googleRoads:
+       name: Google Roads
+       type: xyz
+       urls: https://mt1.google.com/vt/lyrs=h&x={x}&y={y}&z={z}
+       visible: false
