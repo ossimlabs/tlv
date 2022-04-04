@@ -29,8 +29,11 @@ spec:
     http:
       paths:
       - path: {{ $.Values.ingressPath }}
+        pathType: Prefix
         backend:
-          serviceName: {{ $.Values.appName }}-app
-          servicePort: {{ $.Values.internalPort }}
+          service:
+            name: {{ $.Values.appName }}-app
+            port:
+              number: {{ $.Values.internalPort }}
   {{- end }}
 {{- end }}

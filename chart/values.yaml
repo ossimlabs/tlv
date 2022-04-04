@@ -42,7 +42,7 @@ resources:
 image:
   name: tlv
   tag: 2.13
-  pullPolicy: Always
+  pullPolicy: IfNotPresent
 
 ingress:
   enabled:
