@@ -10,7 +10,12 @@ global:
     registry: null
     username: null
     password: null
-  createIngress: true
+
+  ingress:
+    class: nginx
+    enabled: true
+    annotations: {}
+
   useTls: false
   useTLSClientAuth: false
   sslCertSecretName: null
@@ -38,6 +43,13 @@ image:
   name: tlv
   tag: 2.13
   pullPolicy: Always
+
+ingress:
+  enabled:
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  class: # defaults to nginx if not set
 
 ingressPath: /tlv
 internalPort: 8080
