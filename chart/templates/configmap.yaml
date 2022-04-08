@@ -10,7 +10,7 @@ data:
       contactEmail: Kevin.Naquin@maxar.com
       releaseName: HystericalHyena
       releaseNumber: 1.0.0
-    
+
     baseLayers:
       googleRoads:
         name: Google Roads
@@ -41,9 +41,9 @@ data:
         type: wms
         urls: /omar-mapproxy/service
         visible: false
-    
+
     baseUrl: ""
-    
+
     endpoints:
       actuator:
         sensitive: false
@@ -64,7 +64,7 @@ data:
         sensitive: false
       trace:
         sensitive: false
-    
+
     environments:
       production:
         dataSource:
@@ -76,23 +76,23 @@ data:
       driver: org.postgresql.Driver
       host:  {{ .Values.global.omarDb.host }}
       name: {{ .Values.global.omarDb.name }}
-      username: {{ .Values.global.omarDb.user }}      
+      username: {{ .Values.global.omarDb.user }}
       password: {{ .Values.global.omarDb.password }}
       port: {{ .Values.global.omarDb.port }}
       url: jdbc:postgresql://${omarDb.host}:${omarDb.port}/${omarDb.name}
 
     grails:
       serverURL: {{ .Values.baseUrl }}${server.contextPath}
-    
+
     hystrix:
       execution:
         timeout:
           enabled: false
       fallback:
         enabled: false
-    
+
     ionAccessToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwMTU5ODJmNy0zNzk4LTRjNWQtODdjYS1kZGFkZWMzNGJiYTQiLCJpZCI6NDA0OCwic2NvcGVzIjpbImFzciIsImdjIl0sImlhdCI6MTUzOTcxNTA1NX0.-qj
-    
+
     libraries:
       o2:
         wmsUrls: {{ .Values.baseUrl }}/omar-wms/wms
