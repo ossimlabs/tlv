@@ -19,7 +19,7 @@ Determine the serviceAccount class name
 */}}
 {{- define "tlv.serviceAccount.name" -}}
 {{-   if eq (include "tlv.serviceAccount.enabled" $) "true" }}
-{{-     pluck "name" .Values.serviceAccount .Values.global.serviceAccount | first | default (include "tlv.fullname" $) -}}
+{{-     pluck "name" .Values.serviceAccount .Values.global.serviceAccount | first | default $.Values.appName -}}
 {{-   else }}
 {{-     pluck "name" .Values.serviceAccount .Values.global.serviceAccount | first | default "" -}}
 {{-   end }}
