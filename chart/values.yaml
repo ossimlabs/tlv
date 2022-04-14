@@ -85,6 +85,8 @@ terminationGracePeriodSeconds: 30
 deployment:
   annotations: {}
 
+envVars: {}
+
 serviceAccount:
   # Specifies whether a service account should be created
   enabled: null
