@@ -39,6 +39,8 @@ global:
     annotations: {}
     # name:
 
+  envVars: {}
+
 resources:
   limits:
     cpu: 1200m
