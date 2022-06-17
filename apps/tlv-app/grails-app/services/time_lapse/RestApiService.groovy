@@ -18,7 +18,7 @@ class RestApiService {
 
 		def config = grailsApplication.config
 		params.availableBaseLayers = config.baseLayers
-		params.baseUrl = config.baseUrl
+		params.baseUrl = config.getProperty('baseUrl', String)
 		params.beLookup = config.beLookup ?: null
 		params.configLayers = config.layers ?: [:]
 		params.demoLocation = config.demoLocation ?: null

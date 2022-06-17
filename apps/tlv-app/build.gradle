@@ -1,33 +1,20 @@
-grails {
-    plugins {
-        //compile project( ":${ rootProject.name }-plugin" )
-        if ( System.getenv('O2_INLINE_BUILD') ) {
-            compile project(":omar-core-plugin")
-            compile project(":omar-security-plugin")
-        }
-    }
-}
 dependencies {
-    if ( ! System.getenv('O2_INLINE_BUILD') ) {
-        compile "io.ossim.omar.plugins-RELEASE:omar-core-plugin:+"
-        compile "io.ossim.omar.plugins-RELEASE:omar-security-plugin:+"
-    }
+    implementation "io.ossim.omar.plugins:omar-core-plugin:+"
+    implementation "io.ossim.omar.plugins:omar-security-plugin:+"
 
-    // compile "de.codecentric:spring-boot-admin-starter-client:${springBootAdminStarterClientV}"
 
-    compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.2'
-    compile 'org.webjars:bootstrap:3.3.5'
-    compile 'org.webjars.bower:typeahead.js:0.11.1'
-    compile 'org.webjars.bower:typeahead.js-bootstrap-css:1.2.1'
-    compile 'org.webjars:font-awesome:4.4.0'
-    compile 'org.webjars:jquery:3.4.1'
-    compile 'org.webjars:jszip:3.1.0'
-    compile 'org.webjars:momentjs:2.24.0'
-    compile 'org.webjars.npm:cesium:1.43.0'
-    compile 'org.webjars:bootswatch:3.3.5+4'
+    implementation 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.2'
+    implementation 'org.webjars:bootstrap:3.3.5'
+    implementation 'org.webjars.bower:typeahead.js:0.11.1'
+    implementation 'org.webjars.bower:typeahead.js-bootstrap-css:1.2.1'
+    implementation 'org.webjars:font-awesome:4.4.0'
+    implementation 'org.webjars:jquery:3.4.1'
+    implementation 'org.webjars:jszip:3.1.0'
+    implementation 'org.webjars:momentjs:2.24.0'
+    implementation 'org.webjars.npm:cesium:1.43.0'
+    implementation 'org.webjars:bootswatch:3.3.5+4'
 
-    compile 'org.postgresql:postgresql:42.2.18'
-
+    implementation 'org.postgresql:postgresql:42.2.18'
 }
 
 assets {
@@ -52,5 +39,4 @@ assets {
         "**/logos/**",
         "**/prototype.*",
         "**/tlvicon.ico"
-    ]
-}
+    ]}

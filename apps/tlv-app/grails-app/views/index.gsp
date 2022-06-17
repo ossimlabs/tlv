@@ -23,9 +23,9 @@
 			<g:render template = "/dialogs"/>
 		</div>
 
-		<g:if test = "${ grailsApplication.config.userInfo }">
+		<g:if test = "${ grailsApplication.config.getProperty('userInfo', String) }">
 			<%
-				def userInfo = grailsApplication.config.userInfo
+				def userInfo = grailsApplication.config.getProperty('userInfo', String)
 				def requestHeaderUserName = userInfo.requestHeaderUserName
 				def userName = request.getHeader( requestHeaderUserName ) ?: userInfo.requestHeaderUserNameDefault
 			%>
