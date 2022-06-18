@@ -14,4 +14,15 @@
     <root level="error">
         <appender-ref ref="STDOUT" />
     </root>
+
+    <logger name="omar" level="info" additivity="false">
+        <appender-ref ref="STDOUT" />
+    </logger>
+    <logger name="tlv" level="info" additivity="false">
+        <appender-ref ref="STDOUT" />
+    </logger>
+    <logger name="time_lapse" level="info" additivity="false">
+        <appender-ref ref="STDOUT" />
+    </logger>
+        
 </configuration>
