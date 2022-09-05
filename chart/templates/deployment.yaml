@@ -61,15 +61,12 @@ spec:
             memory: {{ .Values.resources.requests.memory }}
         terminationMessagePath: /dev/termination-log
         volumeMounts:
-        {{- include "tlv.volumeMounts" . | indent 8 }}
+          {{- include "tlv.volumeMounts" . | nindent 12 }}
       dnsPolicy: ClusterFirst
-      {{- if .Values.global.useImagePullSecret }}
-      imagePullSecrets:
-        - name: {{ .Values.fullnameOverride }}-pull-secret
-      {{- end }}
+      {{- include "tlv.imagePullSecrets" . | indent 6 }}
       restartPolicy: Always
       securityContext: {}
       serviceAccountName: {{ include "tlv.serviceAccount.name" . }}
       terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
       volumes:
-      {{- include "tlv.volumes" . | indent 6 }}
+        {{- include "tlv.volumes" . | nindent 8 }}
