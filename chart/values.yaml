@@ -21,7 +21,7 @@ global:
   sslCertSecretName: null
   authSslCertSecretName: null
 
-  useImagePullSecret: true
+  
 
   omarDb:
     name: null
