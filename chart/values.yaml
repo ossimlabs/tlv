@@ -42,6 +42,7 @@ global:
     # name:
 
   envVars: {}
+  envFrom: []
   nodeSelector: {}
   affinity: {}
   tolerations: []
@@ -91,6 +92,7 @@ deployment:
   annotations: {}
 
 envVars: {}
+envFrom: []
 nodeSelector: {}
 affinity: {}
 tolerations: []
