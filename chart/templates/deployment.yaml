@@ -35,7 +35,7 @@ spec:
           {{- tpl (toYaml .) $ | nindent 10 }}
           {{- end }}
         image: {{ include "tlv.image" . | quote }}
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        imagePullPolicy: {{ include "tlv.pullPolicy" . }}
         livenessProbe:
           failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
           initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}

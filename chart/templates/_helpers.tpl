@@ -79,3 +79,8 @@ Return the proper image name
     {{- printf "%s/%s:%s" $registryName $imageName $tag -}}
 {{- end -}}
 {{- end -}}
+
+
+{{- define "tlv.pullPolicy" -}}
+{{ .Values.image.pullPolicy | default .Values.global.image.pullPolicy | default "IfNotPresent" }}
+{{- end -}}

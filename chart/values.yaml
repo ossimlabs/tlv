@@ -58,7 +58,7 @@ resources:
 image:
   name: tlv
   tag: null
-  pullPolicy: IfNotPresent
+  pullPolicy: ""
 
 ingress:
   enabled:
