@@ -1,6 +1,12 @@
 buildscript {
     repositories {
-        maven { url ossimMavenProxy }
+        maven {
+            url ossimMavenProxy
+            credentials {
+                username ossimMavenProxyUsername
+                password ossimMavenProxyPassword
+            }
+        }
         maven { url "https://repo.grails.org/grails/core" }
     }
     dependencies {
@@ -69,7 +75,13 @@ subprojects { project ->
 
         repositories {
             mavenLocal()
-            maven { url ossimMavenProxy }
+            maven {
+                url ossimMavenProxy
+                credentials {
+                    username ossimMavenProxyUsername
+                    password ossimMavenProxyPassword
+                }
+            }
             maven { url "https://repo.grails.org/grails/core" }
         }
 
@@ -114,7 +126,7 @@ subprojects { project ->
             testCompile "org.grails:grails-gorm-testing-support"
             testCompile "org.mockito:mockito-core"
             testCompile "org.grails:grails-web-testing-support"
-			
+
 			constraints {
       			implementation('org.apache.logging.log4j:log4j-core:2.17.1') {
         			because 'Log4j vulnerable to remote code execution and other critical security vulnerabilities'

@@ -1,11 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  labels: {}
-  name: {{ .Values.fullnameOverride }}-app
+  labels:
+    {{- include "tlv.labels" . | nindent 4 }}
+  name: {{ include "tlv.fullname" . }}
 spec:
   selector:
-    app: {{ .Values.fullnameOverride }}
+    {{- include "tlv.selectorLabels" . | nindent 4 }}
   ports:
   - name: {{ .Values.internalPort }}-tcp
     port: {{ .Values.externalPort }}

@@ -5,11 +5,16 @@
 fullnameOverride: tlv
 
 global:
-  dockerRepository: nexus-docker-private-group.ossim.io
+
   imagePullSecret:
     registry: null
     username: null
     password: null
+
+  image:
+    registry: ""
+    pullPolicy: ""
+    pullSecrets: []
 
   ingress:
     class: nginx
@@ -20,9 +25,6 @@ global:
   useTLSClientAuth: false
   sslCertSecretName: null
   authSslCertSecretName: null
-
-  createImagePullSecret: true
-  useImagePullSecret: true
 
   omarDb:
     name: null
@@ -40,6 +42,10 @@ global:
     # name:
 
   envVars: {}
+  envFrom: []
+  nodeSelector: {}
+  affinity: {}
+  tolerations: []
 
 resources:
   limits:
@@ -52,7 +58,7 @@ resources:
 image:
   name: tlv
   tag: null
-  pullPolicy: IfNotPresent
+  pullPolicy: ""
 
 ingress:
   enabled:
@@ -86,6 +92,10 @@ deployment:
   annotations: {}
 
 envVars: {}
+envFrom: []
+nodeSelector: {}
+affinity: {}
+tolerations: []
 
 serviceAccount:
   # Specifies whether a service account should be created

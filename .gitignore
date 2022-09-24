@@ -18,3 +18,4 @@ packaged-chart
 charts/*.tgz
 .asscache
 *java_pid*
+*.tgz
