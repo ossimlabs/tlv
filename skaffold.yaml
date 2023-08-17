@@ -1,0 +1,23 @@
+apiVersion: skaffold/v2beta7
+kind: Config
+metadata:
+  name: tlv
+build:
+  artifacts:
+    - image: registry.iap.maxar.com/gegd/omar/tlv
+      jib: 
+        project: tlv-app
+      context: ./apps/tlv-app
+  tagPolicy:
+    sha256: {}
+deploy:
+  helm:
+    releases:
+      - name: tlv # this is the helm release name                
+        chartPath: ./apps/tlv-app/chart
+        valuesFiles:
+          - ./apps/tlv-app/values-dev.yaml # provides values to override defaults in chart
+        namespace: omar-3pa-dev
+        setValueTemplates:
+          image.tag: latest
+          image.name: tlv

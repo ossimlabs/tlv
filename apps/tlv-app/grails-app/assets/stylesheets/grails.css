@@ -8,7 +8,7 @@ html, body {
     -webkit-overflow-scrolling: touch;
 }
 
-p, ul, pre, h1, h2, h3, h4, h5, h6 {
+p, ul, pre, h1, h2, h3, h4, h5, h6, h7, h8 {
     margin: 1em 0;
 }
 
@@ -16,7 +16,7 @@ p {
     display: block;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1, h2, h3, h4, h5, h6, h7, h8 {
     font-weight: bold;
 }
 
@@ -29,11 +29,8 @@ pre {
 /* customizing bootstrap nav bar */
 .navbar {
     margin-bottom: 0px;
-    padding-right: 110px;
 }
-.navbar .container {
-    margin: 10px;
-}
+
 .navbar-dark a {
     color: #ffffff !important;
     font-size: 18px !important;
@@ -440,6 +437,15 @@ h6 {
     color: #2559a7;
 }
 
+h7 {
+    font-weight: bold;
+    color: #245f78;
+}
+
+h8 {
+    color: #245f78;
+}
+
 #footer {
     background: #f2f2f2;
     text-align: center;
@@ -513,22 +519,6 @@ h6 {
     color: #db4800
 }
 
-.row {
-    position: relative;
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 5%
-}
-
-.row:before, .row:after {
-    content: " ";
-    display: table
-}
-
-.row:after {
-    clear: both
-}
-
 .band {
     background: #4298b8;
     height: 400px;
@@ -550,16 +540,9 @@ h6 {
 }
 
 #content {
-    background: white
-}
-
-#content .row:before, #content .row:after {
-    content: " ";
-    display: table
-}
-
-#content .row:after {
-    clear: both
+    margin: 2em 0;
+    padding: 1em 0;
+    background: white;
 }
 
 #content .row > h1 {
@@ -572,7 +555,7 @@ h6 {
     width: 100%;
 }
 
-#content hr.row, #content hr.divider {
+#content hr.divider {
     border: 0 none;
     border-top: 1px solid #EEE;
     margin: 0 5%;
@@ -848,7 +831,7 @@ html, body, .st-container, .st-pusher, .st-content {
 }
 
 .sign-in-fa-icon:before {
-    font-family: FontAwesome, sans-serif;
+    font-family: FontAwesome;
     content: '\f090';
     padding-right: 10px;
 }
