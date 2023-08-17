@@ -16,7 +16,7 @@ dependencies {
   implementation "org.webjars:font-awesome:${fontAwesomeVersion}"
   implementation "org.webjars:jszip:${jszipVersion}"
   implementation "org.webjars:momentjs:${momentJsVersion}"
-  implementation "org.webjars.npm:cesium:${cesiumVersion}"
+//  implementation "org.webjars.npm:cesium:${cesiumVersion}"
   implementation "org.webjars:bootswatch:${bootswatchVersion}"
 
   runtimeOnly 'org.postgresql:postgresql'
