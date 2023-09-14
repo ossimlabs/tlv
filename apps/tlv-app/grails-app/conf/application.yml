@@ -132,7 +132,7 @@ environments:
             web-allow-others: true
 ---
 omarDb:
-  host: localhost
+  host: host.docker.internal
   port: 5432
   username: postgres  
   password: postgres
